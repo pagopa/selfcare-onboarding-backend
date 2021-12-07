@@ -1,8 +1,0 @@
-it\pagopa\selfcare\onboarding\connector\rest\config\PartyProcessRestClientConfig.class
-it\pagopa\selfcare\onboarding\connector\rest\model\OnboardingResponse.class
-it\pagopa\selfcare\onboarding\connector\rest\model\User.class
-it\pagopa\selfcare\onboarding\connector\rest\client\ProductsRestClient.class
-it\pagopa\selfcare\onboarding\connector\PartyConnectorImpl.class
-it\pagopa\selfcare\onboarding\connector\rest\config\ProductsRestClientConfig.class
-it\pagopa\selfcare\onboarding\connector\rest\model\OnboardingRequest.class
-it\pagopa\selfcare\onboarding\connector\rest\client\PartyProcessRestClient.class
