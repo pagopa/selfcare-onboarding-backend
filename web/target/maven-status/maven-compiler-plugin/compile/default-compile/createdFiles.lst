@@ -1,0 +1,10 @@
+it\pagopa\selfcare\onboarding\web\config\OnboardingSecurityConfig.class
+it\pagopa\selfcare\onboarding\web\model\OnboardingResponse.class
+it\pagopa\selfcare\onboarding\web\config\WebConfig.class
+it\pagopa\selfcare\onboarding\web\model\UserDto.class
+it\pagopa\selfcare\onboarding\web\security\PartyAuthenticationProvider.class
+it\pagopa\selfcare\onboarding\web\config\SwaggerConfig$enConfig.class
+it\pagopa\selfcare\onboarding\web\controller\InstitutionController.class
+it\pagopa\selfcare\onboarding\web\model\mapper\OnboardingMapper.class
+it\pagopa\selfcare\onboarding\web\config\SwaggerConfig.class
+it\pagopa\selfcare\onboarding\web\config\SwaggerConfig$itConfig.class

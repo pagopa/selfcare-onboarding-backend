@@ -1,0 +1,6 @@
+it\pagopa\selfcare\onboarding\web\controller\InstitutionControllerTest.class
+it\pagopa\selfcare\onboarding\web\model\mapper\OnboardingMapperTest$DummyOnboardingResource.class
+it\pagopa\selfcare\onboarding\web\model\mapper\OnboardingMapperTest.class
+it\pagopa\selfcare\onboarding\web\model\OnboardingResponseTest.class
+it\pagopa\selfcare\onboarding\web\config\WebTestConfig.class
+it\pagopa\selfcare\onboarding\web\model\UserDtoTest.class

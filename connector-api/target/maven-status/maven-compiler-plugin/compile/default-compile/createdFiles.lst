@@ -1,0 +1,7 @@
+it\pagopa\selfcare\onboarding\connector\model\onboarding\OnboardingData.class
+it\pagopa\selfcare\onboarding\connector\model\onboarding\UserInfo.class
+it\pagopa\selfcare\onboarding\connector\model\onboarding\OnboardingResource.class
+it\pagopa\selfcare\onboarding\connector\api\ProductsConnector.class
+it\pagopa\selfcare\onboarding\connector\api\PartyConnector.class
+it\pagopa\selfcare\onboarding\connector\model\product\Product.class
+it\pagopa\selfcare\onboarding\connector\model\onboarding\PartyRole.class
