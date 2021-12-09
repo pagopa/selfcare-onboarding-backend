@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: b4f-onboarding
+  name: b4f-onboarding
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: b4f-onboarding
+  template:
+    metadata:
+      labels:
+        app: b4f-onboarding
+    spec:
+      containers:
+        - name: b4f-onboarding
+          image: selcdacr.azurecr.io/selfcareonboardingbackend
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+          envFrom:
+            - secretRef:
+                name: application-insights
+            - configMapRef:
+                name: b4f-onboarding
+            - configMapRef:
+                name: inner-service-url
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 8080
+              scheme: HTTP
+            timeoutSeconds: 5
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 5
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: 8080
+              scheme: HTTP
+            timeoutSeconds: 5
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3
+          startupProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 20
+            timeoutSeconds: 5
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 30
