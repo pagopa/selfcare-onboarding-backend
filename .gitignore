@@ -1,58 +1,33 @@
-bin
-obj
-csx
-.vs
-edge
-Publish
+HELP.md
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
 
-*.user
-*.suo
-*.cscfg
-*.Cache
-project.lock.json
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
 
-/packages
-/TestResults
-
-/tools/NuGet.exe
-/App_Data
-/secrets
-/data
-.secrets
-appsettings.json
-local.settings.json
-
-node_modules
-generated
-build
-local
-dist
-
-# Local python packages
-.python_packages/
-
-# Python Environments
-.venv
-env/
-venv/
-ENV/
-env.bak/
-venv.bak/
-
-.eslintcache
-
-# Byte-compiled / optimized / DLL files
-__pycache__/
-*.py[cod]
-*$py.class
-
-coverage
-
-yarn-error.log
-
-*.zip
-
-!jest.config.js
-!.release-it.js
+### IntelliJ IDEA ###
 .idea
-.vscode
+*.iws
+*.iml
+*.ipr
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### VS Code ###
+.vscode/
