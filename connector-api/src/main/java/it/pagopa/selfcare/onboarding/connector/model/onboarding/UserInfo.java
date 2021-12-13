@@ -26,6 +26,6 @@ public interface UserInfo {
 
     String getProductRole();
 
-    void setProductRole(String productRole); //TODO: verify usefulness
+    void setProductRole(String productRole);
 
 }
