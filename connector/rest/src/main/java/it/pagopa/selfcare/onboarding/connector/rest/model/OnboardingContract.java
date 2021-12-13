@@ -15,14 +15,11 @@ package it.pagopa.selfcare.onboarding.connector.rest.model;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.List;
-
 @Setter
 @Getter
-public class OnboardingRequest {
+public class OnboardingContract {
 
-    private String institutionId;
-    private List<User> users;
-    private OnboardingContract contract;
+    private String version;
+    private String path;
 
 }
