@@ -4,6 +4,7 @@ import it.pagopa.selfcare.onboarding.connector.api.PartyConnector;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingResource;
 import it.pagopa.selfcare.onboarding.connector.rest.client.PartyProcessRestClient;
+import it.pagopa.selfcare.onboarding.connector.rest.model.OnboardingContract;
 import it.pagopa.selfcare.onboarding.connector.rest.model.OnboardingRequest;
 import it.pagopa.selfcare.onboarding.connector.rest.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +42,10 @@ class PartyConnectorImpl implements PartyConnector {
                     user.setProductRole(userInfo.getProductRole());
                     return user;
                 }).collect(Collectors.toList()));
+        OnboardingContract onboardingContract = new OnboardingContract();
+        onboardingContract.setPath(onboardingData.getContractPath());
+        onboardingContract.setVersion(onboardingData.getContractVersion());
+        onboardingRequest.setContract(onboardingContract);
 
         return restClient.onboardingOrganization(onboardingRequest);
     }
