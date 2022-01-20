@@ -25,13 +25,29 @@ public class ProductServiceImplTest {
     void getProduct_nullProductId() {
         //given
         String productId = null;
-        Product product = Mockito.mock(Product.class);
         //when
         Executable executable = () -> productService.getProduct(productId);
         //then
-        IllegalArgumentException e = Assertions.assertThrows(IllegalArgumentException.class, executable);
+        Exception e = Assertions.assertThrows(IllegalArgumentException.class, executable);
         Assertions.assertEquals("ProductId is required", e.getMessage());
-        Mockito.verifyNoMoreInteractions(productsConnectorMock);
-
+        Mockito.verifyNoInteractions(productsConnectorMock);
     }
+
+    @Test
+    void getProduct() {
+        //given
+        String productId = "productId";
+        Product productMock = Mockito.mock(Product.class);
+        Mockito.when(productsConnectorMock.getProduct(Mockito.any()))
+                .thenReturn(productMock);
+        //when
+        Product product = productService.getProduct(productId);
+        //then
+        Assertions.assertSame(productMock, product);
+        Mockito.verify(productsConnectorMock, Mockito.times(1))
+                .getProduct(productId);
+        Mockito.verifyNoMoreInteractions(productsConnectorMock);
+    }
+
+
 }
