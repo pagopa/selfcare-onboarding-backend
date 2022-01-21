@@ -34,10 +34,10 @@ public class ProductController {
     public ProductResource getProduct(@ApiParam("${swagger.onboarding.product.model.id}")
                                       @PathVariable("id") String id) {
         log.trace("ProductController.getProduct start");
-        log.debug("id = {}", id);
+        log.debug("ProductController.getProduct id = {}", id);
         Product product = productService.getProduct(id);
         ProductResource resource = ProductMapper.toResource(product);
-        log.debug("result = {}", resource);
+        log.debug("ProductController.getProduct result = {}", resource);
         log.trace("ProductController.getProduct end");
         return resource;
     }
