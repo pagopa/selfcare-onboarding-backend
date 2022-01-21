@@ -25,7 +25,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
         ProductController.class,
         WebTestConfig.class
 })
-public class ProductControllerTest {
+class ProductControllerTest {
     private static final String BASE_URL = "/product";
 
     @Autowired

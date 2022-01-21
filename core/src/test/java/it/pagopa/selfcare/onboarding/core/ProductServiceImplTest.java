@@ -12,7 +12,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-public class ProductServiceImplTest {
+class ProductServiceImplTest {
 
     @InjectMocks
     private ProductServiceImpl productService;
