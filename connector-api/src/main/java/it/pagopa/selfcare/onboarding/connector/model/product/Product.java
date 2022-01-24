@@ -15,5 +15,5 @@ public class Product {
     private EnumMap<PartyRole, List<String>> roleMappings;
     private String contractTemplatePath;
     private String contractTemplateVersion;
-
+    private String title;
 }
