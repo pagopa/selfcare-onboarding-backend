@@ -72,6 +72,7 @@ public class ProductsRestClientTest extends BaseFeignRestClientTest {
         Assert.assertNotNull(product.getContractTemplatePath());
         Assert.assertNotNull(product.getContractTemplateVersion());
         Assert.assertNotNull(product.getRoleMappings());
+        Assert.assertNotNull(product.getTitle());
         Assert.assertFalse(product.getRoleMappings().isEmpty());
     }
 
