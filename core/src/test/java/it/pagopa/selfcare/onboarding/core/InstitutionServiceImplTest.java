@@ -166,6 +166,37 @@ class InstitutionServiceImplTest {
         Mockito.verifyNoInteractions(partyConnectorMock);
     }
 
+    @Test
+    void onboarding_MoreThanOneProductRoles() {
+        // given
+        DummyUserInfo userInfo = TestUtils.mockInstance(new DummyUserInfo(), "setRole");
+        userInfo.setRole(PartyRole.DELEGATE);
+        OnboardingData onboardingData =
+                new OnboardingData("institutionId", "productId", List.of(userInfo));
+        Product productMock = TestUtils.mockInstance(new Product(), "setRoleMappings");
+        ProductRoleInfo productRoleInfo1 = TestUtils.mockInstance(new ProductRoleInfo(), 1, "setRoles");
+        productRoleInfo1.setRoles(List.of(TestUtils.mockInstance(new ProductRoleInfo.ProductRole(), 1)));
+        ProductRoleInfo productRoleInfo2 = TestUtils.mockInstance(new ProductRoleInfo(), 2, "setRoles");
+        productRoleInfo2.setRoles(List.of(TestUtils.mockInstance(new ProductRoleInfo.ProductRole(), 1),
+                TestUtils.mockInstance(new ProductRoleInfo.ProductRole(), 2)));
+        EnumMap<PartyRole, ProductRoleInfo> roleMappings = new EnumMap<>(PartyRole.class) {{
+            put(PartyRole.MANAGER, productRoleInfo1);
+            put(PartyRole.DELEGATE, productRoleInfo2);
+        }};
+        productMock.setRoleMappings(roleMappings);
+        Mockito.when(productsConnectorMock.getProduct(onboardingData.getProductId()))
+                .thenReturn(productMock);
+        // when
+        Executable executable = () -> institutionService.onboarding(onboardingData);
+        // then
+        IllegalStateException e = Assertions.assertThrows(IllegalStateException.class, executable);
+        Assertions.assertEquals("More than one Product role related to " + userInfo.getRole() + " Party role is available. Cannot automatically set the Product role", e.getMessage());
+        Mockito.verify(productsConnectorMock, Mockito.times(1))
+                .getProduct(onboardingData.getProductId());
+        Mockito.verifyNoMoreInteractions(productsConnectorMock);
+        Mockito.verifyNoInteractions(partyConnectorMock);
+    }
+
 
     @Test
     void onboarding() {

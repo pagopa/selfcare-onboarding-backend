@@ -41,7 +41,7 @@ class InstitutionServiceImpl implements InstitutionService {
             Assert.notEmpty(product.getRoleMappings().get(userInfo.getRole()).getRoles(),
                     String.format("At least one Product role related to %s Party role is required", userInfo.getRole()));
             Assert.state(product.getRoleMappings().get(userInfo.getRole()).getRoles().size() == 1,
-                    "More than one Product role available. Cannot automatically set the Product role");
+                    String.format("More than one Product role related to %s Party role is available. Cannot automatically set the Product role", userInfo.getRole()));
             userInfo.setProductRole(product.getRoleMappings().get(userInfo.getRole()).getRoles().get(0).getCode());
         });
 
