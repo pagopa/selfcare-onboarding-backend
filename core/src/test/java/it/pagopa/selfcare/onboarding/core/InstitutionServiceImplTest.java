@@ -7,6 +7,7 @@ import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.PartyRole;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.UserInfo;
 import it.pagopa.selfcare.onboarding.connector.model.product.Product;
+import it.pagopa.selfcare.onboarding.connector.model.product.ProductRoleInfo;
 import lombok.Getter;
 import lombok.Setter;
 import org.junit.jupiter.api.Assertions;
@@ -16,7 +17,6 @@ import org.junit.jupiter.api.function.Executable;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Collections;
 import java.util.EnumMap;
 import java.util.List;
 
@@ -143,12 +143,18 @@ class InstitutionServiceImplTest {
         userInfo.setRole(PartyRole.DELEGATE);
         OnboardingData onboardingData =
                 new OnboardingData("institutionId", "productId", List.of(userInfo));
-        Product product = TestUtils.mockInstance(new Product());
-        product.setRoleMappings(new EnumMap<>(PartyRole.class) {{
-            put(PartyRole.DELEGATE, Collections.emptyList());
-        }});
+        Product productMock = TestUtils.mockInstance(new Product(), "setRoleMappings");
+        ProductRoleInfo productRoleInfo1 = TestUtils.mockInstance(new ProductRoleInfo(), 1, "setRoles");
+        productRoleInfo1.setRoles(List.of(TestUtils.mockInstance(new ProductRoleInfo.ProductRole(), 1)));
+        ProductRoleInfo productRoleInfo2 = TestUtils.mockInstance(new ProductRoleInfo(), 2, "setRoles");
+        productRoleInfo2.setRoles(List.of());
+        EnumMap<PartyRole, ProductRoleInfo> roleMappings = new EnumMap<>(PartyRole.class) {{
+            put(PartyRole.MANAGER, productRoleInfo1);
+            put(PartyRole.DELEGATE, productRoleInfo2);
+        }};
+        productMock.setRoleMappings(roleMappings);
         Mockito.when(productsConnectorMock.getProduct(onboardingData.getProductId()))
-                .thenReturn(product);
+                .thenReturn(productMock);
         // when
         Executable executable = () -> institutionService.onboarding(onboardingData);
         // then
@@ -160,21 +166,64 @@ class InstitutionServiceImplTest {
         Mockito.verifyNoInteractions(partyConnectorMock);
     }
 
+    @Test
+    void onboarding_MoreThanOneProductRoles() {
+        // given
+        DummyUserInfo userInfo = TestUtils.mockInstance(new DummyUserInfo(), "setRole");
+        userInfo.setRole(PartyRole.DELEGATE);
+        OnboardingData onboardingData =
+                new OnboardingData("institutionId", "productId", List.of(userInfo));
+        Product productMock = TestUtils.mockInstance(new Product(), "setRoleMappings");
+        ProductRoleInfo productRoleInfo1 = TestUtils.mockInstance(new ProductRoleInfo(), 1, "setRoles");
+        productRoleInfo1.setRoles(List.of(TestUtils.mockInstance(new ProductRoleInfo.ProductRole(), 1)));
+        ProductRoleInfo productRoleInfo2 = TestUtils.mockInstance(new ProductRoleInfo(), 2, "setRoles");
+        productRoleInfo2.setRoles(List.of(TestUtils.mockInstance(new ProductRoleInfo.ProductRole(), 1),
+                TestUtils.mockInstance(new ProductRoleInfo.ProductRole(), 2)));
+        EnumMap<PartyRole, ProductRoleInfo> roleMappings = new EnumMap<>(PartyRole.class) {{
+            put(PartyRole.MANAGER, productRoleInfo1);
+            put(PartyRole.DELEGATE, productRoleInfo2);
+        }};
+        productMock.setRoleMappings(roleMappings);
+        Mockito.when(productsConnectorMock.getProduct(onboardingData.getProductId()))
+                .thenReturn(productMock);
+        // when
+        Executable executable = () -> institutionService.onboarding(onboardingData);
+        // then
+        IllegalStateException e = Assertions.assertThrows(IllegalStateException.class, executable);
+        Assertions.assertEquals("More than one Product role related to " + userInfo.getRole() + " Party role is available. Cannot automatically set the Product role", e.getMessage());
+        Mockito.verify(productsConnectorMock, Mockito.times(1))
+                .getProduct(onboardingData.getProductId());
+        Mockito.verifyNoMoreInteractions(productsConnectorMock);
+        Mockito.verifyNoInteractions(partyConnectorMock);
+    }
+
 
     @Test
     void onboarding() {
         // given
-        DummyUserInfo userInfo = TestUtils.mockInstance(new DummyUserInfo(), "setRole");
-        userInfo.setRole(PartyRole.MANAGER);
         String productRole = "role";
+        DummyUserInfo userInfo1 = TestUtils.mockInstance(new DummyUserInfo(), 1, "setRole");
+        userInfo1.setRole(PartyRole.MANAGER);
+        DummyUserInfo userInfo2 = TestUtils.mockInstance(new DummyUserInfo(), 2, "setRole");
+        userInfo2.setRole(PartyRole.DELEGATE);
         OnboardingData onboardingData =
-                new OnboardingData("institutionId", "productId", List.of(userInfo));
-        Product product = TestUtils.mockInstance(new Product());
-        product.setRoleMappings(new EnumMap<>(PartyRole.class) {{
-            put(PartyRole.MANAGER, List.of(productRole));
-        }});
+                new OnboardingData("institutionId", "productId", List.of(userInfo1, userInfo2));
+        Product productMock = TestUtils.mockInstance(new Product(), "setRoleMappings");
+        ProductRoleInfo productRoleInfo1 = TestUtils.mockInstance(new ProductRoleInfo(), 1, "setRoles");
+        ProductRoleInfo.ProductRole productRole1 = TestUtils.mockInstance(new ProductRoleInfo.ProductRole(), 1);
+        productRole1.setCode(productRole);
+        productRoleInfo1.setRoles(List.of(productRole1));
+        ProductRoleInfo productRoleInfo2 = TestUtils.mockInstance(new ProductRoleInfo(), 2, "setRoles");
+        ProductRoleInfo.ProductRole productRole2 = TestUtils.mockInstance(new ProductRoleInfo.ProductRole(), 2);
+        productRole2.setCode(productRole);
+        productRoleInfo2.setRoles(List.of(productRole2));
+        EnumMap<PartyRole, ProductRoleInfo> roleMappings = new EnumMap<>(PartyRole.class) {{
+            put(PartyRole.MANAGER, productRoleInfo1);
+            put(PartyRole.DELEGATE, productRoleInfo2);
+        }};
+        productMock.setRoleMappings(roleMappings);
         Mockito.when(productsConnectorMock.getProduct(onboardingData.getProductId()))
-                .thenReturn(product);
+                .thenReturn(productMock);
         // when
         institutionService.onboarding(onboardingData);
         // then
@@ -184,8 +233,8 @@ class InstitutionServiceImplTest {
                 .onboardingOrganization(onboardingDataCaptor.capture());
         OnboardingData captured = onboardingDataCaptor.getValue();
         Assertions.assertNotNull(captured.getUsers());
-        Assertions.assertEquals(1, captured.getUsers().size());
-        Assertions.assertEquals(productRole, captured.getUsers().get(0).getProductRole());
+        Assertions.assertEquals(2, captured.getUsers().size());
+        captured.getUsers().forEach(userInfo -> Assertions.assertEquals(productRole, userInfo.getProductRole()));
         Mockito.verifyNoMoreInteractions(productsConnectorMock, partyConnectorMock);
     }
 

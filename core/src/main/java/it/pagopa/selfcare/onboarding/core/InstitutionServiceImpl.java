@@ -36,8 +36,13 @@ class InstitutionServiceImpl implements InstitutionService {
 
         Assert.notNull(product.getRoleMappings(), "Role mappings is required");
         onboardingData.getUsers().forEach(userInfo -> {
-            Assert.notEmpty(product.getRoleMappings().get(userInfo.getRole()), String.format("At least one Product role related to %s Party role is required", userInfo.getRole()));
-            userInfo.setProductRole(product.getRoleMappings().get(userInfo.getRole()).get(0));
+            Assert.notNull(product.getRoleMappings().get(userInfo.getRole()),
+                    String.format("At least one Product role related to %s Party role is required", userInfo.getRole()));
+            Assert.notEmpty(product.getRoleMappings().get(userInfo.getRole()).getRoles(),
+                    String.format("At least one Product role related to %s Party role is required", userInfo.getRole()));
+            Assert.state(product.getRoleMappings().get(userInfo.getRole()).getRoles().size() == 1,
+                    String.format("More than one Product role related to %s Party role is available. Cannot automatically set the Product role", userInfo.getRole()));
+            userInfo.setProductRole(product.getRoleMappings().get(userInfo.getRole()).getRoles().get(0).getCode());
         });
 
         return partyConnector.onboardingOrganization(onboardingData);

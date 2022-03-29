@@ -19,4 +19,4 @@ info:
 
 logging:
   level:
-    it.pagopa.selfcare.onboarding: ${B4F_ONBOARDING_LOG_LEVEL:DEBUG}
+    it.pagopa.selfcare: ${B4F_ONBOARDING_LOG_LEVEL:DEBUG}
