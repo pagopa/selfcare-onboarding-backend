@@ -185,11 +185,20 @@
   },
   "components": {
     "schemas": {
-      "DatiFatturazione": {
-        "title": "DatiFatturazione",
+      "BillingData": {
+        "title": "BillingData",
         "type": "object",
         "properties": {
-          "data": {
+          "description": {
+            "type": "string"
+          },
+          "digitalAddress": {
+            "type": "string"
+          },
+          "physicalAddress": {
+            "type": "string"
+          },
+          "taxCode": {
             "type": "string"
           }
         }
@@ -219,8 +228,8 @@
         ],
         "type": "object",
         "properties": {
-          "datiFatturazione": {
-            "$ref": "#/components/schemas/DatiFatturazione"
+          "billingData": {
+            "$ref": "#/components/schemas/BillingData"
           },
           "users": {
             "type": "array",
