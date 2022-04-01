@@ -10,14 +10,9 @@
  * Do not edit the class manually.
  */
 
-package it.pagopa.selfcare.onboarding.connector.rest.model;
+package it.pagopa.selfcare.onboarding.connector.model;
 
-import lombok.Data;
+import java.util.ArrayList;
 
-@Data
-public class OnboardingContract {
-
-    private String version;
-    private String path;
-
+public class RelationshipsResponse extends ArrayList<RelationshipInfo> {
 }

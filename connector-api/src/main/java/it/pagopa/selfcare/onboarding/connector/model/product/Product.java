@@ -1,13 +1,11 @@
 package it.pagopa.selfcare.onboarding.connector.model.product;
 
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.PartyRole;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
 import java.util.EnumMap;
 
-@Setter
-@Getter
+@Data
 public class Product {
 
     private String id;
@@ -15,4 +13,5 @@ public class Product {
     private String contractTemplatePath;
     private String contractTemplateVersion;
     private String title;
+    private String parent;
 }

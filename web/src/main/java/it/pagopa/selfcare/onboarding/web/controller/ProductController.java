@@ -33,12 +33,12 @@ public class ProductController {
     @ApiOperation(value = "", notes = "${swagger.onboarding.operation.getProduct}")
     public ProductResource getProduct(@ApiParam("${swagger.onboarding.product.model.id}")
                                       @PathVariable("id") String id) {
-        log.trace("ProductController.getProduct start");
-        log.debug("ProductController.getProduct id = {}", id);
+        log.trace("getProduct start");
+        log.debug("getProduct id = {}", id);
         Product product = productService.getProduct(id);
         ProductResource resource = ProductMapper.toResource(product);
-        log.debug("ProductController.getProduct result = {}", resource);
-        log.trace("ProductController.getProduct end");
+        log.debug("getProduct result = {}", resource);
+        log.trace("getProduct end");
         return resource;
     }
 

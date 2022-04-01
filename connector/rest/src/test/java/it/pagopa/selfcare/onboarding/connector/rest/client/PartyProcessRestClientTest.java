@@ -4,7 +4,11 @@ import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import it.pagopa.selfcare.commons.connector.rest.BaseFeignRestClientTest;
 import it.pagopa.selfcare.commons.connector.rest.RestTestUtils;
 import it.pagopa.selfcare.commons.utils.TestUtils;
+import it.pagopa.selfcare.onboarding.connector.model.RelationshipState;
+import it.pagopa.selfcare.onboarding.connector.model.RelationshipsResponse;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.PartyRole;
 import it.pagopa.selfcare.onboarding.connector.rest.config.PartyProcessRestClientTestConfig;
+import it.pagopa.selfcare.onboarding.connector.rest.model.OnBoardingInfo;
 import it.pagopa.selfcare.onboarding.connector.rest.model.OnboardingRequest;
 import it.pagopa.selfcare.onboarding.connector.rest.model.OnboardingResponse;
 import it.pagopa.selfcare.onboarding.connector.rest.model.User;
@@ -21,9 +25,13 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.support.TestPropertySourceUtils;
 
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
+import static it.pagopa.selfcare.onboarding.connector.model.RelationshipState.ACTIVE;
+import static it.pagopa.selfcare.onboarding.connector.model.RelationshipState.PENDING;
+import static it.pagopa.selfcare.onboarding.connector.model.onboarding.PartyRole.MANAGER;
+import static it.pagopa.selfcare.onboarding.connector.model.onboarding.PartyRole.OPERATOR;
+import static org.junit.jupiter.api.Assertions.*;
 
 @TestPropertySource(
         locations = "classpath:config/party-process-rest-client.properties",
@@ -100,5 +108,112 @@ class PartyProcessRestClientTest extends BaseFeignRestClientTest {
         Assertions.assertNull(response.getToken());
         Assertions.assertNull(response.getDocument());
     }
+
+    @Test
+    void getUserInstitutionRelationships_fullyValued() {
+        // given
+        String institutionId = testCase2instIdMap.get(TestCase.FULLY_VALUED);
+        EnumSet<PartyRole> roles = null;
+        EnumSet<RelationshipState> states = EnumSet.of(ACTIVE);
+        Set<String> products = Set.of("productId");
+        Set<String> productRole = null;
+        String userId = null;
+        // when
+        RelationshipsResponse response = restClient.getUserInstitutionRelationships(institutionId, roles, states, products, productRole, userId);
+        // then
+        assertNotNull(response);
+        assertFalse(response.isEmpty());
+        assertNotNull(response.get(0).getId());
+        assertNotNull(response.get(0).getFrom());
+        assertNotNull(response.get(0).getTo());
+        assertNotNull(response.get(0).getName());
+        assertNotNull(response.get(0).getSurname());
+        assertNotNull(response.get(0).getEmail());
+        assertNotNull(response.get(0).getRole());
+        assertNotNull(response.get(0).getState());
+        assertNotNull(response.get(0).getCreatedAt());
+        assertNotNull(response.get(0).getUpdatedAt());
+    }
+
+    @Test
+    void getInstitutionRelationships_fullyNull() {
+        // given
+        String institutionId = testCase2instIdMap.get(TestCase.FULLY_NULL);
+        EnumSet<PartyRole> roles = null;
+        EnumSet<RelationshipState> states = null;
+        Set<String> products = null;
+        Set<String> productRole = null;
+        String userId = null;
+        // when
+        RelationshipsResponse response = restClient.getUserInstitutionRelationships(institutionId, roles, states, products, productRole, userId);
+        // then
+        assertNotNull(response);
+        assertFalse(response.isEmpty());
+        assertNull(response.get(0).getId());
+        assertNull(response.get(0).getFrom());
+        assertNull(response.get(0).getRole());
+        assertNull(response.get(0).getState());
+    }
+
+    @Test
+    void getInstitutionRelationships_emptyResult() {
+        // given
+        String institutionId = testCase2instIdMap.get(TestCase.EMPTY_RESULT);
+        EnumSet<PartyRole> roles = EnumSet.of(MANAGER, OPERATOR);
+        EnumSet<RelationshipState> states = EnumSet.of(ACTIVE, PENDING);
+        Set<String> products = Set.of("prod1", "prod2");
+        Set<String> productRole = Set.of("api", "security");
+        String userId = "userId";
+        // when
+        RelationshipsResponse response = restClient.getUserInstitutionRelationships(institutionId, roles, states, products, productRole, userId);
+
+        // then
+        assertNotNull(response);
+        assertTrue(response.isEmpty());
+    }
+
+
+    @Test
+    void getOnBoardingInfo_fullyValued() {
+        // given and when
+        OnBoardingInfo response = restClient.getOnBoardingInfo(testCase2instIdMap.get(TestCase.FULLY_VALUED), null);
+        // then
+        assertNotNull(response);
+        assertNotNull(response.getPerson());
+        assertNotNull(response.getInstitutions());
+        assertNotNull(response.getPerson().getName());
+        assertNotNull(response.getPerson().getSurname());
+        assertNotNull(response.getPerson().getTaxCode());
+        assertNotNull(response.getInstitutions().get(0).getInstitutionId());
+        assertNotNull(response.getInstitutions().get(0).getDescription());
+    }
+
+
+    @Test
+    void getOnBoardingInfo_fullyNull() {
+        // given and when
+        OnBoardingInfo response = restClient.getOnBoardingInfo(testCase2instIdMap.get(TestCase.FULLY_NULL), EnumSet.of(ACTIVE));
+        // then
+        assertNotNull(response);
+        assertNotNull(response.getPerson());
+        assertNotNull(response.getInstitutions());
+        assertNull(response.getPerson().getName());
+        assertNull(response.getPerson().getSurname());
+        assertNull(response.getPerson().getTaxCode());
+        assertNull(response.getInstitutions().get(0).getInstitutionId());
+        assertNull(response.getInstitutions().get(0).getDescription());
+    }
+
+
+    @Test
+    void getOnBoardingInfo_emptyResult() {
+        // given and when
+        OnBoardingInfo response = restClient.getOnBoardingInfo(testCase2instIdMap.get(TestCase.EMPTY_RESULT), EnumSet.of(ACTIVE, PENDING));
+        // then
+        assertNotNull(response);
+        assertTrue(response.getInstitutions().isEmpty());
+        assertNull(response.getPerson());
+    }
+
 
 }

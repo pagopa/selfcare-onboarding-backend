@@ -31,4 +31,6 @@ class ProductMapperTest {
         // then
         assertNull(productResource);
     }
+
+
 }

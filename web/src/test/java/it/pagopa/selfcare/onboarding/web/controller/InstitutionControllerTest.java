@@ -1,10 +1,15 @@
 package it.pagopa.selfcare.onboarding.web.controller;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.pagopa.selfcare.commons.utils.TestUtils;
+import it.pagopa.selfcare.onboarding.connector.model.InstitutionInfo;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.BillingData;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
 import it.pagopa.selfcare.onboarding.core.InstitutionService;
 import it.pagopa.selfcare.onboarding.web.config.WebTestConfig;
+import it.pagopa.selfcare.onboarding.web.model.InstitutionResource;
+import it.pagopa.selfcare.onboarding.web.model.OnboardingDto;
 import it.pagopa.selfcare.onboarding.web.model.OnboardingResponse;
 import it.pagopa.selfcare.onboarding.web.model.UserDto;
 import org.junit.jupiter.api.Test;
@@ -23,6 +28,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.io.File;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -57,12 +63,16 @@ class InstitutionControllerTest {
             OnboardingResponse onboardingResponse = TestUtils.mockInstance(new OnboardingResponse(), "setDocument");
             onboardingResponse.setDocument(tempFile);
             List<UserDto> userDtos = List.of(TestUtils.mockInstance(new UserDto()));
+            OnboardingDto onboardingDto = new OnboardingDto();
+            BillingData billingData = TestUtils.mockInstance(new BillingData());
+            onboardingDto.setUsers(userDtos);
+            onboardingDto.setBillingData(billingData);
             Mockito.when(institutionServiceMock.onboarding(Mockito.any()))
                     .thenReturn(onboardingResponse);
             // when
             MvcResult result = mvc.perform(MockMvcRequestBuilders
                     .post(BASE_URL + "/{institutionId}/products/{productId}/onboarding", institutionId, productId)
-                    .content(objectMapper.writeValueAsString(userDtos))
+                    .content(objectMapper.writeValueAsString(onboardingDto))
                     .contentType(MediaType.APPLICATION_JSON_VALUE)
                     .accept(MediaType.APPLICATION_JSON_VALUE))
                     .andExpect(MockMvcResultMatchers.status().isCreated())
@@ -89,6 +99,33 @@ class InstitutionControllerTest {
         } finally {
             tempFile.deleteOnExit();
         }
+    }
+
+    @Test
+    void getInstitutions() throws Exception {
+        //given
+        InstitutionInfo institutionInfo = TestUtils.mockInstance(new InstitutionInfo());
+        Mockito.when(institutionServiceMock.getInstitutions())
+                .thenReturn(Collections.singletonList(institutionInfo));
+        //when
+        MvcResult result = mvc.perform(MockMvcRequestBuilders
+                .get(BASE_URL + "")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+        //then
+        List<InstitutionResource> response = objectMapper.readValue(
+                result.getResponse().getContentAsString(),
+                new TypeReference<>() {
+                });
+        assertNotNull(response);
+        assertEquals(1, response.size());
+        assertEquals(institutionInfo.getInstitutionId(), response.get(0).getId());
+        assertEquals(institutionInfo.getDescription(), response.get(0).getName());
+        Mockito.verify(institutionServiceMock, Mockito.times(1))
+                .getInstitutions();
+        Mockito.verifyNoMoreInteractions(institutionServiceMock);
     }
 
 }

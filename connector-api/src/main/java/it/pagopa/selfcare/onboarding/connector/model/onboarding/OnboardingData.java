@@ -12,28 +12,27 @@
 
 package it.pagopa.selfcare.onboarding.connector.model.onboarding;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-@Getter
+@Data
 public class OnboardingData {
 
     private final String institutionId;
     private final String productId;
     private final List<? extends UserInfo> users;
-    @Setter
     private String contractPath;
-    @Setter
     private String contractVersion;
+    private BillingData billingData;
 
-    public OnboardingData(String institutionId, String productId, List<? extends UserInfo> users) {
+    public OnboardingData(String institutionId, String productId, List<? extends UserInfo> users, BillingData billingData) {
         this.institutionId = institutionId;
         this.productId = productId;
         this.users = users;
+        this.billingData = billingData;
     }
 
     public List<? extends UserInfo> getUsers() {
