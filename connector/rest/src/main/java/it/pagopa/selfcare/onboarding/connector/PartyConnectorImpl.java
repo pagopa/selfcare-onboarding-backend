@@ -35,6 +35,7 @@ class PartyConnectorImpl implements PartyConnector {
         InstitutionInfo institutionInfo = new InstitutionInfo();
         institutionInfo.setInstitutionId(onboardingData.getInstitutionId());
         institutionInfo.setDescription(onboardingData.getDescription());
+        institutionInfo.setStatus(onboardingData.getState().toString());
         return institutionInfo;
     };
 
@@ -49,7 +50,6 @@ class PartyConnectorImpl implements PartyConnector {
         Assert.notNull(onboardingData, "Onboarding data is required");
         OnboardingRequest onboardingRequest = new OnboardingRequest();
         onboardingRequest.setInstitutionId(onboardingData.getInstitutionId());
-//        onboardingRequest.setBillingData(onboardingData.getBillingData());
         //TODO onboardingRequest.setDatiFatturazione(onboardingData.getDatiFatturazione());
         onboardingRequest.setUsers(onboardingData.getUsers().stream()
                 .map(userInfo -> {

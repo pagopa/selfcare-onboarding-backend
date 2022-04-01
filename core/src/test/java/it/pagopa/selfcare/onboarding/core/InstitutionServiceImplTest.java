@@ -270,7 +270,7 @@ class InstitutionServiceImplTest {
         Mockito.verify(productsConnectorMock, Mockito.times(1))
                 .getProduct(onboardingData.getProductId());
         Mockito.verify(partyConnectorMock, Mockito.times(1))
-                .getUserInstitutionRelationships(Mockito.eq(onboardingData.getInstitutionId()), Mockito.eq(product.getParent()));
+                .getUserInstitutionRelationships(onboardingData.getInstitutionId(), product.getParent());
         Mockito.verifyNoMoreInteractions(partyConnectorMock, productsConnectorMock);
     }
 
@@ -315,7 +315,7 @@ class InstitutionServiceImplTest {
         Mockito.verify(productsConnectorMock, Mockito.times(1))
                 .getProduct(onboardingData.getProductId());
         Mockito.verify(partyConnectorMock, Mockito.times(1))
-                .getUserInstitutionRelationships(Mockito.eq(onboardingData.getInstitutionId()), Mockito.eq(productMock.getParent()));
+                .getUserInstitutionRelationships(onboardingData.getInstitutionId(), productMock.getParent());
         Mockito.verify(productsConnectorMock, Mockito.times(1))
                 .getProduct(productMock.getParent());
         Mockito.verify(partyConnectorMock, Mockito.times(1))

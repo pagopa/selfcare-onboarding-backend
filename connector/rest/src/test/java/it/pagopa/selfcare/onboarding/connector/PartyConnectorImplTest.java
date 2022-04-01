@@ -22,6 +22,11 @@ import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.*;
+import java.util.stream.Collectors;
+
+import static it.pagopa.selfcare.onboarding.connector.model.RelationshipState.ACTIVE;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @ExtendWith(MockitoExtension.class)
 class PartyConnectorImplTest {
@@ -92,26 +97,39 @@ class PartyConnectorImplTest {
 
     @Test
     void getOnboardedInstitutions() {
-        //given
-        OnBoardingInfo onboardingInfo = new OnBoardingInfo();
-        PersonInfo personInfo = TestUtils.mockInstance(new PersonInfo());
-        OnboardingResponseData onboardingData = TestUtils.mockInstance(new OnboardingResponseData());
-        onboardingInfo.setPerson(personInfo);
-        OnboardingResponseData onboardingData2 = TestUtils.mockInstance(new OnboardingResponseData());
-        onboardingInfo.setPerson(personInfo);
-        onboardingInfo.setInstitutions(List.of(onboardingData, onboardingData2));
+        // given
+        OnBoardingInfo onBoardingInfo = new OnBoardingInfo();
+        OnboardingResponseData onboardingData1 = TestUtils.mockInstance(new OnboardingResponseData(), 1, "setState");
+        onboardingData1.setState(ACTIVE);
+        OnboardingResponseData onboardingData2 = TestUtils.mockInstance(new OnboardingResponseData(), 2, "setState", "setInstitutionId");
+        onboardingData2.setState(RelationshipState.PENDING);
+        onboardingData2.setInstitutionId(onboardingData1.getInstitutionId());
+        OnboardingResponseData onboardingData3 = TestUtils.mockInstance(new OnboardingResponseData(), 3, "setState");
+        onboardingData3.setState(RelationshipState.PENDING);
+        onBoardingInfo.setInstitutions(List.of(onboardingData1, onboardingData2, onboardingData3, onboardingData3));
         Mockito.when(restClientMock.getOnBoardingInfo(Mockito.any(), Mockito.any()))
-                .thenReturn(onboardingInfo);
-        //when
-        Collection<InstitutionInfo> institutionInfos = partyConnector.getOnBoardedInstitutions();
-        //then
-        Assertions.assertNotNull(institutionInfos);
-        Assertions.assertEquals(1, institutionInfos.size());
-        InstitutionInfo institution = institutionInfos.iterator().next();
-        Assertions.assertEquals(onboardingData.getInstitutionId(), institution.getInstitutionId());
-        Assertions.assertEquals(onboardingData.getDescription(), institution.getDescription());
+                .thenReturn(onBoardingInfo);
+        // when
+        Collection<InstitutionInfo> institutions = partyConnector.getOnBoardedInstitutions();
+        // then
+        assertNotNull(institutions);
+        assertEquals(2, institutions.size());
+        Map<String, List<InstitutionInfo>> map = institutions.stream()
+                .collect(Collectors.groupingBy(InstitutionInfo::getStatus));
+        List<InstitutionInfo> institutionInfos = map.get(ACTIVE.name());
+        assertNotNull(institutionInfos);
+        assertEquals(1, institutionInfos.size());
+        assertEquals(onboardingData1.getDescription(), institutionInfos.get(0).getDescription());
+        assertEquals(onboardingData1.getInstitutionId(), institutionInfos.get(0).getInstitutionId());
+        assertEquals(onboardingData1.getState().toString(), institutionInfos.get(0).getStatus());
+        institutionInfos = map.get(RelationshipState.PENDING.name());
+        assertNotNull(institutionInfos);
+        assertEquals(1, institutionInfos.size());
+        assertEquals(onboardingData3.getDescription(), institutionInfos.get(0).getDescription());
+        assertEquals(onboardingData3.getInstitutionId(), institutionInfos.get(0).getInstitutionId());
+        assertEquals(onboardingData3.getState().toString(), institutionInfos.get(0).getStatus());
         Mockito.verify(restClientMock, Mockito.times(1))
-                .getOnBoardingInfo(Mockito.isNull(), Mockito.isNotNull());
+                .getOnBoardingInfo(Mockito.isNull(), Mockito.eq(EnumSet.of(ACTIVE)));
         Mockito.verifyNoMoreInteractions(restClientMock);
     }
 
@@ -176,7 +194,7 @@ class PartyConnectorImplTest {
         Mockito.verify(restClientMock, Mockito.times(1))
                 .getUserInstitutionRelationships(Mockito.eq(institutionId),
                         Mockito.isNull(),
-                        Mockito.eq(EnumSet.of(RelationshipState.ACTIVE)),
+                        Mockito.eq(EnumSet.of(ACTIVE)),
                         Mockito.eq(Set.of(productId)),
                         Mockito.isNull(),
                         Mockito.isNull());
@@ -196,7 +214,7 @@ class PartyConnectorImplTest {
         Mockito.verify(restClientMock, Mockito.times(1))
                 .getUserInstitutionRelationships(Mockito.eq(institutionId),
                         Mockito.isNull(),
-                        Mockito.eq(EnumSet.of(RelationshipState.ACTIVE)),
+                        Mockito.eq(EnumSet.of(ACTIVE)),
                         Mockito.eq(Set.of(productId)),
                         Mockito.isNull(),
                         Mockito.isNull());
