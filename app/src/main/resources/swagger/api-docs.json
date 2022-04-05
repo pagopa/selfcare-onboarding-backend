@@ -63,6 +63,116 @@
         ]
       }
     },
+    "/institutions/{institutionId}/billing-data": {
+      "get": {
+        "tags": [
+          "institutions"
+        ],
+        "summary": "getInstitutionBillingData",
+        "description": "${swagger.onboarding.institutions.api.manager}",
+        "operationId": "getInstitutionBillingDataUsingGET",
+        "parameters": [
+          {
+            "name": "institutionId",
+            "in": "path",
+            "description": "Institution's unique identifier (i.e.: IPA code)",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BillingDataDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [
+              "global"
+            ]
+          }
+        ]
+      }
+    },
+    "/institutions/{institutionId}/products/{productId}/manager": {
+      "get": {
+        "tags": [
+          "institutions"
+        ],
+        "summary": "getInstitutionProductManager",
+        "description": "${swagger.onboarding.institutions.api.manager}",
+        "operationId": "getInstitutionProductManagerUsingGET",
+        "parameters": [
+          {
+            "name": "institutionId",
+            "in": "path",
+            "description": "Institution's unique identifier (i.e.: IPA code)",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "productId",
+            "in": "path",
+            "description": "Product's unique identifier",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResource"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [
+              "global"
+            ]
+          }
+        ]
+      }
+    },
     "/institutions/{institutionId}/products/{productId}/onboarding": {
       "post": {
         "tags": [
@@ -185,12 +295,13 @@
   },
   "components": {
     "schemas": {
-      "BillingData": {
-        "title": "BillingData",
+      "BillingDataDto": {
+        "title": "BillingDataDto",
         "type": "object",
         "properties": {
           "description": {
-            "type": "string"
+            "type": "string",
+            "description": "${}"
           },
           "digitalAddress": {
             "type": "string"
@@ -199,6 +310,9 @@
             "type": "string"
           },
           "taxCode": {
+            "type": "string"
+          },
+          "vatNumber": {
             "type": "string"
           }
         }
@@ -224,13 +338,24 @@
       "OnboardingDto": {
         "title": "OnboardingDto",
         "required": [
+          "organizationType",
           "users"
         ],
         "type": "object",
         "properties": {
           "billingData": {
             "description": "Institution's billing informations",
-            "$ref": "#/components/schemas/BillingData"
+            "$ref": "#/components/schemas/BillingDataDto"
+          },
+          "organizationType": {
+            "type": "string",
+            "description": "Institution's type",
+            "enum": [
+              "GSP",
+              "PA",
+              "PT",
+              "SCP"
+            ]
           },
           "users": {
             "type": "array",
@@ -290,6 +415,48 @@
           "email": {
             "type": "string",
             "description": "User's email"
+          },
+          "name": {
+            "type": "string",
+            "description": "User's name"
+          },
+          "role": {
+            "type": "string",
+            "description": "User's role",
+            "enum": [
+              "DELEGATE",
+              "MANAGER",
+              "OPERATOR",
+              "SUB_DELEGATE"
+            ]
+          },
+          "surname": {
+            "type": "string",
+            "description": "User's surname"
+          },
+          "taxCode": {
+            "type": "string",
+            "description": "User's fiscal code"
+          }
+        }
+      },
+      "UserResource": {
+        "title": "UserResource",
+        "required": [
+          "email",
+          "name",
+          "role",
+          "surname",
+          "taxCode"
+        ],
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "User's email"
+          },
+          "from": {
+            "type": "string"
           },
           "name": {
             "type": "string",
