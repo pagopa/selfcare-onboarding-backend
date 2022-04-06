@@ -7,8 +7,9 @@ import it.pagopa.selfcare.onboarding.connector.model.InstitutionInfo;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipInfo;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipsResponse;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.OrganizationType;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.PartyRole;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.UserInfo;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.UserInfoOperations;
 import it.pagopa.selfcare.onboarding.connector.model.product.Product;
 import it.pagopa.selfcare.onboarding.connector.model.product.ProductRoleInfo;
 import it.pagopa.selfcare.onboarding.core.exceptions.ProductHasNoRelationshipException;
@@ -98,12 +99,12 @@ class InstitutionServiceImplTest {
 //        Mockito.verifyNoInteractions(partyConnectorMock, productsConnectorMock);
 //    }
 
-
+    //TODO add test for organizationType
     @Test
     void onboarding_nullRoleMapping() {
         // given
         OnboardingData onboardingData =
-                new OnboardingData("institutionId", "productId", List.of(TestUtils.mockInstance(new DummyUserInfo())), null);
+                new OnboardingData("institutionId", "productId", List.of(TestUtils.mockInstance(new DummyUserInfo())), null, null);
         Product product = TestUtils.mockInstance(new Product(), "setParent");
         Mockito.when(productsConnectorMock.getProduct(onboardingData.getProductId()))
                 .thenReturn(product);
@@ -118,14 +119,13 @@ class InstitutionServiceImplTest {
         Mockito.verifyNoInteractions(partyConnectorMock);
     }
 
-
     @Test
     void onboarding_nullProductRoles() {
         // given
         DummyUserInfo userInfo = TestUtils.mockInstance(new DummyUserInfo(), "setRole");
         userInfo.setRole(PartyRole.MANAGER);
         OnboardingData onboardingData =
-                new OnboardingData("institutionId", "productId", List.of(userInfo), null);
+                new OnboardingData("institutionId", "productId", List.of(userInfo), null, null);
         Product product = TestUtils.mockInstance(new Product(), "setParent");
         product.setRoleMappings(new EnumMap<>(PartyRole.class) {{
             put(PartyRole.MANAGER, null);
@@ -150,7 +150,7 @@ class InstitutionServiceImplTest {
         DummyUserInfo userInfo = TestUtils.mockInstance(new DummyUserInfo(), "setRole");
         userInfo.setRole(PartyRole.DELEGATE);
         OnboardingData onboardingData =
-                new OnboardingData("institutionId", "productId", List.of(userInfo), null);
+                new OnboardingData("institutionId", "productId", List.of(userInfo), null, OrganizationType.GSP);
         Product productMock = TestUtils.mockInstance(new Product(), "setRoleMappings", "setParent");
         ProductRoleInfo productRoleInfo1 = TestUtils.mockInstance(new ProductRoleInfo(), 1, "setRoles");
         productRoleInfo1.setRoles(List.of(TestUtils.mockInstance(new ProductRoleInfo.ProductRole(), 1)));
@@ -180,7 +180,7 @@ class InstitutionServiceImplTest {
         DummyUserInfo userInfo = TestUtils.mockInstance(new DummyUserInfo(), "setRole");
         userInfo.setRole(PartyRole.DELEGATE);
         OnboardingData onboardingData =
-                new OnboardingData("institutionId", "productId", List.of(userInfo), null);
+                new OnboardingData("institutionId", "productId", List.of(userInfo), null, OrganizationType.GSP);
         Product productMock = TestUtils.mockInstance(new Product(), "setRoleMappings", "setParent");
         ProductRoleInfo productRoleInfo1 = TestUtils.mockInstance(new ProductRoleInfo(), 1, "setRoles");
         productRoleInfo1.setRoles(List.of(TestUtils.mockInstance(new ProductRoleInfo.ProductRole(), 1)));
@@ -215,7 +215,7 @@ class InstitutionServiceImplTest {
         DummyUserInfo userInfo2 = TestUtils.mockInstance(new DummyUserInfo(), 2, "setRole");
         userInfo2.setRole(PartyRole.DELEGATE);
         OnboardingData onboardingData =
-                new OnboardingData("institutionId", "productId", List.of(userInfo1, userInfo2), null);
+                new OnboardingData("institutionId", "productId", List.of(userInfo1, userInfo2), null, OrganizationType.GSP);
         Product productMock = TestUtils.mockInstance(new Product(), "setRoleMappings", "setParent");
         ProductRoleInfo productRoleInfo1 = TestUtils.mockInstance(new ProductRoleInfo(), 1, "setRoles");
         ProductRoleInfo.ProductRole productRole1 = TestUtils.mockInstance(new ProductRoleInfo.ProductRole(), 1);
@@ -254,7 +254,7 @@ class InstitutionServiceImplTest {
     void onboarding_noRelationshipForSubProduct() {
         //given
         OnboardingData onboardingData =
-                new OnboardingData("institutionId", "productId", List.of(TestUtils.mockInstance(new DummyUserInfo())), null);
+                new OnboardingData("institutionId", "productId", List.of(TestUtils.mockInstance(new DummyUserInfo())), null, OrganizationType.GSP);
         Product product = TestUtils.mockInstance(new Product());
         Mockito.when(productsConnectorMock.getProduct(onboardingData.getProductId()))
                 .thenReturn(product);
@@ -283,7 +283,7 @@ class InstitutionServiceImplTest {
         DummyUserInfo userInfo2 = TestUtils.mockInstance(new DummyUserInfo(), 2, "setRole");
         userInfo2.setRole(PartyRole.DELEGATE);
         OnboardingData onboardingData =
-                new OnboardingData("institutionId", "productId", List.of(userInfo1, userInfo2), null);
+                new OnboardingData("institutionId", "productId", List.of(userInfo1, userInfo2), null, OrganizationType.GSP);
         Product productMock = TestUtils.mockInstance(new Product(), "setRoleMappings");
         ProductRoleInfo productRoleInfo1 = TestUtils.mockInstance(new ProductRoleInfo(), 1, "setRoles");
         ProductRoleInfo.ProductRole productRole1 = TestUtils.mockInstance(new ProductRoleInfo.ProductRole(), 1);
@@ -359,7 +359,7 @@ class InstitutionServiceImplTest {
 
     @Getter
     @Setter
-    private static class DummyUserInfo implements UserInfo {
+    private static class DummyUserInfo implements UserInfoOperations {
         private String name;
         private String surname;
         private String taxCode;

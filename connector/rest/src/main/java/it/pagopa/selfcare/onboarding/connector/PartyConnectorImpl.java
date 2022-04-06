@@ -4,9 +4,7 @@ import it.pagopa.selfcare.commons.base.logging.LogUtils;
 import it.pagopa.selfcare.onboarding.connector.api.PartyConnector;
 import it.pagopa.selfcare.onboarding.connector.model.InstitutionInfo;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipsResponse;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingResource;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingResponseData;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.*;
 import it.pagopa.selfcare.onboarding.connector.rest.client.PartyProcessRestClient;
 import it.pagopa.selfcare.onboarding.connector.rest.model.OnBoardingInfo;
 import it.pagopa.selfcare.onboarding.connector.rest.model.OnboardingContract;
@@ -51,6 +49,7 @@ class PartyConnectorImpl implements PartyConnector {
         OnboardingRequest onboardingRequest = new OnboardingRequest();
         onboardingRequest.setInstitutionId(onboardingData.getInstitutionId());
         //TODO onboardingRequest.setDatiFatturazione(onboardingData.getDatiFatturazione());
+        //TODO onboardingRequest.setOrganizationType(onboardingData.getOrganizationType());
         onboardingRequest.setUsers(onboardingData.getUsers().stream()
                 .map(userInfo -> {
                     User user = new User();
@@ -116,6 +115,11 @@ class PartyConnectorImpl implements PartyConnector {
         log.debug("getUserInstitutionRelationships institutionRelationships = {}", institutionRelationships);
         log.trace("getUserInstitutionRelationships end");
         return institutionRelationships;
+    }
+
+    @Override
+    public UserInfo getUser(String institutionId, String productId, PartyRole role) {
+        return null;
     }
 
 

@@ -66,7 +66,7 @@ class InstitutionControllerTest {
             OnboardingDto onboardingDto = new OnboardingDto();
             BillingData billingData = TestUtils.mockInstance(new BillingData());
             onboardingDto.setUsers(userDtos);
-            onboardingDto.setBillingData(billingData);
+//            onboardingDto.setBillingData(billingData);
             Mockito.when(institutionServiceMock.onboarding(Mockito.any()))
                     .thenReturn(onboardingResponse);
             // when

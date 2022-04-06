@@ -7,6 +7,8 @@ import it.pagopa.selfcare.onboarding.connector.model.InstitutionInfo;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipsResponse;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingResource;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.PartyRole;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.UserInfo;
 import it.pagopa.selfcare.onboarding.connector.model.product.Product;
 import it.pagopa.selfcare.onboarding.core.exceptions.ProductHasNoRelationshipException;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
+import javax.validation.ValidationException;
 import java.util.Collection;
 
 @Slf4j
@@ -42,17 +45,27 @@ class InstitutionServiceImpl implements InstitutionService {
         onboardingData.setContractVersion(product.getContractTemplateVersion());
 
         if (product.getParent() != null) {
+            //TODO organizationType has to be retrieved from the institution, by calling the getInstitution API in party-process
             RelationshipsResponse response = partyConnector.getUserInstitutionRelationships(onboardingData.getInstitutionId()
                     , product.getParent());
             if (response == null) {
-                throw new ProductHasNoRelationshipException("No relationship for "
-                        + product.getParent()
-                        + " and "
-                        + onboardingData.getInstitutionId()
+                throw new ProductHasNoRelationshipException(
+                        String.format("No relationship for %s and %s", product.getParent(), onboardingData.getInstitutionId())
                 );
+            } else {
+                Assert.isTrue(onboardingData.getUsers().stream()
+                                .filter(user -> PartyRole.MANAGER.equals(user.getRole()))
+                                .findAny().orElseThrow(() -> new ValidationException("")).getTaxCode().equals(response.stream()//TODO exception messagre
+                                        .filter(relationshipInfo -> PartyRole.MANAGER.equals(relationshipInfo.getRole()))
+                                        .findAny().orElseThrow(() -> new ValidationException("")).getTaxCode())//TODO exception messagre
+                        , "");//TODO message
+
             }
+            // else response.get(0).getTaxCode() == onboardingData.getUsers(.get(0)).getTaxCode()
             product = productsConnector.getProduct(product.getParent());
         }
+        //TODO in else check onboardingData.getBillingData assertNotNull OnboardingData.getBillingData
+        //TODO in else check onboardingData.organizationType(mandatory for base contract)
         Assert.notNull(product.getRoleMappings(), "Role mappings is required");
         Product finalProduct = product;
         onboardingData.getUsers().forEach(userInfo -> {
@@ -78,6 +91,12 @@ class InstitutionServiceImpl implements InstitutionService {
         log.debug(LogUtils.CONFIDENTIAL_MARKER, "getInstitutions result = {}", result);
         log.trace("getInstitutions end");
         return result;
+    }
+
+    @Override
+    public UserInfo getManager(String institutionId, String producId) {
+
+        return null;
     }
 
 }

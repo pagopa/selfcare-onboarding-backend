@@ -8,7 +8,7 @@ import it.pagopa.selfcare.onboarding.connector.model.RelationshipsResponse;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingResponseData;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.PartyRole;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.UserInfo;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.UserInfoOperations;
 import it.pagopa.selfcare.onboarding.connector.rest.client.PartyProcessRestClient;
 import it.pagopa.selfcare.onboarding.connector.rest.model.OnBoardingInfo;
 import it.pagopa.selfcare.onboarding.connector.rest.model.OnboardingRequest;
@@ -57,7 +57,7 @@ class PartyConnectorImplTest {
     void onboardingOrganization_emptyUsers() {
         // given
         OnboardingData onboardingData =
-                new OnboardingData("institutionId", "productId", Collections.emptyList(), null);
+                new OnboardingData("institutionId", "productId", Collections.emptyList(), null, null);
         // when
         partyConnector.onboardingOrganization(onboardingData);
         // then
@@ -75,7 +75,7 @@ class PartyConnectorImplTest {
     void onboardingOrganization() {
         // given
         OnboardingData onboardingData =
-                new OnboardingData("institutionId", "productId", List.of(TestUtils.mockInstance(new DummyUserInfo())), null);
+                new OnboardingData("institutionId", "productId", List.of(TestUtils.mockInstance(new DummyUserInfo())), null, null);
         // when
         partyConnector.onboardingOrganization(onboardingData);
         // then
@@ -248,7 +248,7 @@ class PartyConnectorImplTest {
     }
 
     @Data
-    private static class DummyUserInfo implements UserInfo {
+    private static class DummyUserInfo implements UserInfoOperations {
         private String name;
         private String surname;
         private String taxCode;

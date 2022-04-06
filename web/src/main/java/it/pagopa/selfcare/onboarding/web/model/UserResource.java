@@ -3,14 +3,23 @@ package it.pagopa.selfcare.onboarding.web.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModelProperty;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.PartyRole;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.UserInfoOperations;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 @Data
-public class UserDto implements UserInfoOperations {
+public class UserResource {
+    /*
+   dati manager e dati fatturazione, nessuno dei  due obbligatori
+   manager è l'utente associato ente prodotto avente partyRole manager'
+   institutionId e productId
+   */
+
+    @ApiModelProperty(value = "${swagger.onboarding.user.model.id}", required = true)
+    @JsonProperty(required = true)
+    @NotBlank
+    private String id;
 
     @ApiModelProperty(value = "${swagger.onboarding.user.model.name}", required = true)
     @JsonProperty(required = true)
@@ -36,8 +45,5 @@ public class UserDto implements UserInfoOperations {
     @JsonProperty(required = true)
     @NotBlank
     private String email;
-
-    @ApiModelProperty(hidden = true)
-    private String productRole;
 
 }

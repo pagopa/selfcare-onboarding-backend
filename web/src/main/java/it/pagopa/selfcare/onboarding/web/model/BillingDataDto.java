@@ -1,10 +1,12 @@
-package it.pagopa.selfcare.onboarding.connector.model.onboarding;
+package it.pagopa.selfcare.onboarding.web.model;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-public class BillingData {
-    //TODO to be confirmed don't do any test on this
+public class BillingDataDto {
+
+    @ApiModelProperty(value = "${}")
     private String description;
     private String physicalAddress;
     private String digitalAddress;

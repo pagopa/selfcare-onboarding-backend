@@ -23,19 +23,23 @@ public class OnboardingData {
 
     private final String institutionId;
     private final String productId;
-    private final List<? extends UserInfo> users;
+    private final List<? extends UserInfoOperations> users;
     private String contractPath;
     private String contractVersion;
     private BillingData billingData;
+    private OrganizationType organizationType;
+    //TODO add source
 
-    public OnboardingData(String institutionId, String productId, List<? extends UserInfo> users, BillingData billingData) {
+    //TODO replace with a fromDto in onboardingMapper
+    public OnboardingData(String institutionId, String productId, List<? extends UserInfoOperations> users, BillingData billingData, OrganizationType organizationType) {
         this.institutionId = institutionId;
         this.productId = productId;
         this.users = users;
         this.billingData = billingData;
+        this.organizationType = organizationType;
     }
 
-    public List<? extends UserInfo> getUsers() {
+    public List<? extends UserInfoOperations> getUsers() {
         return Optional.ofNullable(users).orElse(Collections.emptyList());
     }
 

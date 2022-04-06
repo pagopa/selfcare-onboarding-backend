@@ -3,11 +3,8 @@ package it.pagopa.selfcare.onboarding.web.controller;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
 import it.pagopa.selfcare.onboarding.core.InstitutionService;
-import it.pagopa.selfcare.onboarding.web.model.InstitutionResource;
-import it.pagopa.selfcare.onboarding.web.model.OnboardingDto;
-import it.pagopa.selfcare.onboarding.web.model.OnboardingResponse;
+import it.pagopa.selfcare.onboarding.web.model.*;
 import it.pagopa.selfcare.onboarding.web.model.mapper.OnboardingMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,18 +45,48 @@ public class InstitutionController {
                                                  OnboardingDto request) {
         log.trace("onboarding start");
         log.debug("onboarding institutionId = {}, productId = {}, request = {}", institutionId, productId, request);
-
-        OnboardingResponse result = OnboardingMapper.toResource(institutionService.onboarding(new OnboardingData(institutionId, productId, request.getUsers(), request.getBillingData())));
-        log.debug("onboarding result = {}", result);
+//
+//        OnboardingResponse result = OnboardingMapper.toResource(institutionService.onboarding(new OnboardingData(institutionId,
+//                productId,
+//                request.getUsers(),
+//                request.getBillingData(),
+//                request.getOrganizationType())));
+//        log.debug("onboarding result = {}", result);
         log.trace("onboarding end");
-        return result;
+        return null;
+    }
+
+    //TODO @PreAuthorize("hasPermission(#institutionId, 'InstitutionResource', 'ADMIN')")
+    @GetMapping(value = "/{institutionId}/products/{productId}/onboarded-institution-info")
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "", notes = "${swagger.onboarding.institutions.api.getInstitutionOnboardingInfo}")
+    public InstitutionOnboardingInfoResource getInstitutionOnboardingInfo(@ApiParam("${swagger.onboarding.institutions.model.id}")
+                                                                          @PathVariable("institutionId")
+                                                                                  String institutionId,
+                                                                          @ApiParam("${swagger.onboarding.products.model.id}")
+                                                                          @PathVariable("productId")
+                                                                                  String productId) {
+
+        //TODO for now retrieve just the Manager
+
+        return null;
+    }
+
+    @GetMapping(value = "/{institutionId}/billing-data")
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "", notes = "${swagger.onboarding.institutions.api.manager}")
+    public BillingDataDto getInstitutionBillingData(@ApiParam("${swagger.onboarding.institutions.model.id}")
+                                                    @PathVariable("institutionId")
+                                                            String institutionId) {
+
+        return null;
     }
 
 
     @GetMapping("")
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "", notes = "${swagger.dashboard.institutions.api.getInstitutions}")
-    public List<InstitutionResource> getInstitutions() {
+    public List<InstitutionResource> getInstitutions() {//TODO se party restituisce i billingData in questa response potremmo decidere di resituirli direttamente qua al FE
         log.trace("getInstitutions start");
         List<InstitutionResource> institutionResources = institutionService.getInstitutions()
                 .stream()
