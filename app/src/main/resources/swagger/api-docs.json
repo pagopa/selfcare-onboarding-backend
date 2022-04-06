@@ -317,13 +317,35 @@
           }
         }
       },
+      "InstitutionData": {
+        "title": "InstitutionData",
+        "required": [
+          "billingData",
+          "organizationType"
+        ],
+        "type": "object",
+        "properties": {
+          "billingData": {
+            "$ref": "#/components/schemas/BillingDataDto"
+          },
+          "organizationType": {
+            "type": "string",
+            "enum": [
+              "GSP",
+              "PA",
+              "PT",
+              "SCP"
+            ]
+          }
+        }
+      },
       "InstitutionOnboardingInfoResource": {
         "title": "InstitutionOnboardingInfoResource",
         "type": "object",
         "properties": {
           "institution": {
-            "description": "Institution's informations",
-            "$ref": "#/components/schemas/InstitutionResource"
+            "description": "Institution's billing and type informations",
+            "$ref": "#/components/schemas/InstitutionData"
           },
           "manager": {
             "description": "Institution Manager's informations",
@@ -339,9 +361,6 @@
         ],
         "type": "object",
         "properties": {
-          "billingData": {
-            "$ref": "#/components/schemas/BillingDataDto"
-          },
           "id": {
             "type": "string",
             "description": "Institution's unique identifier (i.e.: IPA code)"
@@ -349,15 +368,6 @@
           "name": {
             "type": "string",
             "description": "Institution's legal name"
-          },
-          "organizationType": {
-            "type": "string",
-            "enum": [
-              "GSP",
-              "PA",
-              "PT",
-              "SCP"
-            ]
           }
         }
       },
