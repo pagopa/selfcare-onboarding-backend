@@ -63,14 +63,14 @@
         ]
       }
     },
-    "/institutions/{institutionId}/billing-data": {
+    "/institutions/{institutionId}/data": {
       "get": {
         "tags": [
           "institutions"
         ],
-        "summary": "getInstitutionBillingData",
+        "summary": "getInstitutionData",
         "description": "${swagger.onboarding.institutions.api.manager}",
-        "operationId": "getInstitutionBillingDataUsingGET",
+        "operationId": "getInstitutionDataUsingGET",
         "parameters": [
           {
             "name": "institutionId",
@@ -89,7 +89,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/BillingDataDto"
+                  "$ref": "#/components/schemas/InstitutionData"
                 }
               }
             }
@@ -299,14 +299,20 @@
         "title": "BillingDataDto",
         "type": "object",
         "properties": {
-          "description": {
+          "businessName": {
             "type": "string",
             "description": "${}"
           },
           "digitalAddress": {
             "type": "string"
           },
-          "physicalAddress": {
+          "publicService": {
+            "type": "boolean"
+          },
+          "recipientCode": {
+            "type": "string"
+          },
+          "registeredOffice": {
             "type": "string"
           },
           "taxCode": {
@@ -319,10 +325,6 @@
       },
       "InstitutionData": {
         "title": "InstitutionData",
-        "required": [
-          "billingData",
-          "organizationType"
-        ],
         "type": "object",
         "properties": {
           "billingData": {
@@ -356,18 +358,38 @@
       "InstitutionResource": {
         "title": "InstitutionResource",
         "required": [
-          "id",
-          "name"
+          "address",
+          "description",
+          "digitalAddress",
+          "institutionId",
+          "taxCode",
+          "zipCode"
         ],
         "type": "object",
         "properties": {
-          "id": {
+          "address": {
             "type": "string",
-            "description": "Institution's unique identifier (i.e.: IPA code)"
+            "description": "Institution's physical address"
           },
-          "name": {
+          "description": {
             "type": "string",
             "description": "Institution's legal name"
+          },
+          "digitalAddress": {
+            "type": "string",
+            "description": "Institution's digitalAddress"
+          },
+          "institutionId": {
+            "type": "string",
+            "description": "Institution's unique Id"
+          },
+          "taxCode": {
+            "type": "string",
+            "description": "Institution's taxCode"
+          },
+          "zipCode": {
+            "type": "string",
+            "description": "Institution's zipCode"
           }
         }
       },
