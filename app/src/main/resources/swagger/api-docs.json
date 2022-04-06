@@ -113,14 +113,14 @@
         ]
       }
     },
-    "/institutions/{institutionId}/products/{productId}/manager": {
+    "/institutions/{institutionId}/products/{productId}/onboarded-institution-info": {
       "get": {
         "tags": [
           "institutions"
         ],
-        "summary": "getInstitutionProductManager",
-        "description": "${swagger.onboarding.institutions.api.manager}",
-        "operationId": "getInstitutionProductManagerUsingGET",
+        "summary": "getInstitutionOnboardingInfo",
+        "description": "The service retrieves the institutions Manager and institution informations",
+        "operationId": "getInstitutionOnboardingInfoUsingGET",
         "parameters": [
           {
             "name": "institutionId",
@@ -149,7 +149,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/UserResource"
+                  "$ref": "#/components/schemas/InstitutionOnboardingInfoResource"
                 }
               }
             }
@@ -317,6 +317,20 @@
           }
         }
       },
+      "InstitutionOnboardingInfoResource": {
+        "title": "InstitutionOnboardingInfoResource",
+        "type": "object",
+        "properties": {
+          "institution": {
+            "description": "Institution's informations",
+            "$ref": "#/components/schemas/InstitutionResource"
+          },
+          "manager": {
+            "description": "Institution Manager's informations",
+            "$ref": "#/components/schemas/UserDto"
+          }
+        }
+      },
       "InstitutionResource": {
         "title": "InstitutionResource",
         "required": [
@@ -325,6 +339,9 @@
         ],
         "type": "object",
         "properties": {
+          "billingData": {
+            "$ref": "#/components/schemas/BillingDataDto"
+          },
           "id": {
             "type": "string",
             "description": "Institution's unique identifier (i.e.: IPA code)"
@@ -332,6 +349,15 @@
           "name": {
             "type": "string",
             "description": "Institution's legal name"
+          },
+          "organizationType": {
+            "type": "string",
+            "enum": [
+              "GSP",
+              "PA",
+              "PT",
+              "SCP"
+            ]
           }
         }
       },
@@ -415,48 +441,6 @@
           "email": {
             "type": "string",
             "description": "User's email"
-          },
-          "name": {
-            "type": "string",
-            "description": "User's name"
-          },
-          "role": {
-            "type": "string",
-            "description": "User's role",
-            "enum": [
-              "DELEGATE",
-              "MANAGER",
-              "OPERATOR",
-              "SUB_DELEGATE"
-            ]
-          },
-          "surname": {
-            "type": "string",
-            "description": "User's surname"
-          },
-          "taxCode": {
-            "type": "string",
-            "description": "User's fiscal code"
-          }
-        }
-      },
-      "UserResource": {
-        "title": "UserResource",
-        "required": [
-          "email",
-          "name",
-          "role",
-          "surname",
-          "taxCode"
-        ],
-        "type": "object",
-        "properties": {
-          "email": {
-            "type": "string",
-            "description": "User's email"
-          },
-          "from": {
-            "type": "string"
           },
           "name": {
             "type": "string",
