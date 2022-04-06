@@ -328,10 +328,12 @@
         "type": "object",
         "properties": {
           "billingData": {
+            "description": "Institution's billing informations",
             "$ref": "#/components/schemas/BillingDataDto"
           },
           "organizationType": {
             "type": "string",
+            "description": "Institution's type",
             "enum": [
               "GSP",
               "PA",
