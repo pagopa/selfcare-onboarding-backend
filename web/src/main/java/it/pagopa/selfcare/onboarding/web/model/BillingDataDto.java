@@ -7,10 +7,11 @@ import lombok.Data;
 public class BillingDataDto {
 
     @ApiModelProperty(value = "${}")
-    private String description;
-    private String physicalAddress;
+    private String businessName;
+    private String registeredOffice;
     private String digitalAddress;
     private String taxCode;
     private String vatNumber;
-
+    private String recipientCode;
+    private Boolean publicService;
 }

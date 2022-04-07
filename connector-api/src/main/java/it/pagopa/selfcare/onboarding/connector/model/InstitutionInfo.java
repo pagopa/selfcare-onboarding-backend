@@ -12,7 +12,10 @@ public class InstitutionInfo {
     private String taxCode;
     private String digitalAddress;
     private String status;
+    private String address;
     private String category;
+    private String zipCode;
+
 
     @Override
     public boolean equals(Object o) {

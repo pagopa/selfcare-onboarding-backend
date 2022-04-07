@@ -13,6 +13,6 @@ public interface InstitutionService {
 
     Collection<InstitutionInfo> getInstitutions();
 
-    UserInfo getManager(String institutionId, String producId);
+    UserInfo getManager(String institutionId, String productId);
 
 }

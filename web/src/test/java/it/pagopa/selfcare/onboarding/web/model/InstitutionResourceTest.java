@@ -34,8 +34,8 @@ class InstitutionResourceTest {
         toCheckMap.put("name", NotBlank.class);
 
         InstitutionResource institutionResource = new InstitutionResource();
-        institutionResource.setId(null);
-        institutionResource.setName(null);
+        institutionResource.setInstitutionId(null);
+        institutionResource.setDescription(null);
 
         // when
         Set<ConstraintViolation<Object>> violations = validator.validate(institutionResource);

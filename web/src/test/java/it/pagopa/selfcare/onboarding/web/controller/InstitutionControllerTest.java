@@ -121,8 +121,8 @@ class InstitutionControllerTest {
                 });
         assertNotNull(response);
         assertEquals(1, response.size());
-        assertEquals(institutionInfo.getInstitutionId(), response.get(0).getId());
-        assertEquals(institutionInfo.getDescription(), response.get(0).getName());
+        assertEquals(institutionInfo.getInstitutionId(), response.get(0).getInstitutionId());
+        assertEquals(institutionInfo.getDescription(), response.get(0).getDescription());
         Mockito.verify(institutionServiceMock, Mockito.times(1))
                 .getInstitutions();
         Mockito.verifyNoMoreInteractions(institutionServiceMock);

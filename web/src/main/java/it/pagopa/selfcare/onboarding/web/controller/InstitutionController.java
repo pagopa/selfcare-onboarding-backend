@@ -3,6 +3,7 @@ package it.pagopa.selfcare.onboarding.web.controller;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.UserInfo;
 import it.pagopa.selfcare.onboarding.core.InstitutionService;
 import it.pagopa.selfcare.onboarding.web.model.*;
 import it.pagopa.selfcare.onboarding.web.model.mapper.OnboardingMapper;
@@ -66,18 +67,18 @@ public class InstitutionController {
                                                                           @ApiParam("${swagger.onboarding.products.model.id}")
                                                                           @PathVariable("productId")
                                                                                   String productId) {
-
+        UserInfo manager = institutionService.getManager(institutionId, productId);
         //TODO for now retrieve just the Manager
 
         return null;
     }
 
-    @GetMapping(value = "/{institutionId}/billing-data")
+    @GetMapping(value = "/{institutionId}/data")
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "", notes = "${swagger.onboarding.institutions.api.manager}")
-    public BillingDataDto getInstitutionBillingData(@ApiParam("${swagger.onboarding.institutions.model.id}")
-                                                    @PathVariable("institutionId")
-                                                            String institutionId) {
+    public InstitutionData getInstitutionData(@ApiParam("${swagger.onboarding.institutions.model.id}")
+                                              @PathVariable("institutionId")
+                                                      String institutionId) {
 
         return null;
     }

@@ -2,7 +2,9 @@ package it.pagopa.selfcare.onboarding.connector;
 
 import it.pagopa.selfcare.commons.base.logging.LogUtils;
 import it.pagopa.selfcare.onboarding.connector.api.PartyConnector;
+import it.pagopa.selfcare.onboarding.connector.model.Certification;
 import it.pagopa.selfcare.onboarding.connector.model.InstitutionInfo;
+import it.pagopa.selfcare.onboarding.connector.model.RelationshipInfo;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipsResponse;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.*;
 import it.pagopa.selfcare.onboarding.connector.rest.client.PartyProcessRestClient;
@@ -26,6 +28,8 @@ import static it.pagopa.selfcare.onboarding.connector.model.RelationshipState.AC
 @Slf4j
 class PartyConnectorImpl implements PartyConnector {
 
+    private static final String REQUIRED_INSTITUTION_ID_MESSAGE = "An Institution id is required";
+
     private final PartyProcessRestClient restClient;
     private static final BinaryOperator<InstitutionInfo> MERGE_FUNCTION =
             (inst1, inst2) -> ACTIVE.name().equals(inst1.getStatus()) ? inst1 : inst2;
@@ -34,8 +38,27 @@ class PartyConnectorImpl implements PartyConnector {
         institutionInfo.setInstitutionId(onboardingData.getInstitutionId());
         institutionInfo.setDescription(onboardingData.getDescription());
         institutionInfo.setStatus(onboardingData.getState().toString());
+        institutionInfo.setAddress(onboardingData.getAddress());
+        institutionInfo.setTaxCode(onboardingData.getTaxCode());
+        institutionInfo.setZipCode(onboardingData.getZipCode());
+        institutionInfo.setDigitalAddress(onboardingData.getDigitalAddress());
         return institutionInfo;
     };
+
+    static final Function<RelationshipInfo, UserInfo> RELATIONSHIP_INFO_TO_USER_INFO_FUNCTION = relationshipInfo -> {
+        UserInfo userInfo = new UserInfo();
+        userInfo.setId(relationshipInfo.getFrom());
+        userInfo.setName(relationshipInfo.getName());
+        userInfo.setSurname(relationshipInfo.getSurname());
+        userInfo.setEmail(relationshipInfo.getEmail());
+        userInfo.setStatus(relationshipInfo.getState().toString());
+        userInfo.setCertified(Certification.isCertified(relationshipInfo.getCertification()));
+        userInfo.setTaxCode(relationshipInfo.getTaxCode());
+        userInfo.setRole(relationshipInfo.getRole());
+        userInfo.setInstitutionId(relationshipInfo.getTo());
+        return userInfo;
+    };
+
 
     @Autowired
     public PartyConnectorImpl(PartyProcessRestClient restClient) {
@@ -118,8 +141,39 @@ class PartyConnectorImpl implements PartyConnector {
     }
 
     @Override
-    public UserInfo getUser(String institutionId, String productId, PartyRole role) {
-        return null;
+    public Collection<UserInfo> getUsers(String institutionId, UserInfo.UserInfoFilter userInfoFilter) {
+        log.trace("getUsers start");
+        log.debug("getUsers institutionId = {}, role = {}, productId = {}, productRoles = {}, userId = {}", institutionId, userInfoFilter.getRole(), userInfoFilter.getProductId(), userInfoFilter.getProductRoles(), userInfoFilter.getUserId());
+        Assert.hasText(institutionId, REQUIRED_INSTITUTION_ID_MESSAGE);
+
+        Collection<UserInfo> userInfos = Collections.emptyList();
+        EnumSet<PartyRole> roles = null;
+        if (userInfoFilter.getRole().isPresent()) {
+            roles = Arrays.stream(PartyRole.values())
+                    .filter(partyRole -> partyRole.equals(userInfoFilter.getRole().get()))
+                    .collect(Collectors.toCollection(() -> EnumSet.noneOf(PartyRole.class)));
+        }
+        RelationshipsResponse institutionRelationships = restClient.getUserInstitutionRelationships(institutionId, roles, userInfoFilter.getAllowedStates().orElse(null), userInfoFilter.getProductId().map(Set::of).orElse(null), userInfoFilter.getProductRoles().orElse(null), userInfoFilter.getUserId().orElse(null));
+        if (institutionRelationships != null) {
+            userInfos = institutionRelationships.stream()
+                    .collect(Collectors.toMap(RelationshipInfo::getFrom,
+                            RELATIONSHIP_INFO_TO_USER_INFO_FUNCTION, (userInfo1, userInfo2) -> {
+                                if (userInfo1.getStatus().equals(userInfo2.getStatus())) {
+                                    if (userInfo1.getRole().compareTo(userInfo2.getRole()) > 0) {
+                                        userInfo1.setRole(userInfo2.getRole());
+                                    }
+                                } else {
+                                    if ("ACTIVE".equals(userInfo2.getStatus())) {
+                                        userInfo1.setRole(userInfo2.getRole());
+                                        userInfo1.setStatus(userInfo2.getStatus());
+                                    }
+                                }
+                                return userInfo1;
+                            })).values();
+        }
+        log.debug(LogUtils.CONFIDENTIAL_MARKER, "getUsers result = {}", userInfos);
+        log.trace("getUsers end");
+        return userInfos;
     }
 
 

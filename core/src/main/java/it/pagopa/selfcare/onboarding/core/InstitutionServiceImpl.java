@@ -4,6 +4,7 @@ import it.pagopa.selfcare.commons.base.logging.LogUtils;
 import it.pagopa.selfcare.onboarding.connector.api.PartyConnector;
 import it.pagopa.selfcare.onboarding.connector.api.ProductsConnector;
 import it.pagopa.selfcare.onboarding.connector.model.InstitutionInfo;
+import it.pagopa.selfcare.onboarding.connector.model.RelationshipState;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipsResponse;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingResource;
@@ -11,6 +12,7 @@ import it.pagopa.selfcare.onboarding.connector.model.onboarding.PartyRole;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.UserInfo;
 import it.pagopa.selfcare.onboarding.connector.model.product.Product;
 import it.pagopa.selfcare.onboarding.core.exceptions.ProductHasNoRelationshipException;
+import it.pagopa.selfcare.onboarding.core.exceptions.ResourceNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,10 +20,14 @@ import org.springframework.util.Assert;
 
 import javax.validation.ValidationException;
 import java.util.Collection;
+import java.util.EnumSet;
+import java.util.Optional;
 
 @Slf4j
 @Service
 class InstitutionServiceImpl implements InstitutionService {
+
+    protected static final String REQUIRED_INSTITUTION_ID_MESSAGE = "An Institution id is required";
 
     private final PartyConnector partyConnector;
     private final ProductsConnector productsConnector;
@@ -94,9 +100,33 @@ class InstitutionServiceImpl implements InstitutionService {
     }
 
     @Override
-    public UserInfo getManager(String institutionId, String producId) {
+    public UserInfo getManager(String institutionId, String productId) {
+        log.trace("getManager start");
+        log.debug("getManager institutionId = {}, productId = {}", institutionId, productId);
+        Assert.hasText(institutionId, REQUIRED_INSTITUTION_ID_MESSAGE);
+        UserInfo.UserInfoFilter userInfoFilter = new UserInfo.UserInfoFilter();
+        userInfoFilter.setProductId(Optional.of(productId));
+        userInfoFilter.setRole(Optional.of(PartyRole.MANAGER));
+        userInfoFilter.setAllowedState(Optional.of(EnumSet.of(RelationshipState.ACTIVE)));
+        Collection<UserInfo> userInfos = getUsers(institutionId, userInfoFilter);
+        if (!userInfos.iterator().hasNext()) {
+            throw new ResourceNotFoundException("No Manager found for given institution");
+        }
+        UserInfo result = userInfos.iterator().next();
+        log.debug(LogUtils.CONFIDENTIAL_MARKER, "getManager result = {}", result);
+        log.trace("getManager end");
+        return result;
+    }
 
-        return null;
+    private Collection<UserInfo> getUsers(String institutionId, UserInfo.UserInfoFilter userInfoFilter) {
+        log.trace("getUsers start");
+        log.debug("getUsers institutionId = {}, productId = {}, role = {}, productRoles = {}",
+                institutionId, userInfoFilter.getProductId(), userInfoFilter.getRole(), userInfoFilter.getProductRoles());
+        Assert.hasText(institutionId, REQUIRED_INSTITUTION_ID_MESSAGE);
+        Collection<UserInfo> userInfos = partyConnector.getUsers(institutionId, userInfoFilter);
+        log.debug(LogUtils.CONFIDENTIAL_MARKER, "getUsers result = {}", userInfos);
+        log.trace("getUsers end");
+        return userInfos;
     }
 
 }

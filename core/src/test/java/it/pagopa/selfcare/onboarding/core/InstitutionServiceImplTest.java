@@ -5,14 +5,13 @@ import it.pagopa.selfcare.onboarding.connector.api.PartyConnector;
 import it.pagopa.selfcare.onboarding.connector.api.ProductsConnector;
 import it.pagopa.selfcare.onboarding.connector.model.InstitutionInfo;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipInfo;
+import it.pagopa.selfcare.onboarding.connector.model.RelationshipState;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipsResponse;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.OrganizationType;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.PartyRole;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.UserInfoOperations;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.*;
 import it.pagopa.selfcare.onboarding.connector.model.product.Product;
 import it.pagopa.selfcare.onboarding.connector.model.product.ProductRoleInfo;
 import it.pagopa.selfcare.onboarding.core.exceptions.ProductHasNoRelationshipException;
+import it.pagopa.selfcare.onboarding.core.exceptions.ResourceNotFoundException;
 import lombok.Getter;
 import lombok.Setter;
 import org.junit.jupiter.api.Assertions;
@@ -24,8 +23,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Collection;
 import java.util.EnumMap;
+import java.util.EnumSet;
 import java.util.List;
 
+import static it.pagopa.selfcare.onboarding.core.InstitutionServiceImpl.REQUIRED_INSTITUTION_ID_MESSAGE;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -355,6 +356,67 @@ class InstitutionServiceImplTest {
         Mockito.verify(partyConnectorMock, Mockito.times(1))
                 .getOnBoardedInstitutions();
         Mockito.verifyNoMoreInteractions(partyConnectorMock);
+    }
+
+    @Test
+    void getManager_nullInstitutionId() {
+        //given
+        String institutionId = null;
+        String productId = "productId";
+        //when
+        Executable executable = () -> institutionService.getManager(institutionId, productId);
+        //then
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, executable);
+        assertEquals(REQUIRED_INSTITUTION_ID_MESSAGE, e.getMessage());
+        Mockito.verifyNoInteractions(partyConnectorMock);
+    }
+
+    @Test
+    void getManager_emptyResult() {
+        //given
+        String institutionId = "institutionId";
+        String productId = "productId";
+        //when
+        Executable executable = () -> institutionService.getManager(institutionId, productId);
+        //then
+        ResourceNotFoundException e = assertThrows(ResourceNotFoundException.class, executable);
+        assertEquals("No Manager found for given institution", e.getMessage());
+        ArgumentCaptor<UserInfo.UserInfoFilter> filterCaptor = ArgumentCaptor.forClass(UserInfo.UserInfoFilter.class);
+        Mockito.verify(partyConnectorMock, Mockito.times(1))
+                .getUsers(Mockito.eq(institutionId), filterCaptor.capture());
+        UserInfo.UserInfoFilter capturedFilter = filterCaptor.getValue();
+        assertEquals(capturedFilter.getAllowedStates().get(), EnumSet.of(RelationshipState.ACTIVE));
+        assertEquals(capturedFilter.getRole().get(), PartyRole.MANAGER);
+        assertEquals(capturedFilter.getProductId().get(), productId);
+        Mockito.verifyNoMoreInteractions(partyConnectorMock);
+    }
+
+    @Test
+    void getManager() {
+        //given
+        String institutionId = "institutionId";
+        String productId = "productId";
+        UserInfo userInfoMock = TestUtils.mockInstance(new UserInfo(), "setRole");
+        userInfoMock.setRole(PartyRole.MANAGER);
+        Mockito.when(partyConnectorMock.getUsers(Mockito.anyString(), Mockito.any()))
+                .thenReturn(List.of(userInfoMock));
+        //when
+        UserInfo manager = institutionService.getManager(institutionId, productId);
+        //then
+        assertNotNull(manager);
+        assertEquals(userInfoMock.getInstitutionId(), manager.getInstitutionId());
+        assertEquals(userInfoMock.getId(), manager.getId());
+        assertEquals(userInfoMock.getEmail(), manager.getEmail());
+        assertEquals(userInfoMock.getRole(), manager.getRole());
+        ArgumentCaptor<UserInfo.UserInfoFilter> filterCaptor = ArgumentCaptor.forClass(UserInfo.UserInfoFilter.class);
+        Mockito.verify(partyConnectorMock, Mockito.times(1))
+                .getUsers(Mockito.eq(institutionId), filterCaptor.capture());
+        UserInfo.UserInfoFilter capturedFilter = filterCaptor.getValue();
+        assertEquals(capturedFilter.getAllowedStates().get(), EnumSet.of(RelationshipState.ACTIVE));
+        assertEquals(capturedFilter.getRole().get(), PartyRole.MANAGER);
+        assertEquals(capturedFilter.getProductId().get(), productId);
+        Mockito.verifyNoMoreInteractions(partyConnectorMock);
+
     }
 
     @Getter

@@ -11,8 +11,8 @@ public class InstitutionOnboardingInfoResource {
     @ApiModelProperty(value = "${swagger.onboarding.user.model.manager}")
     private UserDto manager;
 
-    @ApiModelProperty(value = "${swagger.onboarding.institutions.model.institution}")
+    @ApiModelProperty(value = "${swagger.onboarding.institutions.model.institutionData}")
     @NotNull
-    private InstitutionResource institution;
+    private InstitutionData institution;
 
 }

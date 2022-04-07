@@ -7,5 +7,10 @@ import lombok.Data;
 public class OnboardingResponseData {
     private String institutionId;
     private String description;
+    private String address;
+    private String taxCode;
+    private String zipCode;
+    private String digitalAddress;
     private RelationshipState state;
+    private PartyRole role;
 }

@@ -10,11 +10,7 @@ import javax.validation.constraints.NotNull;
 
 @Data
 public class UserResource {
-    /*
-   dati manager e dati fatturazione, nessuno dei  due obbligatori
-   manager è l'utente associato ente prodotto avente partyRole manager'
-   institutionId e productId
-   */
+
 
     @ApiModelProperty(value = "${swagger.onboarding.user.model.id}", required = true)
     @JsonProperty(required = true)
