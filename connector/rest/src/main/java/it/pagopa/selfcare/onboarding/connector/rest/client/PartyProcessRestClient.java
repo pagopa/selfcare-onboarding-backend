@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @FeignClient(name = "${rest-client.party-process.serviceCode}", url = "${rest-client.party-process.base-url}")
 public interface PartyProcessRestClient {
 
-    @PostMapping(value = "${rest-client.party-process.onboardingOrganization.path}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "${rest-client.party-process.onboardingOrganization.path}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     void onboardingOrganization(@RequestBody OnboardingRequest request);
 
