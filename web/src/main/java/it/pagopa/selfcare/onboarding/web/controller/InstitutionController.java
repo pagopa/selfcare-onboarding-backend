@@ -31,7 +31,7 @@ public class InstitutionController {
 
 
     @PostMapping(value = "/{institutionId}/products/{productId}/onboarding")
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.CREATED)
     @ApiOperation(value = "", notes = "${swagger.onboarding.institutions.api.onboarding}")
     public void onboarding(@ApiParam("${swagger.onboarding.institutions.model.id}")
                            @PathVariable("institutionId")
