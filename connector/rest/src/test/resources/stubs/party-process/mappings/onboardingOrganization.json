@@ -5,15 +5,15 @@
     "bodyPatterns": [
       {
         "matchesJsonPath": "$[?(@.institutionId == 'institutionId1')]"
+      },
+      {
+        "matchesJsonPath": "$[?(@.users.size() == 1)]"
       }
     ]
   },
   "response": {
     "status": "201",
-    "jsonBody": {
-      "token": "string",
-      "document": "string"
-    },
+    "jsonBody": {},
     "headers": {
       "Content-Type": "application/json"
     }
