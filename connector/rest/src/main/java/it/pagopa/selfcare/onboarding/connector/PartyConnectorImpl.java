@@ -2,7 +2,6 @@ package it.pagopa.selfcare.onboarding.connector;
 
 import it.pagopa.selfcare.onboarding.connector.api.PartyConnector;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingResource;
 import it.pagopa.selfcare.onboarding.connector.rest.client.PartyProcessRestClient;
 import it.pagopa.selfcare.onboarding.connector.rest.model.OnboardingContract;
 import it.pagopa.selfcare.onboarding.connector.rest.model.OnboardingRequest;
@@ -26,7 +25,7 @@ class PartyConnectorImpl implements PartyConnector {
 
 
     @Override
-    public OnboardingResource onboardingOrganization(OnboardingData onboardingData) {
+    public void onboardingOrganization(OnboardingData onboardingData) {
         Assert.notNull(onboardingData, "Onboarding data is required");
         OnboardingRequest onboardingRequest = new OnboardingRequest();
         onboardingRequest.setInstitutionId(onboardingData.getInstitutionId());
@@ -47,7 +46,7 @@ class PartyConnectorImpl implements PartyConnector {
         onboardingContract.setVersion(onboardingData.getContractVersion());
         onboardingRequest.setContract(onboardingContract);
 
-        return restClient.onboardingOrganization(onboardingRequest);
+        restClient.onboardingOrganization(onboardingRequest);
     }
 
 }

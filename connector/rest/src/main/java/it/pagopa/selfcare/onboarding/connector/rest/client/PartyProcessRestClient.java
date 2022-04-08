@@ -1,7 +1,6 @@
 package it.pagopa.selfcare.onboarding.connector.rest.client;
 
 import it.pagopa.selfcare.onboarding.connector.rest.model.OnboardingRequest;
-import it.pagopa.selfcare.onboarding.connector.rest.model.OnboardingResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,6 +15,6 @@ public interface PartyProcessRestClient {
 
     @PostMapping(value = "${rest-client.party-process.onboardingOrganization.path}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    OnboardingResponse onboardingOrganization(@RequestBody OnboardingRequest request);
+    void onboardingOrganization(@RequestBody OnboardingRequest request);
 
 }
