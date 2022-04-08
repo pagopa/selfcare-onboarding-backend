@@ -3,7 +3,6 @@ package it.pagopa.selfcare.onboarding.core;
 import it.pagopa.selfcare.onboarding.connector.api.PartyConnector;
 import it.pagopa.selfcare.onboarding.connector.api.ProductsConnector;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingResource;
 import it.pagopa.selfcare.onboarding.connector.model.product.Product;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +25,7 @@ class InstitutionServiceImpl implements InstitutionService {
 
 
     @Override
-    public OnboardingResource onboarding(OnboardingData onboardingData) {
+    public void onboarding(OnboardingData onboardingData) {
         Assert.notNull(onboardingData, "Onboarding data is required");
 
         Product product = productsConnector.getProduct(onboardingData.getProductId());
@@ -45,7 +44,7 @@ class InstitutionServiceImpl implements InstitutionService {
             userInfo.setProductRole(product.getRoleMappings().get(userInfo.getRole()).getRoles().get(0).getCode());
         });
 
-        return partyConnector.onboardingOrganization(onboardingData);
+        partyConnector.onboardingOrganization(onboardingData);
     }
 
 }

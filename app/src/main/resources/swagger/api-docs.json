@@ -66,14 +66,7 @@
         },
         "responses": {
           "201": {
-            "description": "Created",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/OnboardingResponse"
-                }
-              }
-            }
+            "description": "Created"
           },
           "401": {
             "description": "Unauthorized"
@@ -147,19 +140,6 @@
   },
   "components": {
     "schemas": {
-      "OnboardingResponse": {
-        "title": "OnboardingResponse",
-        "type": "object",
-        "properties": {
-          "document": {
-            "type": "string",
-            "format": "binary"
-          },
-          "token": {
-            "type": "string"
-          }
-        }
-      },
       "ProductResource": {
         "title": "ProductResource",
         "required": [
