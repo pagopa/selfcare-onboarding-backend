@@ -15,13 +15,17 @@ public class OnboardingDto {
     @ApiModelProperty(value = "${swagger.onboarding.institutions.model.users}", required = true)
     @NotEmpty
     @Valid
-    List<UserDto> users;
+    private List<UserDto> users;
 
-    @ApiModelProperty(value = "${swagger.onboarding.institutions.model.billingData}", required = false)
+    @ApiModelProperty(value = "${swagger.onboarding.institutions.model.billingData}", required = true)
+    @NotNull
     @Valid
-    BillingDataDto billingData;
+    private BillingDataDto billingData;
 
     @ApiModelProperty(value = "${swagger.onboarding.institutions.model.organizationType}", required = true)
     @NotNull
-    OrganizationType organizationType;
+    private OrganizationType organizationType;
+
+    //TODO required(?)
+    private String origin;
 }

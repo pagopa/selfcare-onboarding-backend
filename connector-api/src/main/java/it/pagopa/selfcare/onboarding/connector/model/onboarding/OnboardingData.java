@@ -13,33 +13,26 @@
 package it.pagopa.selfcare.onboarding.connector.model.onboarding;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 @Data
+@NoArgsConstructor
 public class OnboardingData {
 
-    private final String institutionId;
-    private final String productId;
-    private final List<? extends UserInfoOperations> users;
+    private String institutionId;
+    private String productId;
+    private List<User> users;
     private String contractPath;
     private String contractVersion;
     private BillingData billingData;
     private OrganizationType organizationType;
-    //TODO add source
+    private String origin;
 
-    //TODO replace with a fromDto in onboardingMapper
-    public OnboardingData(String institutionId, String productId, List<? extends UserInfoOperations> users, BillingData billingData, OrganizationType organizationType) {
-        this.institutionId = institutionId;
-        this.productId = productId;
-        this.users = users;
-        this.billingData = billingData;
-        this.organizationType = organizationType;
-    }
-
-    public List<? extends UserInfoOperations> getUsers() {
+    public List<User> getUsers() {
         return Optional.ofNullable(users).orElse(Collections.emptyList());
     }
 

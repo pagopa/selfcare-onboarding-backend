@@ -1,4 +1,4 @@
-package it.pagopa.selfcare.onboarding.connector.model;
+package it.pagopa.selfcare.onboarding.connector.model.institutions;
 
 import lombok.Data;
 

@@ -2,6 +2,7 @@ package it.pagopa.selfcare.onboarding.connector.rest.client;
 
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipState;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipsResponse;
+import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.PartyRole;
 import it.pagopa.selfcare.onboarding.connector.rest.model.OnBoardingInfo;
 import it.pagopa.selfcare.onboarding.connector.rest.model.OnboardingRequest;
@@ -40,5 +41,10 @@ public interface PartyProcessRestClient {
     @CollectionFormat(feign.CollectionFormat.CSV)
     OnBoardingInfo getOnBoardingInfo(@RequestParam(value = "institutionId", required = false) String institutionId,
                                      @RequestParam(value = "states", required = false) EnumSet<RelationshipState> states);
+
+    //TODO add tests
+    @GetMapping(value = "${rest-client.party-process.getInstitutionByExternalId.path}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    Institution getInstitutionByExternalId(@PathVariable("externalId") String externalId);
 
 }

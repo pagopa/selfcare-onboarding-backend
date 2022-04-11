@@ -1,10 +1,10 @@
 package it.pagopa.selfcare.onboarding.connector;
 
 import it.pagopa.selfcare.commons.utils.TestUtils;
-import it.pagopa.selfcare.onboarding.connector.model.InstitutionInfo;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipInfo;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipState;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipsResponse;
+import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionInfo;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.*;
 import it.pagopa.selfcare.onboarding.connector.rest.client.PartyProcessRestClient;
 import it.pagopa.selfcare.onboarding.connector.rest.model.OnBoardingInfo;
@@ -52,8 +52,10 @@ class PartyConnectorImplTest {
     @Test
     void onboardingOrganization_emptyUsers() {
         // given
-        OnboardingData onboardingData =
-                new OnboardingData("institutionId", "productId", Collections.emptyList(), null, null);
+        OnboardingData onboardingData = TestUtils.mockInstance(new OnboardingData());
+        BillingData billingData = TestUtils.mockInstance(new BillingData());
+        onboardingData.setBillingData(billingData);
+
         // when
         partyConnector.onboardingOrganization(onboardingData);
         // then
@@ -70,8 +72,10 @@ class PartyConnectorImplTest {
     @Test
     void onboardingOrganization() {
         // given
-        OnboardingData onboardingData =
-                new OnboardingData("institutionId", "productId", List.of(TestUtils.mockInstance(new DummyUserInfo())), null, null);
+        OnboardingData onboardingData = TestUtils.mockInstance(new OnboardingData());
+        BillingData billingData = TestUtils.mockInstance(new BillingData());
+        onboardingData.setBillingData(billingData);
+        onboardingData.setUsers(List.of(TestUtils.mockInstance(new User())));
         // when
         partyConnector.onboardingOrganization(onboardingData);
         // then
@@ -87,7 +91,6 @@ class PartyConnectorImplTest {
         Assertions.assertEquals(onboardingData.getUsers().get(0).getTaxCode(), request.getUsers().get(0).getTaxCode());
         Assertions.assertEquals(onboardingData.getUsers().get(0).getRole(), request.getUsers().get(0).getRole());
         Assertions.assertEquals(onboardingData.getUsers().get(0).getEmail(), request.getUsers().get(0).getEmail());
-        Assertions.assertEquals(onboardingData.getUsers().get(0).getProductRole(), request.getUsers().get(0).getProductRole());
         Mockito.verifyNoMoreInteractions(restClientMock);
     }
 
@@ -171,11 +174,11 @@ class PartyConnectorImplTest {
         response.add(relationshipInfo1);
         response.add(relationshipInfo2);
         Mockito.when(restClientMock.getUserInstitutionRelationships(Mockito.anyString(),
-                Mockito.any(),
-                Mockito.any(),
-                Mockito.any(),
-                Mockito.any(),
-                Mockito.any()))
+                        Mockito.any(),
+                        Mockito.any(),
+                        Mockito.any(),
+                        Mockito.any(),
+                        Mockito.any()))
                 .thenReturn(response);
         //when
         RelationshipsResponse restResponse = partyConnector.getUserInstitutionRelationships(institutionId, productId);
@@ -226,7 +229,7 @@ class PartyConnectorImplTest {
         Executable executable = () -> partyConnector.getUserInstitutionRelationships(institutionId, productId);
         //then
         IllegalArgumentException e = Assertions.assertThrows(IllegalArgumentException.class, executable);
-        Assertions.assertEquals("An institutionId is required", e.getMessage());
+        Assertions.assertEquals("An Institution id is required", e.getMessage());
         Mockito.verifyNoInteractions(restClientMock);
     }
 
@@ -338,14 +341,8 @@ class PartyConnectorImplTest {
         // then
         Assertions.assertNotNull(users);
         Assertions.assertTrue(users.isEmpty());
-        EnumSet<PartyRole> partyRoles = EnumSet.noneOf(PartyRole.class);
-        for (PartyRole partyRole : PartyRole.values()) {
-            if (userInfoFilter.getRole().get().equals(PartyRole.MANAGER)) {
-                partyRoles.add(partyRole);
-            }
-        }
         Mockito.verify(restClientMock, Mockito.times(1))
-                .getUserInstitutionRelationships(Mockito.eq(institutionId), Mockito.eq(partyRoles), Mockito.isNotNull(), Mockito.isNull(), Mockito.isNull(), Mockito.isNull());
+                .getUserInstitutionRelationships(Mockito.eq(institutionId), Mockito.isNotNull(), Mockito.isNotNull(), Mockito.isNull(), Mockito.isNull(), Mockito.isNull());
         Mockito.verifyNoMoreInteractions(restClientMock);
     }
 

@@ -10,5 +10,6 @@ public class BillingData {
     private String digitalAddress;
     private String taxCode;
     private String vatNumber;
-
+    private String recipientCode;
+    private boolean publicService;
 }

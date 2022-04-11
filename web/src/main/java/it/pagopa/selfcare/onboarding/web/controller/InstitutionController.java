@@ -46,13 +46,7 @@ public class InstitutionController {
                                                  OnboardingDto request) {
         log.trace("onboarding start");
         log.debug("onboarding institutionId = {}, productId = {}, request = {}", institutionId, productId, request);
-//
-//        OnboardingResponse result = OnboardingMapper.toResource(institutionService.onboarding(new OnboardingData(institutionId,
-//                productId,
-//                request.getUsers(),
-//                request.getBillingData(),
-//                request.getOrganizationType())));
-//        log.debug("onboarding result = {}", result);
+        institutionService.onboarding(OnboardingMapper.toOnboardingData(institutionId, productId, request));
         log.trace("onboarding end");
         return null;
     }

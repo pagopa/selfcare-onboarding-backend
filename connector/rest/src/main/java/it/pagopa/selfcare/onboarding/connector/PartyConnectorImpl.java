@@ -3,15 +3,15 @@ package it.pagopa.selfcare.onboarding.connector;
 import it.pagopa.selfcare.commons.base.logging.LogUtils;
 import it.pagopa.selfcare.onboarding.connector.api.PartyConnector;
 import it.pagopa.selfcare.onboarding.connector.model.Certification;
-import it.pagopa.selfcare.onboarding.connector.model.InstitutionInfo;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipInfo;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipsResponse;
+import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
+import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionInfo;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.*;
 import it.pagopa.selfcare.onboarding.connector.rest.client.PartyProcessRestClient;
 import it.pagopa.selfcare.onboarding.connector.rest.model.OnBoardingInfo;
 import it.pagopa.selfcare.onboarding.connector.rest.model.OnboardingContract;
 import it.pagopa.selfcare.onboarding.connector.rest.model.OnboardingRequest;
-import it.pagopa.selfcare.onboarding.connector.rest.model.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,6 +29,7 @@ import static it.pagopa.selfcare.onboarding.connector.model.RelationshipState.AC
 class PartyConnectorImpl implements PartyConnector {
 
     private static final String REQUIRED_INSTITUTION_ID_MESSAGE = "An Institution id is required";
+    private static final String REQUIRED_PRODUCT_ID_MESSAGE = "A product Id is required";
 
     private final PartyProcessRestClient restClient;
     private static final BinaryOperator<InstitutionInfo> MERGE_FUNCTION =
@@ -67,12 +68,12 @@ class PartyConnectorImpl implements PartyConnector {
 
 
     @Override
-    public OnboardingResource onboardingOrganization(OnboardingData onboardingData) {
+    public void onboardingOrganization(OnboardingData onboardingData) {
         Assert.notNull(onboardingData, "Onboarding data is required");
         OnboardingRequest onboardingRequest = new OnboardingRequest();
         onboardingRequest.setInstitutionId(onboardingData.getInstitutionId());
-        //TODO onboardingRequest.setDatiFatturazione(onboardingData.getDatiFatturazione());
-        //TODO onboardingRequest.setOrganizationType(onboardingData.getOrganizationType());
+        onboardingRequest.setBillingData(onboardingData.getBillingData());
+        onboardingRequest.setOrganizationType(onboardingData.getOrganizationType());
         onboardingRequest.setUsers(onboardingData.getUsers().stream()
                 .map(userInfo -> {
                     User user = new User();
@@ -90,7 +91,7 @@ class PartyConnectorImpl implements PartyConnector {
         onboardingContract.setVersion(onboardingData.getContractVersion());
         onboardingRequest.setContract(onboardingContract);
 
-        return restClient.onboardingOrganization(onboardingRequest);
+        restClient.onboardingOrganization(onboardingRequest);
     }
 
     @Override
@@ -125,8 +126,8 @@ class PartyConnectorImpl implements PartyConnector {
     public RelationshipsResponse getUserInstitutionRelationships(String institutionId, String productId) {
         log.trace("getUserInstitutionRelationships start");
         log.debug("getUserInstitutionRelationships institutionId = {}, productId = {}", institutionId, productId);
-        Assert.notNull(institutionId, "An institutionId is required");
-        Assert.notNull(productId, "A productId is required");
+        Assert.hasText(institutionId, REQUIRED_INSTITUTION_ID_MESSAGE);
+        Assert.hasText(productId, "A productId is required");
         RelationshipsResponse institutionRelationships = restClient.getUserInstitutionRelationships(
                 institutionId,
                 null,
@@ -174,6 +175,18 @@ class PartyConnectorImpl implements PartyConnector {
         log.debug(LogUtils.CONFIDENTIAL_MARKER, "getUsers result = {}", userInfos);
         log.trace("getUsers end");
         return userInfos;
+    }
+
+    //TODO add tests
+    @Override
+    public Institution getInstitution(String institutionId) {
+        log.trace("getInstitution start");
+        log.debug("getInstitution institutionId = {}", institutionId);
+        Assert.hasText(institutionId, REQUIRED_INSTITUTION_ID_MESSAGE);
+        Institution result = restClient.getInstitutionByExternalId(institutionId);
+        log.debug("getInstitution result = {}", result);
+        log.trace("getInstitution end");
+        return result;
     }
 
 

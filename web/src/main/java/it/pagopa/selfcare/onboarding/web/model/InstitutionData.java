@@ -12,4 +12,7 @@ public class InstitutionData {
 
     @ApiModelProperty(value = "${swagger.onboarding.institutions.model.billingData}")
     private BillingDataDto billingData;
+
+    @ApiModelProperty
+    private String origin;
 }

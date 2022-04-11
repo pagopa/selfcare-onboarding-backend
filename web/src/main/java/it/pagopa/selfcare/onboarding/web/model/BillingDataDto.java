@@ -1,17 +1,45 @@
 package it.pagopa.selfcare.onboarding.web.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+
+import javax.validation.constraints.NotBlank;
 
 @Data
 public class BillingDataDto {
 
-    @ApiModelProperty(value = "${}")
+    @ApiModelProperty(value = "${swagger.onboarding.institutions.model.name}", required = true)
+    @JsonProperty(required = true)
+    @NotBlank
     private String businessName;
+
+    @ApiModelProperty(value = "${swagger.onboarding.institutions.model.address}", required = true)
+    @JsonProperty(required = true)
+    @NotBlank
     private String registeredOffice;
+
+    @ApiModelProperty(value = "${swagger.onboarding.institutions.model.digitalAddress}", required = true)
+    @JsonProperty(required = true)
+    @NotBlank
     private String digitalAddress;
+
+    @ApiModelProperty(value = "${swagger.onboarding.institutions.model.taxCode}", required = true)
+    @JsonProperty(required = true)
+    @NotBlank
     private String taxCode;
+
+    @ApiModelProperty(value = "${swagger.onboarding.institutions.model.vatNumber}", required = true)
+    @JsonProperty(required = true)
+    @NotBlank
     private String vatNumber;
+
+    @ApiModelProperty(value = "${swagger.onboarding.institutions.model.recipientCode}", required = true)
+    @JsonProperty(required = true)
+    @NotBlank
     private String recipientCode;
+
+    @ApiModelProperty(value = "${swagger.onboarding.institutions.model.publicService}")
     private Boolean publicService;
+
 }

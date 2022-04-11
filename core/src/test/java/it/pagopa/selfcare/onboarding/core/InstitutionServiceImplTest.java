@@ -3,10 +3,10 @@ package it.pagopa.selfcare.onboarding.core;
 import it.pagopa.selfcare.commons.utils.TestUtils;
 import it.pagopa.selfcare.onboarding.connector.api.PartyConnector;
 import it.pagopa.selfcare.onboarding.connector.api.ProductsConnector;
-import it.pagopa.selfcare.onboarding.connector.model.InstitutionInfo;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipInfo;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipState;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipsResponse;
+import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionInfo;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.*;
 import it.pagopa.selfcare.onboarding.connector.model.product.Product;
 import it.pagopa.selfcare.onboarding.connector.model.product.ProductRoleInfo;
@@ -26,7 +26,7 @@ import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.List;
 
-import static it.pagopa.selfcare.onboarding.core.InstitutionServiceImpl.REQUIRED_INSTITUTION_ID_MESSAGE;
+import static it.pagopa.selfcare.onboarding.core.InstitutionServiceImpl.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -53,59 +53,16 @@ class InstitutionServiceImplTest {
         Executable executable = () -> institutionService.onboarding(onboardingData);
         // then
         IllegalArgumentException e = Assertions.assertThrows(IllegalArgumentException.class, executable);
-        Assertions.assertEquals("Onboarding data is required", e.getMessage());
+        Assertions.assertEquals(REQUIRED_ONBOARDING_DATA_MESSAGE, e.getMessage());
         Mockito.verifyNoInteractions(partyConnectorMock, productsConnectorMock);
     }
 
-//    @Test
-//    void onboarding_nullInstitutionId() {
-//        // given
-//        String institutionId = null;
-//        String productId = "productId";
-//        List<UserInfo> users = List.of(Mockito.mock(UserInfo.class));
-//        // when
-//        Executable executable = () -> institutionService.onboarding(institutionId, productId, users);
-//        // then
-//        IllegalArgumentException e = Assertions.assertThrows(IllegalArgumentException.class, executable);
-//        Assertions.assertEquals("InstitutionId id is required", e.getMessage());
-//        Mockito.verifyNoInteractions(partyConnectorMock, productsConnectorMock);
-//    }
-//
-//    @Test
-//    void onboarding_nullProductId() {
-//        // given
-//        String institutionId = "institutionId";
-//        String productId = null;
-//        List<UserInfo> users = List.of(TestUtils.mockInstance(new DummyUserInfo()));
-//        // when
-//        Executable executable = () -> institutionService.onboarding(institutionId, productId, users);
-//        // then
-//        IllegalArgumentException e = Assertions.assertThrows(IllegalArgumentException.class, executable);
-//        Assertions.assertEquals("Product id is required", e.getMessage());
-//        Mockito.verifyNoInteractions(partyConnectorMock, productsConnectorMock);
-//    }
-//
-//
-//    @Test
-//    void onboarding_emptyUsers() {
-//        // given
-//        String institutionId = "institutionId";
-//        String productId = "productId";
-//        List<UserInfo> users = Collections.emptyList();
-//        // when
-//        Executable executable = () -> institutionService.onboarding(institutionId, productId, users);
-//        // then
-//        IllegalArgumentException e = Assertions.assertThrows(IllegalArgumentException.class, executable);
-//        Assertions.assertEquals("At least one user is required", e.getMessage());
-//        Mockito.verifyNoInteractions(partyConnectorMock, productsConnectorMock);
-//    }
 
     //TODO add test for organizationType
     @Test
     void onboarding_nullRoleMapping() {
         // given
-        OnboardingData onboardingData =
-                new OnboardingData("institutionId", "productId", List.of(TestUtils.mockInstance(new DummyUserInfo())), null, null);
+        OnboardingData onboardingData = TestUtils.mockInstance(new OnboardingData());
         Product product = TestUtils.mockInstance(new Product(), "setParent");
         Mockito.when(productsConnectorMock.getProduct(onboardingData.getProductId()))
                 .thenReturn(product);
@@ -121,12 +78,39 @@ class InstitutionServiceImplTest {
     }
 
     @Test
+    void onboarding_nullBillingData() {
+        //given
+        OnboardingData onboardingData = TestUtils.mockInstance(new OnboardingData(), "setBillingData");
+        //when
+        Executable executable = () -> institutionService.onboarding(onboardingData);
+        //then
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, executable);
+        assertEquals(REQUIRED_INSTITUTION_BILLING_DATA_MESSAGE, e.getMessage());
+        Mockito.verifyNoInteractions(productsConnectorMock, partyConnectorMock);
+    }
+
+    @Test
+    void onboarding_nullOrganizationType() {
+        //given
+        OnboardingData onboardingData = TestUtils.mockInstance(new OnboardingData(), "setOrganizationType");
+        BillingData billingData = TestUtils.mockInstance(new BillingData());
+        onboardingData.setBillingData(billingData);
+        //when
+        Executable executable = () -> institutionService.onboarding(onboardingData);
+        //then
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, executable);
+        assertEquals(REQUIRED_ORGANIZATION_TYPE_MESSAGE, e.getMessage());
+        Mockito.verifyNoInteractions(productsConnectorMock, partyConnectorMock);
+    }
+
+    @Test
     void onboarding_nullProductRoles() {
         // given
-        DummyUserInfo userInfo = TestUtils.mockInstance(new DummyUserInfo(), "setRole");
+        User userInfo = TestUtils.mockInstance(new User(), "setRole");
         userInfo.setRole(PartyRole.MANAGER);
-        OnboardingData onboardingData =
-                new OnboardingData("institutionId", "productId", List.of(userInfo), null, null);
+        OnboardingData onboardingData = TestUtils.mockInstance(new OnboardingData());
+        BillingData billingData = TestUtils.mockInstance(new BillingData());
+        onboardingData.setBillingData(billingData);
         Product product = TestUtils.mockInstance(new Product(), "setParent");
         product.setRoleMappings(new EnumMap<>(PartyRole.class) {{
             put(PartyRole.MANAGER, null);
@@ -150,8 +134,9 @@ class InstitutionServiceImplTest {
         // given
         DummyUserInfo userInfo = TestUtils.mockInstance(new DummyUserInfo(), "setRole");
         userInfo.setRole(PartyRole.DELEGATE);
-        OnboardingData onboardingData =
-                new OnboardingData("institutionId", "productId", List.of(userInfo), null, OrganizationType.GSP);
+        OnboardingData onboardingData = TestUtils.mockInstance(new OnboardingData());
+        BillingData billingData = TestUtils.mockInstance(new BillingData());
+        onboardingData.setBillingData(billingData);
         Product productMock = TestUtils.mockInstance(new Product(), "setRoleMappings", "setParent");
         ProductRoleInfo productRoleInfo1 = TestUtils.mockInstance(new ProductRoleInfo(), 1, "setRoles");
         productRoleInfo1.setRoles(List.of(TestUtils.mockInstance(new ProductRoleInfo.ProductRole(), 1)));
@@ -180,8 +165,9 @@ class InstitutionServiceImplTest {
         // given
         DummyUserInfo userInfo = TestUtils.mockInstance(new DummyUserInfo(), "setRole");
         userInfo.setRole(PartyRole.DELEGATE);
-        OnboardingData onboardingData =
-                new OnboardingData("institutionId", "productId", List.of(userInfo), null, OrganizationType.GSP);
+        OnboardingData onboardingData = TestUtils.mockInstance(new OnboardingData());
+        BillingData billingData = TestUtils.mockInstance(new BillingData());
+        onboardingData.setBillingData(billingData);
         Product productMock = TestUtils.mockInstance(new Product(), "setRoleMappings", "setParent");
         ProductRoleInfo productRoleInfo1 = TestUtils.mockInstance(new ProductRoleInfo(), 1, "setRoles");
         productRoleInfo1.setRoles(List.of(TestUtils.mockInstance(new ProductRoleInfo.ProductRole(), 1)));
@@ -215,8 +201,9 @@ class InstitutionServiceImplTest {
         userInfo1.setRole(PartyRole.MANAGER);
         DummyUserInfo userInfo2 = TestUtils.mockInstance(new DummyUserInfo(), 2, "setRole");
         userInfo2.setRole(PartyRole.DELEGATE);
-        OnboardingData onboardingData =
-                new OnboardingData("institutionId", "productId", List.of(userInfo1, userInfo2), null, OrganizationType.GSP);
+        OnboardingData onboardingData = TestUtils.mockInstance(new OnboardingData());
+        BillingData billingData = TestUtils.mockInstance(new BillingData());
+        onboardingData.setBillingData(billingData);
         Product productMock = TestUtils.mockInstance(new Product(), "setRoleMappings", "setParent");
         ProductRoleInfo productRoleInfo1 = TestUtils.mockInstance(new ProductRoleInfo(), 1, "setRoles");
         ProductRoleInfo.ProductRole productRole1 = TestUtils.mockInstance(new ProductRoleInfo.ProductRole(), 1);
@@ -254,8 +241,9 @@ class InstitutionServiceImplTest {
     @Test
     void onboarding_noRelationshipForSubProduct() {
         //given
-        OnboardingData onboardingData =
-                new OnboardingData("institutionId", "productId", List.of(TestUtils.mockInstance(new DummyUserInfo())), null, OrganizationType.GSP);
+        OnboardingData onboardingData = TestUtils.mockInstance(new OnboardingData());
+        BillingData billingData = TestUtils.mockInstance(new BillingData());
+        onboardingData.setBillingData(billingData);
         Product product = TestUtils.mockInstance(new Product());
         Mockito.when(productsConnectorMock.getProduct(onboardingData.getProductId()))
                 .thenReturn(product);
@@ -263,10 +251,7 @@ class InstitutionServiceImplTest {
         Executable executable = () -> institutionService.onboarding(onboardingData);
         //then
         ProductHasNoRelationshipException e = Assertions.assertThrows(ProductHasNoRelationshipException.class, executable);
-        Assertions.assertEquals("No relationship for "
-                        + product.getParent()
-                        + " and "
-                        + onboardingData.getInstitutionId()
+        Assertions.assertEquals(String.format("No relationship for %s and %s", product.getParent(), onboardingData.getInstitutionId())
                 , e.getMessage());
         Mockito.verify(productsConnectorMock, Mockito.times(1))
                 .getProduct(onboardingData.getProductId());
@@ -276,15 +261,32 @@ class InstitutionServiceImplTest {
     }
 
     @Test
+    void onboardingSubProduct_noManagerProvided() {
+
+    }
+
+    @Test
+    void onboardingSubProduct_invalidManagerForProvidedProduct() {
+
+    }
+
+    @Test
+    void onboardingSubProduct_internalError() {
+
+    }
+
+    @Test
     void onboardingSubProduct() {
         // given
         String productRole = "role";
-        DummyUserInfo userInfo1 = TestUtils.mockInstance(new DummyUserInfo(), 1, "setRole");
+        User userInfo1 = TestUtils.mockInstance(new User(), 1, "setRole");
         userInfo1.setRole(PartyRole.MANAGER);
-        DummyUserInfo userInfo2 = TestUtils.mockInstance(new DummyUserInfo(), 2, "setRole");
+        User userInfo2 = TestUtils.mockInstance(new User(), 2, "setRole");
         userInfo2.setRole(PartyRole.DELEGATE);
-        OnboardingData onboardingData =
-                new OnboardingData("institutionId", "productId", List.of(userInfo1, userInfo2), null, OrganizationType.GSP);
+        OnboardingData onboardingData = TestUtils.mockInstance(new OnboardingData());
+        BillingData billingData = TestUtils.mockInstance(new BillingData());
+        onboardingData.setBillingData(billingData);
+        onboardingData.setUsers(List.of(userInfo1, userInfo2));
         Product productMock = TestUtils.mockInstance(new Product(), "setRoleMappings");
         ProductRoleInfo productRoleInfo1 = TestUtils.mockInstance(new ProductRoleInfo(), 1, "setRoles");
         ProductRoleInfo.ProductRole productRole1 = TestUtils.mockInstance(new ProductRoleInfo.ProductRole(), 1);
@@ -306,6 +308,7 @@ class InstitutionServiceImplTest {
         Mockito.when(productsConnectorMock.getProduct(productMock.getParent()))
                 .thenReturn(productMock2);
         RelationshipInfo relationshipInfoMock = TestUtils.mockInstance(new RelationshipInfo());
+        relationshipInfoMock.setTaxCode(userInfo1.getTaxCode());
         RelationshipsResponse relationshipsResponse = new RelationshipsResponse();
         relationshipsResponse.add(relationshipInfoMock);
         Mockito.when(partyConnectorMock.getUserInstitutionRelationships(Mockito.anyString(), Mockito.anyString()))

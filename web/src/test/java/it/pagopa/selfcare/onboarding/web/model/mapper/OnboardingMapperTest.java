@@ -1,7 +1,7 @@
 package it.pagopa.selfcare.onboarding.web.model.mapper;
 
 import it.pagopa.selfcare.commons.utils.TestUtils;
-import it.pagopa.selfcare.onboarding.connector.model.InstitutionInfo;
+import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionInfo;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingResource;
 import it.pagopa.selfcare.onboarding.web.model.InstitutionResource;
 import it.pagopa.selfcare.onboarding.web.model.OnboardingResponse;
