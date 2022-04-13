@@ -4,6 +4,7 @@ import it.pagopa.selfcare.commons.utils.TestUtils;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipInfo;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipState;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipsResponse;
+import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionInfo;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.*;
 import it.pagopa.selfcare.onboarding.connector.rest.client.PartyProcessRestClient;
@@ -381,6 +382,30 @@ class PartyConnectorImplTest {
 
         Mockito.verify(restClientMock, Mockito.times(1))
                 .getUserInstitutionRelationships(Mockito.eq(institutionId), Mockito.isNotNull(), Mockito.notNull(), Mockito.isNull(), Mockito.isNull(), Mockito.any());
+        Mockito.verifyNoMoreInteractions(restClientMock);
+    }
+
+    @Test
+    void getInstitution() {
+        //given
+        String institutionId = "institutionId";
+        Institution institutionMock = TestUtils.mockInstance(new Institution());
+        Mockito.when(restClientMock.getInstitutionByExternalId(Mockito.anyString()))
+                .thenReturn(institutionMock);
+        //when
+        Institution institution = partyConnector.getInstitution(institutionId);
+        //then
+        assertNotNull(institution);
+        assertEquals(institutionMock.getInstitutionId(), institution.getInstitutionId());
+        assertEquals(institutionMock.getDescription(), institution.getDescription());
+        assertEquals(institutionMock.getAddress(), institution.getAddress());
+        assertEquals(institutionMock.getTaxCode(), institution.getTaxCode());
+        assertEquals(institutionMock.getId(), institution.getId());
+        assertEquals(institutionMock.getZipCode(), institution.getZipCode());
+        assertEquals(institutionMock.getDigitalAddress(), institution.getDigitalAddress());
+        assertEquals(institutionMock.getType(), institution.getType());
+        Mockito.verify(restClientMock, Mockito.times(1))
+                .getInstitutionByExternalId(institutionId);
         Mockito.verifyNoMoreInteractions(restClientMock);
     }
 

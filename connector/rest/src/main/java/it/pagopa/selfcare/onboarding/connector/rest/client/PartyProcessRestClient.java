@@ -6,7 +6,6 @@ import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.PartyRole;
 import it.pagopa.selfcare.onboarding.connector.rest.model.OnBoardingInfo;
 import it.pagopa.selfcare.onboarding.connector.rest.model.OnboardingRequest;
-import it.pagopa.selfcare.onboarding.connector.rest.model.OnboardingResponse;
 import org.springframework.cloud.openfeign.CollectionFormat;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;
@@ -24,16 +23,16 @@ public interface PartyProcessRestClient {
     @GetMapping(value = "${rest-client.party-process.getUserInstitutionRelationships.path}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     @CollectionFormat(feign.CollectionFormat.CSV)
-    RelationshipsResponse getUserInstitutionRelationships(@PathVariable("institutionId") String institutionId,
+    RelationshipsResponse getUserInstitutionRelationships(@PathVariable("externalId") String institutionId,
                                                           @RequestParam(value = "roles", required = false) EnumSet<PartyRole> roles,
                                                           @RequestParam(value = "states", required = false) EnumSet<RelationshipState> states,
                                                           @RequestParam(value = "products", required = false) Set<String> productIds,
                                                           @RequestParam(value = "productRoles", required = false) Set<String> productRoles,
                                                           @RequestParam(value = "personId", required = false) String personId);
 
-    @PostMapping(value = "${rest-client.party-process.onboardingOrganization.path}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "${rest-client.party-process.onboardingOrganization.path}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    OnboardingResponse onboardingOrganization(@RequestBody OnboardingRequest request);
+    void onboardingOrganization(@RequestBody OnboardingRequest request);
 
 
     @GetMapping(value = "${rest-client.party-process.getOnBoardingInfo.path}", produces = MediaType.APPLICATION_JSON_VALUE)

@@ -12,6 +12,7 @@ import javax.validation.constraints.NotNull;
 @Data
 public class UserDto implements UserInfoOperations {
 
+
     @ApiModelProperty(value = "${swagger.onboarding.user.model.name}", required = true)
     @JsonProperty(required = true)
     @NotBlank

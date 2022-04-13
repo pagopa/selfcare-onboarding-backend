@@ -1,6 +1,5 @@
 package it.pagopa.selfcare.onboarding.web.model;
 
-import it.pagopa.selfcare.commons.utils.TestUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -18,8 +17,7 @@ import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class UserDtoTest {
-
+class UserResourceTest {
     private Validator validator;
 
 
@@ -28,7 +26,6 @@ class UserDtoTest {
         ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
         validator = validatorFactory.getValidator();
     }
-
 
     @Test
     void validateNullFields() {
@@ -40,7 +37,7 @@ class UserDtoTest {
         toCheckMap.put("taxCode", NotBlank.class);
         toCheckMap.put("role", NotNull.class);
         toCheckMap.put("email", NotBlank.class);
-        UserDto model = new UserDto();
+        UserResource model = new UserResource();
         // when
         Set<ConstraintViolation<Object>> violations = validator.validate(model);
         // then
@@ -51,16 +48,6 @@ class UserDtoTest {
                 })
                 .collect(Collectors.toList());
         assertTrue(filteredViolations.isEmpty());
-    }
-
-    @Test
-    void validateNotNullFields() {
-        // given
-        UserDto model = TestUtils.mockInstance(new UserDto());
-        // when
-        Set<ConstraintViolation<Object>> violations = validator.validate(model);
-        // then
-        assertTrue(violations.isEmpty());
     }
 
 }

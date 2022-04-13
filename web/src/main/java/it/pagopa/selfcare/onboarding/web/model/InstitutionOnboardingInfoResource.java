@@ -9,7 +9,7 @@ import javax.validation.constraints.NotNull;
 public class InstitutionOnboardingInfoResource {
 
     @ApiModelProperty(value = "${swagger.onboarding.user.model.manager}")
-    private UserDto manager;
+    private UserResource manager;
 
     @ApiModelProperty(value = "${swagger.onboarding.institutions.model.institutionData}")
     @NotNull

@@ -13,13 +13,11 @@
 package it.pagopa.selfcare.onboarding.connector.rest.model;
 
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingResource;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
 import java.io.File;
 
-@Getter
-@Setter
+@Data
 public class OnboardingResponse implements OnboardingResource {
 
     private String token;

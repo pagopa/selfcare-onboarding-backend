@@ -29,7 +29,7 @@ public class OnboardingData {
     private String contractPath;
     private String contractVersion;
     private BillingData billingData;
-    private OrganizationType organizationType;
+    private InstitutionType institutionType;
     private String origin;
 
     public List<User> getUsers() {

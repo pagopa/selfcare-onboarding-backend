@@ -5,7 +5,10 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.UserInfo;
 import it.pagopa.selfcare.onboarding.core.InstitutionService;
-import it.pagopa.selfcare.onboarding.web.model.*;
+import it.pagopa.selfcare.onboarding.web.model.InstitutionData;
+import it.pagopa.selfcare.onboarding.web.model.InstitutionOnboardingInfoResource;
+import it.pagopa.selfcare.onboarding.web.model.InstitutionResource;
+import it.pagopa.selfcare.onboarding.web.model.OnboardingDto;
 import it.pagopa.selfcare.onboarding.web.model.mapper.OnboardingMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,20 +38,19 @@ public class InstitutionController {
     @PostMapping(value = "/{institutionId}/products/{productId}/onboarding")
     @ResponseStatus(HttpStatus.CREATED)
     @ApiOperation(value = "", notes = "${swagger.onboarding.institutions.api.onboarding}")
-    public OnboardingResponse onboarding(@ApiParam("${swagger.onboarding.institutions.model.id}")
-                                         @PathVariable("institutionId")
-                                                 String institutionId,
-                                         @ApiParam("${swagger.onboarding.products.model.id}")
-                                         @PathVariable("productId")
-                                                 String productId,
-                                         @RequestBody
-                                         @Valid
-                                                 OnboardingDto request) {
+    public void onboarding(@ApiParam("${swagger.onboarding.institutions.model.id}")
+                           @PathVariable("institutionId")
+                                   String institutionId,
+                           @ApiParam("${swagger.onboarding.products.model.id}")
+                           @PathVariable("productId")
+                                   String productId,
+                           @RequestBody
+                           @Valid
+                                   OnboardingDto request) {
         log.trace("onboarding start");
         log.debug("onboarding institutionId = {}, productId = {}, request = {}", institutionId, productId, request);
         institutionService.onboarding(OnboardingMapper.toOnboardingData(institutionId, productId, request));
         log.trace("onboarding end");
-        return null;
     }
 
     //TODO @PreAuthorize("hasPermission(#institutionId, 'InstitutionResource', 'ADMIN')")
@@ -62,9 +64,12 @@ public class InstitutionController {
                                                                           @PathVariable("productId")
                                                                                   String productId) {
         UserInfo manager = institutionService.getManager(institutionId, productId);
+
+        InstitutionOnboardingInfoResource resource = new InstitutionOnboardingInfoResource();
+        resource.setManager(OnboardingMapper.toResource(manager));
         //TODO for now retrieve just the Manager
 
-        return null;
+        return resource;
     }
 
     @GetMapping(value = "/{institutionId}/data")

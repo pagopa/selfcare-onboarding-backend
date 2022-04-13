@@ -42,4 +42,17 @@ public class UserResource {
     @NotBlank
     private String email;
 
+    @ApiModelProperty(value = "${swagger.onboarding.user.model.status}", required = true)
+    @JsonProperty(required = true)
+    @NotBlank
+    private String status;
+
+    @ApiModelProperty(value = "${swagger.onboarding.user.model.institutionId}", required = true)
+    @JsonProperty(required = true)
+    @NotBlank
+    private String institutionId;
+
+    @ApiModelProperty(value = "${swagger.onboarding.user.model.certified}", required = true)
+    @JsonProperty(required = true)
+    private boolean certified;
 }

@@ -13,7 +13,7 @@
 package it.pagopa.selfcare.onboarding.connector.rest.model;
 
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.BillingData;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.OrganizationType;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.InstitutionType;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.User;
 import lombok.Data;
 
@@ -25,6 +25,7 @@ public class OnboardingRequest {
     private String institutionId;
     private List<User> users;
     private OnboardingContract contract;
+    private String pricingPlan;
     private BillingData billingData;
-    private OrganizationType organizationType;
+    private InstitutionType organizationType;
 }

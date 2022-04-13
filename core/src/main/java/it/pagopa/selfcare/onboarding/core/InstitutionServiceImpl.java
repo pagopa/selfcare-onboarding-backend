@@ -29,8 +29,11 @@ class InstitutionServiceImpl implements InstitutionService {
 
     protected static final String REQUIRED_INSTITUTION_ID_MESSAGE = "An Institution id is required";
     protected static final String REQUIRED_INSTITUTION_BILLING_DATA_MESSAGE = "Institution's billing data are required";
-    protected static final String REQUIRED_ORGANIZATION_TYPE_MESSAGE = "Organization type is required";
+    protected static final String REQUIRED_INSTITUTION_TYPE_MESSAGE = "An institution type is required";
     protected static final String REQUIRED_ONBOARDING_DATA_MESSAGE = "Onboarding data is required";
+    protected static final String ATLEAST_ONE_PRODUCT_ROLE_REQUIRED = "At least one Product role related to %s Party role is required";
+    protected static final String MORE_THAN_ONE_PRODUCT_ROLE_AVAILABLE = "More than one Product role related to %s Party role is available. Cannot automatically set the Product role";
+    protected static final String ILLEGAL_LIST_OF_USERS = "Illegal list of users, provide a Manager in the list";
     private final PartyConnector partyConnector;
     private final ProductsConnector productsConnector;
 
@@ -48,7 +51,7 @@ class InstitutionServiceImpl implements InstitutionService {
         log.debug("onboarding onboardingData = {}", onboardingData);
         Assert.notNull(onboardingData, REQUIRED_ONBOARDING_DATA_MESSAGE);
         Assert.notNull(onboardingData.getBillingData(), REQUIRED_INSTITUTION_BILLING_DATA_MESSAGE);
-        Assert.notNull(onboardingData.getOrganizationType(), REQUIRED_ORGANIZATION_TYPE_MESSAGE);
+        Assert.notNull(onboardingData.getInstitutionType(), REQUIRED_INSTITUTION_TYPE_MESSAGE);
         Product product = productsConnector.getProduct(onboardingData.getProductId());
         Assert.notNull(product, "Product is required");
         onboardingData.setContractPath(product.getContractTemplatePath());
@@ -64,7 +67,7 @@ class InstitutionServiceImpl implements InstitutionService {
             } else {
                 if (!onboardingData.getUsers().stream()
                         .filter(user -> PartyRole.MANAGER.equals(user.getRole()))
-                        .findAny().orElseThrow(() -> new ValidationException("Illegal list of users, provide a Manager in the list")).getTaxCode().equals(response.stream()
+                        .findAny().orElseThrow(() -> new ValidationException(ILLEGAL_LIST_OF_USERS)).getTaxCode().equals(response.stream()
                                 .filter(relationshipInfo -> PartyRole.MANAGER.equals(relationshipInfo.getRole()))
                                 .findAny().orElseThrow(() -> new InternalServerException("Internal Error: Legal referent not Manager")).getTaxCode())
                 ) throw new ValidationException("The provided Manager is not valid for this product");
@@ -76,11 +79,11 @@ class InstitutionServiceImpl implements InstitutionService {
         Product finalProduct = product;
         onboardingData.getUsers().forEach(userInfo -> {
             Assert.notNull(finalProduct.getRoleMappings().get(userInfo.getRole()),
-                    String.format("At least one Product role related to %s Party role is required", userInfo.getRole()));
+                    String.format(ATLEAST_ONE_PRODUCT_ROLE_REQUIRED, userInfo.getRole()));
             Assert.notEmpty(finalProduct.getRoleMappings().get(userInfo.getRole()).getRoles(),
-                    String.format("At least one Product role related to %s Party role is required", userInfo.getRole()));
+                    String.format(ATLEAST_ONE_PRODUCT_ROLE_REQUIRED, userInfo.getRole()));
             Assert.state(finalProduct.getRoleMappings().get(userInfo.getRole()).getRoles().size() == 1,
-                    String.format("More than one Product role related to %s Party role is available. Cannot automatically set the Product role", userInfo.getRole()));
+                    String.format(MORE_THAN_ONE_PRODUCT_ROLE_AVAILABLE, userInfo.getRole()));
             userInfo.setProductRole(finalProduct.getRoleMappings().get(userInfo.getRole()).getRoles().get(0).getCode());
         });
 

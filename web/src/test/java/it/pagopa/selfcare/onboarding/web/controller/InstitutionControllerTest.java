@@ -4,13 +4,13 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.pagopa.selfcare.commons.utils.TestUtils;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionInfo;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.BillingData;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.InstitutionType;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
 import it.pagopa.selfcare.onboarding.core.InstitutionService;
 import it.pagopa.selfcare.onboarding.web.config.WebTestConfig;
+import it.pagopa.selfcare.onboarding.web.model.BillingDataDto;
 import it.pagopa.selfcare.onboarding.web.model.InstitutionResource;
 import it.pagopa.selfcare.onboarding.web.model.OnboardingDto;
-import it.pagopa.selfcare.onboarding.web.model.OnboardingResponse;
 import it.pagopa.selfcare.onboarding.web.model.UserDto;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -27,7 +27,6 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import java.io.File;
 import java.util.Collections;
 import java.util.List;
 
@@ -55,50 +54,46 @@ class InstitutionControllerTest {
 
     @Test
     void onboarding() throws Exception {
-        File tempFile = File.createTempFile("hello", ".file");
-        try {
-            // given
-            String institutionId = "institutionId";
-            String productId = "productId";
-            OnboardingResponse onboardingResponse = TestUtils.mockInstance(new OnboardingResponse(), "setDocument");
-            onboardingResponse.setDocument(tempFile);
-            List<UserDto> userDtos = List.of(TestUtils.mockInstance(new UserDto()));
-            OnboardingDto onboardingDto = new OnboardingDto();
-            BillingData billingData = TestUtils.mockInstance(new BillingData());
-            onboardingDto.setUsers(userDtos);
-//            onboardingDto.setBillingData(billingData);
-            Mockito.when(institutionServiceMock.onboarding(Mockito.any()))
-                    .thenReturn(onboardingResponse);
-            // when
-            MvcResult result = mvc.perform(MockMvcRequestBuilders
-                    .post(BASE_URL + "/{institutionId}/products/{productId}/onboarding", institutionId, productId)
-                    .content(objectMapper.writeValueAsString(onboardingDto))
-                    .contentType(MediaType.APPLICATION_JSON_VALUE)
-                    .accept(MediaType.APPLICATION_JSON_VALUE))
-                    .andExpect(MockMvcResultMatchers.status().isCreated())
-                    .andReturn();
-            // then
-            OnboardingResponse response = objectMapper.readValue(result.getResponse().getContentAsString(), OnboardingResponse.class);
-            assertNotNull(response);
-            assertNotNull(response.getToken());
-            assertNotNull(response.getDocument());
-            Mockito.verify(institutionServiceMock, Mockito.times(1))
-                    .onboarding(onboardingDataCaptor.capture());
-            OnboardingData captured = onboardingDataCaptor.getValue();
-            assertNotNull(captured);
-            assertEquals(institutionId, captured.getInstitutionId());
-            assertEquals(productId, captured.getProductId());
-            assertNotNull(captured.getUsers());
-            assertEquals(1, captured.getUsers().size());
-            assertEquals(userDtos.get(0).getName(), captured.getUsers().get(0).getName());
-            assertEquals(userDtos.get(0).getSurname(), captured.getUsers().get(0).getSurname());
-            assertEquals(userDtos.get(0).getTaxCode(), captured.getUsers().get(0).getTaxCode());
-            assertEquals(userDtos.get(0).getEmail(), captured.getUsers().get(0).getEmail());
-            assertEquals(userDtos.get(0).getRole(), captured.getUsers().get(0).getRole());
-            assertEquals(userDtos.get(0).getProductRole(), captured.getUsers().get(0).getProductRole());
-        } finally {
-            tempFile.deleteOnExit();
-        }
+        // given
+        String institutionId = "institutionId";
+        String productId = "productId";
+        List<UserDto> userDtos = List.of(TestUtils.mockInstance(new UserDto()));
+        OnboardingDto onboardingDto = TestUtils.mockInstance(new OnboardingDto());
+        BillingDataDto billingData = TestUtils.mockInstance(new BillingDataDto());
+        onboardingDto.setUsers(userDtos);
+        onboardingDto.setBillingData(billingData);
+        onboardingDto.setInstitutionType(InstitutionType.PA);
+        // when
+        MvcResult result = mvc.perform(MockMvcRequestBuilders
+                        .post(BASE_URL + "/{institutionId}/products/{productId}/onboarding", institutionId, productId)
+                        .content(objectMapper.writeValueAsString(onboardingDto))
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .accept(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(MockMvcResultMatchers.status().isCreated())
+                .andReturn();
+        // then
+        assertEquals(0, result.getResponse().getContentLength());
+        Mockito.verify(institutionServiceMock, Mockito.times(1))
+                .onboarding(onboardingDataCaptor.capture());
+        OnboardingData captured = onboardingDataCaptor.getValue();
+        assertNotNull(captured);
+        assertEquals(institutionId, captured.getInstitutionId());
+        assertEquals(productId, captured.getProductId());
+        assertNotNull(captured.getUsers());
+        assertEquals(1, captured.getUsers().size());
+        assertEquals(billingData.getTaxCode(), captured.getBillingData().getTaxCode());
+        assertEquals(billingData.getBusinessName(), captured.getBillingData().getDescription());
+        assertEquals(billingData.getRecipientCode(), captured.getBillingData().getRecipientCode());
+        assertEquals(billingData.getVatNumber(), captured.getBillingData().getVatNumber());
+        assertEquals(billingData.getDigitalAddress(), captured.getBillingData().getDigitalAddress());
+        assertEquals(billingData.getRegisteredOffice(), captured.getBillingData().getPhysicalAddress());
+        assertEquals(billingData.getPublicService(), captured.getBillingData().isPublicService());
+        assertEquals(userDtos.get(0).getName(), captured.getUsers().get(0).getName());
+        assertEquals(userDtos.get(0).getSurname(), captured.getUsers().get(0).getSurname());
+        assertEquals(userDtos.get(0).getTaxCode(), captured.getUsers().get(0).getTaxCode());
+        assertEquals(userDtos.get(0).getEmail(), captured.getUsers().get(0).getEmail());
+        assertEquals(userDtos.get(0).getRole(), captured.getUsers().get(0).getRole());
+        assertEquals(userDtos.get(0).getProductRole(), captured.getUsers().get(0).getProductRole());
     }
 
     @Test
@@ -109,9 +104,9 @@ class InstitutionControllerTest {
                 .thenReturn(Collections.singletonList(institutionInfo));
         //when
         MvcResult result = mvc.perform(MockMvcRequestBuilders
-                .get(BASE_URL + "")
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .accept(MediaType.APPLICATION_JSON_VALUE))
+                        .get(BASE_URL + "")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .accept(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andReturn();
         //then

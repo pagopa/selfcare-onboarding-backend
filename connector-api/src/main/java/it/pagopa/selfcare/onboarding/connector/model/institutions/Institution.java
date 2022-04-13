@@ -1,6 +1,6 @@
 package it.pagopa.selfcare.onboarding.connector.model.institutions;
 
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.OrganizationType;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.InstitutionType;
 import lombok.Data;
 
 @Data
@@ -13,7 +13,7 @@ public class Institution {
     private String address;
     private String zipCode;
     private String taxCode;
-    private OrganizationType type;
+    private InstitutionType type;
     private Attributes attributes;
 
 }

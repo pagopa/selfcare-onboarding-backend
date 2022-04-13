@@ -6,17 +6,17 @@ import it.pagopa.selfcare.commons.connector.rest.RestTestUtils;
 import it.pagopa.selfcare.commons.utils.TestUtils;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipState;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipsResponse;
+import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.PartyRole;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.User;
 import it.pagopa.selfcare.onboarding.connector.rest.config.PartyProcessRestClientTestConfig;
 import it.pagopa.selfcare.onboarding.connector.rest.model.OnBoardingInfo;
 import it.pagopa.selfcare.onboarding.connector.rest.model.OnboardingRequest;
-import it.pagopa.selfcare.onboarding.connector.rest.model.OnboardingResponse;
 import lombok.SneakyThrows;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.function.Executable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.commons.httpclient.HttpClientConfiguration;
 import org.springframework.context.ApplicationContextInitializer;
@@ -87,11 +87,9 @@ class PartyProcessRestClientTest extends BaseFeignRestClientTest {
         onboardingRequest.setInstitutionId(testCase2instIdMap.get(TestCase.FULLY_VALUED));
         onboardingRequest.setUsers(List.of(TestUtils.mockInstance(new User())));
         // when
-        OnboardingResponse response = restClient.onboardingOrganization(onboardingRequest);
+        Executable executable = () -> restClient.onboardingOrganization(onboardingRequest);
         // then
-        Assertions.assertNotNull(response);
-        Assertions.assertNotNull(response.getToken());
-        Assertions.assertNotNull(response.getDocument());
+        assertDoesNotThrow(executable);
     }
 
 
@@ -102,11 +100,9 @@ class PartyProcessRestClientTest extends BaseFeignRestClientTest {
         onboardingRequest.setInstitutionId(testCase2instIdMap.get(TestCase.FULLY_NULL));
         onboardingRequest.setUsers(List.of(TestUtils.mockInstance(new User())));
         // when
-        OnboardingResponse response = restClient.onboardingOrganization(onboardingRequest);
+        Executable executable = () -> restClient.onboardingOrganization(onboardingRequest);
         // then
-        Assertions.assertNotNull(response);
-        Assertions.assertNull(response.getToken());
-        Assertions.assertNull(response.getDocument());
+        assertDoesNotThrow(executable);
     }
 
     @Test
@@ -213,6 +209,33 @@ class PartyProcessRestClientTest extends BaseFeignRestClientTest {
         assertNotNull(response);
         assertTrue(response.getInstitutions().isEmpty());
         assertNull(response.getPerson());
+    }
+
+    @Test
+    void getInstitutionByExternalId_fullyValued() {
+        //given
+        String externalId = testCase2instIdMap.get(TestCase.FULLY_VALUED);
+        //when
+        Institution response = restClient.getInstitutionByExternalId(externalId);
+        //then
+        assertNotNull(response);
+        assertNotNull(response.getId());
+    }
+
+    @Test
+    void getInstitutionByExternalId_fullyNull() {
+        // given
+        String externalId = testCase2instIdMap.get(TestCase.FULLY_NULL);
+        // when
+        Institution response = restClient.getInstitutionByExternalId(externalId);
+        assertNotNull(response);
+        assertNull(response.getAddress());
+        assertNull(response.getDescription());
+        assertNull(response.getDigitalAddress());
+        assertNull(response.getId());
+        assertNull(response.getInstitutionId());
+        assertNull(response.getTaxCode());
+        assertNull(response.getZipCode());
     }
 
 

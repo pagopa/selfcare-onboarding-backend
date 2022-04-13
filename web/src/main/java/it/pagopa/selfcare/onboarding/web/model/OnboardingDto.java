@@ -1,10 +1,12 @@
 package it.pagopa.selfcare.onboarding.web.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModelProperty;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.OrganizationType;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.InstitutionType;
 import lombok.Data;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.List;
@@ -22,10 +24,12 @@ public class OnboardingDto {
     @Valid
     private BillingDataDto billingData;
 
-    @ApiModelProperty(value = "${swagger.onboarding.institutions.model.organizationType}", required = true)
+    @ApiModelProperty(value = "${swagger.onboarding.institutions.model.institutionType}", required = true)
     @NotNull
-    private OrganizationType organizationType;
+    private InstitutionType institutionType;
 
-    //TODO required(?)
+    @ApiModelProperty(value = "${swagger.onboarding.institutions.model.origin}")
+    @JsonProperty(required = true)
+    @NotBlank
     private String origin;
 }
