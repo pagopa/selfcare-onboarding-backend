@@ -214,14 +214,7 @@
         },
         "responses": {
           "201": {
-            "description": "Created",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/OnboardingResponse"
-                }
-              }
-            }
+            "description": "Created"
           },
           "401": {
             "description": "Unauthorized"
@@ -297,29 +290,44 @@
     "schemas": {
       "BillingDataDto": {
         "title": "BillingDataDto",
+        "required": [
+          "businessName",
+          "digitalAddress",
+          "recipientCode",
+          "registeredOffice",
+          "taxCode",
+          "vatNumber"
+        ],
         "type": "object",
         "properties": {
           "businessName": {
             "type": "string",
-            "description": "${}"
+            "description": "Institution's legal name"
           },
           "digitalAddress": {
-            "type": "string"
+            "type": "string",
+            "description": "Institution's digitalAddress"
           },
           "publicService": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Institution's service type",
+            "example": false
           },
           "recipientCode": {
-            "type": "string"
+            "type": "string",
+            "description": "Billing recipient code"
           },
           "registeredOffice": {
-            "type": "string"
+            "type": "string",
+            "description": "Institution's physical address"
           },
           "taxCode": {
-            "type": "string"
+            "type": "string",
+            "description": "Institution's taxCode"
           },
           "vatNumber": {
-            "type": "string"
+            "type": "string",
+            "description": "Institution's VAT number"
           }
         }
       },
@@ -331,15 +339,18 @@
             "description": "Institution's billing informations",
             "$ref": "#/components/schemas/BillingDataDto"
           },
-          "organizationType": {
+          "institutionType": {
             "type": "string",
-            "description": "Institution's type",
+            "description": "${swagger.onboarding.institutions.model.institutionType}",
             "enum": [
               "GSP",
               "PA",
               "PT",
               "SCP"
             ]
+          },
+          "origin": {
+            "type": "string"
           }
         }
       },
@@ -353,7 +364,7 @@
           },
           "manager": {
             "description": "Institution Manager's informations",
-            "$ref": "#/components/schemas/UserDto"
+            "$ref": "#/components/schemas/UserResource"
           }
         }
       },
@@ -398,7 +409,8 @@
       "OnboardingDto": {
         "title": "OnboardingDto",
         "required": [
-          "organizationType",
+          "billingData",
+          "institutionType",
           "users"
         ],
         "type": "object",
@@ -407,9 +419,9 @@
             "description": "Institution's billing informations",
             "$ref": "#/components/schemas/BillingDataDto"
           },
-          "organizationType": {
+          "institutionType": {
             "type": "string",
-            "description": "Institution's type",
+            "description": "${swagger.onboarding.institutions.model.institutionType}",
             "enum": [
               "GSP",
               "PA",
@@ -417,25 +429,20 @@
               "SCP"
             ]
           },
+          "origin": {
+            "type": "string",
+            "description": "${swagger.onboarding.institutions.model.origin}"
+          },
+          "pricingPlan": {
+            "type": "string",
+            "description": "Product's pricing plan"
+          },
           "users": {
             "type": "array",
             "description": "List of onboarding users",
             "items": {
               "$ref": "#/components/schemas/UserDto"
             }
-          }
-        }
-      },
-      "OnboardingResponse": {
-        "title": "OnboardingResponse",
-        "type": "object",
-        "properties": {
-          "document": {
-            "type": "string",
-            "format": "binary"
-          },
-          "token": {
-            "type": "string"
           }
         }
       },
@@ -489,6 +496,66 @@
               "OPERATOR",
               "SUB_DELEGATE"
             ]
+          },
+          "surname": {
+            "type": "string",
+            "description": "User's surname"
+          },
+          "taxCode": {
+            "type": "string",
+            "description": "User's fiscal code"
+          }
+        }
+      },
+      "UserResource": {
+        "title": "UserResource",
+        "required": [
+          "certified",
+          "email",
+          "id",
+          "institutionId",
+          "name",
+          "role",
+          "status",
+          "surname",
+          "taxCode"
+        ],
+        "type": "object",
+        "properties": {
+          "certified": {
+            "type": "boolean",
+            "description": "${swagger.onboarding.user.model.certified}",
+            "example": false
+          },
+          "email": {
+            "type": "string",
+            "description": "User's email"
+          },
+          "id": {
+            "type": "string",
+            "description": "${swagger.onboarding.user.model.id}"
+          },
+          "institutionId": {
+            "type": "string",
+            "description": "${swagger.onboarding.user.model.institutionId}"
+          },
+          "name": {
+            "type": "string",
+            "description": "User's name"
+          },
+          "role": {
+            "type": "string",
+            "description": "User's role",
+            "enum": [
+              "DELEGATE",
+              "MANAGER",
+              "OPERATOR",
+              "SUB_DELEGATE"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "description": "${swagger.onboarding.user.model.status}"
           },
           "surname": {
             "type": "string",
