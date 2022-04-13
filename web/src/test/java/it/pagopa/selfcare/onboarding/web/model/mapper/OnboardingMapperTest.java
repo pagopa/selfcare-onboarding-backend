@@ -109,7 +109,7 @@ class OnboardingMapperTest {
         InstitutionResource resource = OnboardingMapper.toResource(model);
         //then
         assertNotNull(resource);
-        assertEquals(resource.getInstitutionId(), model.getInstitutionId());
+        assertEquals(resource.getExternalId(), model.getInstitutionId());
         assertEquals(resource.getDescription(), model.getDescription());
         TestUtils.reflectionEqualsByName(model, resource);
     }

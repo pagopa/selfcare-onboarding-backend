@@ -12,5 +12,8 @@ public class OnboardingResponseData {
     private String zipCode;
     private String digitalAddress;
     private RelationshipState state;
+    private String pricingPlan;
+    private ProductInfo productInfo;
+    private BillingData billing;
     private PartyRole role;
 }

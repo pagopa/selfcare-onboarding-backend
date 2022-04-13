@@ -7,7 +7,10 @@ import it.pagopa.selfcare.onboarding.connector.model.RelationshipInfo;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipsResponse;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionInfo;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.*;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingResponseData;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.User;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.UserInfo;
 import it.pagopa.selfcare.onboarding.connector.rest.client.PartyProcessRestClient;
 import it.pagopa.selfcare.onboarding.connector.rest.model.OnBoardingInfo;
 import it.pagopa.selfcare.onboarding.connector.rest.model.OnboardingContract;
@@ -28,8 +31,8 @@ import static it.pagopa.selfcare.onboarding.connector.model.RelationshipState.AC
 @Slf4j
 class PartyConnectorImpl implements PartyConnector {
 
-    private static final String REQUIRED_INSTITUTION_ID_MESSAGE = "An Institution id is required";
-    private static final String REQUIRED_PRODUCT_ID_MESSAGE = "A product Id is required";
+    protected static final String REQUIRED_INSTITUTION_ID_MESSAGE = "An Institution id is required";
+    protected static final String REQUIRED_PRODUCT_ID_MESSAGE = "A product Id is required";
 
     private final PartyProcessRestClient restClient;
     private static final BinaryOperator<InstitutionInfo> MERGE_FUNCTION =
@@ -43,6 +46,7 @@ class PartyConnectorImpl implements PartyConnector {
         institutionInfo.setTaxCode(onboardingData.getTaxCode());
         institutionInfo.setZipCode(onboardingData.getZipCode());
         institutionInfo.setDigitalAddress(onboardingData.getDigitalAddress());
+        institutionInfo.setBilling(onboardingData.getBilling());
         return institutionInfo;
     };
 
@@ -127,7 +131,7 @@ class PartyConnectorImpl implements PartyConnector {
         log.trace("getUserInstitutionRelationships start");
         log.debug("getUserInstitutionRelationships institutionId = {}, productId = {}", institutionId, productId);
         Assert.hasText(institutionId, REQUIRED_INSTITUTION_ID_MESSAGE);
-        Assert.hasText(productId, "A productId is required");
+        Assert.hasText(productId, REQUIRED_PRODUCT_ID_MESSAGE);
         RelationshipsResponse institutionRelationships = restClient.getUserInstitutionRelationships(
                 institutionId,
                 null,
@@ -148,13 +152,12 @@ class PartyConnectorImpl implements PartyConnector {
         Assert.hasText(institutionId, REQUIRED_INSTITUTION_ID_MESSAGE);
 
         Collection<UserInfo> userInfos = Collections.emptyList();
-        EnumSet<PartyRole> roles = null;
-        if (userInfoFilter.getRole().isPresent()) {
-            roles = Arrays.stream(PartyRole.values())
-                    .filter(partyRole -> partyRole.equals(userInfoFilter.getRole().get()))
-                    .collect(Collectors.toCollection(() -> EnumSet.noneOf(PartyRole.class)));
-        }
-        RelationshipsResponse institutionRelationships = restClient.getUserInstitutionRelationships(institutionId, roles, userInfoFilter.getAllowedStates().orElse(null), userInfoFilter.getProductId().map(Set::of).orElse(null), userInfoFilter.getProductRoles().orElse(null), userInfoFilter.getUserId().orElse(null));
+        RelationshipsResponse institutionRelationships = restClient.getUserInstitutionRelationships(institutionId,
+                userInfoFilter.getRole().orElse(null),
+                userInfoFilter.getAllowedStates().orElse(null),
+                userInfoFilter.getProductId().map(Set::of).orElse(null),
+                userInfoFilter.getProductRoles().orElse(null),
+                userInfoFilter.getUserId().orElse(null));
         if (institutionRelationships != null) {
             userInfos = institutionRelationships.stream()
                     .collect(Collectors.toMap(RelationshipInfo::getFrom,
@@ -177,15 +180,27 @@ class PartyConnectorImpl implements PartyConnector {
         return userInfos;
     }
 
-    //TODO add tests
     @Override
-    public Institution getInstitution(String institutionId) {
+    public Institution getInstitutionByExternalId(String institutionId) {
         log.trace("getInstitution start");
         log.debug("getInstitution institutionId = {}", institutionId);
         Assert.hasText(institutionId, REQUIRED_INSTITUTION_ID_MESSAGE);
         Institution result = restClient.getInstitutionByExternalId(institutionId);
         log.debug("getInstitution result = {}", result);
         log.trace("getInstitution end");
+        return result;
+    }
+
+    @Override
+    public InstitutionInfo getOnboardedInstitution(String institutionId) {
+        log.trace("getOnBoardedInstitution start");
+        log.debug("getOnBoardedInstitution institutionId = {}", institutionId);
+        Assert.hasText(institutionId, REQUIRED_INSTITUTION_ID_MESSAGE);
+        OnBoardingInfo onBoardingInfo = restClient.getOnBoardingInfo(institutionId, EnumSet.of(ACTIVE));
+        InstitutionInfo result = parseOnBoardingInfo(onBoardingInfo).stream()
+                .findAny().orElse(null);
+        log.debug(LogUtils.CONFIDENTIAL_MARKER, "getOnBoardedInstitution result = {}", result);
+        log.trace("getOnBoardedInstitution end");
         return result;
     }
 

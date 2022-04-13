@@ -41,7 +41,6 @@ public interface PartyProcessRestClient {
     OnBoardingInfo getOnBoardingInfo(@RequestParam(value = "institutionId", required = false) String institutionId,
                                      @RequestParam(value = "states", required = false) EnumSet<RelationshipState> states);
 
-    //TODO add tests
     @GetMapping(value = "${rest-client.party-process.getInstitutionByExternalId.path}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     Institution getInstitutionByExternalId(@PathVariable("externalId") String externalId);

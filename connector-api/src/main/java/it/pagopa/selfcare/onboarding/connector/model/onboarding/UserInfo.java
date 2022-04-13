@@ -22,13 +22,13 @@ public class UserInfo {
 
     @Data
     public static class UserInfoFilter {
-        private Optional<PartyRole> role = Optional.empty();
+        private Optional<EnumSet<PartyRole>> role = Optional.empty();
         private Optional<String> productId = Optional.empty();
         private Optional<Set<String>> productRoles = Optional.empty();
         private Optional<String> userId = Optional.empty();
         private Optional<EnumSet<RelationshipState>> allowedStates = Optional.empty();
 
-        public void setRole(Optional<PartyRole> role) {
+        public void setRole(Optional<EnumSet<PartyRole>> role) {
             this.role = role == null ? Optional.empty() : role;
         }
 

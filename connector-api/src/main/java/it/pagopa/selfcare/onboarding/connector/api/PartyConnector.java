@@ -18,6 +18,8 @@ public interface PartyConnector {
 
     Collection<UserInfo> getUsers(String institutionId, UserInfo.UserInfoFilter userInfoFilter);
 
-    Institution getInstitution(String institutionId);
+    Institution getInstitutionByExternalId(String institutionId);
+
+    InstitutionInfo getOnboardedInstitution(String institutionId);
 
 }

@@ -1,5 +1,7 @@
 package it.pagopa.selfcare.onboarding.connector.model.institutions;
 
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.BillingData;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.InstitutionType;
 import lombok.Data;
 
 import java.util.Objects;
@@ -15,7 +17,9 @@ public class InstitutionInfo {
     private String address;
     private String category;
     private String zipCode;
-
+    private BillingData billing;
+    private String origin;
+    private InstitutionType institutionType;
 
     @Override
     public boolean equals(Object o) {

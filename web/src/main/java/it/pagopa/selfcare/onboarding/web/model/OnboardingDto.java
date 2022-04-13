@@ -32,4 +32,7 @@ public class OnboardingDto {
     @JsonProperty(required = true)
     @NotBlank
     private String origin;
+
+    @ApiModelProperty(value = "${swagger.onboarding.institutions.model.pricingPlan}")
+    private String pricingPlan;
 }

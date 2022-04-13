@@ -9,15 +9,18 @@ import javax.validation.constraints.NotBlank;
 @Data
 public class InstitutionResource {
 
+    @ApiModelProperty(value = "${swagger.onboarding.institutions.model.id}", required = true)
+    private String id;
+
     @ApiModelProperty(value = "${swagger.onboarding.institutions.model.name}", required = true)
     @JsonProperty(required = true)
     @NotBlank
     private String description;
 
     @ApiModelProperty(value = "${swagger.onboarding.institutions.model.institutionId}", required = true)
-    @JsonProperty(required = true)
+    @JsonProperty(value = "institutionId", required = true)
     @NotBlank
-    private String institutionId;
+    private String externalId;
 
     @ApiModelProperty(value = "${swagger.onboarding.institutions.model.digitalAddress}", required = true)
     @JsonProperty(required = true)
@@ -38,5 +41,8 @@ public class InstitutionResource {
     @JsonProperty(required = true)
     @NotBlank
     private String taxCode;
+
+    @ApiModelProperty(value = "${swagger.onboarding.institutions.model.origin}", required = true)
+    private String origin;
 
 }

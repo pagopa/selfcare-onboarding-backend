@@ -3,9 +3,9 @@ package it.pagopa.selfcare.onboarding.web.controller;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.UserInfo;
+import it.pagopa.selfcare.onboarding.connector.model.InstitutionOnboardingData;
+import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
 import it.pagopa.selfcare.onboarding.core.InstitutionService;
-import it.pagopa.selfcare.onboarding.web.model.InstitutionData;
 import it.pagopa.selfcare.onboarding.web.model.InstitutionOnboardingInfoResource;
 import it.pagopa.selfcare.onboarding.web.model.InstitutionResource;
 import it.pagopa.selfcare.onboarding.web.model.OnboardingDto;
@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
-@RequestMapping(value = "/institutions", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/institutions", produces = MediaType.APPLICATION_JSON_VALUE)
 @Api(tags = "institutions")
 public class InstitutionController {
 
@@ -63,11 +63,9 @@ public class InstitutionController {
                                                                           @ApiParam("${swagger.onboarding.products.model.id}")
                                                                           @PathVariable("productId")
                                                                                   String productId) {
-        UserInfo manager = institutionService.getManager(institutionId, productId);
 
-        InstitutionOnboardingInfoResource resource = new InstitutionOnboardingInfoResource();
-        resource.setManager(OnboardingMapper.toResource(manager));
-        //TODO for now retrieve just the Manager
+        InstitutionOnboardingData institutionOnboardingData = institutionService.getInstitutionOnboardingData(institutionId, productId);
+        InstitutionOnboardingInfoResource resource = OnboardingMapper.toResource(institutionOnboardingData);
 
         return resource;
     }
@@ -75,17 +73,19 @@ public class InstitutionController {
     @GetMapping(value = "/{institutionId}/data")
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "", notes = "${swagger.onboarding.institutions.api.manager}")
-    public InstitutionData getInstitutionData(@ApiParam("${swagger.onboarding.institutions.model.id}")
-                                              @PathVariable("institutionId")
-                                                      String institutionId) {
+    public InstitutionResource getInstitutionData(@ApiParam("${swagger.onboarding.institutions.model.id}")
+                                                  @PathVariable("institutionId")
+                                                          String institutionId) {
+        Institution institution = institutionService.getInstitutionByExternalId(institutionId);//TODO change to institutionInfo
+        InstitutionResource result = OnboardingMapper.toResource(institution);
 
-        return null;
+        return result;
     }
 
 
     @GetMapping("")
     @ResponseStatus(HttpStatus.OK)
-    @ApiOperation(value = "", notes = "${swagger.dashboard.institutions.api.getInstitutions}")
+    @ApiOperation(value = "", notes = "${swagger.onboarding.institutions.api.getInstitutions}")
     public List<InstitutionResource> getInstitutions() {//TODO se party restituisce i billingData in questa response potremmo decidere di resituirli direttamente qua al FE
         log.trace("getInstitutions start");
         List<InstitutionResource> institutionResources = institutionService.getInstitutions()

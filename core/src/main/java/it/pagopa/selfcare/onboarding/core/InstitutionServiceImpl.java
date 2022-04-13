@@ -1,10 +1,14 @@
 package it.pagopa.selfcare.onboarding.core;
 
 import it.pagopa.selfcare.commons.base.logging.LogUtils;
+import it.pagopa.selfcare.commons.base.security.SelfCareAuthority;
+import it.pagopa.selfcare.commons.base.security.SelfCareUser;
 import it.pagopa.selfcare.onboarding.connector.api.PartyConnector;
 import it.pagopa.selfcare.onboarding.connector.api.ProductsConnector;
+import it.pagopa.selfcare.onboarding.connector.model.InstitutionOnboardingData;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipState;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipsResponse;
+import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionInfo;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.PartyRole;
@@ -15,13 +19,17 @@ import it.pagopa.selfcare.onboarding.core.exceptions.ProductHasNoRelationshipExc
 import it.pagopa.selfcare.onboarding.core.exceptions.ResourceNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import javax.validation.ValidationException;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.EnumSet;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -101,22 +109,59 @@ class InstitutionServiceImpl implements InstitutionService {
     }
 
     @Override
-    public UserInfo getManager(String institutionId, String productId) {
+    public InstitutionOnboardingData getInstitutionOnboardingData(String institutionId, String productId) {
         log.trace("getManager start");
         log.debug("getManager institutionId = {}, productId = {}", institutionId, productId);
-        Assert.hasText(institutionId, REQUIRED_INSTITUTION_ID_MESSAGE);
-        UserInfo.UserInfoFilter userInfoFilter = new UserInfo.UserInfoFilter();
-        userInfoFilter.setProductId(Optional.of(productId));
-        userInfoFilter.setRole(Optional.of(PartyRole.MANAGER));
-        userInfoFilter.setAllowedState(Optional.of(EnumSet.of(RelationshipState.ACTIVE)));
-        Collection<UserInfo> userInfos = getUsers(institutionId, userInfoFilter);
-        if (!userInfos.iterator().hasNext()) {
-            throw new ResourceNotFoundException("No Manager found for given institution");
+        InstitutionOnboardingData result = new InstitutionOnboardingData();
+
+        EnumSet<PartyRole> roles = Arrays.stream(PartyRole.values())
+                .filter(partyRole -> SelfCareAuthority.ADMIN.equals(partyRole.getSelfCareAuthority()))
+                .collect(Collectors.toCollection(() -> EnumSet.noneOf(PartyRole.class)));
+        if (checkAuthority(institutionId, productId, roles)) {
+            UserInfo.UserInfoFilter userInfoFilter = new UserInfo.UserInfoFilter();
+            userInfoFilter.setProductId(Optional.of(productId));
+            Assert.hasText(institutionId, REQUIRED_INSTITUTION_ID_MESSAGE);
+            userInfoFilter.setRole(Optional.of(EnumSet.of(PartyRole.MANAGER)));
+            userInfoFilter.setAllowedState(Optional.of(EnumSet.of(RelationshipState.ACTIVE)));
+            Collection<UserInfo> userInfos = getUsers(institutionId, userInfoFilter);
+            if (!userInfos.iterator().hasNext()) {
+                throw new ResourceNotFoundException("No Manager found for given institution");
+            }
+            UserInfo manager = userInfos.iterator().next();
+            result.setManager(manager);
         }
-        UserInfo result = userInfos.iterator().next();
+        InstitutionInfo institution = partyConnector.getOnboardedInstitution(institutionId);
+        result.setInstitution(institution);
         log.debug(LogUtils.CONFIDENTIAL_MARKER, "getManager result = {}", result);
         log.trace("getManager end");
         return result;
+    }
+
+    private Boolean checkAuthority(String institutionId, String productId, EnumSet<PartyRole> roles) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Assert.state(authentication != null, "Authentication is required");
+        Assert.state(authentication.getPrincipal() instanceof SelfCareUser, "Not SelfCareUser principal");
+        SelfCareUser principal = ((SelfCareUser) authentication.getPrincipal());
+        UserInfo.UserInfoFilter filter = new UserInfo.UserInfoFilter();
+        filter.setUserId(Optional.of(principal.getId()));
+        filter.setProductId(Optional.of(productId));
+        filter.setAllowedState(Optional.of(EnumSet.of(RelationshipState.ACTIVE)));
+        filter.setRole(Optional.of(roles));
+
+        Collection<UserInfo> userInfos = getUsers(institutionId, filter);
+        return userInfos.iterator().hasNext();
+
+    }
+
+    @Override
+    public Institution getInstitutionByExternalId(String institutionId) {
+        log.trace("getInstitutionData start");
+        log.debug("getInstitutionData institutionId = {}", institutionId);
+        Assert.hasText(institutionId, REQUIRED_INSTITUTION_ID_MESSAGE);
+        Institution institution = partyConnector.getInstitutionByExternalId(institutionId);
+        log.debug("getInstitutionData result = {}", institution);
+        log.trace("getInstitutionData end");
+        return institution;
     }
 
     private Collection<UserInfo> getUsers(String institutionId, UserInfo.UserInfoFilter userInfoFilter) {

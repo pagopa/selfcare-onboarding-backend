@@ -1,5 +1,7 @@
 package it.pagopa.selfcare.onboarding.web.model.mapper;
 
+import it.pagopa.selfcare.onboarding.connector.model.InstitutionOnboardingData;
+import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionInfo;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.BillingData;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
@@ -65,11 +67,55 @@ public class OnboardingMapper {
         if (model != null) {
             resource = new InstitutionResource();
             resource.setDescription(model.getDescription());
-            resource.setInstitutionId(model.getInstitutionId());
+            resource.setExternalId(model.getInstitutionId());
             resource.setAddress(model.getAddress());
             resource.setDigitalAddress(model.getDigitalAddress());
             resource.setTaxCode(model.getTaxCode());
             resource.setZipCode(model.getZipCode());
+        }
+        return resource;
+    }
+
+    public static InstitutionResource toResource(Institution model) {
+        InstitutionResource resource = null;
+        if (model != null) {
+            resource = new InstitutionResource();
+            resource.setId(model.getId());
+            resource.setDescription(model.getDescription());
+            resource.setExternalId(model.getInstitutionId());
+            resource.setAddress(model.getAddress());
+            resource.setDigitalAddress(model.getDigitalAddress());
+            resource.setTaxCode(model.getTaxCode());
+            resource.setZipCode(model.getZipCode());
+        }
+        return resource;
+    }
+
+    public static InstitutionOnboardingInfoResource toResource(InstitutionOnboardingData model) {
+        InstitutionOnboardingInfoResource resource = null;
+        if (model != null) {
+            resource = new InstitutionOnboardingInfoResource();
+            resource.setManager(toResource(model.getManager()));
+            resource.setInstitution(toData(model.getInstitution()));
+        }
+        return resource;
+    }
+
+    public static InstitutionData toData(InstitutionInfo model) {
+        InstitutionData resource = null;
+        if (model != null) {
+            resource = new InstitutionData();
+            BillingDataDto billing = new BillingDataDto();
+            billing.setDigitalAddress(model.getDigitalAddress());
+            billing.setPublicService(model.getBilling().isPublicService());
+            billing.setRecipientCode(model.getBilling().getRecipientCode());
+            billing.setTaxCode(model.getTaxCode());
+            billing.setVatNumber(model.getBilling().getVatNumber());
+            billing.setBusinessName(model.getDescription());
+            billing.setRegisteredOffice(model.getAddress());
+            resource.setBillingData(billing);
+            resource.setOrigin(model.getOrigin());
+            resource.setInstitutionType(model.getInstitutionType());
         }
         return resource;
     }

@@ -3,6 +3,7 @@ package it.pagopa.selfcare.onboarding.core;
 import it.pagopa.selfcare.commons.utils.TestUtils;
 import it.pagopa.selfcare.onboarding.connector.api.PartyConnector;
 import it.pagopa.selfcare.onboarding.connector.api.ProductsConnector;
+import it.pagopa.selfcare.onboarding.connector.model.InstitutionOnboardingData;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipInfo;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipState;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipsResponse;
@@ -460,7 +461,7 @@ class InstitutionServiceImplTest {
         String institutionId = null;
         String productId = "productId";
         //when
-        Executable executable = () -> institutionService.getManager(institutionId, productId);
+        Executable executable = () -> institutionService.getInstitutionOnboardingData(institutionId, productId);
         //then
         IllegalArgumentException e = assertThrows(IllegalArgumentException.class, executable);
         assertEquals(REQUIRED_INSTITUTION_ID_MESSAGE, e.getMessage());
@@ -473,7 +474,7 @@ class InstitutionServiceImplTest {
         String institutionId = "institutionId";
         String productId = "productId";
         //when
-        Executable executable = () -> institutionService.getManager(institutionId, productId);
+        Executable executable = () -> institutionService.getInstitutionOnboardingData(institutionId, productId);
         //then
         ResourceNotFoundException e = assertThrows(ResourceNotFoundException.class, executable);
         assertEquals("No Manager found for given institution", e.getMessage());
@@ -488,7 +489,7 @@ class InstitutionServiceImplTest {
     }
 
     @Test
-    void getManager() {
+    void getInstitutionOnboardingData() {
         //given
         String institutionId = "institutionId";
         String productId = "productId";
@@ -497,13 +498,13 @@ class InstitutionServiceImplTest {
         Mockito.when(partyConnectorMock.getUsers(Mockito.anyString(), Mockito.any()))
                 .thenReturn(List.of(userInfoMock));
         //when
-        UserInfo manager = institutionService.getManager(institutionId, productId);
+        InstitutionOnboardingData institutionOnboardingData = institutionService.getInstitutionOnboardingData(institutionId, productId);
         //then
-        assertNotNull(manager);
-        assertEquals(userInfoMock.getInstitutionId(), manager.getInstitutionId());
-        assertEquals(userInfoMock.getId(), manager.getId());
-        assertEquals(userInfoMock.getEmail(), manager.getEmail());
-        assertEquals(userInfoMock.getRole(), manager.getRole());
+        assertNotNull(institutionOnboardingData);
+        assertEquals(userInfoMock.getInstitutionId(), institutionOnboardingData.getManager().getInstitutionId());
+        assertEquals(userInfoMock.getId(), institutionOnboardingData.getManager().getId());
+        assertEquals(userInfoMock.getEmail(), institutionOnboardingData.getManager().getEmail());
+        assertEquals(userInfoMock.getRole(), institutionOnboardingData.getManager().getRole());
         ArgumentCaptor<UserInfo.UserInfoFilter> filterCaptor = ArgumentCaptor.forClass(UserInfo.UserInfoFilter.class);
         Mockito.verify(partyConnectorMock, Mockito.times(1))
                 .getUsers(Mockito.eq(institutionId), filterCaptor.capture());

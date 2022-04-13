@@ -34,7 +34,7 @@ class InstitutionResourceTest {
         toCheckMap.put("name", NotBlank.class);
 
         InstitutionResource institutionResource = new InstitutionResource();
-        institutionResource.setInstitutionId(null);
+        institutionResource.setExternalId(null);
         institutionResource.setDescription(null);
 
         // when
