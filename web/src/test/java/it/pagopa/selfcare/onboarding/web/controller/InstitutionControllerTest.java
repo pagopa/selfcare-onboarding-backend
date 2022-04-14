@@ -1,6 +1,5 @@
 package it.pagopa.selfcare.onboarding.web.controller;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.pagopa.selfcare.commons.utils.TestUtils;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionInfo;
@@ -81,12 +80,8 @@ class InstitutionControllerTest {
         assertEquals(productId, captured.getProductId());
         assertNotNull(captured.getUsers());
         assertEquals(1, captured.getUsers().size());
-        assertEquals(billingData.getTaxCode(), captured.getBillingData().getTaxCode());
-        assertEquals(billingData.getBusinessName(), captured.getBillingData().getDescription());
         assertEquals(billingData.getRecipientCode(), captured.getBillingData().getRecipientCode());
         assertEquals(billingData.getVatNumber(), captured.getBillingData().getVatNumber());
-        assertEquals(billingData.getDigitalAddress(), captured.getBillingData().getDigitalAddress());
-        assertEquals(billingData.getRegisteredOffice(), captured.getBillingData().getPhysicalAddress());
         assertEquals(billingData.getPublicService(), captured.getBillingData().isPublicService());
         assertEquals(userDtos.get(0).getName(), captured.getUsers().get(0).getName());
         assertEquals(userDtos.get(0).getSurname(), captured.getUsers().get(0).getSurname());

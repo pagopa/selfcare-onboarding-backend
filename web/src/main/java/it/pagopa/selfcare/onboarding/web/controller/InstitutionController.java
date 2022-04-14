@@ -82,6 +82,7 @@ public class InstitutionController {
     }
 
 
+
     @GetMapping("")
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "", notes = "${swagger.onboarding.institutions.api.getInstitutions}")
@@ -94,6 +95,6 @@ public class InstitutionController {
         log.debug("getInstitutions institutionResources = {}", institutionResources);
         log.trace("getInstitutions end");
         return institutionResources;
-    }
+}
 
 }

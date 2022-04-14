@@ -203,6 +203,4 @@ class PartyConnectorImpl implements PartyConnector {
         log.trace("getOnBoardedInstitution end");
         return result;
     }
-
-
 }
