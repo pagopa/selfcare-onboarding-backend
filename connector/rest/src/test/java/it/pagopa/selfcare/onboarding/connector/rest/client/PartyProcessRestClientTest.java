@@ -220,6 +220,7 @@ class PartyProcessRestClientTest extends BaseFeignRestClientTest {
         //then
         assertNotNull(response);
         assertNotNull(response.getId());
+        assertNotNull(response.getAddress());
     }
 
     @Test
@@ -236,6 +237,8 @@ class PartyProcessRestClientTest extends BaseFeignRestClientTest {
         assertNull(response.getInstitutionId());
         assertNull(response.getTaxCode());
         assertNull(response.getZipCode());
+        assertNull(response.getOrigin());
+        assertNull(response.getAttributes());
     }
 
 

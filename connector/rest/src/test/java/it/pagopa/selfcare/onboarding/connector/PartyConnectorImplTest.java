@@ -442,10 +442,6 @@ class PartyConnectorImplTest {
         assertEquals(onboardingData.getInstitutionId(), institutionInfo.getInstitutionId());
         assertEquals(onboardingData.getState().toString(), institutionInfo.getStatus());
         assertEquals(onboardingData.getAddress(), institutionInfo.getAddress());
-        assertEquals(onboardingData.getBilling().getDescription(), institutionInfo.getBilling().getDescription());
-        assertEquals(onboardingData.getBilling().getDigitalAddress(), institutionInfo.getBilling().getDigitalAddress());
-        assertEquals(onboardingData.getBilling().getTaxCode(), institutionInfo.getBilling().getTaxCode());
-        assertEquals(onboardingData.getBilling().getPhysicalAddress(), institutionInfo.getBilling().getPhysicalAddress());
         assertEquals(onboardingData.getBilling().getRecipientCode(), institutionInfo.getBilling().getRecipientCode());
         assertEquals(onboardingData.getBilling().isPublicService(), institutionInfo.getBilling().isPublicService());
         assertEquals(onboardingData.getBilling().getVatNumber(), institutionInfo.getBilling().getVatNumber());

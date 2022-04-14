@@ -12,7 +12,13 @@
       "digitalAddress": "string",
       "address": "string",
       "zipCode": "string",
-      "taxCode": "string"
+      "taxCode": "string",
+      "origin": "string",
+      "attributes": {
+        "origin": "string",
+        "code": "string",
+        "description": "string"
+      }
     },
     "headers": {
       "Content-Type": "application/json"

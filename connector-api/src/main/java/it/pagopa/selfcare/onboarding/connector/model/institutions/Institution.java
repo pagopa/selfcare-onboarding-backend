@@ -14,6 +14,7 @@ public class Institution {
     private String zipCode;
     private String taxCode;
     private InstitutionType type;
+    private String origin;
     private Attributes attributes;
 
 }

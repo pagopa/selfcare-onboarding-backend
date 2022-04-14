@@ -8,6 +8,8 @@ import it.pagopa.selfcare.onboarding.connector.api.ProductsConnector;
 import it.pagopa.selfcare.onboarding.connector.model.InstitutionOnboardingData;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipInfo;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipsResponse;
+import it.pagopa.selfcare.onboarding.connector.model.institutions.Attributes;
+import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionInfo;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.*;
 import it.pagopa.selfcare.onboarding.connector.model.product.Product;
@@ -16,12 +18,14 @@ import it.pagopa.selfcare.onboarding.core.exceptions.InternalServerException;
 import it.pagopa.selfcare.onboarding.core.exceptions.ProductHasNoRelationshipException;
 import it.pagopa.selfcare.onboarding.core.exceptions.ResourceNotFoundException;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.authentication.TestingAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.test.context.TestSecurityContextHolder;
 
 import javax.validation.ValidationException;
@@ -47,6 +51,10 @@ class InstitutionServiceImplTest {
     @Captor
     ArgumentCaptor<OnboardingData> onboardingDataCaptor;
 
+    @BeforeEach
+    void beforeEach() {
+        SecurityContextHolder.clearContext();
+    }
 
     @Test
     void onboarding_nullOnboardingData() {
@@ -704,5 +712,43 @@ class InstitutionServiceImplTest {
 
     }
 
+    @Test
+    void getInstitutionByExternalId_nullInstitutionId() {
+        //given
+        String institutionId = null;
+        //when
+        Executable executable = () -> institutionService.getInstitutionByExternalId(institutionId);
+        //then
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, executable);
+        assertEquals(REQUIRED_INSTITUTION_ID_MESSAGE, e.getMessage());
+        Mockito.verifyNoInteractions(partyConnectorMock);
+    }
+
+    @Test
+    void getInstitutionByExternalId() {
+        //given
+        String institutionId = "institutionId";
+        Institution institutionMock = TestUtils.mockInstance(new Institution());
+        Attributes attributes = TestUtils.mockInstance(new Attributes());
+        institutionMock.setAttributes(attributes);
+        Mockito.when(partyConnectorMock.getInstitutionByExternalId(Mockito.anyString()))
+                .thenReturn(institutionMock);
+        //when
+        Institution result = institutionService.getInstitutionByExternalId(institutionId);
+        //then
+        assertNotNull(result);
+        assertEquals(institutionMock.getInstitutionId(), result.getInstitutionId());
+        assertEquals(institutionMock.getId(), result.getId());
+        assertEquals(institutionMock.getOrigin(), result.getOrigin());
+        assertEquals(institutionMock.getType(), result.getType());
+        assertEquals(institutionMock.getDescription(), result.getDescription());
+        assertEquals(institutionMock.getTaxCode(), result.getTaxCode());
+        assertEquals(institutionMock.getZipCode(), result.getZipCode());
+        assertEquals(institutionMock.getAddress(), result.getAddress());
+        assertEquals(institutionMock.getAttributes(), result.getAttributes());
+        Mockito.verify(partyConnectorMock, Mockito.times(1))
+                .getInstitutionByExternalId(Mockito.eq(institutionId));
+        Mockito.verifyNoMoreInteractions(partyConnectorMock);
+    }
 
 }
