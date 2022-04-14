@@ -75,18 +75,17 @@ public class InstitutionController {
     public InstitutionResource getInstitutionData(@ApiParam("${swagger.onboarding.institutions.model.id}")
                                                   @PathVariable("institutionId")
                                                           String institutionId) {
-        Institution institution = institutionService.getInstitutionByExternalId(institutionId);//TODO change to institutionInfo
+        Institution institution = institutionService.getInstitutionByExternalId(institutionId);
         InstitutionResource result = OnboardingMapper.toResource(institution);
 
         return result;
     }
 
 
-
     @GetMapping("")
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "", notes = "${swagger.onboarding.institutions.api.getInstitutions}")
-    public List<InstitutionResource> getInstitutions() {//TODO se party restituisce i billingData in questa response potremmo decidere di resituirli direttamente qua al FE
+    public List<InstitutionResource> getInstitutions() {
         log.trace("getInstitutions start");
         List<InstitutionResource> institutionResources = institutionService.getInstitutions()
                 .stream()
@@ -95,6 +94,6 @@ public class InstitutionController {
         log.debug("getInstitutions institutionResources = {}", institutionResources);
         log.trace("getInstitutions end");
         return institutionResources;
-}
+    }
 
 }

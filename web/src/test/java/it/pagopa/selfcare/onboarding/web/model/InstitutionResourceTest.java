@@ -31,7 +31,12 @@ class InstitutionResourceTest {
         // given
         HashMap<String, Class<? extends Annotation>> toCheckMap = new HashMap<>();
         toCheckMap.put("id", NotBlank.class);
-        toCheckMap.put("name", NotBlank.class);
+        toCheckMap.put("description", NotBlank.class);
+        toCheckMap.put("externalId", NotBlank.class);
+        toCheckMap.put("digitalAddress", NotBlank.class);
+        toCheckMap.put("address", NotBlank.class);
+        toCheckMap.put("zipCode", NotBlank.class);
+        toCheckMap.put("taxCode", NotBlank.class);
 
         InstitutionResource institutionResource = new InstitutionResource();
         institutionResource.setExternalId(null);

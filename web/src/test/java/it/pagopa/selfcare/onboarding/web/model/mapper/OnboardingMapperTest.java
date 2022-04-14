@@ -32,11 +32,7 @@ class OnboardingMapperTest {
         assertEquals(1, model.getUsers().size());
         assertEquals(institutionId, resource.getInstitutionId());
         assertEquals(productId, resource.getProductId());
-        assertEquals(billingDataDto.getBusinessName(), resource.getBillingData().getDescription());
         assertEquals(billingDataDto.getPublicService(), resource.getBillingData().isPublicService());
-        assertEquals(billingDataDto.getRegisteredOffice(), resource.getBillingData().getPhysicalAddress());
-        assertEquals(billingDataDto.getDigitalAddress(), resource.getBillingData().getDigitalAddress());
-        assertEquals(billingDataDto.getTaxCode(), resource.getBillingData().getTaxCode());
         assertEquals(billingDataDto.getVatNumber(), resource.getBillingData().getVatNumber());
         assertEquals(billingDataDto.getRecipientCode(), resource.getBillingData().getRecipientCode());
         assertEquals(userDtos.get(0).getEmail(), resource.getUsers().get(0).getEmail());
@@ -105,13 +101,19 @@ class OnboardingMapperTest {
     void toResource_institutionInfo() {
         //given
         InstitutionInfo model = TestUtils.mockInstance(new InstitutionInfo());
+        model.setBilling(TestUtils.mockInstance(new BillingData()));
         //when
         InstitutionResource resource = OnboardingMapper.toResource(model);
         //then
         assertNotNull(resource);
         assertEquals(resource.getExternalId(), model.getInstitutionId());
         assertEquals(resource.getDescription(), model.getDescription());
-        TestUtils.reflectionEqualsByName(model, resource);
+        assertEquals(resource.getAddress(), model.getAddress());
+        assertEquals(resource.getDigitalAddress(), model.getDigitalAddress());
+        assertEquals(resource.getZipCode(), model.getZipCode());
+        assertEquals(resource.getTaxCode(), model.getTaxCode());
+        assertEquals(resource.getOrigin(), model.getOrigin());
+
     }
 
     @Test

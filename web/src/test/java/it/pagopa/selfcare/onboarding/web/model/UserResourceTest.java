@@ -37,6 +37,8 @@ class UserResourceTest {
         toCheckMap.put("taxCode", NotBlank.class);
         toCheckMap.put("role", NotNull.class);
         toCheckMap.put("email", NotBlank.class);
+        toCheckMap.put("status", NotBlank.class);
+        toCheckMap.put("id", NotBlank.class);
         UserResource model = new UserResource();
         // when
         Set<ConstraintViolation<Object>> violations = validator.validate(model);

@@ -68,6 +68,7 @@ public class OnboardingMapper {
             resource.setDigitalAddress(model.getDigitalAddress());
             resource.setTaxCode(model.getTaxCode());
             resource.setZipCode(model.getZipCode());
+            resource.setOrigin(model.getOrigin());
         }
         return resource;
     }
@@ -83,6 +84,7 @@ public class OnboardingMapper {
             resource.setDigitalAddress(model.getDigitalAddress());
             resource.setTaxCode(model.getTaxCode());
             resource.setZipCode(model.getZipCode());
+            resource.setOrigin(model.getOrigin());
         }
         return resource;
     }

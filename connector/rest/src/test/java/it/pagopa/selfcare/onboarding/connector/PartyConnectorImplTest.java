@@ -1,8 +1,15 @@
 package it.pagopa.selfcare.onboarding.connector;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import it.pagopa.selfcare.commons.utils.TestUtils;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipInfo;
-import it.pagopa.selfcare.onboarding.connector.model.RelationshipState;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipsResponse;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionInfo;
@@ -17,12 +24,17 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.util.ResourceUtils;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
 import static it.pagopa.selfcare.onboarding.connector.PartyConnectorImpl.REQUIRED_INSTITUTION_ID_MESSAGE;
+import static it.pagopa.selfcare.onboarding.connector.PartyConnectorImpl.REQUIRED_PRODUCT_ID_MESSAGE;
 import static it.pagopa.selfcare.onboarding.connector.model.RelationshipState.ACTIVE;
+import static it.pagopa.selfcare.onboarding.connector.model.RelationshipState.PENDING;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -37,6 +49,20 @@ class PartyConnectorImplTest {
     @Captor
     ArgumentCaptor<OnboardingRequest> onboardingRequestCaptor;
 
+    private final ObjectMapper mapper;
+
+    public PartyConnectorImplTest() {
+        mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+        mapper.registerModule(new Jdk8Module());
+        mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+        mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        mapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.NONE);
+        mapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
+        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        mapper.setTimeZone(TimeZone.getDefault());
+    }
 
     @Test
     void onboardingOrganization_nullOnboardingData() {
@@ -102,10 +128,10 @@ class PartyConnectorImplTest {
         OnboardingResponseData onboardingData1 = TestUtils.mockInstance(new OnboardingResponseData(), 1, "setState");
         onboardingData1.setState(ACTIVE);
         OnboardingResponseData onboardingData2 = TestUtils.mockInstance(new OnboardingResponseData(), 2, "setState", "setInstitutionId");
-        onboardingData2.setState(RelationshipState.PENDING);
+        onboardingData2.setState(PENDING);
         onboardingData2.setInstitutionId(onboardingData1.getInstitutionId());
         OnboardingResponseData onboardingData3 = TestUtils.mockInstance(new OnboardingResponseData(), 3, "setState");
-        onboardingData3.setState(RelationshipState.PENDING);
+        onboardingData3.setState(PENDING);
         onBoardingInfo.setInstitutions(List.of(onboardingData1, onboardingData2, onboardingData3, onboardingData3));
         Mockito.when(restClientMock.getOnBoardingInfo(Mockito.any(), Mockito.any()))
                 .thenReturn(onBoardingInfo);
@@ -122,7 +148,7 @@ class PartyConnectorImplTest {
         assertEquals(onboardingData1.getDescription(), institutionInfos.get(0).getDescription());
         assertEquals(onboardingData1.getInstitutionId(), institutionInfos.get(0).getInstitutionId());
         assertEquals(onboardingData1.getState().toString(), institutionInfos.get(0).getStatus());
-        institutionInfos = map.get(RelationshipState.PENDING.name());
+        institutionInfos = map.get(PENDING.name());
         assertNotNull(institutionInfos);
         assertEquals(1, institutionInfos.size());
         assertEquals(onboardingData3.getDescription(), institutionInfos.get(0).getDescription());
@@ -230,7 +256,7 @@ class PartyConnectorImplTest {
         Executable executable = () -> partyConnector.getUserInstitutionRelationships(institutionId, productId);
         //then
         IllegalArgumentException e = Assertions.assertThrows(IllegalArgumentException.class, executable);
-        Assertions.assertEquals("An Institution id is required", e.getMessage());
+        Assertions.assertEquals(REQUIRED_INSTITUTION_ID_MESSAGE, e.getMessage());
         Mockito.verifyNoInteractions(restClientMock);
     }
 
@@ -243,7 +269,7 @@ class PartyConnectorImplTest {
         Executable executable = () -> partyConnector.getUserInstitutionRelationships(institutionId, productId);
         //then
         IllegalArgumentException e = Assertions.assertThrows(IllegalArgumentException.class, executable);
-        Assertions.assertEquals("A productId is required", e.getMessage());
+        Assertions.assertEquals(REQUIRED_PRODUCT_ID_MESSAGE, e.getMessage());
         Mockito.verifyNoInteractions(restClientMock);
     }
 
@@ -256,7 +282,7 @@ class PartyConnectorImplTest {
         Executable executable = () -> partyConnector.getUsers(institutionId, filter);
         //then
         IllegalArgumentException e = assertThrows(IllegalArgumentException.class, executable);
-        Assertions.assertEquals("An Institution id is required", e.getMessage());
+        Assertions.assertEquals(REQUIRED_INSTITUTION_ID_MESSAGE, e.getMessage());
         Mockito.verifyNoInteractions(restClientMock);
 
     }
@@ -383,6 +409,81 @@ class PartyConnectorImplTest {
         Mockito.verify(restClientMock, Mockito.times(1))
                 .getUserInstitutionRelationships(Mockito.eq(institutionId), Mockito.isNotNull(), Mockito.notNull(), Mockito.isNull(), Mockito.isNull(), Mockito.any());
         Mockito.verifyNoMoreInteractions(restClientMock);
+    }
+
+    @Test
+    void getUsers_activeRoleUserDifferentStatus2() {
+        //given
+        String institutionId = "institutionId";
+        UserInfo.UserInfoFilter userInfoFilter = new UserInfo.UserInfoFilter();
+
+        RelationshipInfo relationshipInfo1 = TestUtils.mockInstance(new RelationshipInfo(), "setFrom");
+        String id = "id";
+        relationshipInfo1.setFrom(id);
+        relationshipInfo1.setName("user1");
+        relationshipInfo1.setRole(PartyRole.OPERATOR);
+        relationshipInfo1.setState(PENDING);
+        RelationshipInfo relationshipInfo2 = TestUtils.mockInstance(new RelationshipInfo(), "setFrom");
+        relationshipInfo2.setFrom(id);
+        relationshipInfo2.setName("user1");
+        relationshipInfo2.setRole(PartyRole.DELEGATE);
+        relationshipInfo2.setState(ACTIVE);
+        RelationshipsResponse relationshipsResponse = new RelationshipsResponse();
+        relationshipsResponse.add(relationshipInfo1);
+        relationshipsResponse.add(relationshipInfo2);
+        Mockito.when(restClientMock.getUserInstitutionRelationships(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any()))
+                .thenReturn(relationshipsResponse);
+        //when
+        Collection<UserInfo> userInfos = partyConnector.getUsers(institutionId, userInfoFilter);
+        UserInfo userInfo = userInfos.iterator().next();
+        //Then
+        Assertions.assertEquals("user1", userInfo.getName());
+        Assertions.assertEquals(PartyRole.DELEGATE, userInfo.getRole());
+        Assertions.assertEquals("ACTIVE", userInfo.getStatus());
+        Assertions.assertEquals(1, userInfos.size());
+    }
+
+    @Test
+    void getUsers_higherRoleForPendingUsers() throws IOException {
+        //given
+        String institutionId = "institutionId";
+        UserInfo.UserInfoFilter userInfoFilter = new UserInfo.UserInfoFilter();
+
+
+        File stub = ResourceUtils.getFile("classpath:stubs/PartyConnectorImplTest/getUserInstitutionRelationships/higher-role-pending.json");
+        RelationshipsResponse relationshipsResponse = mapper.readValue(stub, RelationshipsResponse.class);
+
+        Mockito.when(restClientMock.getUserInstitutionRelationships(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any()))
+                .thenReturn(relationshipsResponse);
+        //when
+        Collection<UserInfo> userInfos = partyConnector.getUsers(institutionId, userInfoFilter);
+        UserInfo userInfo = userInfos.iterator().next();
+        //Then
+        Assertions.assertEquals("user1", userInfo.getName());
+        Assertions.assertEquals(PartyRole.DELEGATE, userInfo.getRole());
+        Assertions.assertEquals("PENDING", userInfo.getStatus());
+        Assertions.assertEquals(1, userInfos.size());
+    }
+
+    @Test
+    void getUsers_higherRoleForActiveUsers() throws IOException {
+        //given
+        String institutionId = "institutionId";
+        UserInfo.UserInfoFilter userInfoFilter = new UserInfo.UserInfoFilter();
+
+        File stub = ResourceUtils.getFile("classpath:stubs/PartyConnectorImplTest/getUserInstitutionRelationships/higher-role-active.json");
+        RelationshipsResponse relationshipsResponse = mapper.readValue(stub, RelationshipsResponse.class);
+
+        Mockito.when(restClientMock.getUserInstitutionRelationships(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any()))
+                .thenReturn(relationshipsResponse);
+        //when
+        Collection<UserInfo> userInfos = partyConnector.getUsers(institutionId, userInfoFilter);
+        //Then
+        Assertions.assertEquals(1, userInfos.size());
+        UserInfo userInfo = userInfos.iterator().next();
+        Assertions.assertEquals("user1", userInfo.getName());
+        Assertions.assertEquals(PartyRole.DELEGATE, userInfo.getRole());
+        Assertions.assertEquals("ACTIVE", userInfo.getStatus());
     }
 
     @Test
