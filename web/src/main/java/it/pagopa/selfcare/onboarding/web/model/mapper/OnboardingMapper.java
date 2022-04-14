@@ -17,14 +17,10 @@ public class OnboardingMapper {
         BillingData resource = null;
         if (model != null) {
             resource = new BillingData();
-            resource.setDescription(model.getBusinessName());
-            resource.setTaxCode(model.getTaxCode());
-            resource.setDigitalAddress(model.getDigitalAddress());
             resource.setVatNumber(model.getVatNumber());
-            resource.setPhysicalAddress(model.getRegisteredOffice());
             resource.setRecipientCode(model.getRecipientCode());
             if (model.getPublicService() != null) {
-                resource.setPublicService(true);
+                resource.setPublicService(model.getPublicService().booleanValue());
             }
         }
         return resource;

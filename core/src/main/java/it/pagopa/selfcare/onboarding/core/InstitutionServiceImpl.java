@@ -112,6 +112,7 @@ class InstitutionServiceImpl implements InstitutionService {
     public InstitutionOnboardingData getInstitutionOnboardingData(String institutionId, String productId) {
         log.trace("getManager start");
         log.debug("getManager institutionId = {}, productId = {}", institutionId, productId);
+        Assert.hasText(institutionId, REQUIRED_INSTITUTION_ID_MESSAGE);
         InstitutionOnboardingData result = new InstitutionOnboardingData();
 
         EnumSet<PartyRole> roles = Arrays.stream(PartyRole.values())
@@ -120,7 +121,6 @@ class InstitutionServiceImpl implements InstitutionService {
         if (checkAuthority(institutionId, productId, roles)) {
             UserInfo.UserInfoFilter userInfoFilter = new UserInfo.UserInfoFilter();
             userInfoFilter.setProductId(Optional.of(productId));
-            Assert.hasText(institutionId, REQUIRED_INSTITUTION_ID_MESSAGE);
             userInfoFilter.setRole(Optional.of(EnumSet.of(PartyRole.MANAGER)));
             userInfoFilter.setAllowedState(Optional.of(EnumSet.of(RelationshipState.ACTIVE)));
             Collection<UserInfo> userInfos = getUsers(institutionId, userInfoFilter);
@@ -131,6 +131,9 @@ class InstitutionServiceImpl implements InstitutionService {
             result.setManager(manager);
         }
         InstitutionInfo institution = partyConnector.getOnboardedInstitution(institutionId);
+        if (institution == null) {
+            throw new ResourceNotFoundException(String.format("Institution %s not found", institutionId));
+        }
         result.setInstitution(institution);
         log.debug(LogUtils.CONFIDENTIAL_MARKER, "getManager result = {}", result);
         log.trace("getManager end");

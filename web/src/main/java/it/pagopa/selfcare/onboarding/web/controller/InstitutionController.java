@@ -53,7 +53,6 @@ public class InstitutionController {
         log.trace("onboarding end");
     }
 
-    //TODO @PreAuthorize("hasPermission(#institutionId, 'InstitutionResource', 'ADMIN')")
     @GetMapping(value = "/{institutionId}/products/{productId}/onboarded-institution-info")
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "", notes = "${swagger.onboarding.institutions.api.getInstitutionOnboardingInfo}")
