@@ -550,7 +550,7 @@ class InstitutionServiceImplTest {
         assertEquals(capturedFilter.getProductId().get(), productId);
         assertEquals(capturedFilter.getUserId().get(), loggedUser);
         Mockito.verify(partyConnectorMock, Mockito.times(1))
-                .getOnboardedInstitution(Mockito.eq(institutionId));
+                .getOnboardedInstitution(institutionId);
         Mockito.verifyNoMoreInteractions(partyConnectorMock);
     }
 
@@ -603,7 +603,7 @@ class InstitutionServiceImplTest {
         assertEquals(EnumSet.of(ACTIVE), capturedFilters.get(1).getAllowedStates().get());
 
         Mockito.verify(partyConnectorMock, Mockito.times(0))
-                .getOnboardedInstitution(Mockito.eq(institutionId));
+                .getOnboardedInstitution(institutionId);
         Mockito.verifyNoMoreInteractions(partyConnectorMock);
     }
 
@@ -634,7 +634,7 @@ class InstitutionServiceImplTest {
         assertEquals(capturedFilter.getProductId().get(), productId);
         assertEquals(capturedFilter.getUserId().get(), loggedUser);
         Mockito.verify(partyConnectorMock, Mockito.times(1))
-                .getOnboardedInstitution(Mockito.eq(institutionId));
+                .getOnboardedInstitution(institutionId);
         Mockito.verifyNoMoreInteractions(partyConnectorMock);
     }
 
@@ -676,18 +676,7 @@ class InstitutionServiceImplTest {
         assertNotNull(institutionOnboardingData.getManager());
         assertEquals(userInfoManager, institutionOnboardingData.getManager());
         assertNotNull(institutionOnboardingData.getInstitution());
-        assertEquals(institutionInfoMock.getInstitutionId(), institutionOnboardingData.getInstitution().getInstitutionId());
-        assertEquals(institutionInfoMock.getAddress(), institutionOnboardingData.getInstitution().getAddress());
-        assertEquals(institutionInfoMock.getInstitutionType(), institutionOnboardingData.getInstitution().getInstitutionType());
-        assertEquals(institutionInfoMock.getCategory(), institutionOnboardingData.getInstitution().getCategory());
-        assertEquals(institutionInfoMock.getDescription(), institutionOnboardingData.getInstitution().getDescription());
-        assertEquals(institutionInfoMock.getDescription(), institutionOnboardingData.getInstitution().getDescription());
-        assertEquals(institutionInfoMock.getTaxCode(), institutionOnboardingData.getInstitution().getTaxCode());
-        assertEquals(institutionInfoMock.getZipCode(), institutionOnboardingData.getInstitution().getZipCode());
-        assertEquals(institutionInfoMock.getDigitalAddress(), institutionOnboardingData.getInstitution().getDigitalAddress());
-        assertEquals(institutionInfoMock.getBilling().getVatNumber(), institutionOnboardingData.getInstitution().getBilling().getVatNumber());
-        assertEquals(institutionInfoMock.getBilling().getRecipientCode(), institutionOnboardingData.getInstitution().getBilling().getRecipientCode());
-        assertEquals(institutionInfoMock.getBilling().isPublicService(), institutionOnboardingData.getInstitution().getBilling().isPublicService());
+        assertEquals(institutionInfoMock, institutionOnboardingData.getInstitution());
 
         ArgumentCaptor<UserInfo.UserInfoFilter> filterCaptor = ArgumentCaptor.forClass(UserInfo.UserInfoFilter.class);
         Mockito.verify(partyConnectorMock, Mockito.times(2))
@@ -707,7 +696,7 @@ class InstitutionServiceImplTest {
         assertEquals(EnumSet.of(ACTIVE), capturedFilters.get(1).getAllowedStates().get());
 
         Mockito.verify(partyConnectorMock, Mockito.times(1))
-                .getOnboardedInstitution(Mockito.eq(institutionId));
+                .getOnboardedInstitution(institutionId);
         Mockito.verifyNoMoreInteractions(partyConnectorMock);
 
     }

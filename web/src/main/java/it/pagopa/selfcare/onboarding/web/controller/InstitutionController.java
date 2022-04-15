@@ -62,11 +62,13 @@ public class InstitutionController {
                                                                           @ApiParam("${swagger.onboarding.products.model.id}")
                                                                           @PathVariable("productId")
                                                                                   String productId) {
-
+        log.trace("getInstitutionOnBoardingInfo start");
+        log.debug("getInstitutionOnBoardingInfo institutionId = {}, productId = {}", institutionId, productId);
         InstitutionOnboardingData institutionOnboardingData = institutionService.getInstitutionOnboardingData(institutionId, productId);
-        InstitutionOnboardingInfoResource resource = OnboardingMapper.toResource(institutionOnboardingData);
-
-        return resource;
+        InstitutionOnboardingInfoResource result = OnboardingMapper.toResource(institutionOnboardingData);
+        log.debug("getInstitutionOnBoardingInfo result = {}", result);
+        log.trace("getInstitutionOnBoardingInfo end");
+        return result;
     }
 
     @GetMapping(value = "/{institutionId}/data")
@@ -75,9 +77,12 @@ public class InstitutionController {
     public InstitutionResource getInstitutionData(@ApiParam("${swagger.onboarding.institutions.model.id}")
                                                   @PathVariable("institutionId")
                                                           String institutionId) {
+        log.trace("getInstitutionData start");
+        log.debug("getInstitutionData institutionId = {}", institutionId);
         Institution institution = institutionService.getInstitutionByExternalId(institutionId);
         InstitutionResource result = OnboardingMapper.toResource(institution);
-
+        log.debug("getInstitutionData result = {}", result);
+        log.trace("getInstitutionData end");
         return result;
     }
 
@@ -91,7 +96,7 @@ public class InstitutionController {
                 .stream()
                 .map(OnboardingMapper::toResource)
                 .collect(Collectors.toList());
-        log.debug("getInstitutions institutionResources = {}", institutionResources);
+        log.debug("getInstitutions result = {}", institutionResources);
         log.trace("getInstitutions end");
         return institutionResources;
     }
