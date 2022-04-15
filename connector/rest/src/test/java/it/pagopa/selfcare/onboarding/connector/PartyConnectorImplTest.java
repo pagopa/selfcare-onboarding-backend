@@ -412,6 +412,26 @@ class PartyConnectorImplTest {
     }
 
     @Test
+    void getUsers_activeRoleUserDifferentStatus() throws IOException {
+        //given
+        String institutionId = "institutionId";
+        UserInfo.UserInfoFilter userInfoFilter = new UserInfo.UserInfoFilter();
+
+        File stub = ResourceUtils.getFile("classpath:stubs/PartyConnectorImplTest/getUserInstitutionRelationships/active-role-different-status.json");
+        RelationshipsResponse relationshipsResponse = mapper.readValue(stub, RelationshipsResponse.class);
+        Mockito.when(restClientMock.getUserInstitutionRelationships(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any()))
+                .thenReturn(relationshipsResponse);
+        //when
+        Collection<UserInfo> userInfos = partyConnector.getUsers(institutionId, userInfoFilter);
+        UserInfo userInfo = userInfos.iterator().next();
+        //Then
+        Assertions.assertEquals("user1", userInfo.getName());
+        Assertions.assertEquals(PartyRole.OPERATOR, userInfo.getRole());
+        Assertions.assertEquals("ACTIVE", userInfo.getStatus());
+        Assertions.assertEquals(1, userInfos.size());
+    }
+
+    @Test
     void getUsers_activeRoleUserDifferentStatus2() {
         //given
         String institutionId = "institutionId";
