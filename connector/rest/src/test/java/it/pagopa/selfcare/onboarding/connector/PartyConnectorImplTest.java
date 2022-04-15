@@ -412,55 +412,24 @@ class PartyConnectorImplTest {
     }
 
     @Test
-    void getUsers_activeRoleUserDifferentStatus() throws IOException {
+    void getUsers_higherRoleForActiveUsers() throws IOException {
         //given
         String institutionId = "institutionId";
         UserInfo.UserInfoFilter userInfoFilter = new UserInfo.UserInfoFilter();
 
-        File stub = ResourceUtils.getFile("classpath:stubs/PartyConnectorImplTest/getUserInstitutionRelationships/active-role-different-status.json");
+        File stub = ResourceUtils.getFile("classpath:stubs/PartyConnectorImplTest/getUserInstitutionRelationships/higher-role-active.json");
         RelationshipsResponse relationshipsResponse = mapper.readValue(stub, RelationshipsResponse.class);
+
         Mockito.when(restClientMock.getUserInstitutionRelationships(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any()))
                 .thenReturn(relationshipsResponse);
         //when
         Collection<UserInfo> userInfos = partyConnector.getUsers(institutionId, userInfoFilter);
-        UserInfo userInfo = userInfos.iterator().next();
         //Then
-        Assertions.assertEquals("user1", userInfo.getName());
-        Assertions.assertEquals(PartyRole.OPERATOR, userInfo.getRole());
-        Assertions.assertEquals("ACTIVE", userInfo.getStatus());
         Assertions.assertEquals(1, userInfos.size());
-    }
-
-    @Test
-    void getUsers_activeRoleUserDifferentStatus2() {
-        //given
-        String institutionId = "institutionId";
-        UserInfo.UserInfoFilter userInfoFilter = new UserInfo.UserInfoFilter();
-
-        RelationshipInfo relationshipInfo1 = TestUtils.mockInstance(new RelationshipInfo(), "setFrom");
-        String id = "id";
-        relationshipInfo1.setFrom(id);
-        relationshipInfo1.setName("user1");
-        relationshipInfo1.setRole(PartyRole.OPERATOR);
-        relationshipInfo1.setState(PENDING);
-        RelationshipInfo relationshipInfo2 = TestUtils.mockInstance(new RelationshipInfo(), "setFrom");
-        relationshipInfo2.setFrom(id);
-        relationshipInfo2.setName("user1");
-        relationshipInfo2.setRole(PartyRole.DELEGATE);
-        relationshipInfo2.setState(ACTIVE);
-        RelationshipsResponse relationshipsResponse = new RelationshipsResponse();
-        relationshipsResponse.add(relationshipInfo1);
-        relationshipsResponse.add(relationshipInfo2);
-        Mockito.when(restClientMock.getUserInstitutionRelationships(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any()))
-                .thenReturn(relationshipsResponse);
-        //when
-        Collection<UserInfo> userInfos = partyConnector.getUsers(institutionId, userInfoFilter);
         UserInfo userInfo = userInfos.iterator().next();
-        //Then
         Assertions.assertEquals("user1", userInfo.getName());
         Assertions.assertEquals(PartyRole.DELEGATE, userInfo.getRole());
         Assertions.assertEquals("ACTIVE", userInfo.getStatus());
-        Assertions.assertEquals(1, userInfos.size());
     }
 
     @Test
@@ -486,24 +455,44 @@ class PartyConnectorImplTest {
     }
 
     @Test
-    void getUsers_higherRoleForActiveUsers() throws IOException {
+    void getUsers_activeRoleUserDifferentStatus() throws IOException {
         //given
         String institutionId = "institutionId";
         UserInfo.UserInfoFilter userInfoFilter = new UserInfo.UserInfoFilter();
 
-        File stub = ResourceUtils.getFile("classpath:stubs/PartyConnectorImplTest/getUserInstitutionRelationships/higher-role-active.json");
+        File stub = ResourceUtils.getFile("classpath:stubs/PartyConnectorImplTest/getUserInstitutionRelationships/active-role-different-status.json");
+        RelationshipsResponse relationshipsResponse = mapper.readValue(stub, RelationshipsResponse.class);
+        Mockito.when(restClientMock.getUserInstitutionRelationships(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any()))
+                .thenReturn(relationshipsResponse);
+        //when
+        Collection<UserInfo> userInfos = partyConnector.getUsers(institutionId, userInfoFilter);
+        UserInfo userInfo = userInfos.iterator().next();
+        //Then
+        Assertions.assertEquals("user1", userInfo.getName());
+        Assertions.assertEquals(PartyRole.OPERATOR, userInfo.getRole());
+        Assertions.assertEquals("ACTIVE", userInfo.getStatus());
+        Assertions.assertEquals(1, userInfos.size());
+    }
+
+    @Test
+    void getUsers_activeRoleUserDifferentStatus2() throws IOException {
+        //given
+        String institutionId = "institutionId";
+        UserInfo.UserInfoFilter userInfoFilter = new UserInfo.UserInfoFilter();
+
+        File stub = ResourceUtils.getFile("classpath:stubs/PartyConnectorImplTest/getUserInstitutionRelationships/active-role-different-status-2.json");
         RelationshipsResponse relationshipsResponse = mapper.readValue(stub, RelationshipsResponse.class);
 
         Mockito.when(restClientMock.getUserInstitutionRelationships(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any()))
                 .thenReturn(relationshipsResponse);
         //when
         Collection<UserInfo> userInfos = partyConnector.getUsers(institutionId, userInfoFilter);
-        //Then
-        Assertions.assertEquals(1, userInfos.size());
         UserInfo userInfo = userInfos.iterator().next();
+        //Then
         Assertions.assertEquals("user1", userInfo.getName());
         Assertions.assertEquals(PartyRole.DELEGATE, userInfo.getRole());
         Assertions.assertEquals("ACTIVE", userInfo.getStatus());
+        Assertions.assertEquals(1, userInfos.size());
     }
 
     @Test
