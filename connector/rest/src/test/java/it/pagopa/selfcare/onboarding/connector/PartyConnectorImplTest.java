@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import it.pagopa.selfcare.commons.utils.TestUtils;
+import it.pagopa.selfcare.onboarding.connector.model.InstitutionContact;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipInfo;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipsResponse;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
@@ -385,6 +386,11 @@ class PartyConnectorImplTest {
         String id = "id";
         relationshipInfo1.setFrom(id);
         relationshipInfo1.setRole(PartyRole.MANAGER);
+        //FIXME
+        InstitutionContact institutionContactMock = TestUtils.mockInstance(new InstitutionContact());
+        Map<String, List<InstitutionContact>> institutionContact = new HashMap<>();
+        institutionContact.put("institutionContact", List.of(institutionContactMock));
+        relationshipInfo1.setInstitutionContacts(institutionContact);
         RelationshipInfo relationshipInfo2 = TestUtils.mockInstance(new RelationshipInfo(), "setFrom");
         relationshipInfo2.setFrom(id);
         relationshipInfo2.setRole(PartyRole.DELEGATE);

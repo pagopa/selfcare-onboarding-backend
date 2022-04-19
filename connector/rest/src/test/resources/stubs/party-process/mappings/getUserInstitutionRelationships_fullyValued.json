@@ -14,6 +14,13 @@
         "surname": "string",
         "email": "string",
         "role": "MANAGER",
+        "institutionContacts": {
+          "institutionContact": [
+            {
+              "email": "email"
+            }
+          ]
+        },
         "product": {
           "id": "string",
           "role": "string",

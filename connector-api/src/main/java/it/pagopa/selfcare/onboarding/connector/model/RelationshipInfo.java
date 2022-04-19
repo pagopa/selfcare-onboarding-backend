@@ -13,10 +13,12 @@
 package it.pagopa.selfcare.onboarding.connector.model;
 
 
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.BillingData;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.PartyRole;
 import lombok.Data;
 
 import java.time.OffsetDateTime;
+import java.util.List;
 import java.util.Map;
 
 @Data
@@ -29,11 +31,23 @@ public class RelationshipInfo {
     private String surname;
     private String taxCode;
     private Certification certification;
-    private Map<String, InstitutionContact> institutionContacts;
+    //FIXME private Map<String, InstitutionContact> institutionContacts;
+    private Map<String, List<InstitutionContact>> institutionContacts;
+    private String pricingPlan;
+    private BillingData billing;
     private String email;
     private PartyRole role;
     private RelationshipState state;
     private OffsetDateTime createdAt;
     private OffsetDateTime updatedAt;
 
+    //FIXME
+    public String getEmail() {
+        if (institutionContacts != null) {
+            for (Map.Entry<String, List<InstitutionContact>> e : institutionContacts.entrySet()) {
+                return e.getValue().get(0).getEmail();
+            }
+        }
+        return null;
+    }
 }

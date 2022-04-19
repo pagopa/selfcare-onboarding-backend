@@ -77,7 +77,7 @@ class PartyConnectorImpl implements PartyConnector {
         OnboardingRequest onboardingRequest = new OnboardingRequest();
         onboardingRequest.setInstitutionId(onboardingData.getInstitutionId());
         onboardingRequest.setBillingData(onboardingData.getBillingData());
-        onboardingRequest.setOrganizationType(onboardingData.getInstitutionType());
+//TODO        onboardingRequest.getInstitutionUpdate().setInstitutionType(onboardingData.getInstitutionType());
         onboardingRequest.setUsers(onboardingData.getUsers().stream()
                 .map(userInfo -> {
                     User user = new User();
