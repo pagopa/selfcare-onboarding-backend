@@ -57,8 +57,6 @@ class InstitutionControllerTest {
             OnboardingResponse onboardingResponse = TestUtils.mockInstance(new OnboardingResponse(), "setDocument");
             onboardingResponse.setDocument(tempFile);
             List<UserDto> userDtos = List.of(TestUtils.mockInstance(new UserDto()));
-            Mockito.when(institutionServiceMock.onboarding(Mockito.any()))
-                    .thenReturn(onboardingResponse);
             // when
             MvcResult result = mvc.perform(MockMvcRequestBuilders
                     .post(BASE_URL + "/{institutionId}/products/{productId}/onboarding", institutionId, productId)
@@ -68,10 +66,7 @@ class InstitutionControllerTest {
                     .andExpect(MockMvcResultMatchers.status().isCreated())
                     .andReturn();
             // then
-            OnboardingResponse response = objectMapper.readValue(result.getResponse().getContentAsString(), OnboardingResponse.class);
-            assertNotNull(response);
-            assertNotNull(response.getToken());
-            assertNotNull(response.getDocument());
+            assertEquals(0, result.getResponse().getContentLength());
             Mockito.verify(institutionServiceMock, Mockito.times(1))
                     .onboarding(onboardingDataCaptor.capture());
             OnboardingData captured = onboardingDataCaptor.getValue();
