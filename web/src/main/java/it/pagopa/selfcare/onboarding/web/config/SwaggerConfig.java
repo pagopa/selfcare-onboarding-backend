@@ -58,7 +58,8 @@ class SwaggerConfig {
                         .version(environment.getProperty("swagger.version", environment.getProperty("spring.application.version")))
                         .build())
                 .select().apis(RequestHandlerSelectors.basePackage("it.pagopa.selfcare.onboarding.web.controller")).build()
-                .tags(new Tag("institutions", environment.getProperty("swagger.onboarding.institutions.api.description")))
+                .tags(new Tag("institutions", environment.getProperty("swagger.onboarding.institutions.api.description")),
+                        new Tag("product", environment.getProperty("swagger.onboarding.product.api.description")))
                 .directModelSubstitute(LocalTime.class, String.class)
                 .securityContexts(Collections.singletonList(SecurityContext.builder()
                         .securityReferences(defaultAuth())

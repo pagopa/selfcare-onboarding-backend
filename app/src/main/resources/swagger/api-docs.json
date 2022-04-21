@@ -15,6 +15,10 @@
     {
       "name": "institutions",
       "description": "Institution operations"
+    },
+    {
+      "name": "product",
+      "description": "Product operations"
     }
   ],
   "paths": {
@@ -62,11 +66,54 @@
         },
         "responses": {
           "201": {
-            "description": "Created",
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [
+              "global"
+            ]
+          }
+        ]
+      }
+    },
+    "/product/{id}": {
+      "get": {
+        "tags": [
+          "product"
+        ],
+        "summary": "getProduct",
+        "description": "Service that returns the information for a single product given its product id",
+        "operationId": "getProductUsingGET",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Product id",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OnboardingResponse"
+                  "$ref": "#/components/schemas/ProductResource"
                 }
               }
             }
@@ -93,16 +140,21 @@
   },
   "components": {
     "schemas": {
-      "OnboardingResponse": {
-        "title": "OnboardingResponse",
+      "ProductResource": {
+        "title": "ProductResource",
+        "required": [
+          "id",
+          "title"
+        ],
         "type": "object",
         "properties": {
-          "document": {
+          "id": {
             "type": "string",
-            "format": "binary"
+            "description": "Product id"
           },
-          "token": {
-            "type": "string"
+          "title": {
+            "type": "string",
+            "description": "Product's title"
           }
         }
       },

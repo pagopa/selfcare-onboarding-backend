@@ -1,19 +1,20 @@
 package it.pagopa.selfcare.onboarding.connector.rest.client;
 
-import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
-import com.github.tomakehurst.wiremock.junit.WireMockClassRule;
+import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import it.pagopa.selfcare.commons.connector.rest.BaseFeignRestClientTest;
 import it.pagopa.selfcare.commons.connector.rest.RestTestUtils;
 import it.pagopa.selfcare.commons.utils.TestUtils;
 import it.pagopa.selfcare.onboarding.connector.rest.config.PartyProcessRestClientTestConfig;
 import it.pagopa.selfcare.onboarding.connector.rest.model.OnboardingRequest;
-import it.pagopa.selfcare.onboarding.connector.rest.model.OnboardingResponse;
 import it.pagopa.selfcare.onboarding.connector.rest.model.User;
 import lombok.SneakyThrows;
-import org.junit.Assert;
-import org.junit.ClassRule;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.function.Executable;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.commons.httpclient.HttpClientConfiguration;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
@@ -28,20 +29,19 @@ import java.util.Map;
         locations = "classpath:config/party-process-rest-client.properties",
         properties = {
                 "logging.level.it.pagopa.selfcare.onboarding.connector.rest=DEBUG",
-                "spring.application.name=selc-onboarding-connector-rest"
+                "spring.application.name=selc-onboarding-connector-rest",
+                "feign.okhttp.enabled=true"
         })
 @ContextConfiguration(
         initializers = PartyProcessRestClientTest.RandomPortInitializer.class,
-        classes = {PartyProcessRestClientTestConfig.class})
-public class PartyProcessRestClientTest extends BaseFeignRestClientTest {
+        classes = {PartyProcessRestClientTestConfig.class, HttpClientConfiguration.class})
+class PartyProcessRestClientTest extends BaseFeignRestClientTest {
 
-    @ClassRule
-    public static WireMockClassRule wireMockRule;
-
-    static {
-        WireMockConfiguration config = RestTestUtils.getWireMockConfiguration("stubs/party-process");
-        wireMockRule = new WireMockClassRule(config);
-    }
+    @Order(1)
+    @RegisterExtension
+    static WireMockExtension wm = WireMockExtension.newInstance()
+            .options(RestTestUtils.getWireMockConfiguration("stubs/party-process"))
+            .build();
 
 
     public static class RandomPortInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
@@ -49,9 +49,8 @@ public class PartyProcessRestClientTest extends BaseFeignRestClientTest {
         @Override
         public void initialize(ConfigurableApplicationContext applicationContext) {
             TestPropertySourceUtils.addInlinedPropertiesToEnvironment(applicationContext,
-                    String.format("USERVICE_PARTY_PROCESS_URL=http://%s:%d/pdnd-interop-uservice-party-process/0.0.1",
-                            wireMockRule.getOptions().bindAddress(),
-                            wireMockRule.port())
+                    String.format("USERVICE_PARTY_PROCESS_URL=%s/pdnd-interop-uservice-party-process/0.0.1",
+                            wm.getRuntimeInfo().getHttpBaseUrl())
             );
         }
     }
@@ -65,8 +64,6 @@ public class PartyProcessRestClientTest extends BaseFeignRestClientTest {
 
     private static final Map<TestCase, String> testCase2instIdMap = new EnumMap<>(TestCase.class) {{
         put(TestCase.FULLY_VALUED, "institutionId1");
-        put(TestCase.FULLY_NULL, "institutionId2");
-        put(TestCase.EMPTY_RESULT, "institutionId3");
     }};
 
     @Autowired
@@ -74,32 +71,17 @@ public class PartyProcessRestClientTest extends BaseFeignRestClientTest {
 
 
     @Test
-    public void onboardingOrganization_fullyValued() {
+    void onboardingOrganization() {
         // given
         OnboardingRequest onboardingRequest = new OnboardingRequest();
         onboardingRequest.setInstitutionId(testCase2instIdMap.get(TestCase.FULLY_VALUED));
         onboardingRequest.setUsers(List.of(TestUtils.mockInstance(new User())));
         // when
-        OnboardingResponse response = restClient.onboardingOrganization(onboardingRequest);
+        Executable exe = () -> restClient.onboardingOrganization(onboardingRequest);
         // then
-        Assert.assertNotNull(response);
-        Assert.assertNotNull(response.getToken());
-        Assert.assertNotNull(response.getDocument());
+        Assertions.assertDoesNotThrow(exe);
     }
 
 
-    @Test
-    public void onboardingOrganization_fullyNull() {
-        // given
-        OnboardingRequest onboardingRequest = new OnboardingRequest();
-        onboardingRequest.setInstitutionId(testCase2instIdMap.get(TestCase.FULLY_NULL));
-        onboardingRequest.setUsers(List.of(TestUtils.mockInstance(new User())));
-        // when
-        OnboardingResponse response = restClient.onboardingOrganization(onboardingRequest);
-        // then
-        Assert.assertNotNull(response);
-        Assert.assertNull(response.getToken());
-        Assert.assertNull(response.getDocument());
-    }
 
 }
