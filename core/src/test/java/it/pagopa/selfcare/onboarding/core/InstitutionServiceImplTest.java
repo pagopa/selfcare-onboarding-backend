@@ -736,7 +736,7 @@ class InstitutionServiceImplTest {
         assertEquals(institutionMock.getAddress(), result.getAddress());
         assertEquals(institutionMock.getAttributes(), result.getAttributes());
         Mockito.verify(partyConnectorMock, Mockito.times(1))
-                .getInstitutionByExternalId(Mockito.eq(institutionId));
+                .getInstitutionByExternalId(institutionId);
         Mockito.verifyNoMoreInteractions(partyConnectorMock);
     }
 
