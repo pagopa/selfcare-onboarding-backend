@@ -3,10 +3,7 @@ package it.pagopa.selfcare.onboarding.web.model.mapper;
 import it.pagopa.selfcare.onboarding.connector.model.InstitutionOnboardingData;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionInfo;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.BillingData;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.User;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.UserInfo;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.*;
 import it.pagopa.selfcare.onboarding.web.model.*;
 
 import java.util.stream.Collectors;
@@ -26,6 +23,18 @@ public class OnboardingMapper {
         return resource;
     }
 
+    public static InstitutionUpdate mapInstitutionUpdate(BillingDataDto dto) {
+        InstitutionUpdate resource = null;
+        if (dto != null) {
+            resource = new InstitutionUpdate();
+            resource.setAddress(dto.getRegisteredOffice());
+            resource.setDigitalAddress(dto.getDigitalAddress());
+            resource.setDescription(dto.getBusinessName());
+            resource.setTaxCode(dto.getTaxCode());
+        }
+        return resource;
+    }
+
     public static OnboardingData toOnboardingData(String institutionId, String productId, OnboardingDto model) {
         OnboardingData resource = null;
         if (model != null) {
@@ -36,6 +45,7 @@ public class OnboardingMapper {
             resource.setInstitutionId(institutionId);
             resource.setProductId(productId);
             resource.setOrigin(model.getOrigin());
+            resource.setInstitutionUpdate(mapInstitutionUpdate(model.getBillingData()));
             if (model.getBillingData() != null) {
                 resource.setBillingData(fromDto(model.getBillingData()));
             }

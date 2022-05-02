@@ -4,5 +4,11 @@ import lombok.Data;
 
 @Data
 public class InstitutionUpdate {
-    private String institutionType;
+
+    private InstitutionType institutionType;
+    private String description;
+    private String digitalAddress;
+    private String address;
+    private String taxCode;
+
 }

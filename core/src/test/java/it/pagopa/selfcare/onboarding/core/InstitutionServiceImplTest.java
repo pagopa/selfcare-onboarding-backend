@@ -719,7 +719,7 @@ class InstitutionServiceImplTest {
         String institutionId = "institutionId";
         Institution institutionMock = TestUtils.mockInstance(new Institution());
         Attributes attributes = TestUtils.mockInstance(new Attributes());
-        institutionMock.setAttributes(attributes);
+        institutionMock.setAttributes(List.of(attributes));
         Mockito.when(partyConnectorMock.getInstitutionByExternalId(Mockito.anyString()))
                 .thenReturn(institutionMock);
         //when

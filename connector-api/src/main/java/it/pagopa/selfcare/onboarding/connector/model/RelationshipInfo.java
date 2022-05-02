@@ -14,6 +14,7 @@ package it.pagopa.selfcare.onboarding.connector.model;
 
 
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.BillingData;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.InstitutionUpdate;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.PartyRole;
 import lombok.Data;
 
@@ -33,11 +34,12 @@ public class RelationshipInfo {
     private Certification certification;
     //FIXME private Map<String, InstitutionContact> institutionContacts;
     private Map<String, List<InstitutionContact>> institutionContacts;
+    private PartyRole role;
     private String pricingPlan;
+    private RelationshipState state;
+    private InstitutionUpdate institutionUpdate;
     private BillingData billing;
     private String email;
-    private PartyRole role;
-    private RelationshipState state;
     private OffsetDateTime createdAt;
     private OffsetDateTime updatedAt;
 

@@ -23,9 +23,10 @@ public class OnboardingRequest {
 
     private String institutionId;
     private List<User> users;
+    private String origin;
     private OnboardingContract contract;
     private String pricingPlan;
-    private BillingData billingData;
+    private BillingData billing;
     private InstitutionUpdate institutionUpdate;
 
 }

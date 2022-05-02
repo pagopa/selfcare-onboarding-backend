@@ -142,7 +142,7 @@ class InstitutionControllerTest {
         String institutionId = "institutionId";
         Institution institutionMock = TestUtils.mockInstance(new Institution());
         Attributes attributes = TestUtils.mockInstance(new Attributes());
-        institutionMock.setAttributes(attributes);
+        institutionMock.setAttributes(List.of(attributes));
         Mockito.when(institutionServiceMock.getInstitutionByExternalId(Mockito.anyString()))
                 .thenReturn(institutionMock);
         //when

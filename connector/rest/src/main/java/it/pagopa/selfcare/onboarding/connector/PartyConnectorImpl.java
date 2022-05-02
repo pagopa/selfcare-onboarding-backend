@@ -12,6 +12,7 @@ import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingRespon
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.User;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.UserInfo;
 import it.pagopa.selfcare.onboarding.connector.rest.client.PartyProcessRestClient;
+import it.pagopa.selfcare.onboarding.connector.rest.model.InstitutionUpdate;
 import it.pagopa.selfcare.onboarding.connector.rest.model.OnBoardingInfo;
 import it.pagopa.selfcare.onboarding.connector.rest.model.OnboardingContract;
 import it.pagopa.selfcare.onboarding.connector.rest.model.OnboardingRequest;
@@ -76,8 +77,15 @@ class PartyConnectorImpl implements PartyConnector {
         Assert.notNull(onboardingData, "Onboarding data is required");
         OnboardingRequest onboardingRequest = new OnboardingRequest();
         onboardingRequest.setInstitutionId(onboardingData.getInstitutionId());
-        onboardingRequest.setBillingData(onboardingData.getBillingData());
-//TODO        onboardingRequest.getInstitutionUpdate().setInstitutionType(onboardingData.getInstitutionType());
+        onboardingRequest.setBilling(onboardingData.getBillingData());
+        InstitutionUpdate institutionUpdate = new InstitutionUpdate();
+        institutionUpdate.setInstitutionType(onboardingData.getInstitutionType());
+        institutionUpdate.setAddress(onboardingData.getInstitutionUpdate().getAddress());
+        institutionUpdate.setDescription(onboardingData.getInstitutionUpdate().getDescription());
+        institutionUpdate.setDigitalAddress(onboardingData.getInstitutionUpdate().getDigitalAddress());
+        institutionUpdate.setTaxCode(onboardingData.getInstitutionUpdate().getTaxCode());
+        onboardingRequest.setInstitutionUpdate(institutionUpdate);
+
         onboardingRequest.setUsers(onboardingData.getUsers().stream()
                 .map(userInfo -> {
                     User user = new User();
