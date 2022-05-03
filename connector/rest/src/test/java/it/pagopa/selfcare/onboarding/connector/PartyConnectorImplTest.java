@@ -559,7 +559,7 @@ class PartyConnectorImplTest {
         assertEquals(onboardingData.getState().toString(), institutionInfo.getStatus());
         assertEquals(onboardingData.getAddress(), institutionInfo.getAddress());
         assertEquals(onboardingData.getBilling().getRecipientCode(), institutionInfo.getBilling().getRecipientCode());
-        assertEquals(onboardingData.getBilling().isPublicServices(), institutionInfo.getBilling().isPublicServices());
+        assertEquals(onboardingData.getBilling().isPublicServices(), institutionInfo.getBilling().getPublicServices());
         assertEquals(onboardingData.getBilling().getVatNumber(), institutionInfo.getBilling().getVatNumber());
 
         Mockito.verify(restClientMock, Mockito.times(1))

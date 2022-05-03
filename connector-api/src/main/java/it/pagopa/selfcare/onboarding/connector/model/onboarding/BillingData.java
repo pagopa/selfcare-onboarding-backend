@@ -6,5 +6,5 @@ import lombok.Data;
 public class BillingData {
     private String vatNumber;
     private String recipientCode;
-    private boolean publicServices;
+    private Boolean publicServices;
 }
