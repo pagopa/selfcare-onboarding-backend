@@ -20,5 +20,5 @@ public class ProductResource {
     private String title;
 
     @ApiModelProperty(value = "${swagger.onboarding.product.model.parentId}", required = false)
-    private String parent;
+    private String parentId;
 }

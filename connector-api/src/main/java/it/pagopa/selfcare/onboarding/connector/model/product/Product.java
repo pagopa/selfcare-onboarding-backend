@@ -13,5 +13,5 @@ public class Product {
     private String contractTemplatePath;
     private String contractTemplateVersion;
     private String title;
-    private String parent;
+    private String parentId;
 }

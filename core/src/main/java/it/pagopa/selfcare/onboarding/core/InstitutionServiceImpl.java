@@ -65,12 +65,12 @@ class InstitutionServiceImpl implements InstitutionService {
         onboardingData.setContractPath(product.getContractTemplatePath());
         onboardingData.setContractVersion(product.getContractTemplateVersion());
 
-        if (product.getParent() != null) {
+        if (product.getParentId() != null) {
             RelationshipsResponse response = partyConnector.getUserInstitutionRelationships(onboardingData.getInstitutionId()
-                    , product.getParent());
+                    , product.getParentId());
             if (response == null) {
                 throw new ProductHasNoRelationshipException(
-                        String.format("No relationship for %s and %s", product.getParent(), onboardingData.getInstitutionId())
+                        String.format("No relationship for %s and %s", product.getParentId(), onboardingData.getInstitutionId())
                 );
             } else {
                 if (!onboardingData.getUsers().stream()
@@ -81,7 +81,7 @@ class InstitutionServiceImpl implements InstitutionService {
                 ) throw new ValidationException("The provided Manager is not valid for this product");
 
             }
-            product = productsConnector.getProduct(product.getParent());
+            product = productsConnector.getProduct(product.getParentId());
         }
         Assert.notNull(product.getRoleMappings(), "Role mappings is required");
         Product finalProduct = product;

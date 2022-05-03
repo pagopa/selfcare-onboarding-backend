@@ -248,28 +248,28 @@
         "required" : [ "businessName", "digitalAddress", "recipientCode", "registeredOffice", "taxCode", "vatNumber" ],
         "type" : "object",
         "properties" : {
-          "businessName" : {
-            "type" : "string",
-            "description" : "Institution's legal name"
+          "businessName": {
+            "type": "string",
+            "description": "Institution's legal name"
           },
-          "digitalAddress" : {
-            "type" : "string",
-            "description" : "Institution's digitalAddress"
+          "digitalAddress": {
+            "type": "string",
+            "description": "Institution's digitalAddress"
           },
           "publicServices": {
             "type": "boolean",
             "description": "Institution's service type",
             "example": false
           },
-          "recipientCode" : {
-            "type" : "string",
-            "description" : "Billing recipient code"
+          "recipientCode": {
+            "type": "string",
+            "description": "Billing recipient code"
           },
-          "registeredOffice" : {
-            "type" : "string",
-            "description" : "Institution's physical address"
+          "registeredOffice": {
+            "type": "string",
+            "description": "Institution's physical address"
           },
-          "taxCode" : {
+          "taxCode": {
             "type" : "string",
             "description" : "Institution's taxCode"
           },
@@ -390,9 +390,9 @@
             "type" : "string",
             "description" : "Product id"
           },
-          "parent" : {
-            "type" : "string",
-            "description" : "Product's parent's Id"
+          "parentId": {
+            "type": "string",
+            "description": "Product's parent's Id"
           },
           "title" : {
             "type" : "string",
