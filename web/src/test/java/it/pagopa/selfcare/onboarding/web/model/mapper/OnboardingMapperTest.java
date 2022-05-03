@@ -32,7 +32,7 @@ class OnboardingMapperTest {
         assertEquals(1, model.getUsers().size());
         assertEquals(institutionId, resource.getInstitutionId());
         assertEquals(productId, resource.getProductId());
-        assertEquals(billingDataDto.getPublicServices(), resource.getBillingData().isPublicServices());
+        assertEquals(billingDataDto.getPublicServices(), resource.getBillingData().getPublicServices());
         assertEquals(billingDataDto.getVatNumber(), resource.getBillingData().getVatNumber());
         assertEquals(billingDataDto.getRecipientCode(), resource.getBillingData().getRecipientCode());
         assertEquals(userDtos.get(0).getEmail(), resource.getUsers().get(0).getEmail());

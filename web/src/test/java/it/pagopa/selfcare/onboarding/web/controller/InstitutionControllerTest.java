@@ -85,7 +85,7 @@ class InstitutionControllerTest {
         assertEquals(1, captured.getUsers().size());
         assertEquals(billingData.getRecipientCode(), captured.getBillingData().getRecipientCode());
         assertEquals(billingData.getVatNumber(), captured.getBillingData().getVatNumber());
-        assertEquals(billingData.getPublicServices(), captured.getBillingData().isPublicServices());
+        assertEquals(billingData.getPublicServices(), captured.getBillingData().getPublicServices());
         assertEquals(userDtos.get(0).getName(), captured.getUsers().get(0).getName());
         assertEquals(userDtos.get(0).getSurname(), captured.getUsers().get(0).getSurname());
         assertEquals(userDtos.get(0).getTaxCode(), captured.getUsers().get(0).getTaxCode());
@@ -123,7 +123,7 @@ class InstitutionControllerTest {
         assertNotNull(response.getManager());
         BillingDataDto responseBillings = response.getInstitution().getBillingData();
         assertEquals(onBoardingDataMock.getInstitution().getBilling().getRecipientCode(), responseBillings.getRecipientCode());
-        assertEquals(onBoardingDataMock.getInstitution().getBilling().isPublicServices(), responseBillings.getPublicServices());
+        assertEquals(onBoardingDataMock.getInstitution().getBilling().getPublicServices(), responseBillings.getPublicServices());
         assertEquals(onBoardingDataMock.getInstitution().getBilling().getVatNumber(), responseBillings.getVatNumber());
         assertEquals(onBoardingDataMock.getInstitution().getDigitalAddress(), responseBillings.getDigitalAddress());
         assertEquals(onBoardingDataMock.getInstitution().getTaxCode(), responseBillings.getTaxCode());
