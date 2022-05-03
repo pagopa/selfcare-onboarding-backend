@@ -519,7 +519,7 @@ class PartyConnectorImplTest {
         assertEquals(institutionMock.getId(), institution.getId());
         assertEquals(institutionMock.getZipCode(), institution.getZipCode());
         assertEquals(institutionMock.getDigitalAddress(), institution.getDigitalAddress());
-        assertEquals(institutionMock.getType(), institution.getType());
+        assertEquals(institutionMock.getInstitutionType(), institution.getInstitutionType());
         Mockito.verify(restClientMock, Mockito.times(1))
                 .getInstitutionByExternalId(institutionId);
         Mockito.verifyNoMoreInteractions(restClientMock);

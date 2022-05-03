@@ -729,7 +729,7 @@ class InstitutionServiceImplTest {
         assertEquals(institutionMock.getInstitutionId(), result.getInstitutionId());
         assertEquals(institutionMock.getId(), result.getId());
         assertEquals(institutionMock.getOrigin(), result.getOrigin());
-        assertEquals(institutionMock.getType(), result.getType());
+        assertEquals(institutionMock.getInstitutionType(), result.getInstitutionType());
         assertEquals(institutionMock.getDescription(), result.getDescription());
         assertEquals(institutionMock.getTaxCode(), result.getTaxCode());
         assertEquals(institutionMock.getZipCode(), result.getZipCode());

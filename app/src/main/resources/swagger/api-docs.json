@@ -270,12 +270,12 @@
             "description": "Institution's physical address"
           },
           "taxCode": {
-            "type" : "string",
-            "description" : "Institution's taxCode"
+            "type": "string",
+            "description": "Institution's taxCode"
           },
-          "vatNumber" : {
-            "type" : "string",
-            "description" : "Institution's VAT number"
+          "vatNumber": {
+            "type": "string",
+            "description": "Institution's VAT number"
           }
         }
       },
@@ -386,17 +386,17 @@
         "required" : [ "id", "title" ],
         "type" : "object",
         "properties" : {
-          "id" : {
-            "type" : "string",
-            "description" : "Product id"
+          "id": {
+            "type": "string",
+            "description": "Product id"
           },
           "parentId": {
             "type": "string",
             "description": "Product's parent's Id"
           },
-          "title" : {
-            "type" : "string",
-            "description" : "Product's title"
+          "title": {
+            "type": "string",
+            "description": "Product's title"
           }
         }
       },
