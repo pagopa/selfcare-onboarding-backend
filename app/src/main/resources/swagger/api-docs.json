@@ -256,10 +256,10 @@
             "type" : "string",
             "description" : "Institution's digitalAddress"
           },
-          "publicService" : {
-            "type" : "boolean",
-            "description" : "Institution's service type",
-            "example" : false
+          "publicServices": {
+            "type": "boolean",
+            "description": "Institution's service type",
+            "example": false
           },
           "recipientCode" : {
             "type" : "string",

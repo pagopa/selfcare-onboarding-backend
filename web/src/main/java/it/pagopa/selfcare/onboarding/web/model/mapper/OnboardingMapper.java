@@ -16,8 +16,8 @@ public class OnboardingMapper {
             resource = new BillingData();
             resource.setVatNumber(model.getVatNumber());
             resource.setRecipientCode(model.getRecipientCode());
-            if (model.getPublicService() != null) {
-                resource.setPublicService(model.getPublicService().booleanValue());
+            if (model.getPublicServices() != null) {
+                resource.setPublicServices(model.getPublicServices().booleanValue());
             }
         }
         return resource;
@@ -115,7 +115,7 @@ public class OnboardingMapper {
             resource = new InstitutionData();
             BillingDataDto billing = new BillingDataDto();
             billing.setDigitalAddress(model.getDigitalAddress());
-            billing.setPublicService(model.getBilling().isPublicService());
+            billing.setPublicServices(model.getBilling().isPublicServices());
             billing.setRecipientCode(model.getBilling().getRecipientCode());
             billing.setTaxCode(model.getTaxCode());
             billing.setVatNumber(model.getBilling().getVatNumber());

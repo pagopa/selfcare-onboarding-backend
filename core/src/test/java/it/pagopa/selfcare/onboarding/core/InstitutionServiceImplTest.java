@@ -540,7 +540,7 @@ class InstitutionServiceImplTest {
         assertEquals(institutionInfoMock.getDigitalAddress(), institutionOnboardingData.getInstitution().getDigitalAddress());
         assertEquals(institutionInfoMock.getBilling().getVatNumber(), institutionOnboardingData.getInstitution().getBilling().getVatNumber());
         assertEquals(institutionInfoMock.getBilling().getRecipientCode(), institutionOnboardingData.getInstitution().getBilling().getRecipientCode());
-        assertEquals(institutionInfoMock.getBilling().isPublicService(), institutionOnboardingData.getInstitution().getBilling().isPublicService());
+        assertEquals(institutionInfoMock.getBilling().isPublicServices(), institutionOnboardingData.getInstitution().getBilling().isPublicServices());
         ArgumentCaptor<UserInfo.UserInfoFilter> filterCaptor = ArgumentCaptor.forClass(UserInfo.UserInfoFilter.class);
         Mockito.verify(partyConnectorMock, Mockito.times(1))
                 .getUsers(Mockito.eq(institutionId), filterCaptor.capture());

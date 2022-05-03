@@ -39,7 +39,7 @@ public class BillingDataDto {
     @NotBlank
     private String recipientCode;
 
-    @ApiModelProperty(value = "${swagger.onboarding.institutions.model.publicService}")
-    private Boolean publicService;
+    @ApiModelProperty(value = "${swagger.onboarding.institutions.model.publicServices}")
+    private Boolean publicServices;
 
 }
