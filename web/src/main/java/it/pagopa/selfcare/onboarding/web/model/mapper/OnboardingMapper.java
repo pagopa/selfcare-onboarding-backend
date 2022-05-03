@@ -115,12 +115,14 @@ public class OnboardingMapper {
             resource = new InstitutionData();
             BillingDataDto billing = new BillingDataDto();
             billing.setDigitalAddress(model.getDigitalAddress());
-            billing.setPublicServices(model.getBilling().getPublicServices());
-            billing.setRecipientCode(model.getBilling().getRecipientCode());
             billing.setTaxCode(model.getTaxCode());
-            billing.setVatNumber(model.getBilling().getVatNumber());
             billing.setBusinessName(model.getDescription());
             billing.setRegisteredOffice(model.getAddress());
+            if (model.getBilling() != null) {
+                billing.setPublicServices(model.getBilling().getPublicServices());
+                billing.setRecipientCode(model.getBilling().getRecipientCode());
+                billing.setVatNumber(model.getBilling().getVatNumber());
+            }
             resource.setBillingData(billing);
             resource.setOrigin(model.getOrigin());
             resource.setInstitutionType(model.getInstitutionType());
