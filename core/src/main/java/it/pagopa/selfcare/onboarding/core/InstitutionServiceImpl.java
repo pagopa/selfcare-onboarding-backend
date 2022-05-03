@@ -109,30 +109,30 @@ class InstitutionServiceImpl implements InstitutionService {
     }
 
     @Override
-    public InstitutionOnboardingData getInstitutionOnboardingData(String institutionId, String productId) {
+    public InstitutionOnboardingData getInstitutionOnboardingData(String externalInstitutionId, String productId) {
         log.trace("getManager start");
-        log.debug("getManager institutionId = {}, productId = {}", institutionId, productId);
-        Assert.hasText(institutionId, REQUIRED_INSTITUTION_ID_MESSAGE);
+        log.debug("getManager externalInstitutionId = {}, productId = {}", externalInstitutionId, productId);
+        Assert.hasText(externalInstitutionId, REQUIRED_INSTITUTION_ID_MESSAGE);
         InstitutionOnboardingData result = new InstitutionOnboardingData();
 
         EnumSet<PartyRole> roles = Arrays.stream(PartyRole.values())
                 .filter(partyRole -> SelfCareAuthority.ADMIN.equals(partyRole.getSelfCareAuthority()))
                 .collect(Collectors.toCollection(() -> EnumSet.noneOf(PartyRole.class)));
-        if (checkAuthority(institutionId, productId, roles)) {
+        if (checkAuthority(externalInstitutionId, productId, roles)) {
             UserInfo.UserInfoFilter userInfoFilter = new UserInfo.UserInfoFilter();
             userInfoFilter.setProductId(Optional.of(productId));
             userInfoFilter.setRole(Optional.of(EnumSet.of(PartyRole.MANAGER)));
             userInfoFilter.setAllowedState(Optional.of(EnumSet.of(RelationshipState.ACTIVE)));
-            Collection<UserInfo> userInfos = getUsers(institutionId, userInfoFilter);
+            Collection<UserInfo> userInfos = getUsers(externalInstitutionId, userInfoFilter);
             if (!userInfos.iterator().hasNext()) {
                 throw new ResourceNotFoundException(String.format("No Manager found for given institution: %s", institutionId));
             }
             UserInfo manager = userInfos.iterator().next();
             result.setManager(manager);
         }
-        InstitutionInfo institution = partyConnector.getOnboardedInstitution(institutionId);
+        InstitutionInfo institution = partyConnector.getOnboardedInstitution(externalInstitutionId);
         if (institution == null) {
-            throw new ResourceNotFoundException(String.format("Institution %s not found", institutionId));
+            throw new ResourceNotFoundException(String.format("Institution %s not found", externalInstitutionId));
         }
         result.setInstitution(institution);
         log.debug(LogUtils.CONFIDENTIAL_MARKER, "getManager result = {}", result);
@@ -140,7 +140,7 @@ class InstitutionServiceImpl implements InstitutionService {
         return result;
     }
 
-    private Boolean checkAuthority(String institutionId, String productId, EnumSet<PartyRole> roles) {
+    private Boolean checkAuthority(String externalInstitutionId, String productId, EnumSet<PartyRole> roles) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Assert.state(authentication != null, "Authentication is required");
         Assert.state(authentication.getPrincipal() instanceof SelfCareUser, "Not SelfCareUser principal");
@@ -151,28 +151,28 @@ class InstitutionServiceImpl implements InstitutionService {
         filter.setAllowedState(Optional.of(EnumSet.of(RelationshipState.ACTIVE)));
         filter.setRole(Optional.of(roles));
 
-        Collection<UserInfo> userInfos = getUsers(institutionId, filter);
+        Collection<UserInfo> userInfos = getUsers(externalInstitutionId, filter);
         return userInfos.iterator().hasNext();
 
     }
 
     @Override
-    public Institution getInstitutionByExternalId(String institutionId) {
+    public Institution getInstitutionByExternalId(String externalInstitutionId) {
         log.trace("getInstitutionData start");
-        log.debug("getInstitutionData institutionId = {}", institutionId);
-        Assert.hasText(institutionId, REQUIRED_INSTITUTION_ID_MESSAGE);
-        Institution institution = partyConnector.getInstitutionByExternalId(institutionId);
+        log.debug("getInstitutionData externalInstitutionId = {}", externalInstitutionId);
+        Assert.hasText(externalInstitutionId, REQUIRED_INSTITUTION_ID_MESSAGE);
+        Institution institution = partyConnector.getInstitutionByExternalId(externalInstitutionId);
         log.debug("getInstitutionData result = {}", institution);
         log.trace("getInstitutionData end");
         return institution;
     }
 
-    private Collection<UserInfo> getUsers(String institutionId, UserInfo.UserInfoFilter userInfoFilter) {
+    private Collection<UserInfo> getUsers(String externalInstitutionId, UserInfo.UserInfoFilter userInfoFilter) {
         log.trace("getUsers start");
-        log.debug("getUsers institutionId = {}, productId = {}, role = {}, productRoles = {}",
-                institutionId, userInfoFilter.getProductId(), userInfoFilter.getRole(), userInfoFilter.getProductRoles());
-        Assert.hasText(institutionId, REQUIRED_INSTITUTION_ID_MESSAGE);
-        Collection<UserInfo> userInfos = partyConnector.getUsers(institutionId, userInfoFilter);
+        log.debug("getUsers externalInstitutionId = {}, productId = {}, role = {}, productRoles = {}",
+                externalInstitutionId, userInfoFilter.getProductId(), userInfoFilter.getRole(), userInfoFilter.getProductRoles());
+        Assert.hasText(externalInstitutionId, REQUIRED_INSTITUTION_ID_MESSAGE);
+        Collection<UserInfo> userInfos = partyConnector.getUsers(externalInstitutionId, userInfoFilter);
         log.debug(LogUtils.CONFIDENTIAL_MARKER, "getUsers result = {}", userInfos);
         log.trace("getUsers end");
         return userInfos;

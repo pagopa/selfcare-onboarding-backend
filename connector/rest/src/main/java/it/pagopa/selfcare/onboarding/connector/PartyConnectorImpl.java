@@ -137,13 +137,13 @@ class PartyConnectorImpl implements PartyConnector {
     }
 
     @Override
-    public RelationshipsResponse getUserInstitutionRelationships(String institutionId, String productId) {
+    public RelationshipsResponse getUserInstitutionRelationships(String externalInstitutionId, String productId) {
         log.trace("getUserInstitutionRelationships start");
-        log.debug("getUserInstitutionRelationships institutionId = {}, productId = {}", institutionId, productId);
-        Assert.hasText(institutionId, REQUIRED_INSTITUTION_ID_MESSAGE);
+        log.debug("getUserInstitutionRelationships externalInstitutionId = {}, productId = {}", externalInstitutionId, productId);
+        Assert.hasText(externalInstitutionId, REQUIRED_INSTITUTION_ID_MESSAGE);
         Assert.hasText(productId, REQUIRED_PRODUCT_ID_MESSAGE);
         RelationshipsResponse institutionRelationships = restClient.getUserInstitutionRelationships(
-                institutionId,
+                externalInstitutionId,
                 null,
                 EnumSet.of(ACTIVE),
                 Set.of(productId),
@@ -156,13 +156,13 @@ class PartyConnectorImpl implements PartyConnector {
     }
 
     @Override
-    public Collection<UserInfo> getUsers(String institutionId, UserInfo.UserInfoFilter userInfoFilter) {
+    public Collection<UserInfo> getUsers(String externalInstitutionId, UserInfo.UserInfoFilter userInfoFilter) {
         log.trace("getUsers start");
-        log.debug("getUsers institutionId = {}, role = {}, productId = {}, productRoles = {}, userId = {}", institutionId, userInfoFilter.getRole(), userInfoFilter.getProductId(), userInfoFilter.getProductRoles(), userInfoFilter.getUserId());
-        Assert.hasText(institutionId, REQUIRED_INSTITUTION_ID_MESSAGE);
+        log.debug("getUsers externalInstitutionId = {}, role = {}, productId = {}, productRoles = {}, userId = {}", externalInstitutionId, userInfoFilter.getRole(), userInfoFilter.getProductId(), userInfoFilter.getProductRoles(), userInfoFilter.getUserId());
+        Assert.hasText(externalInstitutionId, REQUIRED_INSTITUTION_ID_MESSAGE);
 
         Collection<UserInfo> userInfos = Collections.emptyList();
-        RelationshipsResponse institutionRelationships = restClient.getUserInstitutionRelationships(institutionId,
+        RelationshipsResponse institutionRelationships = restClient.getUserInstitutionRelationships(externalInstitutionId,
                 userInfoFilter.getRole().orElse(null),
                 userInfoFilter.getAllowedStates().orElse(null),
                 userInfoFilter.getProductId().map(Set::of).orElse(null),
@@ -191,22 +191,22 @@ class PartyConnectorImpl implements PartyConnector {
     }
 
     @Override
-    public Institution getInstitutionByExternalId(String institutionId) {
+    public Institution getInstitutionByExternalId(String externalInstitutionId) {
         log.trace("getInstitution start");
-        log.debug("getInstitution institutionId = {}", institutionId);
-        Assert.hasText(institutionId, REQUIRED_INSTITUTION_ID_MESSAGE);
-        Institution result = restClient.getInstitutionByExternalId(institutionId);
+        log.debug("getInstitution externalInstitutionId = {}", externalInstitutionId);
+        Assert.hasText(externalInstitutionId, REQUIRED_INSTITUTION_ID_MESSAGE);
+        Institution result = restClient.getInstitutionByExternalId(externalInstitutionId);
         log.debug("getInstitution result = {}", result);
         log.trace("getInstitution end");
         return result;
     }
 
     @Override
-    public InstitutionInfo getOnboardedInstitution(String institutionId) {
+    public InstitutionInfo getOnboardedInstitution(String externalInstitutionId) {
         log.trace("getOnBoardedInstitution start");
-        log.debug("getOnBoardedInstitution institutionId = {}", institutionId);
-        Assert.hasText(institutionId, REQUIRED_INSTITUTION_ID_MESSAGE);
-        OnBoardingInfo onBoardingInfo = restClient.getOnBoardingInfo(institutionId, EnumSet.of(ACTIVE));
+        log.debug("getOnBoardedInstitution externalInstitutionId = {}", externalInstitutionId);
+        Assert.hasText(externalInstitutionId, REQUIRED_INSTITUTION_ID_MESSAGE);
+        OnBoardingInfo onBoardingInfo = restClient.getOnBoardingInfo(externalInstitutionId, EnumSet.of(ACTIVE));
         InstitutionInfo result = parseOnBoardingInfo(onBoardingInfo).stream()
                 .findAny().orElse(null);
         log.debug(LogUtils.CONFIDENTIAL_MARKER, "getOnBoardedInstitution result = {}", result);

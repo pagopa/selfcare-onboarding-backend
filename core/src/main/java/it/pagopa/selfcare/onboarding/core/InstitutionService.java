@@ -13,9 +13,9 @@ public interface InstitutionService {
 
     Collection<InstitutionInfo> getInstitutions();
 
-    InstitutionOnboardingData getInstitutionOnboardingData(String institutionId, String productId);
+    InstitutionOnboardingData getInstitutionOnboardingData(String externalInstitutionId, String productId);
 
-    Institution getInstitutionByExternalId(String institutionId);
+    Institution getInstitutionByExternalId(String externalInstitutionId);
 
 
 }

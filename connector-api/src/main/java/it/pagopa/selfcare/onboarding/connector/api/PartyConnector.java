@@ -14,12 +14,12 @@ public interface PartyConnector {
 
     Collection<InstitutionInfo> getOnBoardedInstitutions();
 
-    RelationshipsResponse getUserInstitutionRelationships(String institutionId, String productId);
+    RelationshipsResponse getUserInstitutionRelationships(String externalInstitutionId, String productId);
 
-    Collection<UserInfo> getUsers(String institutionId, UserInfo.UserInfoFilter userInfoFilter);
+    Collection<UserInfo> getUsers(String externalInstitutionId, UserInfo.UserInfoFilter userInfoFilter);
 
-    Institution getInstitutionByExternalId(String institutionId);
+    Institution getInstitutionByExternalId(String externalInstitutionId);
 
-    InstitutionInfo getOnboardedInstitution(String institutionId);
+    InstitutionInfo getOnboardedInstitution(String externalInstitutionId);
 
 }
