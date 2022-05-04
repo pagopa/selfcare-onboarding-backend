@@ -583,7 +583,7 @@ class InstitutionServiceImplTest {
         Executable executable = () -> institutionService.getInstitutionOnboardingData(institutionId, productId);
         //then
         ResourceNotFoundException e = assertThrows(ResourceNotFoundException.class, executable);
-        assertEquals("No Manager found for given institution", e.getMessage());
+        assertEquals(String.format("No Manager found for given institution: %s", institutionId), e.getMessage());
 
         ArgumentCaptor<UserInfo.UserInfoFilter> filterCaptor = ArgumentCaptor.forClass(UserInfo.UserInfoFilter.class);
         Mockito.verify(partyConnectorMock, Mockito.times(2))
