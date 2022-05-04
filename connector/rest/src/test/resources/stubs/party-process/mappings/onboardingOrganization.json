@@ -4,7 +4,7 @@
     "url": "/pdnd-interop-uservice-party-process/0.0.1/onboarding/institution",
     "bodyPatterns": [
       {
-        "matchesJsonPath": "$[?(@.institutionId == 'institutionId1')]"
+        "matchesJsonPath": "$[?(@.institutionId == 'institutionId2')]"
       },
       {
         "matchesJsonPath": "$[?(@.users.size() == 1)]"

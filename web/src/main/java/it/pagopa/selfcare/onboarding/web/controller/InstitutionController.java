@@ -3,9 +3,13 @@ package it.pagopa.selfcare.onboarding.web.controller;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
+import it.pagopa.selfcare.onboarding.connector.model.InstitutionOnboardingData;
+import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
 import it.pagopa.selfcare.onboarding.core.InstitutionService;
-import it.pagopa.selfcare.onboarding.web.model.UserDto;
+import it.pagopa.selfcare.onboarding.web.model.InstitutionOnboardingInfoResource;
+import it.pagopa.selfcare.onboarding.web.model.InstitutionResource;
+import it.pagopa.selfcare.onboarding.web.model.OnboardingDto;
+import it.pagopa.selfcare.onboarding.web.model.mapper.OnboardingMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
@@ -41,13 +46,59 @@ public class InstitutionController {
                                    String productId,
                            @RequestBody
                            @Valid
-                                   List<UserDto> users) {
-        if (log.isDebugEnabled()) {
-            log.trace("InstitutionController.onboarding");
-            log.debug("institutionId = {}, productId = {}, users = {}", institutionId, productId, users);
-        }
+                                   OnboardingDto request) {
+        log.trace("onboarding start");
+        log.debug("onboarding institutionId = {}, productId = {}, request = {}", institutionId, productId, request);
+        institutionService.onboarding(OnboardingMapper.toOnboardingData(institutionId, productId, request));
+        log.trace("onboarding end");
+    }
 
-        institutionService.onboarding(new OnboardingData(institutionId, productId, users));
+    @GetMapping(value = "/{institutionId}/products/{productId}/onboarded-institution-info")
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "", notes = "${swagger.onboarding.institutions.api.getInstitutionOnboardingInfo}")
+    public InstitutionOnboardingInfoResource getInstitutionOnboardingInfo(@ApiParam("${swagger.onboarding.institutions.model.id}")
+                                                                          @PathVariable("institutionId")
+                                                                                  String institutionId,
+                                                                          @ApiParam("${swagger.onboarding.products.model.id}")
+                                                                          @PathVariable("productId")
+                                                                                  String productId) {
+        log.trace("getInstitutionOnBoardingInfo start");
+        log.debug("getInstitutionOnBoardingInfo institutionId = {}, productId = {}", institutionId, productId);
+        InstitutionOnboardingData institutionOnboardingData = institutionService.getInstitutionOnboardingData(institutionId, productId);
+        InstitutionOnboardingInfoResource result = OnboardingMapper.toResource(institutionOnboardingData);
+        log.debug("getInstitutionOnBoardingInfo result = {}", result);
+        log.trace("getInstitutionOnBoardingInfo end");
+        return result;
+    }
+
+    @GetMapping(value = "/{institutionId}/data")
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "", notes = "${swagger.onboarding.institutions.api.manager}")
+    public InstitutionResource getInstitutionData(@ApiParam("${swagger.onboarding.institutions.model.id}")
+                                                  @PathVariable("institutionId")
+                                                          String institutionId) {
+        log.trace("getInstitutionData start");
+        log.debug("getInstitutionData institutionId = {}", institutionId);
+        Institution institution = institutionService.getInstitutionByExternalId(institutionId);
+        InstitutionResource result = OnboardingMapper.toResource(institution);
+        log.debug("getInstitutionData result = {}", result);
+        log.trace("getInstitutionData end");
+        return result;
+    }
+
+
+    @GetMapping("")
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "", notes = "${swagger.onboarding.institutions.api.getInstitutions}")
+    public List<InstitutionResource> getInstitutions() {
+        log.trace("getInstitutions start");
+        List<InstitutionResource> institutionResources = institutionService.getInstitutions()
+                .stream()
+                .map(OnboardingMapper::toResource)
+                .collect(Collectors.toList());
+        log.debug("getInstitutions result = {}", institutionResources);
+        log.trace("getInstitutions end");
+        return institutionResources;
     }
 
 }

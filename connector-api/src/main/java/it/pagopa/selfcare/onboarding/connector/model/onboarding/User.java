@@ -10,14 +10,11 @@
  * Do not edit the class manually.
  */
 
-package it.pagopa.selfcare.onboarding.connector.rest.model;
+package it.pagopa.selfcare.onboarding.connector.model.onboarding;
 
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.PartyRole;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
-@Getter
-@Setter
+@Data
 public class User {
 
     private String name;

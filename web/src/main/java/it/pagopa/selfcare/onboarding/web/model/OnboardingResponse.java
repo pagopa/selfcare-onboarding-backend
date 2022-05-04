@@ -13,15 +13,13 @@
 package it.pagopa.selfcare.onboarding.web.model;
 
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingResource;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.File;
 
-@Getter
-@Setter
+@Data
 public class OnboardingResponse implements OnboardingResource {
 
     @NotBlank

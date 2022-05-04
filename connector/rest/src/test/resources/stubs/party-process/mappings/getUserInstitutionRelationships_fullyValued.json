@@ -1,0 +1,62 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPath": "/pdnd-interop-uservice-party-process/0.0.1/external/institutions/institutionId1/relationships"
+  },
+  "response": {
+    "status": "200",
+    "jsonBody": [
+      {
+        "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "from": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "to": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "name": "string",
+        "surname": "string",
+        "taxCode": "string",
+        "certification": "SPID",
+        "institutionContacts": {
+          "additionalProp1": [
+            {
+              "email": "string"
+            }
+          ],
+          "additionalProp2": [
+            {
+              "email": "string"
+            }
+          ],
+          "additionalProp3": [
+            {
+              "email": "string"
+            }
+          ]
+        },
+        "role": "MANAGER",
+        "product": {
+          "id": "string",
+          "role": "string",
+          "createdAt": "2022-05-04T09:07:39.931Z"
+        },
+        "state": "PENDING",
+        "pricingPlan": "string",
+        "institutionUpdate": {
+          "institutionType": "PA",
+          "description": "AGENCY X",
+          "digitalAddress": "email@pec.mail.org",
+          "address": "via del campo",
+          "taxCode": "string"
+        },
+        "billing": {
+          "vatNumber": "string",
+          "recipientCode": "string",
+          "publicServices": true
+        },
+        "createdAt": "2022-05-04T09:07:39.931Z",
+        "updatedAt": "2022-05-04T09:07:39.931Z"
+      }
+    ],
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}

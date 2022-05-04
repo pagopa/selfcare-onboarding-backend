@@ -1,0 +1,29 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPath": "/pdnd-interop-uservice-party-process/0.0.1/external/institutions/institutionId1"
+  },
+  "response": {
+    "status": "200",
+    "jsonBody": {
+      "id": "string",
+      "institutionId": "string",
+      "description": "string",
+      "digitalAddress": "string",
+      "address": "string",
+      "zipCode": "string",
+      "taxCode": "string",
+      "origin": "string",
+      "attributes": [
+        {
+          "origin": "string",
+          "code": "string",
+          "description": "string"
+        }
+      ]
+    },
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}

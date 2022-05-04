@@ -1,8 +1,22 @@
 package it.pagopa.selfcare.onboarding.connector.model.onboarding;
 
+import it.pagopa.selfcare.commons.base.security.SelfCareAuthority;
+import lombok.Getter;
+
+import static it.pagopa.selfcare.commons.base.security.SelfCareAuthority.ADMIN;
+import static it.pagopa.selfcare.commons.base.security.SelfCareAuthority.LIMITED;
+
+@Getter
 public enum PartyRole {
-    MANAGER,
-    DELEGATE,
-    SUB_DELEGATE,
-    OPERATOR
+    MANAGER(ADMIN),
+    DELEGATE(ADMIN),
+    SUB_DELEGATE(ADMIN),
+    OPERATOR(LIMITED);
+
+    private SelfCareAuthority selfCareAuthority;
+
+    PartyRole(SelfCareAuthority selfCareAuthority) {
+        this.selfCareAuthority = selfCareAuthority;
+    }
+
 }

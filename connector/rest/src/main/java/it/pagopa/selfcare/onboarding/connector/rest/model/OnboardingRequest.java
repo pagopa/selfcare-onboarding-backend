@@ -12,17 +12,21 @@
 
 package it.pagopa.selfcare.onboarding.connector.rest.model;
 
-import lombok.Getter;
-import lombok.Setter;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.BillingData;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.User;
+import lombok.Data;
 
 import java.util.List;
 
-@Setter
-@Getter
+@Data
 public class OnboardingRequest {
 
     private String institutionId;
     private List<User> users;
+    private String origin;
     private OnboardingContract contract;
+    private String pricingPlan;
+    private BillingData billing;
+    private InstitutionUpdate institutionUpdate;
 
 }
