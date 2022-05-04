@@ -125,7 +125,7 @@ class InstitutionServiceImpl implements InstitutionService {
             userInfoFilter.setAllowedState(Optional.of(EnumSet.of(RelationshipState.ACTIVE)));
             Collection<UserInfo> userInfos = getUsers(externalInstitutionId, userInfoFilter);
             if (!userInfos.iterator().hasNext()) {
-                throw new ResourceNotFoundException(String.format("No Manager found for given institution: %s", institutionId));
+                throw new ResourceNotFoundException(String.format("No Manager found for given institution: %s", externalInstitutionId));
             }
             UserInfo manager = userInfos.iterator().next();
             result.setManager(manager);
