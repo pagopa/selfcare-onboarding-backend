@@ -39,7 +39,6 @@ public class RelationshipInfo {
     private RelationshipState state;
     private InstitutionUpdate institutionUpdate;
     private BillingData billing;
-    private String email;
     private OffsetDateTime createdAt;
     private OffsetDateTime updatedAt;
 
