@@ -48,6 +48,8 @@ class PartyConnectorImpl implements PartyConnector {
         institutionInfo.setZipCode(onboardingData.getZipCode());
         institutionInfo.setDigitalAddress(onboardingData.getDigitalAddress());
         institutionInfo.setBilling(onboardingData.getBilling());
+        institutionInfo.setOrigin(onboardingData.getOrigin());
+        institutionInfo.setInstitutionType(onboardingData.getInstitutionType());
         return institutionInfo;
     };
 
