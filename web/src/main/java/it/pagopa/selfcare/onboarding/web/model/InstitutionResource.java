@@ -12,14 +12,13 @@ public class InstitutionResource {
     @ApiModelProperty(value = "${swagger.onboarding.institutions.model.id}", required = true)
     private String id;
 
-
     @ApiModelProperty(value = "${swagger.onboarding.institutions.model.name}", required = true)
     @JsonProperty(required = true)
     @NotBlank
     private String description;
 
-    @ApiModelProperty(value = "${swagger.onboarding.institutions.model.institutionId}", required = true)
-    @JsonProperty(value = "institutionId", required = true)
+    @ApiModelProperty(value = "${swagger.onboarding.institutions.model.externalId}", required = true)
+    @JsonProperty(required = true)
     @NotBlank
     private String externalId;
 
