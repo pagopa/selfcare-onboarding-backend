@@ -11,6 +11,7 @@ public class Institution {
     private String id;
     private String institutionId;
     private String description;
+    private String originId;
     private String digitalAddress;
     private String address;
     private String zipCode;

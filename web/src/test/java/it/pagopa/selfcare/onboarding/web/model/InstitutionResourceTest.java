@@ -37,6 +37,8 @@ class InstitutionResourceTest {
         toCheckMap.put("address", NotBlank.class);
         toCheckMap.put("zipCode", NotBlank.class);
         toCheckMap.put("taxCode", NotBlank.class);
+        toCheckMap.put("origin", NotBlank.class);
+        toCheckMap.put("originId", NotBlank.class);
 
         InstitutionResource institutionResource = new InstitutionResource();
         institutionResource.setExternalId(null);

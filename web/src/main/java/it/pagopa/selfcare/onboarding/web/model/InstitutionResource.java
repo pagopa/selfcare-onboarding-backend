@@ -2,6 +2,7 @@ package it.pagopa.selfcare.onboarding.web.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModelProperty;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.InstitutionType;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
@@ -21,6 +22,14 @@ public class InstitutionResource {
     @JsonProperty(required = true)
     @NotBlank
     private String externalId;
+
+    @ApiModelProperty(value = "${swagger.onboarding.institutions.model.originId}", required = true)
+    @JsonProperty(required = true)
+    @NotBlank
+    private String originId;
+
+    @ApiModelProperty(value = "${swagger.onboarding.institutions.model.institutionType}", required = true)
+    private InstitutionType institutionType;
 
     @ApiModelProperty(value = "${swagger.onboarding.institutions.model.digitalAddress}", required = true)
     @JsonProperty(required = true)

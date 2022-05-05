@@ -91,6 +91,8 @@ public class OnboardingMapper {
             resource.setDescription(model.getDescription());
             resource.setExternalId(model.getInstitutionId());
             resource.setAddress(model.getAddress());
+            resource.setOriginId(model.getOriginId());
+            resource.setInstitutionType(model.getInstitutionType());
             resource.setDigitalAddress(model.getDigitalAddress());
             resource.setTaxCode(model.getTaxCode());
             resource.setZipCode(model.getZipCode());
