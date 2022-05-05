@@ -43,46 +43,38 @@
           "403" : {
             "description" : "Forbidden"
           },
-          "404": {
-            "description": "Not Found"
+          "404" : {
+            "description" : "Not Found"
           }
         },
-        "security": [
-          {
-            "bearerAuth": [
-              "global"
-            ]
-          }
-        ]
+        "security" : [ {
+          "bearerAuth" : [ "global" ]
+        } ]
       }
     },
-    "/institutions/{externalInstitutionId}/data": {
-      "get": {
-        "tags": [
-          "institutions"
-        ],
-        "summary": "getInstitutionData",
-        "description": "${swagger.onboarding.institutions.api.manager}",
-        "operationId": "getInstitutionDataUsingGET",
-        "parameters": [
-          {
-            "name": "externalInstitutionId",
-            "in": "path",
-            "description": "Institution's unique external Id(i.ee: IPA code)",
-            "required": true,
-            "style": "simple",
-            "schema": {
-              "type": "string"
-            }
+    "/institutions/{institutionId}/data" : {
+      "get" : {
+        "tags" : [ "institutions" ],
+        "summary" : "getInstitutionData",
+        "description" : "${swagger.onboarding.institutions.api.manager}",
+        "operationId" : "getInstitutionDataUsingGET",
+        "parameters" : [ {
+          "name" : "institutionId",
+          "in" : "path",
+          "description" : "Institution's unique identifier (i.e.: IPA code)",
+          "required" : true,
+          "style" : "simple",
+          "schema" : {
+            "type" : "string"
           }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/InstitutionResource"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/InstitutionResource"
                 }
               }
             }
@@ -93,50 +85,41 @@
           "403" : {
             "description" : "Forbidden"
           },
-          "404": {
-            "description": "Not Found"
+          "404" : {
+            "description" : "Not Found"
           }
         },
-        "security": [
-          {
-            "bearerAuth": [
-              "global"
-            ]
-          }
-        ]
+        "security" : [ {
+          "bearerAuth" : [ "global" ]
+        } ]
       }
     },
-    "/institutions/{externalInstitutionId}/products/{productId}/onboarded-institution-info": {
-      "get": {
-        "tags": [
-          "institutions"
-        ],
-        "summary": "getInstitutionOnboardingInfo",
-        "description": "The service retrieves the institutions Manager and institution informations",
-        "operationId": "getInstitutionOnboardingInfoUsingGET",
-        "parameters": [
-          {
-            "name": "externalInstitutionId",
-            "in": "path",
-            "description": "Institution's unique external Id(i.ee: IPA code)",
-            "required": true,
-            "style": "simple",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "productId",
-            "in": "path",
-            "description": "Product's unique identifier",
-            "required": true,
-            "style": "simple",
-            "schema": {
-              "type": "string"
-            }
+    "/institutions/{institutionId}/products/{productId}/onboarded-institution-info" : {
+      "get" : {
+        "tags" : [ "institutions" ],
+        "summary" : "getInstitutionOnboardingInfo",
+        "description" : "The service retrieves the institutions Manager and institution informations",
+        "operationId" : "getInstitutionOnboardingInfoUsingGET",
+        "parameters" : [ {
+          "name" : "institutionId",
+          "in" : "path",
+          "description" : "Institution's unique identifier (i.e.: IPA code)",
+          "required" : true,
+          "style" : "simple",
+          "schema" : {
+            "type" : "string"
           }
-        ],
-        "responses": {
+        }, {
+          "name" : "productId",
+          "in" : "path",
+          "description" : "Product's unique identifier",
+          "required" : true,
+          "style" : "simple",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
           "200" : {
             "description" : "OK",
             "content" : {
@@ -153,50 +136,41 @@
           "403" : {
             "description" : "Forbidden"
           },
-          "404": {
-            "description": "Not Found"
+          "404" : {
+            "description" : "Not Found"
           }
         },
-        "security": [
-          {
-            "bearerAuth": [
-              "global"
-            ]
-          }
-        ]
+        "security" : [ {
+          "bearerAuth" : [ "global" ]
+        } ]
       }
     },
-    "/institutions/{externalInstitutionId}/products/{productId}/onboarding": {
-      "post": {
-        "tags": [
-          "institutions"
-        ],
-        "summary": "onboarding",
-        "description": "The service allows the onboarding of Users to an Institution",
-        "operationId": "onboardingUsingPOST",
-        "parameters": [
-          {
-            "name": "externalInstitutionId",
-            "in": "path",
-            "description": "Institution's unique external Id(i.ee: IPA code)",
-            "required": true,
-            "style": "simple",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "productId",
-            "in": "path",
-            "description": "Product's unique identifier",
-            "required": true,
-            "style": "simple",
-            "schema": {
-              "type": "string"
-            }
+    "/institutions/{institutionId}/products/{productId}/onboarding" : {
+      "post" : {
+        "tags" : [ "institutions" ],
+        "summary" : "onboarding",
+        "description" : "The service allows the onboarding of Users to an Institution",
+        "operationId" : "onboardingUsingPOST",
+        "parameters" : [ {
+          "name" : "institutionId",
+          "in" : "path",
+          "description" : "Institution's unique identifier (i.e.: IPA code)",
+          "required" : true,
+          "style" : "simple",
+          "schema" : {
+            "type" : "string"
           }
-        ],
-        "requestBody": {
+        }, {
+          "name" : "productId",
+          "in" : "path",
+          "description" : "Product's unique identifier",
+          "required" : true,
+          "style" : "simple",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
           "content" : {
             "application/json" : {
               "schema" : {
@@ -356,11 +330,11 @@
           },
           "id" : {
             "type" : "string",
-            "description": "Institution's unique internal Id "
+            "description" : "Institution's unique identifier (i.e.: IPA code)"
           },
           "institutionId" : {
             "type" : "string",
-            "description": "${swagger.onboarding.institutions.model.institutionId}"
+            "description" : "Institution's unique Id"
           },
           "origin" : {
             "type" : "string",
