@@ -43,13 +43,17 @@
           "403" : {
             "description" : "Forbidden"
           },
-          "404" : {
-            "description" : "Not Found"
+          "404": {
+            "description": "Not Found"
           }
         },
-        "security" : [ {
-          "bearerAuth" : [ "global" ]
-        } ]
+        "security": [
+          {
+            "bearerAuth": [
+              "global"
+            ]
+          }
+        ]
       }
     },
     "/institutions/{externalInstitutionId}/data": {
@@ -70,14 +74,15 @@
             "schema": {
               "type": "string"
             }
-          } ],
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/InstitutionResource"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InstitutionResource"
                 }
               }
             }
@@ -88,13 +93,17 @@
           "403" : {
             "description" : "Forbidden"
           },
-          "404" : {
-            "description" : "Not Found"
+          "404": {
+            "description": "Not Found"
           }
         },
-        "security" : [ {
-          "bearerAuth" : [ "global" ]
-        } ]
+        "security": [
+          {
+            "bearerAuth": [
+              "global"
+            ]
+          }
+        ]
       }
     },
     "/institutions/{externalInstitutionId}/products/{productId}/onboarded-institution-info": {
@@ -115,17 +124,19 @@
             "schema": {
               "type": "string"
             }
-          }, {
-          "name" : "productId",
-          "in" : "path",
-          "description" : "Product's unique identifier",
-          "required" : true,
-          "style" : "simple",
-          "schema" : {
-            "type" : "string"
+          },
+          {
+            "name": "productId",
+            "in": "path",
+            "description": "Product's unique identifier",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
           }
-        } ],
-        "responses" : {
+        ],
+        "responses": {
           "200" : {
             "description" : "OK",
             "content" : {
@@ -142,13 +153,17 @@
           "403" : {
             "description" : "Forbidden"
           },
-          "404" : {
-            "description" : "Not Found"
+          "404": {
+            "description": "Not Found"
           }
         },
-        "security" : [ {
-          "bearerAuth" : [ "global" ]
-        } ]
+        "security": [
+          {
+            "bearerAuth": [
+              "global"
+            ]
+          }
+        ]
       }
     },
     "/institutions/{externalInstitutionId}/products/{productId}/onboarding": {
@@ -169,17 +184,19 @@
             "schema": {
               "type": "string"
             }
-          }, {
-          "name" : "productId",
-          "in" : "path",
-          "description" : "Product's unique identifier",
-          "required" : true,
-          "style" : "simple",
-          "schema" : {
-            "type" : "string"
+          },
+          {
+            "name": "productId",
+            "in": "path",
+            "description": "Product's unique identifier",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
           }
-        } ],
-        "requestBody" : {
+        ],
+        "requestBody": {
           "content" : {
             "application/json" : {
               "schema" : {
