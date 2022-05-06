@@ -22,5 +22,6 @@ public class OnboardingResponseData {
     private String pricingPlan;
     private BillingData billing;
     private String origin;
+    private String originId;
     private List<Attribute> attributes;
 }

@@ -6,12 +6,13 @@ import it.pagopa.selfcare.onboarding.connector.model.onboarding.InstitutionType;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
+import java.util.UUID;
 
 @Data
 public class InstitutionResource {
 
     @ApiModelProperty(value = "${swagger.onboarding.institutions.model.id}", required = true)
-    private String id;
+    private UUID id;
 
     @ApiModelProperty(value = "${swagger.onboarding.institutions.model.name}", required = true)
     @JsonProperty(required = true)

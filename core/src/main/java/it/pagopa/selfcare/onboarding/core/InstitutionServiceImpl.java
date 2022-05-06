@@ -103,7 +103,7 @@ class InstitutionServiceImpl implements InstitutionService {
     public Collection<InstitutionInfo> getInstitutions() {
         log.trace("getInstitutions start");
         Collection<InstitutionInfo> result = partyConnector.getOnBoardedInstitutions();
-        log.debug(LogUtils.CONFIDENTIAL_MARKER, "getInstitutions result = {}", result);
+        log.debug("getInstitutions result = {}", result);
         log.trace("getInstitutions end");
         return result;
     }

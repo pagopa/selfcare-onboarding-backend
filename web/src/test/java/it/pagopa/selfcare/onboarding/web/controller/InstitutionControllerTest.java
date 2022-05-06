@@ -2,7 +2,6 @@ package it.pagopa.selfcare.onboarding.web.controller;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import it.pagopa.selfcare.commons.utils.TestUtils;
 import it.pagopa.selfcare.onboarding.connector.model.InstitutionOnboardingData;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Attribute;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
@@ -22,18 +21,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.Collections;
 import java.util.List;
 
+import static it.pagopa.selfcare.commons.utils.TestUtils.mockInstance;
+import static java.util.UUID.randomUUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(value = {InstitutionController.class}, excludeAutoConfiguration = SecurityAutoConfiguration.class)
 @ContextConfiguration(classes = {InstitutionController.class, WebTestConfig.class})
@@ -59,23 +62,23 @@ class InstitutionControllerTest {
         // given
         String institutionId = "institutionId";
         String productId = "productId";
-        List<UserDto> userDtos = List.of(TestUtils.mockInstance(new UserDto()));
-        OnboardingDto onboardingDto = TestUtils.mockInstance(new OnboardingDto());
-        BillingDataDto billingData = TestUtils.mockInstance(new BillingDataDto());
+        List<UserDto> userDtos = List.of(mockInstance(new UserDto()));
+        OnboardingDto onboardingDto = mockInstance(new OnboardingDto());
+        BillingDataDto billingData = mockInstance(new BillingDataDto());
         onboardingDto.setUsers(userDtos);
         onboardingDto.setBillingData(billingData);
         onboardingDto.setInstitutionType(InstitutionType.PA);
         // when
         MvcResult result = mvc.perform(MockMvcRequestBuilders
-                        .post(BASE_URL + "/{institutionId}/products/{productId}/onboarding", institutionId, productId)
-                        .content(objectMapper.writeValueAsString(onboardingDto))
-                        .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .accept(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(MockMvcResultMatchers.status().isCreated())
+                .post(BASE_URL + "/{institutionId}/products/{productId}/onboarding", institutionId, productId)
+                .content(objectMapper.writeValueAsString(onboardingDto))
+                .contentType(APPLICATION_JSON_VALUE)
+                .accept(APPLICATION_JSON_VALUE))
+                .andExpect(status().isCreated())
                 .andReturn();
         // then
         assertEquals(0, result.getResponse().getContentLength());
-        Mockito.verify(institutionServiceMock, Mockito.times(1))
+        verify(institutionServiceMock, times(1))
                 .onboarding(onboardingDataCaptor.capture());
         OnboardingData captured = onboardingDataCaptor.getValue();
         assertNotNull(captured);
@@ -99,19 +102,19 @@ class InstitutionControllerTest {
         //given
         String institutionId = "institutionId";
         String productId = "productId";
-        InstitutionInfo institutionInfoMock = TestUtils.mockInstance(new InstitutionInfo());
-        institutionInfoMock.setBilling(TestUtils.mockInstance(new BillingData()));
-        InstitutionOnboardingData onBoardingDataMock = TestUtils.mockInstance(new InstitutionOnboardingData());
+        InstitutionInfo institutionInfoMock = mockInstance(new InstitutionInfo());
+        institutionInfoMock.setBilling(mockInstance(new BillingData()));
+        InstitutionOnboardingData onBoardingDataMock = mockInstance(new InstitutionOnboardingData());
         onBoardingDataMock.setInstitution(institutionInfoMock);
-        onBoardingDataMock.setManager(TestUtils.mockInstance(new UserInfo()));
-        Mockito.when(institutionServiceMock.getInstitutionOnboardingData(Mockito.anyString(), Mockito.anyString()))
+        onBoardingDataMock.setManager(mockInstance(new UserInfo()));
+        when(institutionServiceMock.getInstitutionOnboardingData(Mockito.anyString(), Mockito.anyString()))
                 .thenReturn(onBoardingDataMock);
         //when
         MvcResult result = mvc.perform(MockMvcRequestBuilders
-                        .get(BASE_URL + "/{institutionId}/products/{productId}/onboarded-institution-info", institutionId, productId)
-                        .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .accept(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(MockMvcResultMatchers.status().isOk())
+                .get(BASE_URL + "/{institutionId}/products/{productId}/onboarded-institution-info", institutionId, productId)
+                .contentType(APPLICATION_JSON_VALUE)
+                .accept(APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk())
                 .andReturn();
         //then
         InstitutionOnboardingInfoResource response = objectMapper.readValue(
@@ -130,9 +133,9 @@ class InstitutionControllerTest {
         assertEquals(onBoardingDataMock.getInstitution().getAddress(), responseBillings.getRegisteredOffice());
         assertEquals(onBoardingDataMock.getInstitution().getInstitutionType(), response.getInstitution().getInstitutionType());
         assertNotNull(response.getManager().getId());
-        Mockito.verify(institutionServiceMock, Mockito.times(1))
+        verify(institutionServiceMock, times(1))
                 .getInstitutionOnboardingData(institutionId, productId);
-        Mockito.verifyNoMoreInteractions(institutionServiceMock);
+        verifyNoMoreInteractions(institutionServiceMock);
 
     }
 
@@ -140,24 +143,25 @@ class InstitutionControllerTest {
     void getInstitutionData() throws Exception {
         //given
         String institutionId = "institutionId";
-        Institution institutionMock = TestUtils.mockInstance(new Institution());
-        Attribute attribute = TestUtils.mockInstance(new Attribute());
+        Institution institutionMock = mockInstance(new Institution(), "setId");
+        institutionMock.setId(randomUUID().toString());
+        Attribute attribute = mockInstance(new Attribute());
         institutionMock.setAttributes(List.of(attribute));
-        Mockito.when(institutionServiceMock.getInstitutionByExternalId(Mockito.anyString()))
+        when(institutionServiceMock.getInstitutionByExternalId(any()))
                 .thenReturn(institutionMock);
         //when
         MvcResult result = mvc.perform(MockMvcRequestBuilders
-                        .get(BASE_URL + "/{institutionId}/data", institutionId)
-                        .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .accept(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(MockMvcResultMatchers.status().isOk())
+                .get(BASE_URL + "/{institutionId}/data", institutionId)
+                .contentType(APPLICATION_JSON_VALUE)
+                .accept(APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk())
                 .andReturn();
         //then
         InstitutionResource response = objectMapper.readValue(result.getResponse().getContentAsString(), InstitutionResource.class);
         assertNotNull(response);
-        Mockito.verify(institutionServiceMock, Mockito.times(1))
+        verify(institutionServiceMock, times(1))
                 .getInstitutionByExternalId(institutionId);
-        Mockito.verifyNoMoreInteractions(institutionServiceMock);
+        verifyNoMoreInteractions(institutionServiceMock);
 
 
     }
@@ -165,15 +169,16 @@ class InstitutionControllerTest {
     @Test
     void getInstitutions() throws Exception {
         //given
-        InstitutionInfo institutionInfo = TestUtils.mockInstance(new InstitutionInfo());
-        Mockito.when(institutionServiceMock.getInstitutions())
+        InstitutionInfo institutionInfo = mockInstance(new InstitutionInfo(), "setId");
+        institutionInfo.setId(randomUUID().toString());
+        when(institutionServiceMock.getInstitutions())
                 .thenReturn(Collections.singletonList(institutionInfo));
         //when
         MvcResult result = mvc.perform(MockMvcRequestBuilders
-                        .get(BASE_URL + "")
-                        .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .accept(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(MockMvcResultMatchers.status().isOk())
+                .get(BASE_URL + "")
+                .contentType(APPLICATION_JSON_VALUE)
+                .accept(APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk())
                 .andReturn();
         //then
         List<InstitutionResource> response = objectMapper.readValue(
@@ -182,11 +187,12 @@ class InstitutionControllerTest {
                 });
         assertNotNull(response);
         assertEquals(1, response.size());
-        assertEquals(institutionInfo.getInstitutionId(), response.get(0).getExternalId());
+        assertEquals(institutionInfo.getId(), response.get(0).getId().toString());
+        assertEquals(institutionInfo.getExternalId(), response.get(0).getExternalId());
         assertEquals(institutionInfo.getDescription(), response.get(0).getDescription());
-        Mockito.verify(institutionServiceMock, Mockito.times(1))
+        verify(institutionServiceMock, times(1))
                 .getInstitutions();
-        Mockito.verifyNoMoreInteractions(institutionServiceMock);
+        verifyNoMoreInteractions(institutionServiceMock);
     }
 
 }

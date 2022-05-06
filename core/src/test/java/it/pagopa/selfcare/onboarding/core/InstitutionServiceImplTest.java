@@ -529,7 +529,8 @@ class InstitutionServiceImplTest {
         assertNotNull(institutionOnboardingData);
         assertNull(institutionOnboardingData.getManager());
         assertNotNull(institutionOnboardingData.getInstitution());
-        assertEquals(institutionInfoMock.getInstitutionId(), institutionOnboardingData.getInstitution().getInstitutionId());
+        assertEquals(institutionInfoMock.getId(), institutionOnboardingData.getInstitution().getId());
+        assertEquals(institutionInfoMock.getExternalId(), institutionOnboardingData.getInstitution().getExternalId());
         assertEquals(institutionInfoMock.getAddress(), institutionOnboardingData.getInstitution().getAddress());
         assertEquals(institutionInfoMock.getInstitutionType(), institutionOnboardingData.getInstitution().getInstitutionType());
         assertEquals(institutionInfoMock.getCategory(), institutionOnboardingData.getInstitution().getCategory());

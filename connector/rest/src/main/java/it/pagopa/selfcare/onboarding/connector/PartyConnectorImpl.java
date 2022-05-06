@@ -40,15 +40,17 @@ class PartyConnectorImpl implements PartyConnector {
             (inst1, inst2) -> ACTIVE.name().equals(inst1.getStatus()) ? inst1 : inst2;
     private static final Function<OnboardingResponseData, InstitutionInfo> ONBOARDING_DATA_TO_INSTITUTION_INFO_FUNCTION = onboardingData -> {
         InstitutionInfo institutionInfo = new InstitutionInfo();
-        institutionInfo.setInstitutionId(onboardingData.getExternalId());
+        institutionInfo.setId(onboardingData.getId());
+        institutionInfo.setExternalId(onboardingData.getExternalId());
         institutionInfo.setDescription(onboardingData.getDescription());
         institutionInfo.setStatus(onboardingData.getState().toString());
-        institutionInfo.setAddress(onboardingData.getAddress());
         institutionInfo.setTaxCode(onboardingData.getTaxCode());
-        institutionInfo.setZipCode(onboardingData.getZipCode());
+        institutionInfo.setAddress(onboardingData.getAddress());
         institutionInfo.setDigitalAddress(onboardingData.getDigitalAddress());
+        institutionInfo.setZipCode(onboardingData.getZipCode());
         institutionInfo.setBilling(onboardingData.getBilling());
         institutionInfo.setOrigin(onboardingData.getOrigin());
+        institutionInfo.setOriginId(onboardingData.getOriginId());
         institutionInfo.setInstitutionType(onboardingData.getInstitutionType());
         return institutionInfo;
     };
@@ -113,7 +115,7 @@ class PartyConnectorImpl implements PartyConnector {
         log.trace("getOnBoardedInstitutions start");
         OnBoardingInfo onBoardingInfo = restClient.getOnBoardingInfo(null, EnumSet.of(ACTIVE));
         Collection<InstitutionInfo> result = parseOnBoardingInfo(onBoardingInfo);
-        log.debug(LogUtils.CONFIDENTIAL_MARKER, "getOnBoardedInstitutions result = {}", result);
+        log.debug("getOnBoardedInstitutions result = {}", result);
         log.trace("getOnBoardedInstitutions end");
         return result;
     }
@@ -127,7 +129,7 @@ class PartyConnectorImpl implements PartyConnector {
             institutions = onBoardingInfo.getInstitutions().stream()
                     .map(ONBOARDING_DATA_TO_INSTITUTION_INFO_FUNCTION)
                     .collect(Collectors.collectingAndThen(
-                            Collectors.toMap(InstitutionInfo::getInstitutionId, Function.identity(), MERGE_FUNCTION),
+                            Collectors.toMap(InstitutionInfo::getId, Function.identity(), MERGE_FUNCTION),
                             Map::values
                     ));
         }

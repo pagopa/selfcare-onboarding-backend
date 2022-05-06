@@ -9,16 +9,18 @@ import java.util.Objects;
 @Data
 public class InstitutionInfo {
 
-    private String institutionId;
+    private String id;
+    private String externalId;
     private String description;
-    private String taxCode;
-    private String digitalAddress;
     private String status;
+    private String taxCode;
     private String address;
-    private String category;
+    private String digitalAddress;
     private String zipCode;
+    private String category;
     private BillingData billing;
     private String origin;
+    private String originId;
     private InstitutionType institutionType;
 
     @Override
@@ -26,11 +28,12 @@ public class InstitutionInfo {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         InstitutionInfo that = (InstitutionInfo) o;
-        return institutionId.equals(that.institutionId);
+        return id.equals(that.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(institutionId);
+        return Objects.hash(id);
     }
+
 }
