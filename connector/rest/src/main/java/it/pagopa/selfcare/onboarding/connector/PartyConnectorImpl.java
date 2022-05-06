@@ -15,7 +15,7 @@ import it.pagopa.selfcare.onboarding.connector.rest.client.PartyProcessRestClien
 import it.pagopa.selfcare.onboarding.connector.rest.model.InstitutionUpdate;
 import it.pagopa.selfcare.onboarding.connector.rest.model.OnBoardingInfo;
 import it.pagopa.selfcare.onboarding.connector.rest.model.OnboardingContract;
-import it.pagopa.selfcare.onboarding.connector.rest.model.OnboardingRequest;
+import it.pagopa.selfcare.onboarding.connector.rest.model.OnboardingInstitutionRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -40,7 +40,7 @@ class PartyConnectorImpl implements PartyConnector {
             (inst1, inst2) -> ACTIVE.name().equals(inst1.getStatus()) ? inst1 : inst2;
     private static final Function<OnboardingResponseData, InstitutionInfo> ONBOARDING_DATA_TO_INSTITUTION_INFO_FUNCTION = onboardingData -> {
         InstitutionInfo institutionInfo = new InstitutionInfo();
-        institutionInfo.setInstitutionId(onboardingData.getInstitutionId());
+        institutionInfo.setInstitutionId(onboardingData.getExternalId());
         institutionInfo.setDescription(onboardingData.getDescription());
         institutionInfo.setStatus(onboardingData.getState().toString());
         institutionInfo.setAddress(onboardingData.getAddress());
@@ -77,18 +77,18 @@ class PartyConnectorImpl implements PartyConnector {
     @Override
     public void onboardingOrganization(OnboardingData onboardingData) {
         Assert.notNull(onboardingData, "Onboarding data is required");
-        OnboardingRequest onboardingRequest = new OnboardingRequest();
-        onboardingRequest.setInstitutionId(onboardingData.getInstitutionId());
-        onboardingRequest.setBilling(onboardingData.getBillingData());
+        OnboardingInstitutionRequest onboardingInstitutionRequest = new OnboardingInstitutionRequest();
+        onboardingInstitutionRequest.setInstitutionExternalId(onboardingData.getInstitutionId());
+        onboardingInstitutionRequest.setBilling(onboardingData.getBillingData());
         InstitutionUpdate institutionUpdate = new InstitutionUpdate();
         institutionUpdate.setInstitutionType(onboardingData.getInstitutionType());
         institutionUpdate.setAddress(onboardingData.getInstitutionUpdate().getAddress());
         institutionUpdate.setDescription(onboardingData.getInstitutionUpdate().getDescription());
         institutionUpdate.setDigitalAddress(onboardingData.getInstitutionUpdate().getDigitalAddress());
         institutionUpdate.setTaxCode(onboardingData.getInstitutionUpdate().getTaxCode());
-        onboardingRequest.setInstitutionUpdate(institutionUpdate);
+        onboardingInstitutionRequest.setInstitutionUpdate(institutionUpdate);
 
-        onboardingRequest.setUsers(onboardingData.getUsers().stream()
+        onboardingInstitutionRequest.setUsers(onboardingData.getUsers().stream()
                 .map(userInfo -> {
                     User user = new User();
                     user.setProduct(onboardingData.getProductId());
@@ -103,9 +103,9 @@ class PartyConnectorImpl implements PartyConnector {
         OnboardingContract onboardingContract = new OnboardingContract();
         onboardingContract.setPath(onboardingData.getContractPath());
         onboardingContract.setVersion(onboardingData.getContractVersion());
-        onboardingRequest.setContract(onboardingContract);
+        onboardingInstitutionRequest.setContract(onboardingContract);
 
-        restClient.onboardingOrganization(onboardingRequest);
+        restClient.onboardingOrganization(onboardingInstitutionRequest);
     }
 
     @Override

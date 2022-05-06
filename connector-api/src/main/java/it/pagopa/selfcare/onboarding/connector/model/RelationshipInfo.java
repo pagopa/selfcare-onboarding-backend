@@ -16,6 +16,7 @@ package it.pagopa.selfcare.onboarding.connector.model;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.BillingData;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.InstitutionUpdate;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.PartyRole;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.ProductInfo;
 import lombok.Data;
 
 import java.time.OffsetDateTime;
@@ -35,8 +36,9 @@ public class RelationshipInfo {
     //FIXME private Map<String, InstitutionContact> institutionContacts;
     private Map<String, List<InstitutionContact>> institutionContacts;
     private PartyRole role;
-    private String pricingPlan;
+    private ProductInfo product;
     private RelationshipState state;
+    private String pricingPlan;
     private InstitutionUpdate institutionUpdate;
     private BillingData billing;
     private OffsetDateTime createdAt;

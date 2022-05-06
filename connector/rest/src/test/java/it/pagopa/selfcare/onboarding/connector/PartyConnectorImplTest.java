@@ -17,7 +17,7 @@ import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionInf
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.*;
 import it.pagopa.selfcare.onboarding.connector.rest.client.PartyProcessRestClient;
 import it.pagopa.selfcare.onboarding.connector.rest.model.OnBoardingInfo;
-import it.pagopa.selfcare.onboarding.connector.rest.model.OnboardingRequest;
+import it.pagopa.selfcare.onboarding.connector.rest.model.OnboardingInstitutionRequest;
 import it.pagopa.selfcare.onboarding.connector.rest.model.PersonInfo;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -48,7 +48,7 @@ class PartyConnectorImplTest {
     private PartyProcessRestClient restClientMock;
 
     @Captor
-    ArgumentCaptor<OnboardingRequest> onboardingRequestCaptor;
+    ArgumentCaptor<OnboardingInstitutionRequest> onboardingRequestCaptor;
 
     private final ObjectMapper mapper;
 
@@ -89,8 +89,8 @@ class PartyConnectorImplTest {
         // then
         Mockito.verify(restClientMock, Mockito.times(1))
                 .onboardingOrganization(onboardingRequestCaptor.capture());
-        OnboardingRequest request = onboardingRequestCaptor.getValue();
-        Assertions.assertEquals(onboardingData.getInstitutionId(), request.getInstitutionId());
+        OnboardingInstitutionRequest request = onboardingRequestCaptor.getValue();
+        Assertions.assertEquals(onboardingData.getInstitutionId(), request.getInstitutionExternalId());
         Assertions.assertNotNull(request.getUsers());
         Assertions.assertTrue(request.getUsers().isEmpty());
         Mockito.verifyNoMoreInteractions(restClientMock);
@@ -109,8 +109,8 @@ class PartyConnectorImplTest {
         // then
         Mockito.verify(restClientMock, Mockito.times(1))
                 .onboardingOrganization(onboardingRequestCaptor.capture());
-        OnboardingRequest request = onboardingRequestCaptor.getValue();
-        Assertions.assertEquals(onboardingData.getInstitutionId(), request.getInstitutionId());
+        OnboardingInstitutionRequest request = onboardingRequestCaptor.getValue();
+        Assertions.assertEquals(onboardingData.getInstitutionId(), request.getInstitutionExternalId());
         Assertions.assertNotNull(request.getUsers());
         Assertions.assertEquals(1, request.getUsers().size());
         Assertions.assertEquals(onboardingData.getProductId(), request.getUsers().get(0).getProduct());
@@ -130,7 +130,7 @@ class PartyConnectorImplTest {
         onboardingData1.setState(ACTIVE);
         OnboardingResponseData onboardingData2 = TestUtils.mockInstance(new OnboardingResponseData(), 2, "setState", "setInstitutionId");
         onboardingData2.setState(PENDING);
-        onboardingData2.setInstitutionId(onboardingData1.getInstitutionId());
+        onboardingData2.setExternalId(onboardingData1.getExternalId());
         OnboardingResponseData onboardingData3 = TestUtils.mockInstance(new OnboardingResponseData(), 3, "setState");
         onboardingData3.setState(PENDING);
         onBoardingInfo.setInstitutions(List.of(onboardingData1, onboardingData2, onboardingData3, onboardingData3));
@@ -147,13 +147,13 @@ class PartyConnectorImplTest {
         assertNotNull(institutionInfos);
         assertEquals(1, institutionInfos.size());
         assertEquals(onboardingData1.getDescription(), institutionInfos.get(0).getDescription());
-        assertEquals(onboardingData1.getInstitutionId(), institutionInfos.get(0).getInstitutionId());
+        assertEquals(onboardingData1.getExternalId(), institutionInfos.get(0).getInstitutionId());
         assertEquals(onboardingData1.getState().toString(), institutionInfos.get(0).getStatus());
         institutionInfos = map.get(PENDING.name());
         assertNotNull(institutionInfos);
         assertEquals(1, institutionInfos.size());
         assertEquals(onboardingData3.getDescription(), institutionInfos.get(0).getDescription());
-        assertEquals(onboardingData3.getInstitutionId(), institutionInfos.get(0).getInstitutionId());
+        assertEquals(onboardingData3.getExternalId(), institutionInfos.get(0).getInstitutionId());
         assertEquals(onboardingData3.getState().toString(), institutionInfos.get(0).getStatus());
         Mockito.verify(restClientMock, Mockito.times(1))
                 .getOnBoardingInfo(Mockito.isNull(), Mockito.eq(EnumSet.of(ACTIVE)));
@@ -512,7 +512,7 @@ class PartyConnectorImplTest {
         Institution institution = partyConnector.getInstitutionByExternalId(institutionId);
         //then
         assertNotNull(institution);
-        assertEquals(institutionMock.getInstitutionId(), institution.getInstitutionId());
+        assertEquals(institutionMock.getExternalId(), institution.getExternalId());
         assertEquals(institutionMock.getDescription(), institution.getDescription());
         assertEquals(institutionMock.getAddress(), institution.getAddress());
         assertEquals(institutionMock.getTaxCode(), institution.getTaxCode());
@@ -544,7 +544,7 @@ class PartyConnectorImplTest {
         OnBoardingInfo onBoardingInfo = TestUtils.mockInstance(new OnBoardingInfo());
         BillingData billingData = TestUtils.mockInstance(new BillingData());
         OnboardingResponseData onboardingData = TestUtils.mockInstance(new OnboardingResponseData());
-        onboardingData.setInstitutionId(institutionId);
+        onboardingData.setExternalId(institutionId);
         onboardingData.setBilling(billingData);
         onBoardingInfo.setInstitutions(Collections.singletonList(onboardingData));
         Mockito.when(restClientMock.getOnBoardingInfo(Mockito.any(), Mockito.any()))
@@ -555,7 +555,7 @@ class PartyConnectorImplTest {
         assertNotNull(institutionInfo);
         assertEquals(onboardingData.getDescription(), institutionInfo.getDescription());
         assertEquals(onboardingData.getDigitalAddress(), institutionInfo.getDigitalAddress());
-        assertEquals(onboardingData.getInstitutionId(), institutionInfo.getInstitutionId());
+        assertEquals(onboardingData.getExternalId(), institutionInfo.getInstitutionId());
         assertEquals(onboardingData.getState().toString(), institutionInfo.getStatus());
         assertEquals(onboardingData.getAddress(), institutionInfo.getAddress());
         assertEquals(onboardingData.getBilling().getRecipientCode(), institutionInfo.getBilling().getRecipientCode());

@@ -9,15 +9,15 @@ import java.util.List;
 public class Institution {
 
     private String id;
-    private String institutionId;
-    private String description;
+    private String externalId;
     private String originId;
+    private String description;
     private String digitalAddress;
     private String address;
     private String zipCode;
     private String taxCode;
     private String origin;
     private InstitutionType institutionType;
-    private List<Attributes> attributes;
+    private List<Attribute> attributes;
 
 }

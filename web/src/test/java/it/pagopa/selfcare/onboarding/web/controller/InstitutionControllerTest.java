@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.pagopa.selfcare.commons.utils.TestUtils;
 import it.pagopa.selfcare.onboarding.connector.model.InstitutionOnboardingData;
-import it.pagopa.selfcare.onboarding.connector.model.institutions.Attributes;
+import it.pagopa.selfcare.onboarding.connector.model.institutions.Attribute;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionInfo;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.BillingData;
@@ -141,8 +141,8 @@ class InstitutionControllerTest {
         //given
         String institutionId = "institutionId";
         Institution institutionMock = TestUtils.mockInstance(new Institution());
-        Attributes attributes = TestUtils.mockInstance(new Attributes());
-        institutionMock.setAttributes(List.of(attributes));
+        Attribute attribute = TestUtils.mockInstance(new Attribute());
+        institutionMock.setAttributes(List.of(attribute));
         Mockito.when(institutionServiceMock.getInstitutionByExternalId(Mockito.anyString()))
                 .thenReturn(institutionMock);
         //when

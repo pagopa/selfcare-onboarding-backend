@@ -8,7 +8,7 @@ import it.pagopa.selfcare.onboarding.connector.api.ProductsConnector;
 import it.pagopa.selfcare.onboarding.connector.model.InstitutionOnboardingData;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipInfo;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipsResponse;
-import it.pagopa.selfcare.onboarding.connector.model.institutions.Attributes;
+import it.pagopa.selfcare.onboarding.connector.model.institutions.Attribute;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionInfo;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.*;
@@ -718,15 +718,15 @@ class InstitutionServiceImplTest {
         //given
         String institutionId = "institutionId";
         Institution institutionMock = TestUtils.mockInstance(new Institution());
-        Attributes attributes = TestUtils.mockInstance(new Attributes());
-        institutionMock.setAttributes(List.of(attributes));
+        Attribute attribute = TestUtils.mockInstance(new Attribute());
+        institutionMock.setAttributes(List.of(attribute));
         Mockito.when(partyConnectorMock.getInstitutionByExternalId(Mockito.anyString()))
                 .thenReturn(institutionMock);
         //when
         Institution result = institutionService.getInstitutionByExternalId(institutionId);
         //then
         assertNotNull(result);
-        assertEquals(institutionMock.getInstitutionId(), result.getInstitutionId());
+        assertEquals(institutionMock.getExternalId(), result.getExternalId());
         assertEquals(institutionMock.getId(), result.getId());
         assertEquals(institutionMock.getOrigin(), result.getOrigin());
         assertEquals(institutionMock.getInstitutionType(), result.getInstitutionType());

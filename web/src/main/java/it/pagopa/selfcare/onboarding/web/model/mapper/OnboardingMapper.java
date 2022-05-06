@@ -89,7 +89,7 @@ public class OnboardingMapper {
             resource = new InstitutionResource();
             resource.setId(model.getId());
             resource.setDescription(model.getDescription());
-            resource.setExternalId(model.getInstitutionId());
+            resource.setExternalId(model.getExternalId());
             resource.setAddress(model.getAddress());
             resource.setOriginId(model.getOriginId());
             resource.setInstitutionType(model.getInstitutionType());

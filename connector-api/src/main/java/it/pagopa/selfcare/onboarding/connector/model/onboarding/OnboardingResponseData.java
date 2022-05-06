@@ -1,7 +1,7 @@
 package it.pagopa.selfcare.onboarding.connector.model.onboarding;
 
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipState;
-import it.pagopa.selfcare.onboarding.connector.model.institutions.Attributes;
+import it.pagopa.selfcare.onboarding.connector.model.institutions.Attribute;
 import lombok.Data;
 
 import java.util.List;
@@ -9,11 +9,11 @@ import java.util.List;
 @Data
 public class OnboardingResponseData {
     private String id;
-    private String institutionId;
+    private String externalId;
     private String description;
     private String taxCode;
-    private String address;
     private String digitalAddress;
+    private String address;
     private String zipCode;
     private RelationshipState state;
     private PartyRole role;
@@ -22,5 +22,5 @@ public class OnboardingResponseData {
     private String pricingPlan;
     private BillingData billing;
     private String origin;
-    private List<Attributes> attributes;
+    private List<Attribute> attributes;
 }

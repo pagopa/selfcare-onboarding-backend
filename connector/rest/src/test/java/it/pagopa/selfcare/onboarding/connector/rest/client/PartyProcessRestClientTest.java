@@ -11,7 +11,7 @@ import it.pagopa.selfcare.onboarding.connector.model.onboarding.PartyRole;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.User;
 import it.pagopa.selfcare.onboarding.connector.rest.config.PartyProcessRestClientTestConfig;
 import it.pagopa.selfcare.onboarding.connector.rest.model.OnBoardingInfo;
-import it.pagopa.selfcare.onboarding.connector.rest.model.OnboardingRequest;
+import it.pagopa.selfcare.onboarding.connector.rest.model.OnboardingInstitutionRequest;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -83,8 +83,8 @@ class PartyProcessRestClientTest extends BaseFeignRestClientTest {
     @Test
     void onboardingOrganization_fullyValued() {
         // given
-        OnboardingRequest onboardingRequest = new OnboardingRequest();
-        onboardingRequest.setInstitutionId(testCase2instIdMap.get(TestCase.FULLY_VALUED));
+        OnboardingInstitutionRequest onboardingRequest = new OnboardingInstitutionRequest();
+        onboardingRequest.setInstitutionExternalId(testCase2instIdMap.get(TestCase.FULLY_VALUED));
         onboardingRequest.setUsers(List.of(TestUtils.mockInstance(new User())));
         // when
         Executable executable = () -> restClient.onboardingOrganization(onboardingRequest);
@@ -96,8 +96,8 @@ class PartyProcessRestClientTest extends BaseFeignRestClientTest {
     @Test
     void onboardingOrganization_fullyNull() {
         // given
-        OnboardingRequest onboardingRequest = new OnboardingRequest();
-        onboardingRequest.setInstitutionId(testCase2instIdMap.get(TestCase.FULLY_NULL));
+        OnboardingInstitutionRequest onboardingRequest = new OnboardingInstitutionRequest();
+        onboardingRequest.setInstitutionExternalId(testCase2instIdMap.get(TestCase.FULLY_NULL));
         onboardingRequest.setUsers(List.of(TestUtils.mockInstance(new User())));
         // when
         Executable executable = () -> restClient.onboardingOrganization(onboardingRequest);
@@ -176,13 +176,12 @@ class PartyProcessRestClientTest extends BaseFeignRestClientTest {
         OnBoardingInfo response = restClient.getOnBoardingInfo(testCase2instIdMap.get(TestCase.FULLY_VALUED), null);
         // then
         assertNotNull(response);
-        assertNotNull(response.getPerson());
-        assertNotNull(response.getInstitutions());
-        assertNotNull(response.getPerson().getName());
-        assertNotNull(response.getPerson().getSurname());
-        assertNotNull(response.getPerson().getTaxCode());
-        assertNotNull(response.getInstitutions().get(0).getInstitutionId());
-        assertNotNull(response.getInstitutions().get(0).getDescription());
+        response.getInstitutions().forEach(onboardingResponseData -> {
+            TestUtils.checkNotNullFields(onboardingResponseData);
+            TestUtils.checkNotNullFields(onboardingResponseData.getBilling());
+            TestUtils.checkNotNullFields(onboardingResponseData.getProductInfo());
+        });
+
     }
 
 
@@ -197,7 +196,7 @@ class PartyProcessRestClientTest extends BaseFeignRestClientTest {
         assertNull(response.getPerson().getName());
         assertNull(response.getPerson().getSurname());
         assertNull(response.getPerson().getTaxCode());
-        assertNull(response.getInstitutions().get(0).getInstitutionId());
+        assertNull(response.getInstitutions().get(0).getExternalId());
         assertNull(response.getInstitutions().get(0).getDescription());
     }
 
@@ -235,7 +234,7 @@ class PartyProcessRestClientTest extends BaseFeignRestClientTest {
         assertNull(response.getDescription());
         assertNull(response.getDigitalAddress());
         assertNull(response.getId());
-        assertNull(response.getInstitutionId());
+        assertNull(response.getExternalId());
         assertNull(response.getTaxCode());
         assertNull(response.getZipCode());
         assertNull(response.getOrigin());
