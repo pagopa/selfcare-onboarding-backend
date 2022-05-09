@@ -35,12 +35,12 @@ public class InstitutionController {
     }
 
 
-    @PostMapping(value = "/{institutionId}/products/{productId}/onboarding")
+    @PostMapping(value = "/{externalInstitutionId}/products/{productId}/onboarding")
     @ResponseStatus(HttpStatus.CREATED)
     @ApiOperation(value = "", notes = "${swagger.onboarding.institutions.api.onboarding}")
-    public void onboarding(@ApiParam("${swagger.onboarding.institutions.model.id}")
-                           @PathVariable("institutionId")
-                                   String institutionId,
+    public void onboarding(@ApiParam("${swagger.onboarding.institutions.model.externalId}")
+                           @PathVariable("externalInstitutionId")
+                                   String externalInstitutionId,
                            @ApiParam("${swagger.onboarding.products.model.id}")
                            @PathVariable("productId")
                                    String productId,
@@ -48,38 +48,38 @@ public class InstitutionController {
                            @Valid
                                    OnboardingDto request) {
         log.trace("onboarding start");
-        log.debug("onboarding institutionId = {}, productId = {}, request = {}", institutionId, productId, request);
-        institutionService.onboarding(OnboardingMapper.toOnboardingData(institutionId, productId, request));
+        log.debug("onboarding institutionId = {}, productId = {}, request = {}", externalInstitutionId, productId, request);
+        institutionService.onboarding(OnboardingMapper.toOnboardingData(externalInstitutionId, productId, request));
         log.trace("onboarding end");
     }
 
-    @GetMapping(value = "/{institutionId}/products/{productId}/onboarded-institution-info")
+    @GetMapping(value = "/{externalInstitutionId}/products/{productId}/onboarded-institution-info")
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "", notes = "${swagger.onboarding.institutions.api.getInstitutionOnboardingInfo}")
-    public InstitutionOnboardingInfoResource getInstitutionOnboardingInfo(@ApiParam("${swagger.onboarding.institutions.model.id}")
-                                                                          @PathVariable("institutionId")
-                                                                                  String institutionId,
+    public InstitutionOnboardingInfoResource getInstitutionOnboardingInfo(@ApiParam("${swagger.onboarding.institutions.model.externalId}")
+                                                                          @PathVariable("externalInstitutionId")
+                                                                                  String externalInstitutionId,
                                                                           @ApiParam("${swagger.onboarding.products.model.id}")
                                                                           @PathVariable("productId")
                                                                                   String productId) {
         log.trace("getInstitutionOnBoardingInfo start");
-        log.debug("getInstitutionOnBoardingInfo institutionId = {}, productId = {}", institutionId, productId);
-        InstitutionOnboardingData institutionOnboardingData = institutionService.getInstitutionOnboardingData(institutionId, productId);
+        log.debug("getInstitutionOnBoardingInfo institutionId = {}, productId = {}", externalInstitutionId, productId);
+        InstitutionOnboardingData institutionOnboardingData = institutionService.getInstitutionOnboardingData(externalInstitutionId, productId);
         InstitutionOnboardingInfoResource result = OnboardingMapper.toResource(institutionOnboardingData);
         log.debug("getInstitutionOnBoardingInfo result = {}", result);
         log.trace("getInstitutionOnBoardingInfo end");
         return result;
     }
 
-    @GetMapping(value = "/{institutionId}/data")
+    @GetMapping(value = "/{externalInstitutionId}/data")
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "", notes = "${swagger.onboarding.institutions.api.manager}")
-    public InstitutionResource getInstitutionData(@ApiParam("${swagger.onboarding.institutions.model.id}")
-                                                  @PathVariable("institutionId")
-                                                          String institutionId) {
+    public InstitutionResource getInstitutionData(@ApiParam("${swagger.onboarding.institutions.model.externalId}")
+                                                  @PathVariable("externalInstitutionId")
+                                                          String externalInstitutionId) {
         log.trace("getInstitutionData start");
-        log.debug("getInstitutionData institutionId = {}", institutionId);
-        Institution institution = institutionService.getInstitutionByExternalId(institutionId);
+        log.debug("getInstitutionData institutionId = {}", externalInstitutionId);
+        Institution institution = institutionService.getInstitutionByExternalId(externalInstitutionId);
         InstitutionResource result = OnboardingMapper.toResource(institution);
         log.debug("getInstitutionData result = {}", result);
         log.trace("getInstitutionData end");

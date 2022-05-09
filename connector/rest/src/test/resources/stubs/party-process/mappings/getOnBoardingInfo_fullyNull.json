@@ -3,7 +3,7 @@
     "method": "GET",
     "urlPath": "/pdnd-interop-uservice-party-process/0.0.1/onboarding/info",
     "queryParameters": {
-      "institutionId": {
+      "institutionExternalId": {
         "equalTo": "institutionId2"
       },
       "states": {

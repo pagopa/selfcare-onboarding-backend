@@ -5,7 +5,7 @@ import it.pagopa.selfcare.onboarding.connector.model.RelationshipsResponse;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.PartyRole;
 import it.pagopa.selfcare.onboarding.connector.rest.model.OnBoardingInfo;
-import it.pagopa.selfcare.onboarding.connector.rest.model.OnboardingRequest;
+import it.pagopa.selfcare.onboarding.connector.rest.model.OnboardingInstitutionRequest;
 import org.springframework.cloud.openfeign.CollectionFormat;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;
@@ -32,13 +32,13 @@ public interface PartyProcessRestClient {
 
     @PostMapping(value = "${rest-client.party-process.onboardingOrganization.path}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    void onboardingOrganization(@RequestBody OnboardingRequest request);
+    void onboardingOrganization(@RequestBody OnboardingInstitutionRequest request);
 
 
     @GetMapping(value = "${rest-client.party-process.getOnBoardingInfo.path}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     @CollectionFormat(feign.CollectionFormat.CSV)
-    OnBoardingInfo getOnBoardingInfo(@RequestParam(value = "institutionId", required = false) String institutionId,
+    OnBoardingInfo getOnBoardingInfo(@RequestParam(value = "institutionExternalId", required = false) String institutionExternalId,
                                      @RequestParam(value = "states", required = false) EnumSet<RelationshipState> states);
 
     @GetMapping(value = "${rest-client.party-process.getInstitutionByExternalId.path}", produces = MediaType.APPLICATION_JSON_VALUE)

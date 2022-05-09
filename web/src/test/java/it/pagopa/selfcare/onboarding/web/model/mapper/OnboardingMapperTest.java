@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
+import static java.util.UUID.randomUUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 class OnboardingMapperTest {
@@ -100,13 +101,15 @@ class OnboardingMapperTest {
     @Test
     void toResource_institutionInfo() {
         //given
-        InstitutionInfo model = TestUtils.mockInstance(new InstitutionInfo());
+        InstitutionInfo model = TestUtils.mockInstance(new InstitutionInfo(), "setId");
+        model.setId(randomUUID().toString());
         model.setBilling(TestUtils.mockInstance(new BillingData()));
         //when
         InstitutionResource resource = OnboardingMapper.toResource(model);
         //then
         assertNotNull(resource);
-        assertEquals(resource.getExternalId(), model.getInstitutionId());
+        assertEquals(resource.getId().toString(), model.getId());
+        assertEquals(resource.getExternalId(), model.getExternalId());
         assertEquals(resource.getDescription(), model.getDescription());
         assertEquals(resource.getAddress(), model.getAddress());
         assertEquals(resource.getDigitalAddress(), model.getDigitalAddress());

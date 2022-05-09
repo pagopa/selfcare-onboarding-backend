@@ -19,14 +19,13 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class OnboardingRequest {
+public class OnboardingInstitutionRequest {
 
-    private String institutionId;
     private List<User> users;
-    private String origin;
-    private OnboardingContract contract;
+    private String institutionExternalId;
+    private InstitutionUpdate institutionUpdate;
     private String pricingPlan;
     private BillingData billing;
-    private InstitutionUpdate institutionUpdate;
+    private OnboardingContract contract;
 
 }

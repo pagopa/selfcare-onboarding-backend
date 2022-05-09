@@ -6,6 +6,7 @@ import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionInf
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.*;
 import it.pagopa.selfcare.onboarding.web.model.*;
 
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class OnboardingMapper {
@@ -17,7 +18,7 @@ public class OnboardingMapper {
             resource.setVatNumber(model.getVatNumber());
             resource.setRecipientCode(model.getRecipientCode());
             if (model.getPublicServices() != null) {
-                resource.setPublicServices(model.getPublicServices().booleanValue());
+                resource.setPublicServices(model.getPublicServices());
             }
         }
         return resource;
@@ -72,8 +73,11 @@ public class OnboardingMapper {
         InstitutionResource resource = null;
         if (model != null) {
             resource = new InstitutionResource();
+            if (model.getId() != null) {
+                resource.setId(UUID.fromString(model.getId()));
+            }
             resource.setDescription(model.getDescription());
-            resource.setExternalId(model.getInstitutionId());
+            resource.setExternalId(model.getExternalId());
             resource.setAddress(model.getAddress());
             resource.setDigitalAddress(model.getDigitalAddress());
             resource.setTaxCode(model.getTaxCode());
@@ -87,10 +91,14 @@ public class OnboardingMapper {
         InstitutionResource resource = null;
         if (model != null) {
             resource = new InstitutionResource();
-            resource.setId(model.getId());
+            if (model.getId() != null) {
+                resource.setId(UUID.fromString(model.getId()));
+            }
             resource.setDescription(model.getDescription());
-            resource.setExternalId(model.getInstitutionId());
+            resource.setExternalId(model.getExternalId());
             resource.setAddress(model.getAddress());
+            resource.setOriginId(model.getOriginId());
+            resource.setInstitutionType(model.getInstitutionType());
             resource.setDigitalAddress(model.getDigitalAddress());
             resource.setTaxCode(model.getTaxCode());
             resource.setZipCode(model.getZipCode());
