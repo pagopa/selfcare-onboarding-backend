@@ -1,16 +1,20 @@
 package it.pagopa.selfcare.onboarding.web.model.mapper;
 
 import it.pagopa.selfcare.onboarding.connector.model.InstitutionOnboardingData;
-import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionInfo;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.*;
-import it.pagopa.selfcare.onboarding.connector.model.user.WorkContact;
-import it.pagopa.selfcare.onboarding.web.model.*;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.Billing;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.InstitutionUpdate;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
+import it.pagopa.selfcare.onboarding.web.model.BillingDataDto;
+import it.pagopa.selfcare.onboarding.web.model.InstitutionData;
+import it.pagopa.selfcare.onboarding.web.model.InstitutionOnboardingInfoResource;
+import it.pagopa.selfcare.onboarding.web.model.OnboardingDto;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
-import java.util.Optional;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class OnboardingMapper {
 
     public static Billing fromDto(BillingDataDto model) {
@@ -43,7 +47,7 @@ public class OnboardingMapper {
         if (model != null) {
             resource = new OnboardingData();
             resource.setUsers(model.getUsers().stream()
-                    .map(OnboardingMapper::toUser)
+                    .map(UserMapper::toUser)
                     .collect(Collectors.toList()));
             resource.setInstitutionId(institutionId);
             resource.setProductId(productId);
@@ -57,63 +61,12 @@ public class OnboardingMapper {
         return resource;
     }
 
-    public static User toUser(UserDto model) {
-        User resource = null;
-        if (model != null) {
-            resource = new User();
-            resource.setRole(model.getRole());
-            resource.setEmail(model.getEmail());
-            resource.setName(model.getName());
-            resource.setSurname(model.getSurname());
-            resource.setProductRole(model.getProductRole());
-            resource.setTaxCode(model.getTaxCode());
-        }
-        return resource;
-    }
-
-    public static InstitutionResource toResource(InstitutionInfo model) {
-        InstitutionResource resource = null;
-        if (model != null) {
-            resource = new InstitutionResource();
-            if (model.getId() != null) {
-                resource.setId(UUID.fromString(model.getId()));
-            }
-            resource.setDescription(model.getDescription());
-            resource.setExternalId(model.getExternalId());
-            resource.setAddress(model.getAddress());
-            resource.setDigitalAddress(model.getDigitalAddress());
-            resource.setTaxCode(model.getTaxCode());
-            resource.setZipCode(model.getZipCode());
-            resource.setOrigin(model.getOrigin());
-        }
-        return resource;
-    }
-
-    public static InstitutionResource toResource(Institution model) {
-        InstitutionResource resource = null;
-        if (model != null) {
-            resource = new InstitutionResource();
-            if (model.getId() != null) {
-                resource.setId(UUID.fromString(model.getId()));
-            }
-            resource.setDescription(model.getDescription());
-            resource.setExternalId(model.getExternalId());
-            resource.setAddress(model.getAddress());
-            resource.setOriginId(model.getOriginId());
-            resource.setInstitutionType(model.getInstitutionType());
-            resource.setDigitalAddress(model.getDigitalAddress());
-            resource.setTaxCode(model.getTaxCode());
-            resource.setZipCode(model.getZipCode());
-            resource.setOrigin(model.getOrigin());
-        }
-        return resource;
-    }
 
     public static InstitutionOnboardingInfoResource toResource(InstitutionOnboardingData model) {
         InstitutionOnboardingInfoResource resource = null;
         if (model != null) {
             resource = new InstitutionOnboardingInfoResource();
-            resource.setManager(toResource(model.getManager()));
+            resource.setManager(UserMapper.toResource(model.getManager()));
             resource.setInstitution(toData(model.getInstitution()));
         }
         return resource;
@@ -136,29 +89,6 @@ public class OnboardingMapper {
             resource.setBillingData(billing);
             resource.setOrigin(model.getOrigin());
             resource.setInstitutionType(model.getInstitutionType());
-        }
-        return resource;
-    }
-
-
-    public static UserResource toResource(UserInfo model) {
-        UserResource resource = null;
-        if (model != null) {
-            resource = new UserResource();
-            resource.setId(UUID.fromString(model.getId()));
-            resource.setRole(model.getRole());
-            resource.setStatus(model.getStatus());
-            resource.setInstitutionId(UUID.fromString(model.getInstitutionId()));
-            if (model.getUser() != null) {
-                resource.setName(CertifiedFieldMapper.map(model.getUser().getName()));
-                resource.setTaxCode(model.getUser().getFiscalCode());
-                resource.setSurname(CertifiedFieldMapper.map(model.getUser().getFamilyName()));
-                resource.setEmail(Optional.ofNullable(model.getUser().getWorkContacts())
-                        .map(map -> map.get(model.getInstitutionId()))
-                        .map(WorkContact::getEmail)
-                        .map(CertifiedFieldMapper::map)
-                        .orElse(null));
-            }
         }
         return resource;
     }
