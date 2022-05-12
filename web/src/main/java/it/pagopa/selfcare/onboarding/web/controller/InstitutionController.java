@@ -41,7 +41,7 @@ public class InstitutionController {
     public void onboarding(@ApiParam("${swagger.onboarding.institutions.model.externalId}")
                            @PathVariable("externalInstitutionId")
                                    String externalInstitutionId,
-                           @ApiParam("${swagger.onboarding.products.model.id}")
+                           @ApiParam("${swagger.onboarding.product.model.id}")
                            @PathVariable("productId")
                                    String productId,
                            @RequestBody
@@ -59,7 +59,7 @@ public class InstitutionController {
     public InstitutionOnboardingInfoResource getInstitutionOnboardingInfo(@ApiParam("${swagger.onboarding.institutions.model.externalId}")
                                                                           @PathVariable("externalInstitutionId")
                                                                                   String externalInstitutionId,
-                                                                          @ApiParam("${swagger.onboarding.products.model.id}")
+                                                                          @ApiParam("${swagger.onboarding.product.model.id}")
                                                                           @PathVariable("productId")
                                                                                   String productId) {
         log.trace("getInstitutionOnBoardingInfo start");
@@ -73,7 +73,7 @@ public class InstitutionController {
 
     @GetMapping(value = "/{externalInstitutionId}/data")
     @ResponseStatus(HttpStatus.OK)
-    @ApiOperation(value = "", notes = "${swagger.onboarding.institutions.api.manager}")
+    @ApiOperation(value = "", notes = "${swagger.onboarding.institutions.api.getInstitutionData}")
     public InstitutionResource getInstitutionData(@ApiParam("${swagger.onboarding.institutions.model.externalId}")
                                                   @PathVariable("externalInstitutionId")
                                                           String externalInstitutionId) {

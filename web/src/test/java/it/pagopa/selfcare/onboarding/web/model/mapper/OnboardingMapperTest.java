@@ -2,7 +2,7 @@ package it.pagopa.selfcare.onboarding.web.model.mapper;
 
 import it.pagopa.selfcare.commons.utils.TestUtils;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionInfo;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.BillingData;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.Billing;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.User;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.UserInfo;
@@ -10,6 +10,7 @@ import it.pagopa.selfcare.onboarding.web.model.*;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.UUID;
 
 import static java.util.UUID.randomUUID;
 import static org.junit.jupiter.api.Assertions.*;
@@ -33,9 +34,9 @@ class OnboardingMapperTest {
         assertEquals(1, model.getUsers().size());
         assertEquals(institutionId, resource.getInstitutionId());
         assertEquals(productId, resource.getProductId());
-        assertEquals(billingDataDto.getPublicServices(), resource.getBillingData().getPublicServices());
-        assertEquals(billingDataDto.getVatNumber(), resource.getBillingData().getVatNumber());
-        assertEquals(billingDataDto.getRecipientCode(), resource.getBillingData().getRecipientCode());
+        assertEquals(billingDataDto.getPublicServices(), resource.getBilling().getPublicServices());
+        assertEquals(billingDataDto.getVatNumber(), resource.getBilling().getVatNumber());
+        assertEquals(billingDataDto.getRecipientCode(), resource.getBilling().getRecipientCode());
         assertEquals(userDtos.get(0).getEmail(), resource.getUsers().get(0).getEmail());
         assertEquals(userDtos.get(0).getName(), resource.getUsers().get(0).getName());
         assertEquals(userDtos.get(0).getSurname(), resource.getUsers().get(0).getSurname());
@@ -78,32 +79,13 @@ class OnboardingMapperTest {
         assertNull(resource);
     }
 
-    @Test
-    void toDto() {
-        //given
-        UserInfo model = TestUtils.mockInstance(new UserInfo());
-        //when
-        UserDto resource = OnboardingMapper.toDto(model);
-        //then
-        assertNotNull(resource);
-        TestUtils.reflectionEqualsByName(resource, model);
-    }
-
-    @Test
-    void toDto_null() {
-        //given
-        //when
-        UserDto resource = OnboardingMapper.toDto(null);
-        //then
-        assertNull(resource);
-    }
 
     @Test
     void toResource_institutionInfo() {
         //given
         InstitutionInfo model = TestUtils.mockInstance(new InstitutionInfo(), "setId");
         model.setId(randomUUID().toString());
-        model.setBilling(TestUtils.mockInstance(new BillingData()));
+        model.setBilling(TestUtils.mockInstance(new Billing()));
         //when
         InstitutionResource resource = OnboardingMapper.toResource(model);
         //then
@@ -131,12 +113,16 @@ class OnboardingMapperTest {
     @Test
     void toResource_userResource() {
         //given
-        UserInfo model = TestUtils.mockInstance(new UserInfo());
+        UserInfo model = TestUtils.mockInstance(new UserInfo(), "setId", "setInstitutionId");
+        model.setId(UUID.randomUUID().toString());
+        model.setInstitutionId(UUID.randomUUID().toString());
         //when
         UserResource resource = OnboardingMapper.toResource(model);
         //then
         assertNotNull(resource);
-        TestUtils.reflectionEqualsByName(resource, model);
+        TestUtils.reflectionEqualsByName(resource, model, "id", "institutionId");
+        assertEquals(model.getId(), resource.getId().toString());
+        assertEquals(model.getInstitutionId(), resource.getInstitutionId().toString());
     }
 
     @Test
@@ -153,7 +139,7 @@ class OnboardingMapperTest {
         //given
         BillingDataDto model = TestUtils.mockInstance(new BillingDataDto());
         //when
-        BillingData resource = OnboardingMapper.fromDto(model);
+        Billing resource = OnboardingMapper.fromDto(model);
         //then
         assertNotNull(resource);
         TestUtils.reflectionEqualsByName(model, resource);
@@ -163,7 +149,7 @@ class OnboardingMapperTest {
     void fromDto_null() {
         //given
         //when
-        BillingData resource = OnboardingMapper.fromDto(null);
+        Billing resource = OnboardingMapper.fromDto(null);
         //then
         assertNull(resource);
     }

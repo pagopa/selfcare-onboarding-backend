@@ -61,6 +61,7 @@ class SwaggerConfig {
                 .tags(new Tag("institutions", environment.getProperty("swagger.onboarding.institutions.api.description")),
                         new Tag("product", environment.getProperty("swagger.onboarding.product.api.description")))
                 .directModelSubstitute(LocalTime.class, String.class)
+                .forCodeGeneration(true)
                 .securityContexts(Collections.singletonList(SecurityContext.builder()
                         .securityReferences(defaultAuth())
                         .build()))

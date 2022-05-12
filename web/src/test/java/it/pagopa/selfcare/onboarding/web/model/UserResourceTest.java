@@ -31,14 +31,11 @@ class UserResourceTest {
     void validateNullFields() {
         // given
         HashMap<String, Class<? extends Annotation>> toCheckMap = new HashMap<>();
-        toCheckMap.put("name", NotBlank.class);
-        toCheckMap.put("institutionId", NotBlank.class);
-        toCheckMap.put("surname", NotBlank.class);
+        toCheckMap.put("id", NotNull.class);
         toCheckMap.put("taxCode", NotBlank.class);
         toCheckMap.put("role", NotNull.class);
-        toCheckMap.put("email", NotBlank.class);
         toCheckMap.put("status", NotBlank.class);
-        toCheckMap.put("id", NotBlank.class);
+        toCheckMap.put("institutionId", NotNull.class);
         UserResource model = new UserResource();
         // when
         Set<ConstraintViolation<Object>> violations = validator.validate(model);

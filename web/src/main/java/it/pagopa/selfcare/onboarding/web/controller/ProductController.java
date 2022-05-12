@@ -30,7 +30,7 @@ public class ProductController {
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    @ApiOperation(value = "", notes = "${swagger.onboarding.operation.getProduct}")
+    @ApiOperation(value = "", notes = "${swagger.onboarding.product.api.getProduct}")
     public ProductResource getProduct(@ApiParam("${swagger.onboarding.product.model.id}")
                                       @PathVariable("id") String id) {
         log.trace("getProduct start");

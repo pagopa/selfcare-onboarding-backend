@@ -2,7 +2,6 @@ package it.pagopa.selfcare.onboarding.connector;
 
 import it.pagopa.selfcare.commons.base.logging.LogUtils;
 import it.pagopa.selfcare.onboarding.connector.api.PartyConnector;
-import it.pagopa.selfcare.onboarding.connector.model.Certification;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipInfo;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipsResponse;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
@@ -58,12 +57,7 @@ class PartyConnectorImpl implements PartyConnector {
     static final Function<RelationshipInfo, UserInfo> RELATIONSHIP_INFO_TO_USER_INFO_FUNCTION = relationshipInfo -> {
         UserInfo userInfo = new UserInfo();
         userInfo.setId(relationshipInfo.getFrom());
-        userInfo.setName(relationshipInfo.getName());
-        userInfo.setSurname(relationshipInfo.getSurname());
-        userInfo.setEmail(relationshipInfo.getEmail());
         userInfo.setStatus(relationshipInfo.getState().toString());
-        userInfo.setCertified(Certification.isCertified(relationshipInfo.getCertification()));
-        userInfo.setTaxCode(relationshipInfo.getTaxCode());
         userInfo.setRole(relationshipInfo.getRole());
         userInfo.setInstitutionId(relationshipInfo.getTo());
         return userInfo;
@@ -81,7 +75,7 @@ class PartyConnectorImpl implements PartyConnector {
         Assert.notNull(onboardingData, "Onboarding data is required");
         OnboardingInstitutionRequest onboardingInstitutionRequest = new OnboardingInstitutionRequest();
         onboardingInstitutionRequest.setInstitutionExternalId(onboardingData.getInstitutionId());
-        onboardingInstitutionRequest.setBilling(onboardingData.getBillingData());
+        onboardingInstitutionRequest.setBilling(onboardingData.getBilling());
         InstitutionUpdate institutionUpdate = new InstitutionUpdate();
         institutionUpdate.setInstitutionType(onboardingData.getInstitutionType());
         institutionUpdate.setAddress(onboardingData.getInstitutionUpdate().getAddress());

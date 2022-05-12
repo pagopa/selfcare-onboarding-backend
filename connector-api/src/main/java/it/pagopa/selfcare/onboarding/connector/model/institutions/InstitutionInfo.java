@@ -1,6 +1,6 @@
 package it.pagopa.selfcare.onboarding.connector.model.institutions;
 
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.BillingData;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.Billing;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.InstitutionType;
 import lombok.Data;
 
@@ -18,7 +18,7 @@ public class InstitutionInfo {
     private String digitalAddress;
     private String zipCode;
     private String category;
-    private BillingData billing;
+    private Billing billing;
     private String origin;
     private String originId;
     private InstitutionType institutionType;

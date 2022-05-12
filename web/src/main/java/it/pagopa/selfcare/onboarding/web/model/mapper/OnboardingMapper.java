@@ -4,17 +4,19 @@ import it.pagopa.selfcare.onboarding.connector.model.InstitutionOnboardingData;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionInfo;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.*;
+import it.pagopa.selfcare.onboarding.connector.model.user.WorkContact;
 import it.pagopa.selfcare.onboarding.web.model.*;
 
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class OnboardingMapper {
 
-    public static BillingData fromDto(BillingDataDto model) {
-        BillingData resource = null;
+    public static Billing fromDto(BillingDataDto model) {
+        Billing resource = null;
         if (model != null) {
-            resource = new BillingData();
+            resource = new Billing();
             resource.setVatNumber(model.getVatNumber());
             resource.setRecipientCode(model.getRecipientCode());
             if (model.getPublicServices() != null) {
@@ -48,7 +50,7 @@ public class OnboardingMapper {
             resource.setOrigin(model.getOrigin());
             resource.setInstitutionUpdate(mapInstitutionUpdate(model.getBillingData()));
             if (model.getBillingData() != null) {
-                resource.setBillingData(fromDto(model.getBillingData()));
+                resource.setBilling(fromDto(model.getBillingData()));
             }
             resource.setInstitutionType(model.getInstitutionType());
         }
@@ -138,32 +140,25 @@ public class OnboardingMapper {
         return resource;
     }
 
-    public static UserDto toDto(UserInfo model) {
-        UserDto resource = null;
-        if (model != null) {
-            resource = new UserDto();
-            resource.setName(model.getName());
-            resource.setRole(model.getRole());
-            resource.setTaxCode(model.getTaxCode());
-            resource.setSurname(model.getSurname());
-            resource.setEmail(model.getEmail());
-        }
-        return resource;
-    }
 
     public static UserResource toResource(UserInfo model) {
         UserResource resource = null;
         if (model != null) {
             resource = new UserResource();
-            resource.setId(model.getId());
-            resource.setName(model.getName());
+            resource.setId(UUID.fromString(model.getId()));
             resource.setRole(model.getRole());
-            resource.setTaxCode(model.getTaxCode());
-            resource.setSurname(model.getSurname());
-            resource.setEmail(model.getEmail());
             resource.setStatus(model.getStatus());
-            resource.setInstitutionId(model.getInstitutionId());
-            resource.setCertified(model.isCertified());
+            resource.setInstitutionId(UUID.fromString(model.getInstitutionId()));
+            if (model.getUser() != null) {
+                resource.setName(CertifiedFieldMapper.map(model.getUser().getName()));
+                resource.setTaxCode(model.getUser().getFiscalCode());
+                resource.setSurname(CertifiedFieldMapper.map(model.getUser().getFamilyName()));
+                resource.setEmail(Optional.ofNullable(model.getUser().getWorkContacts())
+                        .map(map -> map.get(model.getInstitutionId()))
+                        .map(WorkContact::getEmail)
+                        .map(CertifiedFieldMapper::map)
+                        .orElse(null));
+            }
         }
         return resource;
     }

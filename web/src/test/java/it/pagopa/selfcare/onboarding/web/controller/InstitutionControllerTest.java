@@ -6,7 +6,7 @@ import it.pagopa.selfcare.onboarding.connector.model.InstitutionOnboardingData;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Attribute;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionInfo;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.BillingData;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.Billing;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.InstitutionType;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.UserInfo;
@@ -28,6 +28,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 import static it.pagopa.selfcare.commons.utils.TestUtils.mockInstance;
 import static java.util.UUID.randomUUID;
@@ -86,9 +87,9 @@ class InstitutionControllerTest {
         assertEquals(productId, captured.getProductId());
         assertNotNull(captured.getUsers());
         assertEquals(1, captured.getUsers().size());
-        assertEquals(billingData.getRecipientCode(), captured.getBillingData().getRecipientCode());
-        assertEquals(billingData.getVatNumber(), captured.getBillingData().getVatNumber());
-        assertEquals(billingData.getPublicServices(), captured.getBillingData().getPublicServices());
+        assertEquals(billingData.getRecipientCode(), captured.getBilling().getRecipientCode());
+        assertEquals(billingData.getVatNumber(), captured.getBilling().getVatNumber());
+        assertEquals(billingData.getPublicServices(), captured.getBilling().getPublicServices());
         assertEquals(userDtos.get(0).getName(), captured.getUsers().get(0).getName());
         assertEquals(userDtos.get(0).getSurname(), captured.getUsers().get(0).getSurname());
         assertEquals(userDtos.get(0).getTaxCode(), captured.getUsers().get(0).getTaxCode());
@@ -103,10 +104,13 @@ class InstitutionControllerTest {
         String institutionId = "institutionId";
         String productId = "productId";
         InstitutionInfo institutionInfoMock = mockInstance(new InstitutionInfo());
-        institutionInfoMock.setBilling(mockInstance(new BillingData()));
+        institutionInfoMock.setBilling(mockInstance(new Billing()));
         InstitutionOnboardingData onBoardingDataMock = mockInstance(new InstitutionOnboardingData());
         onBoardingDataMock.setInstitution(institutionInfoMock);
-        onBoardingDataMock.setManager(mockInstance(new UserInfo()));
+        final UserInfo manager = mockInstance(new UserInfo(), "setId", "setInstitutionId");
+        manager.setId(UUID.randomUUID().toString());
+        manager.setInstitutionId(UUID.randomUUID().toString());
+        onBoardingDataMock.setManager(manager);
         when(institutionServiceMock.getInstitutionOnboardingData(Mockito.anyString(), Mockito.anyString()))
                 .thenReturn(onBoardingDataMock);
         //when

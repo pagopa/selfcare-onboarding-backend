@@ -20,7 +20,7 @@ public class OnboardingResponseData {
     private ProductInfo productInfo;
     private InstitutionType institutionType;
     private String pricingPlan;
-    private BillingData billing;
+    private Billing billing;
     private String origin;
     private String originId;
     private List<Attribute> attributes;

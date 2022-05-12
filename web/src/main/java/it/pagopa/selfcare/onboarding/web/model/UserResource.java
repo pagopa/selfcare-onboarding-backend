@@ -7,25 +7,23 @@ import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.UUID;
 
 @Data
 public class UserResource {
 
-
     @ApiModelProperty(value = "${swagger.onboarding.user.model.id}", required = true)
-    @JsonProperty(required = true)
-    @NotBlank
-    private String id;
+    @NotNull
+    private UUID id;
 
-    @ApiModelProperty(value = "${swagger.onboarding.user.model.name}", required = true)
-    @JsonProperty(required = true)
-    @NotBlank
-    private String name;
+    @ApiModelProperty(value = "${swagger.onboarding.user.model.name}")
+    private CertifiedFieldResource<String> name;
 
-    @ApiModelProperty(value = "${swagger.onboarding.user.model.surname}", required = true)
-    @JsonProperty(required = true)
-    @NotBlank
-    private String surname;
+    @ApiModelProperty(value = "${swagger.onboarding.user.model.surname}")
+    private CertifiedFieldResource<String> surname;
+
+    @ApiModelProperty(value = "${swagger.onboarding.user.model.institutionalEmail}")
+    private CertifiedFieldResource<String> email;
 
     @ApiModelProperty(value = "${swagger.onboarding.user.model.fiscalCode}", required = true)
     @JsonProperty(required = true)
@@ -37,22 +35,15 @@ public class UserResource {
     @NotNull
     private PartyRole role;
 
-    @ApiModelProperty(value = "${swagger.onboarding.user.model.email}", required = true)
-    @JsonProperty(required = true)
-    @NotBlank
-    private String email;
 
     @ApiModelProperty(value = "${swagger.onboarding.user.model.status}", required = true)
     @JsonProperty(required = true)
     @NotBlank
     private String status;
 
-    @ApiModelProperty(value = "${swagger.onboarding.user.model.institutionId}", required = true)
+    @ApiModelProperty(value = "${swagger.onboarding.institutions.model.id}", required = true)
     @JsonProperty(required = true)
-    @NotBlank
-    private String institutionId;
+    @NotNull
+    private UUID institutionId;
 
-    @ApiModelProperty(value = "${swagger.onboarding.user.model.certified}", required = true)
-    @JsonProperty(required = true)
-    private boolean certified;
 }

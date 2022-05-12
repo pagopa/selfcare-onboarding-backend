@@ -62,7 +62,7 @@
           "institutions"
         ],
         "summary": "getInstitutionData",
-        "description": "${swagger.onboarding.institutions.api.manager}",
+        "description": "The service retrieves the onboarded institution given its external id",
         "operationId": "getInstitutionDataUsingGET",
         "parameters": [
           {
@@ -226,20 +226,23 @@
     },
     "/product/{id}" : {
       "get" : {
-        "tags" : [ "product" ],
-        "summary" : "getProduct",
-        "description" : "${swagger.onboarding.operation.getProduct}",
-        "operationId" : "getProductUsingGET",
-        "parameters" : [ {
-          "name" : "id",
-          "in" : "path",
-          "description" : "Product id",
-          "required" : true,
-          "style" : "simple",
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
+        "tags": [
+          "product"
+        ],
+        "summary": "getProduct",
+        "description": "The service retrieves the product given its internal id",
+        "operationId": "getProductUsingGET",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Product's unique identifier",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          } ],
         "responses" : {
           "200" : {
             "description" : "OK",
@@ -305,16 +308,35 @@
           }
         }
       },
-      "InstitutionData" : {
-        "title" : "InstitutionData",
-        "type" : "object",
-        "properties" : {
-          "billingData" : {
-            "description" : "Institution's billing informations",
-            "$ref" : "#/components/schemas/BillingDataDto"
+      "CertifiedFieldResourceOfstring": {
+        "title": "CertifiedFieldResourceOfstring",
+        "required": [
+          "certified",
+          "value"
+        ],
+        "type": "object",
+        "properties": {
+          "certified": {
+            "type": "boolean",
+            "description": "Indicates whether the value comes from a certified information source",
+            "example": false
           },
-          "institutionType" : {
-            "type" : "string",
+          "value": {
+            "type": "string",
+            "description": "Field value"
+          }
+        }
+      },
+      "InstitutionData": {
+        "title": "InstitutionData",
+        "type": "object",
+        "properties": {
+          "billingData": {
+            "description": "Institution's billing informations",
+            "$ref": "#/components/schemas/BillingDataDto"
+          },
+          "institutionType": {
+            "type": "string",
             "description" : "Institution's type",
             "enum" : [ "GSP", "PA", "PT", "SCP" ]
           },
@@ -440,7 +462,7 @@
         "properties" : {
           "id": {
             "type": "string",
-            "description": "Product id"
+            "description": "Product's unique identifier"
           },
           "parentId": {
             "type": "string",
@@ -481,30 +503,33 @@
         }
       },
       "UserResource" : {
-        "title" : "UserResource",
-        "required" : [ "certified", "email", "id", "institutionId", "name", "role", "status", "surname", "taxCode" ],
-        "type" : "object",
-        "properties" : {
-          "certified" : {
-            "type" : "boolean",
-            "description" : "${swagger.onboarding.user.model.certified}",
-            "example" : false
+        "title": "UserResource",
+        "required": [
+          "id",
+          "institutionId",
+          "role",
+          "status",
+          "taxCode"
+        ],
+        "type": "object",
+        "properties": {
+          "email": {
+            "description": "User's institutional email",
+            "$ref": "#/components/schemas/CertifiedFieldResourceOfstring"
           },
-          "email" : {
-            "type" : "string",
-            "description" : "User's email"
-          },
-          "id" : {
-            "type" : "string",
-            "description" : "${swagger.onboarding.user.model.id}"
+          "id": {
+            "type": "string",
+            "description": "User's unique identifier",
+            "format": "uuid"
           },
           "institutionId" : {
-            "type" : "string",
-            "description" : "${swagger.onboarding.user.model.institutionId}"
+            "type": "string",
+            "description": "Institution's unique internal Id ",
+            "format": "uuid"
           },
           "name" : {
-            "type" : "string",
-            "description" : "User's name"
+            "description": "User's name",
+            "$ref": "#/components/schemas/CertifiedFieldResourceOfstring"
           },
           "role" : {
             "type" : "string",
@@ -513,11 +538,11 @@
           },
           "status" : {
             "type" : "string",
-            "description" : "${swagger.onboarding.user.model.status}"
+            "description": "User's status"
           },
           "surname" : {
-            "type" : "string",
-            "description" : "User's surname"
+            "description": "User's surname",
+            "$ref": "#/components/schemas/CertifiedFieldResourceOfstring"
           },
           "taxCode" : {
             "type" : "string",

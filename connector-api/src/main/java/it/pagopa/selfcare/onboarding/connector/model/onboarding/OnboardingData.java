@@ -28,7 +28,7 @@ public class OnboardingData {
     private List<User> users;
     private String contractPath;
     private String contractVersion;
-    private BillingData billingData;
+    private Billing billing;
     private InstitutionUpdate institutionUpdate;
     private InstitutionType institutionType;
     private String origin;

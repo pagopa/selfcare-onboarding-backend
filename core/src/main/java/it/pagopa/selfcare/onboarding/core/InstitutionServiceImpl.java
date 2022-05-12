@@ -5,6 +5,7 @@ import it.pagopa.selfcare.commons.base.security.SelfCareAuthority;
 import it.pagopa.selfcare.commons.base.security.SelfCareUser;
 import it.pagopa.selfcare.onboarding.connector.api.PartyConnector;
 import it.pagopa.selfcare.onboarding.connector.api.ProductsConnector;
+import it.pagopa.selfcare.onboarding.connector.api.UserRegistryConnector;
 import it.pagopa.selfcare.onboarding.connector.model.InstitutionOnboardingData;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipState;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipsResponse;
@@ -14,6 +15,7 @@ import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.PartyRole;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.UserInfo;
 import it.pagopa.selfcare.onboarding.connector.model.product.Product;
+import it.pagopa.selfcare.onboarding.connector.model.user.User;
 import it.pagopa.selfcare.onboarding.core.exceptions.InternalServerException;
 import it.pagopa.selfcare.onboarding.core.exceptions.ProductHasNoRelationshipException;
 import it.pagopa.selfcare.onboarding.core.exceptions.ResourceNotFoundException;
@@ -31,6 +33,8 @@ import java.util.EnumSet;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static it.pagopa.selfcare.onboarding.connector.model.user.User.Fields.*;
+
 @Slf4j
 @Service
 class InstitutionServiceImpl implements InstitutionService {
@@ -44,12 +48,14 @@ class InstitutionServiceImpl implements InstitutionService {
     protected static final String ILLEGAL_LIST_OF_USERS = "Illegal list of users, provide a Manager in the list";
     private final PartyConnector partyConnector;
     private final ProductsConnector productsConnector;
+    private final UserRegistryConnector userConnector;
 
 
     @Autowired
-    InstitutionServiceImpl(PartyConnector partyConnector, ProductsConnector productsConnector) {
+    InstitutionServiceImpl(PartyConnector partyConnector, ProductsConnector productsConnector, UserRegistryConnector userConnector) {
         this.partyConnector = partyConnector;
         this.productsConnector = productsConnector;
+        this.userConnector = userConnector;
     }
 
 
@@ -58,7 +64,7 @@ class InstitutionServiceImpl implements InstitutionService {
         log.trace("onboarding start");
         log.debug("onboarding onboardingData = {}", onboardingData);
         Assert.notNull(onboardingData, REQUIRED_ONBOARDING_DATA_MESSAGE);
-        Assert.notNull(onboardingData.getBillingData(), REQUIRED_INSTITUTION_BILLING_DATA_MESSAGE);
+        Assert.notNull(onboardingData.getBilling(), REQUIRED_INSTITUTION_BILLING_DATA_MESSAGE);
         Assert.notNull(onboardingData.getInstitutionType(), REQUIRED_INSTITUTION_TYPE_MESSAGE);
         Product product = productsConnector.getProduct(onboardingData.getProductId());
         Assert.notNull(product, "Product is required");
@@ -66,8 +72,7 @@ class InstitutionServiceImpl implements InstitutionService {
         onboardingData.setContractVersion(product.getContractTemplateVersion());
 
         if (product.getParentId() != null) {
-            RelationshipsResponse response = partyConnector.getUserInstitutionRelationships(onboardingData.getInstitutionId()
-                    , product.getParentId());
+            RelationshipsResponse response = partyConnector.getUserInstitutionRelationships(onboardingData.getInstitutionId(), product.getParentId());
             if (response == null) {
                 throw new ProductHasNoRelationshipException(
                         String.format("No relationship for %s and %s", product.getParentId(), onboardingData.getInstitutionId())
@@ -75,9 +80,12 @@ class InstitutionServiceImpl implements InstitutionService {
             } else {
                 if (!onboardingData.getUsers().stream()
                         .filter(user -> PartyRole.MANAGER.equals(user.getRole()))
-                        .findAny().orElseThrow(() -> new ValidationException(ILLEGAL_LIST_OF_USERS)).getTaxCode().equals(response.stream()
+                        .findAny()
+                        .orElseThrow(() -> new ValidationException(ILLEGAL_LIST_OF_USERS)).getTaxCode().equals(response.stream()
                                 .filter(relationshipInfo -> PartyRole.MANAGER.equals(relationshipInfo.getRole()))
-                                .findAny().orElseThrow(() -> new InternalServerException("Internal Error: Legal referent not Manager")).getTaxCode())
+                                .findAny()//TODO: correct if can exists only one manager for each institution-product pair
+                                .map(relationshipInfo -> userConnector.getUserByInternalId(relationshipInfo.getTo(), EnumSet.of(fiscalCode)))
+                                .orElseThrow(() -> new InternalServerException("Internal Error: Legal referent not Manager")).getFiscalCode())
                 ) throw new ValidationException("The provided Manager is not valid for this product");
 
             }
@@ -99,6 +107,7 @@ class InstitutionServiceImpl implements InstitutionService {
         log.trace("onboarding end");
     }
 
+
     @Override
     public Collection<InstitutionInfo> getInstitutions() {
         log.trace("getInstitutions start");
@@ -107,6 +116,7 @@ class InstitutionServiceImpl implements InstitutionService {
         log.trace("getInstitutions end");
         return result;
     }
+
 
     @Override
     public InstitutionOnboardingData getInstitutionOnboardingData(String externalInstitutionId, String productId) {
@@ -123,7 +133,10 @@ class InstitutionServiceImpl implements InstitutionService {
             userInfoFilter.setProductId(Optional.of(productId));
             userInfoFilter.setRole(Optional.of(EnumSet.of(PartyRole.MANAGER)));
             userInfoFilter.setAllowedState(Optional.of(EnumSet.of(RelationshipState.ACTIVE)));
-            Collection<UserInfo> userInfos = getUsers(externalInstitutionId, userInfoFilter);
+            final EnumSet<User.Fields> fieldList = EnumSet.of(name, familyName, workContacts, fiscalCode);
+            Collection<UserInfo> userInfos = partyConnector.getUsers(externalInstitutionId, userInfoFilter).stream()
+                    .peek(userInfo -> userInfo.setUser(userConnector.getUserByInternalId(userInfo.getId(), fieldList)))
+                    .collect(Collectors.toList());
             if (!userInfos.iterator().hasNext()) {
                 throw new ResourceNotFoundException(String.format("No Manager found for given institution: %s", externalInstitutionId));
             }
@@ -140,6 +153,7 @@ class InstitutionServiceImpl implements InstitutionService {
         return result;
     }
 
+
     private Boolean checkAuthority(String externalInstitutionId, String productId, EnumSet<PartyRole> roles) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Assert.state(authentication != null, "Authentication is required");
@@ -150,11 +164,10 @@ class InstitutionServiceImpl implements InstitutionService {
         filter.setProductId(Optional.of(productId));
         filter.setAllowedState(Optional.of(EnumSet.of(RelationshipState.ACTIVE)));
         filter.setRole(Optional.of(roles));
-
-        Collection<UserInfo> userInfos = getUsers(externalInstitutionId, filter);
+        Collection<UserInfo> userInfos = partyConnector.getUsers(externalInstitutionId, filter);
         return userInfos.iterator().hasNext();
-
     }
+
 
     @Override
     public Institution getInstitutionByExternalId(String externalInstitutionId) {
@@ -165,17 +178,6 @@ class InstitutionServiceImpl implements InstitutionService {
         log.debug("getInstitutionData result = {}", institution);
         log.trace("getInstitutionData end");
         return institution;
-    }
-
-    private Collection<UserInfo> getUsers(String externalInstitutionId, UserInfo.UserInfoFilter userInfoFilter) {
-        log.trace("getUsers start");
-        log.debug("getUsers externalInstitutionId = {}, productId = {}, role = {}, productRoles = {}",
-                externalInstitutionId, userInfoFilter.getProductId(), userInfoFilter.getRole(), userInfoFilter.getProductRoles());
-        Assert.hasText(externalInstitutionId, REQUIRED_INSTITUTION_ID_MESSAGE);
-        Collection<UserInfo> userInfos = partyConnector.getUsers(externalInstitutionId, userInfoFilter);
-        log.debug(LogUtils.CONFIDENTIAL_MARKER, "getUsers result = {}", userInfos);
-        log.trace("getUsers end");
-        return userInfos;
     }
 
 }

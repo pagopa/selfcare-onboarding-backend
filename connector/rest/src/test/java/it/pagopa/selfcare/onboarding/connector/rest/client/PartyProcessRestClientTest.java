@@ -122,11 +122,6 @@ class PartyProcessRestClientTest extends BaseFeignRestClientTest {
         assertNotNull(response.get(0));
         response.forEach(relationshipInfo -> {
             TestUtils.checkNotNullFields(relationshipInfo);
-            relationshipInfo.getInstitutionContacts().values().forEach(institutionContacts -> {
-                assertNotNull(institutionContacts);
-                assertFalse(institutionContacts.isEmpty());
-                institutionContacts.forEach(TestUtils::checkNotNullFields);
-            });
             TestUtils.checkNotNullFields(relationshipInfo.getInstitutionUpdate());
             TestUtils.checkNotNullFields(relationshipInfo.getBilling());
         });
@@ -191,13 +186,8 @@ class PartyProcessRestClientTest extends BaseFeignRestClientTest {
         OnBoardingInfo response = restClient.getOnBoardingInfo(testCase2instIdMap.get(TestCase.FULLY_NULL), EnumSet.of(ACTIVE));
         // then
         assertNotNull(response);
-        assertNotNull(response.getPerson());
-        assertNotNull(response.getInstitutions());
-        assertNull(response.getPerson().getName());
-        assertNull(response.getPerson().getSurname());
-        assertNull(response.getPerson().getTaxCode());
-        assertNull(response.getInstitutions().get(0).getExternalId());
-        assertNull(response.getInstitutions().get(0).getDescription());
+        assertNull(response.getUserId());
+        assertNull(response.getInstitutions());
     }
 
 
@@ -208,7 +198,7 @@ class PartyProcessRestClientTest extends BaseFeignRestClientTest {
         // then
         assertNotNull(response);
         assertTrue(response.getInstitutions().isEmpty());
-        assertNull(response.getPerson());
+        assertNull(response.getUserId());
     }
 
     @Test

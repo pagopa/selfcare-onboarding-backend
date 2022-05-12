@@ -1,6 +1,7 @@
 package it.pagopa.selfcare.onboarding.connector.model.onboarding;
 
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipState;
+import it.pagopa.selfcare.onboarding.connector.model.user.User;
 import lombok.Data;
 
 import java.util.EnumSet;
@@ -11,14 +12,10 @@ import java.util.Set;
 public class UserInfo {
 
     private String id;
-    private String name;
-    private String surname;
-    private String taxCode;
+    private User user;
     private String institutionId;
-    private String email;
     private PartyRole role;
     private String status;
-    private boolean certified;
 
     @Data
     public static class UserInfoFilter {
