@@ -42,11 +42,11 @@ public class UserMapper {
                 resource.setName(CertifiedFieldMapper.map(model.getUser().getName()));
                 resource.setTaxCode(model.getUser().getFiscalCode());
                 resource.setSurname(CertifiedFieldMapper.map(model.getUser().getFamilyName()));
-                resource.setEmail(Optional.ofNullable(model.getUser().getWorkContacts())
+                Optional.ofNullable(model.getUser().getWorkContacts())
                         .map(map -> map.get(model.getInstitutionId()))
                         .map(WorkContact::getEmail)
                         .map(CertifiedFieldMapper::map)
-                        .orElse(null));
+                        .ifPresent(resource::setEmail);
             }
         }
         return resource;
