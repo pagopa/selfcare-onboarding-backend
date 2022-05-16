@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipInfo;
+import it.pagopa.selfcare.onboarding.connector.model.RelationshipState;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipsResponse;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionInfo;
@@ -31,7 +32,6 @@ import java.util.stream.Collectors;
 
 import static it.pagopa.selfcare.commons.utils.TestUtils.mockInstance;
 import static it.pagopa.selfcare.onboarding.connector.PartyConnectorImpl.REQUIRED_INSTITUTION_ID_MESSAGE;
-import static it.pagopa.selfcare.onboarding.connector.PartyConnectorImpl.REQUIRED_PRODUCT_ID_MESSAGE;
 import static it.pagopa.selfcare.onboarding.connector.model.RelationshipState.ACTIVE;
 import static it.pagopa.selfcare.onboarding.connector.model.RelationshipState.PENDING;
 import static org.junit.jupiter.api.Assertions.*;
@@ -198,6 +198,12 @@ class PartyConnectorImplTest {
         //given
         String institutionId = "institutionId";
         String productId = "productId";
+        final EnumSet<RelationshipState> allowedStates = EnumSet.of(ACTIVE);
+        final EnumSet<PartyRole> roles = EnumSet.of(PartyRole.MANAGER);
+        UserInfo.UserInfoFilter userInfoFilter = new UserInfo.UserInfoFilter();
+        userInfoFilter.setProductId(Optional.of(productId));
+        userInfoFilter.setAllowedStates(Optional.of(allowedStates));
+        userInfoFilter.setRole(Optional.of(roles));
         RelationshipInfo relationshipInfo1 = mockInstance(new RelationshipInfo());
         RelationshipInfo relationshipInfo2 = mockInstance(new RelationshipInfo());
         RelationshipsResponse response = new RelationshipsResponse();
@@ -206,13 +212,13 @@ class PartyConnectorImplTest {
         when(restClientMock.getUserInstitutionRelationships(any(), any(), any(), any(), any(), any()))
                 .thenReturn(response);
         //when
-        RelationshipsResponse restResponse = partyConnector.getUserInstitutionRelationships(institutionId, productId);
+        RelationshipsResponse restResponse = partyConnector.getUserInstitutionRelationships(institutionId, userInfoFilter);
         //
         assertNotNull(restResponse);
         assertEquals(2, restResponse.size());
         assertIterableEquals(response, restResponse);
         verify(restClientMock, times(1))
-                .getUserInstitutionRelationships(eq(institutionId), isNull(), eq(EnumSet.of(ACTIVE)), eq(Set.of(productId)), isNull(), isNull());
+                .getUserInstitutionRelationships(eq(institutionId), eq(roles), eq(allowedStates), eq(Set.of(productId)), isNull(), isNull());
         verifyNoMoreInteractions(restClientMock);
     }
 
@@ -220,19 +226,13 @@ class PartyConnectorImplTest {
     void getUserInstitutionRelationships_emptyResponse() {
         //given
         String institutionId = "institutionId";
-        String productId = "productId";
-
+        UserInfo.UserInfoFilter userInfoFilter = new UserInfo.UserInfoFilter();
         //when
-        RelationshipsResponse response = partyConnector.getUserInstitutionRelationships(institutionId, productId);
+        RelationshipsResponse response = partyConnector.getUserInstitutionRelationships(institutionId, userInfoFilter);
         //then
         Assertions.assertNull(response);
         verify(restClientMock, times(1))
-                .getUserInstitutionRelationships(eq(institutionId),
-                        isNull(),
-                        eq(EnumSet.of(ACTIVE)),
-                        eq(Set.of(productId)),
-                        isNull(),
-                        isNull());
+                .getUserInstitutionRelationships(eq(institutionId), isNull(), isNull(), isNull(), isNull(), isNull());
         verifyNoMoreInteractions(restClientMock);
     }
 
@@ -240,9 +240,9 @@ class PartyConnectorImplTest {
     void getUserInstitutionRelationships_nullInstitutionId() {
         //given
         String institutionId = null;
-        String productId = "productId";
+        UserInfo.UserInfoFilter userInfoFilter = new UserInfo.UserInfoFilter();
         //when
-        Executable executable = () -> partyConnector.getUserInstitutionRelationships(institutionId, productId);
+        Executable executable = () -> partyConnector.getUserInstitutionRelationships(institutionId, userInfoFilter);
         //then
         IllegalArgumentException e = Assertions.assertThrows(IllegalArgumentException.class, executable);
         assertEquals(REQUIRED_INSTITUTION_ID_MESSAGE, e.getMessage());
@@ -250,15 +250,15 @@ class PartyConnectorImplTest {
     }
 
     @Test
-    void getUserInstitutionRelationships_nullProductId() {
+    void getUserInstitutionRelationships_nullFilter() {
         //given
         String institutionId = "institutionId";
-        String productId = null;
+        UserInfo.UserInfoFilter userInfoFilter = null;
         //when
-        Executable executable = () -> partyConnector.getUserInstitutionRelationships(institutionId, productId);
+        Executable executable = () -> partyConnector.getUserInstitutionRelationships(institutionId, userInfoFilter);
         //then
         IllegalArgumentException e = Assertions.assertThrows(IllegalArgumentException.class, executable);
-        assertEquals(REQUIRED_PRODUCT_ID_MESSAGE, e.getMessage());
+        assertEquals("A filter is required", e.getMessage());
         Mockito.verifyNoInteractions(restClientMock);
     }
 
@@ -281,7 +281,7 @@ class PartyConnectorImplTest {
         // given
         String institutionId = "institutionId";
         UserInfo.UserInfoFilter userInfoFilter = new UserInfo.UserInfoFilter();
-        userInfoFilter.setAllowedState(Optional.of(EnumSet.of(ACTIVE)));
+        userInfoFilter.setAllowedStates(Optional.of(EnumSet.of(ACTIVE)));
         // when
         Collection<UserInfo> users = partyConnector.getUsers(institutionId, userInfoFilter);
         // then
@@ -316,7 +316,7 @@ class PartyConnectorImplTest {
         String institutionId = "institutionId";
         UserInfo.UserInfoFilter userInfoFilter = new UserInfo.UserInfoFilter();
         userInfoFilter.setProductId(Optional.of("productId"));
-        userInfoFilter.setAllowedState(Optional.of(EnumSet.of(ACTIVE)));
+        userInfoFilter.setAllowedStates(Optional.of(EnumSet.of(ACTIVE)));
         // when
         Collection<UserInfo> users = partyConnector.getUsers(institutionId, userInfoFilter);
         // then
@@ -333,7 +333,7 @@ class PartyConnectorImplTest {
         String institutionId = "institutionId";
         UserInfo.UserInfoFilter userInfoFilter = new UserInfo.UserInfoFilter();
         userInfoFilter.setProductRoles(Optional.of(Set.of("api", "security")));
-        userInfoFilter.setAllowedState(Optional.of(EnumSet.of(ACTIVE)));
+        userInfoFilter.setAllowedStates(Optional.of(EnumSet.of(ACTIVE)));
 
         // when
         Collection<UserInfo> users = partyConnector.getUsers(institutionId, userInfoFilter);
@@ -351,7 +351,7 @@ class PartyConnectorImplTest {
         String institutionId = "institutionId";
         UserInfo.UserInfoFilter userInfoFilter = new UserInfo.UserInfoFilter();
         userInfoFilter.setRole(Optional.of(EnumSet.of(PartyRole.MANAGER)));
-        userInfoFilter.setAllowedState(Optional.of(EnumSet.of(ACTIVE)));
+        userInfoFilter.setAllowedStates(Optional.of(EnumSet.of(ACTIVE)));
         // when
         Collection<UserInfo> users = partyConnector.getUsers(institutionId, userInfoFilter);
         // then
@@ -367,7 +367,7 @@ class PartyConnectorImplTest {
         // given
         String institutionId = "institutionId";
         UserInfo.UserInfoFilter userInfoFilter = new UserInfo.UserInfoFilter();
-        userInfoFilter.setAllowedState(Optional.of(EnumSet.of(ACTIVE)));
+        userInfoFilter.setAllowedStates(Optional.of(EnumSet.of(ACTIVE)));
         userInfoFilter.setRole(Optional.of(EnumSet.of(PartyRole.MANAGER)));
 
         RelationshipInfo relationshipInfo1 = mockInstance(new RelationshipInfo(), "setFrom");

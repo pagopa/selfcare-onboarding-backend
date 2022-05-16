@@ -42,6 +42,7 @@ class OnboardingMapperTest {
         assertEquals(userDtos.get(0).getProductRole(), resource.getUsers().get(0).getProductRole());
         assertEquals(model.getOrigin(), resource.getOrigin());
         assertEquals(model.getInstitutionType(), resource.getInstitutionType());
+        assertEquals(model.getPricingPlan(), resource.getPricingPlan());
     }
 
     @Test

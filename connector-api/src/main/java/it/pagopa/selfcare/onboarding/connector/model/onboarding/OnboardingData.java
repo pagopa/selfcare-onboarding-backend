@@ -32,6 +32,7 @@ public class OnboardingData {
     private InstitutionUpdate institutionUpdate;
     private InstitutionType institutionType;
     private String origin;
+    private String pricingPlan;
 
     public List<User> getUsers() {
         return Optional.ofNullable(users).orElse(Collections.emptyList());

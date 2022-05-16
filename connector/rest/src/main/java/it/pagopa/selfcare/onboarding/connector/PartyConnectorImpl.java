@@ -75,6 +75,7 @@ class PartyConnectorImpl implements PartyConnector {
         Assert.notNull(onboardingData, "Onboarding data is required");
         OnboardingInstitutionRequest onboardingInstitutionRequest = new OnboardingInstitutionRequest();
         onboardingInstitutionRequest.setInstitutionExternalId(onboardingData.getInstitutionId());
+        onboardingInstitutionRequest.setPricingPlan(onboardingData.getPricingPlan());
         onboardingInstitutionRequest.setBilling(onboardingData.getBilling());
         InstitutionUpdate institutionUpdate = new InstitutionUpdate();
         institutionUpdate.setInstitutionType(onboardingData.getInstitutionType());
@@ -133,18 +134,18 @@ class PartyConnectorImpl implements PartyConnector {
     }
 
     @Override
-    public RelationshipsResponse getUserInstitutionRelationships(String externalInstitutionId, String productId) {
+    public RelationshipsResponse getUserInstitutionRelationships(String externalInstitutionId, UserInfo.UserInfoFilter userInfoFilter) {
         log.trace("getUserInstitutionRelationships start");
-        log.debug("getUserInstitutionRelationships externalInstitutionId = {}, productId = {}", externalInstitutionId, productId);
+        log.debug("getUserInstitutionRelationships externalInstitutionId = {}, userInfoFilter = {}", externalInstitutionId, userInfoFilter);
         Assert.hasText(externalInstitutionId, REQUIRED_INSTITUTION_ID_MESSAGE);
-        Assert.hasText(productId, REQUIRED_PRODUCT_ID_MESSAGE);
+        Assert.notNull(userInfoFilter, "A filter is required");
         RelationshipsResponse institutionRelationships = restClient.getUserInstitutionRelationships(
                 externalInstitutionId,
-                null,
-                EnumSet.of(ACTIVE),
-                Set.of(productId),
-                null,
-                null
+                userInfoFilter.getRole().orElse(null),
+                userInfoFilter.getAllowedStates().orElse(null),
+                userInfoFilter.getProductId().map(Set::of).orElse(null),
+                userInfoFilter.getProductRoles().orElse(null),
+                userInfoFilter.getUserId().orElse(null)
         );
         log.debug("getUserInstitutionRelationships institutionRelationships = {}", institutionRelationships);
         log.trace("getUserInstitutionRelationships end");

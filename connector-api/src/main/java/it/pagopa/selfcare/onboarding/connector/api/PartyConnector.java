@@ -14,7 +14,7 @@ public interface PartyConnector {
 
     Collection<InstitutionInfo> getOnBoardedInstitutions();
 
-    RelationshipsResponse getUserInstitutionRelationships(String externalInstitutionId, String productId);
+    RelationshipsResponse getUserInstitutionRelationships(String externalInstitutionId, UserInfo.UserInfoFilter userInfoFilter);
 
     Collection<UserInfo> getUsers(String externalInstitutionId, UserInfo.UserInfoFilter userInfoFilter);
 

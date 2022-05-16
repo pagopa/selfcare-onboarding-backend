@@ -1,8 +1,7 @@
 package it.pagopa.selfcare.onboarding.web.handler;
 
 import it.pagopa.selfcare.commons.web.model.ErrorResource;
-import it.pagopa.selfcare.onboarding.core.exceptions.InternalServerException;
-import it.pagopa.selfcare.onboarding.core.exceptions.ProductHasNoRelationshipException;
+import it.pagopa.selfcare.onboarding.core.exceptions.ManagerNotFoundException;
 import it.pagopa.selfcare.onboarding.core.exceptions.ResourceNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -33,23 +32,11 @@ class OnboardingExceptionHandlerTest {
         assertEquals(DETAIL_MESSAGE, resource.getMessage());
     }
 
-    @Test
-    void handleInternalServerException() {
-        //given
-        InternalServerException exceptionMock = Mockito.mock(InternalServerException.class);
-        Mockito.when(exceptionMock.getMessage())
-                .thenReturn(DETAIL_MESSAGE);
-        //when
-        ErrorResource resource = handler.handleInternalServerException(exceptionMock);
-        //then
-        assertNotNull(resource);
-        assertEquals(DETAIL_MESSAGE, resource.getMessage());
-    }
 
     @Test
     void handleProductHasNoRelationshipException() {
         //given
-        ProductHasNoRelationshipException exceptionMock = Mockito.mock(ProductHasNoRelationshipException.class);
+        ManagerNotFoundException exceptionMock = Mockito.mock(ManagerNotFoundException.class);
         Mockito.when(exceptionMock.getMessage())
                 .thenReturn(DETAIL_MESSAGE);
         //when
@@ -58,4 +45,5 @@ class OnboardingExceptionHandlerTest {
         assertNotNull(resource);
         assertEquals(DETAIL_MESSAGE, resource.getMessage());
     }
+
 }

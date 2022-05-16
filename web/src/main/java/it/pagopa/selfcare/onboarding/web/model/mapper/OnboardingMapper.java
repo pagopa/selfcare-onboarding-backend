@@ -52,6 +52,7 @@ public class OnboardingMapper {
             resource.setInstitutionId(institutionId);
             resource.setProductId(productId);
             resource.setOrigin(model.getOrigin());
+            resource.setPricingPlan(model.getPricingPlan());
             resource.setInstitutionUpdate(mapInstitutionUpdate(model.getBillingData()));
             if (model.getBillingData() != null) {
                 resource.setBilling(fromDto(model.getBillingData()));

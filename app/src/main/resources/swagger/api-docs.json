@@ -242,23 +242,24 @@
             "schema": {
               "type": "string"
             }
-          } ],
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ProductResource"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductResource"
                 }
               }
             }
           },
-          "401" : {
-            "description" : "Unauthorized"
+          "401": {
+            "description": "Unauthorized"
           },
-          "403" : {
-            "description" : "Forbidden"
+          "403": {
+            "description": "Forbidden"
           },
           "404" : {
             "description" : "Not Found"
@@ -337,11 +338,16 @@
           },
           "institutionType": {
             "type": "string",
-            "description" : "Institution's type",
-            "enum" : [ "GSP", "PA", "PT", "SCP" ]
+            "description": "Institution's type",
+            "enum": [
+              "GSP",
+              "PA",
+              "PT",
+              "SCP"
+            ]
           },
-          "origin" : {
-            "type" : "string"
+          "origin": {
+            "type": "string"
           }
         }
       },
@@ -522,12 +528,12 @@
             "description": "User's unique identifier",
             "format": "uuid"
           },
-          "institutionId" : {
+          "institutionId": {
             "type": "string",
             "description": "Institution's unique internal Id ",
             "format": "uuid"
           },
-          "name" : {
+          "name": {
             "description": "User's name",
             "$ref": "#/components/schemas/CertifiedFieldResourceOfstring"
           },
