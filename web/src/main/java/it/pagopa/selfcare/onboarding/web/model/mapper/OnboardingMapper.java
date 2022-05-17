@@ -36,6 +36,7 @@ public class OnboardingMapper {
             resource = new InstitutionUpdate();
             resource.setAddress(dto.getRegisteredOffice());
             resource.setDigitalAddress(dto.getDigitalAddress());
+            resource.setZipCode(dto.getZipCode());
             resource.setDescription(dto.getBusinessName());
             resource.setTaxCode(dto.getTaxCode());
         }
@@ -82,6 +83,7 @@ public class OnboardingMapper {
             billing.setTaxCode(model.getTaxCode());
             billing.setBusinessName(model.getDescription());
             billing.setRegisteredOffice(model.getAddress());
+            billing.setZipCode(model.getZipCode());
             if (model.getBilling() != null) {
                 billing.setPublicServices(model.getBilling().getPublicServices());
                 billing.setRecipientCode(model.getBilling().getRecipientCode());

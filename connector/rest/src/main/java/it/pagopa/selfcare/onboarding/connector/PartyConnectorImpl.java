@@ -83,6 +83,7 @@ class PartyConnectorImpl implements PartyConnector {
         institutionUpdate.setDescription(onboardingData.getInstitutionUpdate().getDescription());
         institutionUpdate.setDigitalAddress(onboardingData.getInstitutionUpdate().getDigitalAddress());
         institutionUpdate.setTaxCode(onboardingData.getInstitutionUpdate().getTaxCode());
+        institutionUpdate.setZipCode(onboardingData.getInstitutionUpdate().getZipCode());
         onboardingInstitutionRequest.setInstitutionUpdate(institutionUpdate);
 
         onboardingInstitutionRequest.setUsers(onboardingData.getUsers().stream()

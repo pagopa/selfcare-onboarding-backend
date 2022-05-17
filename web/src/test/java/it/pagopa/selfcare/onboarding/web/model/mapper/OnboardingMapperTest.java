@@ -31,15 +31,9 @@ class OnboardingMapperTest {
         assertEquals(1, model.getUsers().size());
         assertEquals(institutionId, resource.getInstitutionId());
         assertEquals(productId, resource.getProductId());
-        assertEquals(billingDataDto.getPublicServices(), resource.getBilling().getPublicServices());
-        assertEquals(billingDataDto.getVatNumber(), resource.getBilling().getVatNumber());
-        assertEquals(billingDataDto.getRecipientCode(), resource.getBilling().getRecipientCode());
-        assertEquals(userDtos.get(0).getEmail(), resource.getUsers().get(0).getEmail());
-        assertEquals(userDtos.get(0).getName(), resource.getUsers().get(0).getName());
-        assertEquals(userDtos.get(0).getSurname(), resource.getUsers().get(0).getSurname());
-        assertEquals(userDtos.get(0).getTaxCode(), resource.getUsers().get(0).getTaxCode());
-        assertEquals(userDtos.get(0).getRole(), resource.getUsers().get(0).getRole());
-        assertEquals(userDtos.get(0).getProductRole(), resource.getUsers().get(0).getProductRole());
+        TestUtils.reflectionEqualsByName(billingDataDto, resource.getBilling());
+        TestUtils.reflectionEqualsByName(userDtos.get(0), resource.getUsers().get(0));
+        TestUtils.reflectionEqualsByName(model.getBillingData(), resource.getInstitutionUpdate());
         assertEquals(model.getOrigin(), resource.getOrigin());
         assertEquals(model.getInstitutionType(), resource.getInstitutionType());
         assertEquals(model.getPricingPlan(), resource.getPricingPlan());

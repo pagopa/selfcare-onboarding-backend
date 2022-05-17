@@ -103,6 +103,8 @@ class PartyConnectorImplTest {
         // given
         OnboardingData onboardingData = mockInstance(new OnboardingData());
         Billing billing = mockInstance(new Billing());
+        InstitutionUpdate institutionUpdate = mockInstance(new InstitutionUpdate());
+        onboardingData.setInstitutionUpdate(institutionUpdate);
         onboardingData.setBilling(billing);
         onboardingData.setUsers(List.of(mockInstance(new User())));
         // when
@@ -114,6 +116,8 @@ class PartyConnectorImplTest {
         assertEquals(onboardingData.getInstitutionId(), request.getInstitutionExternalId());
         assertNotNull(request.getUsers());
         assertEquals(1, request.getUsers().size());
+        TestUtils.reflectionEqualsByName(institutionUpdate, request.getInstitutionUpdate());
+        TestUtils.reflectionEqualsByName(billing, request.getBilling());
         assertEquals(onboardingData.getProductId(), request.getUsers().get(0).getProduct());
         assertEquals(onboardingData.getUsers().get(0).getName(), request.getUsers().get(0).getName());
         assertEquals(onboardingData.getUsers().get(0).getSurname(), request.getUsers().get(0).getSurname());
