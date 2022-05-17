@@ -346,7 +346,7 @@ class PartyConnectorImplTest {
         assertNotNull(users);
         assertTrue(users.isEmpty());
         verify(restClientMock, times(1))
-                .getUserInstitutionRelationships(eq(institutionId), isNull(), Mockito.isNotNull(), isNull(), eq(userInfoFilter.getProductRoles().get()), isNull());
+                .getUserInstitutionRelationships(eq(institutionId), isNull(), isNotNull(), isNull(), eq(userInfoFilter.getProductRoles().get()), isNull());
         verifyNoMoreInteractions(restClientMock);
     }
 

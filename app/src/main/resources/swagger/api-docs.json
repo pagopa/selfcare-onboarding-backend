@@ -563,13 +563,13 @@
             "type": "string",
             "description": "User's status"
           },
-          "surname" : {
+          "surname": {
             "description": "User's surname",
             "$ref": "#/components/schemas/CertifiedFieldResourceOfstring"
           },
-          "taxCode" : {
-            "type" : "string",
-            "description" : "User's fiscal code"
+          "taxCode": {
+            "type": "string",
+            "description": "User's fiscal code"
           }
         }
       }
