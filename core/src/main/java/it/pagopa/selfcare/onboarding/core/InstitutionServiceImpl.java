@@ -106,9 +106,15 @@ class InstitutionServiceImpl implements InstitutionService {
             userInfo.setProductRole(finalProduct.getRoleMappings().get(userInfo.getRole()).getRoles().get(0).getCode());
         });
 
-        //TODO partyConnector.getInstitutionByExternalId or partyConnector.create..() institution from externalId (onboardingData.getInstitutionId())
+        Institution institution = null;
+        try {
+            institution = partyConnector.getInstitutionByExternalId(onboardingData.getInstitutionId());
+        } catch (ResourceNotFoundException e) {
+            institution = partyConnector.createInstitutionUsingExternalId(onboardingData.getInstitutionId());
+        }
+        String finalInstitutionInternalId = institution.getId();
         onboardingData.getUsers().forEach(user ->
-                user.setId(userConnector.saveUser(UserMapper.toSaveUserDto(user, institutionInternalId))
+                user.setId(userConnector.saveUser(UserMapper.toSaveUserDto(user, finalInstitutionInternalId))
                         .getId().toString()));
         partyConnector.onboardingOrganization(onboardingData);
         log.trace("onboarding end");

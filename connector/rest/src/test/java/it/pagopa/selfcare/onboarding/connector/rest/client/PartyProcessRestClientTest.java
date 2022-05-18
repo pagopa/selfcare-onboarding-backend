@@ -219,6 +219,7 @@ class PartyProcessRestClientTest extends BaseFeignRestClientTest {
         String externalId = testCase2instIdMap.get(TestCase.FULLY_NULL);
         // when
         Institution response = restClient.getInstitutionByExternalId(externalId);
+        //then
         assertNotNull(response);
         assertNull(response.getAddress());
         assertNull(response.getDescription());
@@ -231,5 +232,15 @@ class PartyProcessRestClientTest extends BaseFeignRestClientTest {
         assertNull(response.getAttributes());
     }
 
+    @Test
+    void createInstitutionUsingExternalId() {
+        //given
+        String externalId = "externalId";
+        //when
+        Institution response = restClient.createInstitutionUsingExternalId(externalId);
+        //then
+        assertNotNull(response);
+        TestUtils.checkNotNullFields(response);
+    }
 
 }

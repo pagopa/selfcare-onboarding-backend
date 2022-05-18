@@ -261,8 +261,8 @@
           "403": {
             "description": "Forbidden"
           },
-          "404" : {
-            "description" : "Not Found"
+          "404": {
+            "description": "Not Found"
           }
         },
         "security" : [ {
@@ -537,13 +537,18 @@
             "description": "User's name",
             "$ref": "#/components/schemas/CertifiedFieldResourceOfstring"
           },
-          "role" : {
-            "type" : "string",
-            "description" : "User's role",
-            "enum" : [ "DELEGATE", "MANAGER", "OPERATOR", "SUB_DELEGATE" ]
+          "role": {
+            "type": "string",
+            "description": "User's role",
+            "enum": [
+              "DELEGATE",
+              "MANAGER",
+              "OPERATOR",
+              "SUB_DELEGATE"
+            ]
           },
-          "status" : {
-            "type" : "string",
+          "status": {
+            "type": "string",
             "description": "User's status"
           },
           "surname" : {

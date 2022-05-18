@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import it.pagopa.selfcare.commons.utils.TestUtils;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipInfo;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipState;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipsResponse;
@@ -605,5 +606,32 @@ class PartyConnectorImplTest {
         verifyNoMoreInteractions(restClientMock);
     }
 
+    @Test
+    void createInstitutionUsingExternalId_nullId() {
+        //given
+        String externalId = null;
+        //when
+        Executable executable = () -> partyConnector.createInstitutionUsingExternalId(externalId);
+        //then
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, executable);
+        assertEquals(REQUIRED_INSTITUTION_ID_MESSAGE, e.getMessage());
+        verifyNoInteractions(restClientMock);
+    }
+
+    @Test
+    void createInstitutionUsingExternalId() {
+        //given
+        String externalId = "externalId";
+        Institution institution = TestUtils.mockInstance(new Institution());
+        when(restClientMock.createInstitutionUsingExternalId(Mockito.anyString()))
+                .thenReturn(institution);
+        //when
+        Institution result = partyConnector.createInstitutionUsingExternalId(externalId);
+        //then
+        assertNotNull(result);
+        assertSame(institution, result);
+        verify(restClientMock, times(1))
+                .createInstitutionUsingExternalId(externalId);
+    }
 
 }

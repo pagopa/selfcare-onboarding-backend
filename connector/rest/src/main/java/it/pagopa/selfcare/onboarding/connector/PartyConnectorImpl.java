@@ -31,7 +31,7 @@ import static it.pagopa.selfcare.onboarding.connector.model.RelationshipState.AC
 @Slf4j
 class PartyConnectorImpl implements PartyConnector {
 
-    protected static final String REQUIRED_INSTITUTION_ID_MESSAGE = "An Institution id is required";
+    protected static final String REQUIRED_INSTITUTION_ID_MESSAGE = "An Institution external id is required";
     protected static final String REQUIRED_PRODUCT_ID_MESSAGE = "A product Id is required";
 
     private final PartyProcessRestClient restClient;
@@ -211,4 +211,17 @@ class PartyConnectorImpl implements PartyConnector {
         log.trace("getOnBoardedInstitution end");
         return result;
     }
+
+    @Override
+    public Institution createInstitutionUsingExternalId(String institutionExternalId) {
+        log.trace("createInstitutionUsingExternalId start");
+        log.debug("createInstitutionUsingExternalId externalId = {}", institutionExternalId);
+        Assert.hasText(institutionExternalId, REQUIRED_INSTITUTION_ID_MESSAGE);
+        Institution result = restClient.createInstitutionUsingExternalId(institutionExternalId);
+        log.debug("createInstitutionUsingExternalId result = {}", result);
+        log.trace("createInstitutionUsingExternalId end");
+        return result;
+    }
+
+
 }
