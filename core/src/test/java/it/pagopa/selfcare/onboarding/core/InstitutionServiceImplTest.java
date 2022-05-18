@@ -364,11 +364,11 @@ class InstitutionServiceImplTest {
         Executable executable = () -> institutionService.onboarding(onboardingData);
         //then
         ManagerNotFoundException e = Assertions.assertThrows(ManagerNotFoundException.class, executable);
-        assertEquals("Unable to retrieve the manager related to institution external id = " + onboardingData.getInstitutionId() + " and base product " + product.getParentId(), e.getMessage());
+        assertEquals("Unable to retrieve the manager related to institution external id = " + onboardingData.getInstitutionExternalId() + " and base product " + product.getParentId(), e.getMessage());
         verify(productsConnectorMock, times(1))
                 .getProduct(onboardingData.getProductId());
         verify(partyConnectorMock, times(1))
-                .getUserInstitutionRelationships(eq(onboardingData.getInstitutionId()), userInfoFilterCaptor.capture());
+                .getUserInstitutionRelationships(eq(onboardingData.getInstitutionExternalId()), userInfoFilterCaptor.capture());
         assertEquals(Optional.of(EnumSet.of(PartyRole.MANAGER)), userInfoFilterCaptor.getValue().getRole());
         assertEquals(Optional.of(EnumSet.of(RelationshipState.ACTIVE)), userInfoFilterCaptor.getValue().getAllowedStates());
         assertEquals(Optional.of(product.getParentId()), userInfoFilterCaptor.getValue().getProductId());
@@ -399,7 +399,7 @@ class InstitutionServiceImplTest {
         ValidationException e = assertThrows(ValidationException.class, executable);
         assertEquals(ILLEGAL_LIST_OF_USERS, e.getMessage());
         verify(partyConnectorMock, times(1))
-                .getUserInstitutionRelationships(eq(onboardingData.getInstitutionId()), userInfoFilterCaptor.capture());
+                .getUserInstitutionRelationships(eq(onboardingData.getInstitutionExternalId()), userInfoFilterCaptor.capture());
         assertEquals(Optional.of(EnumSet.of(PartyRole.MANAGER)), userInfoFilterCaptor.getValue().getRole());
         assertEquals(Optional.of(EnumSet.of(RelationshipState.ACTIVE)), userInfoFilterCaptor.getValue().getAllowedStates());
         assertEquals(Optional.of(productMock.getParentId()), userInfoFilterCaptor.getValue().getProductId());
@@ -444,7 +444,7 @@ class InstitutionServiceImplTest {
         ValidationException e = assertThrows(ValidationException.class, executable);
         assertEquals("The provided Manager is not valid for this product", e.getMessage());
         verify(partyConnectorMock, times(1))
-                .getUserInstitutionRelationships(eq(onboardingData.getInstitutionId()), userInfoFilterCaptor.capture());
+                .getUserInstitutionRelationships(eq(onboardingData.getInstitutionExternalId()), userInfoFilterCaptor.capture());
         assertEquals(Optional.of(EnumSet.of(PartyRole.MANAGER)), userInfoFilterCaptor.getValue().getRole());
         assertEquals(Optional.of(EnumSet.of(RelationshipState.ACTIVE)), userInfoFilterCaptor.getValue().getAllowedStates());
         assertEquals(Optional.of(productMock.getParentId()), userInfoFilterCaptor.getValue().getProductId());
@@ -481,9 +481,9 @@ class InstitutionServiceImplTest {
         Executable executable = () -> institutionService.onboarding(onboardingData);
         //then
         ManagerNotFoundException e = assertThrows(ManagerNotFoundException.class, executable);
-        assertEquals("Unable to retrieve the manager related to institution external id = " + onboardingData.getInstitutionId() + " and base product " + productMock.getParentId(), e.getMessage());
+        assertEquals("Unable to retrieve the manager related to institution external id = " + onboardingData.getInstitutionExternalId() + " and base product " + productMock.getParentId(), e.getMessage());
         verify(partyConnectorMock, times(1))
-                .getUserInstitutionRelationships(eq(onboardingData.getInstitutionId()), userInfoFilterCaptor.capture());
+                .getUserInstitutionRelationships(eq(onboardingData.getInstitutionExternalId()), userInfoFilterCaptor.capture());
         assertEquals(Optional.of(EnumSet.of(PartyRole.MANAGER)), userInfoFilterCaptor.getValue().getRole());
         assertEquals(Optional.of(EnumSet.of(RelationshipState.ACTIVE)), userInfoFilterCaptor.getValue().getAllowedStates());
         assertEquals(Optional.of(productMock.getParentId()), userInfoFilterCaptor.getValue().getProductId());
@@ -555,7 +555,7 @@ class InstitutionServiceImplTest {
         verify(productsConnectorMock, times(1))
                 .getProduct(onboardingData.getProductId());
         verify(partyConnectorMock, times(1))
-                .getUserInstitutionRelationships(eq(onboardingData.getInstitutionId()), userInfoFilterCaptor.capture());
+                .getUserInstitutionRelationships(eq(onboardingData.getInstitutionExternalId()), userInfoFilterCaptor.capture());
         assertEquals(Optional.of(EnumSet.of(PartyRole.MANAGER)), userInfoFilterCaptor.getValue().getRole());
         assertEquals(Optional.of(EnumSet.of(RelationshipState.ACTIVE)), userInfoFilterCaptor.getValue().getAllowedStates());
         assertEquals(Optional.of(productMock.getParentId()), userInfoFilterCaptor.getValue().getProductId());

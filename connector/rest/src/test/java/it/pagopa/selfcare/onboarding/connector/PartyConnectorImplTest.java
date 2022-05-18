@@ -91,7 +91,7 @@ class PartyConnectorImplTest {
         verify(restClientMock, times(1))
                 .onboardingOrganization(onboardingRequestCaptor.capture());
         OnboardingInstitutionRequest request = onboardingRequestCaptor.getValue();
-        assertEquals(onboardingData.getInstitutionId(), request.getInstitutionExternalId());
+        assertEquals(onboardingData.getInstitutionExternalId(), request.getInstitutionExternalId());
         assertNotNull(request.getUsers());
         assertTrue(request.getUsers().isEmpty());
         verifyNoMoreInteractions(restClientMock);
@@ -113,7 +113,7 @@ class PartyConnectorImplTest {
         verify(restClientMock, times(1))
                 .onboardingOrganization(onboardingRequestCaptor.capture());
         OnboardingInstitutionRequest request = onboardingRequestCaptor.getValue();
-        assertEquals(onboardingData.getInstitutionId(), request.getInstitutionExternalId());
+        assertEquals(onboardingData.getInstitutionExternalId(), request.getInstitutionExternalId());
         assertNotNull(request.getUsers());
         assertEquals(1, request.getUsers().size());
         TestUtils.reflectionEqualsByName(institutionUpdate, request.getInstitutionUpdate());

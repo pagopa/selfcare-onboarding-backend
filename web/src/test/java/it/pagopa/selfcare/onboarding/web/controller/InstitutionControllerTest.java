@@ -83,7 +83,7 @@ class InstitutionControllerTest {
                 .onboarding(onboardingDataCaptor.capture());
         OnboardingData captured = onboardingDataCaptor.getValue();
         assertNotNull(captured);
-        assertEquals(institutionId, captured.getInstitutionId());
+        assertEquals(institutionId, captured.getInstitutionExternalId());
         assertEquals(productId, captured.getProductId());
         assertNotNull(captured.getUsers());
         assertEquals(1, captured.getUsers().size());

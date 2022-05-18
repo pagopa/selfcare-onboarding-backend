@@ -39,7 +39,7 @@ class OnboardingMapperTest {
         //then
         assertNotNull(resource);
         assertEquals(1, model.getUsers().size());
-        assertEquals(institutionId, resource.getInstitutionId());
+        assertEquals(institutionId, resource.getInstitutionExternalId());
         assertEquals(productId, resource.getProductId());
         TestUtils.reflectionEqualsByName(billingDataDto, resource.getBilling());
         TestUtils.reflectionEqualsByName(userDtos.get(0), resource.getUsers().get(0));

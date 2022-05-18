@@ -43,14 +43,14 @@ public class OnboardingMapper {
         return resource;
     }
 
-    public static OnboardingData toOnboardingData(String institutionId, String productId, OnboardingDto model) {
+    public static OnboardingData toOnboardingData(String externalId, String productId, OnboardingDto model) {
         OnboardingData resource = null;
         if (model != null) {
             resource = new OnboardingData();
             resource.setUsers(model.getUsers().stream()
                     .map(UserMapper::toUser)
                     .collect(Collectors.toList()));
-            resource.setInstitutionId(institutionId);
+            resource.setInstitutionExternalId(externalId);
             resource.setProductId(productId);
             resource.setOrigin(model.getOrigin());
             resource.setPricingPlan(model.getPricingPlan());

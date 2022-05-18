@@ -23,7 +23,7 @@ import java.util.Optional;
 @NoArgsConstructor
 public class OnboardingData {
 
-    private String institutionId;
+    private String institutionExternalId;
     private String productId;
     private List<User> users;
     private String contractPath;
