@@ -13,9 +13,10 @@ import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionInfo;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.PartyRole;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.User;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.UserInfo;
 import it.pagopa.selfcare.onboarding.connector.model.product.Product;
-import it.pagopa.selfcare.onboarding.connector.model.user.User;
+import it.pagopa.selfcare.onboarding.connector.model.user.mapper.UserMapper;
 import it.pagopa.selfcare.onboarding.core.exceptions.ManagerNotFoundException;
 import it.pagopa.selfcare.onboarding.core.exceptions.ResourceNotFoundException;
 import lombok.extern.slf4j.Slf4j;
@@ -81,11 +82,11 @@ class InstitutionServiceImpl implements InstitutionService {
                         onboardingData.getInstitutionId(),
                         product.getParentId()));
             } else {
-                final it.pagopa.selfcare.onboarding.connector.model.onboarding.User providedManager = onboardingData.getUsers().stream()
+                final User providedManager = onboardingData.getUsers().stream()
                         .filter(user -> PartyRole.MANAGER.equals(user.getRole()))
                         .findAny()
                         .orElseThrow(() -> new ValidationException(ILLEGAL_LIST_OF_USERS));
-                final User baseProductManager = userConnector.getUserByInternalId(response.get(0).getTo(), EnumSet.of(fiscalCode));
+                final it.pagopa.selfcare.onboarding.connector.model.user.User baseProductManager = userConnector.getUserByInternalId(response.get(0).getTo(), EnumSet.of(fiscalCode));
                 if (!providedManager.getTaxCode().equals(baseProductManager.getFiscalCode())) {
                     throw new ValidationException("The provided Manager is not valid for this product");
                 }
@@ -105,6 +106,10 @@ class InstitutionServiceImpl implements InstitutionService {
             userInfo.setProductRole(finalProduct.getRoleMappings().get(userInfo.getRole()).getRoles().get(0).getCode());
         });
 
+        //TODO partyConnector.getInstitutionByExternalId or partyConnector.create..() institution from externalId (onboardingData.getInstitutionId())
+        onboardingData.getUsers().forEach(user ->
+                user.setId(userConnector.saveUser(UserMapper.toSaveUserDto(user, institutionInternalId))
+                        .getId().toString()));
         partyConnector.onboardingOrganization(onboardingData);
         log.trace("onboarding end");
     }
@@ -135,7 +140,7 @@ class InstitutionServiceImpl implements InstitutionService {
             userInfoFilter.setProductId(Optional.of(productId));
             userInfoFilter.setRole(Optional.of(EnumSet.of(PartyRole.MANAGER)));
             userInfoFilter.setAllowedStates(Optional.of(EnumSet.of(RelationshipState.ACTIVE)));
-            final EnumSet<User.Fields> fieldList = EnumSet.of(name, familyName, workContacts, fiscalCode);
+            final EnumSet<it.pagopa.selfcare.onboarding.connector.model.user.User.Fields> fieldList = EnumSet.of(name, familyName, workContacts, fiscalCode);
             Collection<UserInfo> userInfos = partyConnector.getUsers(externalInstitutionId, userInfoFilter).stream()
                     .peek(userInfo -> userInfo.setUser(userConnector.getUserByInternalId(userInfo.getId(), fieldList)))
                     .collect(Collectors.toList());

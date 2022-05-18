@@ -88,6 +88,7 @@ class PartyConnectorImpl implements PartyConnector {
         onboardingInstitutionRequest.setUsers(onboardingData.getUsers().stream()
                 .map(userInfo -> {
                     User user = new User();
+                    user.setId(userInfo.getId());
                     user.setProduct(onboardingData.getProductId());
                     user.setName(userInfo.getName());
                     user.setSurname(userInfo.getSurname());
