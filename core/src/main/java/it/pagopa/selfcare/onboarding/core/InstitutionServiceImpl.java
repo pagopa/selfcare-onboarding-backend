@@ -108,9 +108,9 @@ class InstitutionServiceImpl implements InstitutionService {
 
         Institution institution = null;
         try {
-            institution = partyConnector.getInstitutionByExternalId(onboardingData.getInstitutionId());
+            institution = partyConnector.getInstitutionByExternalId(onboardingData.getInstitutionExternalId());
         } catch (ResourceNotFoundException e) {
-            institution = partyConnector.createInstitutionUsingExternalId(onboardingData.getInstitutionId());
+            institution = partyConnector.createInstitutionUsingExternalId(onboardingData.getInstitutionExternalId());
         }
         String finalInstitutionInternalId = institution.getId();
         onboardingData.getUsers().forEach(user ->

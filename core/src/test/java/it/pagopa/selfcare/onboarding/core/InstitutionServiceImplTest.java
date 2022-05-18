@@ -263,7 +263,7 @@ class InstitutionServiceImplTest {
         institutionService.onboarding(onboardingData);
         // then
         verify(partyConnectorMock, times(1))
-                .getInstitutionByExternalId(onboardingData.getInstitutionId());
+                .getInstitutionByExternalId(onboardingData.getInstitutionExternalId());
         verify(productsConnectorMock, times(1))
                 .getProduct(onboardingData.getProductId());
         verify(partyConnectorMock, times(1))
@@ -329,9 +329,9 @@ class InstitutionServiceImplTest {
         institutionService.onboarding(onboardingData);
         // then
         verify(partyConnectorMock, times(1))
-                .getInstitutionByExternalId(onboardingData.getInstitutionId());
+                .getInstitutionByExternalId(onboardingData.getInstitutionExternalId());
         verify(partyConnectorMock, times(1))
-                .createInstitutionUsingExternalId(onboardingData.getInstitutionId());
+                .createInstitutionUsingExternalId(onboardingData.getInstitutionExternalId());
         verify(productsConnectorMock, times(1))
                 .getProduct(onboardingData.getProductId());
         verify(partyConnectorMock, times(1))
@@ -581,7 +581,7 @@ class InstitutionServiceImplTest {
         verify(userConnectorMock, times(1))
                 .getUserByInternalId(relationshipInfoMock.getTo(), EnumSet.of(fiscalCode));
         verify(partyConnectorMock, times(1))
-                .getInstitutionByExternalId(onboardingData.getInstitutionId());
+                .getInstitutionByExternalId(onboardingData.getInstitutionExternalId());
         verifyNoMoreInteractions(productsConnectorMock, partyConnectorMock, userConnectorMock);
     }
 
