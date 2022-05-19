@@ -4,6 +4,7 @@ import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import it.pagopa.selfcare.commons.connector.rest.BaseFeignRestClientTest;
 import it.pagopa.selfcare.commons.connector.rest.RestTestUtils;
 import it.pagopa.selfcare.commons.utils.TestUtils;
+import it.pagopa.selfcare.onboarding.connector.exceptions.ResourceNotFoundException;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipState;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipsResponse;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
@@ -233,6 +234,16 @@ class PartyProcessRestClientTest extends BaseFeignRestClientTest {
     }
 
     @Test
+    void getInstitutionExternalId_notFound() {
+        //given
+        String externalId = "externalIdNotFound";
+        //when
+        Executable executable = () -> restClient.getInstitutionByExternalId(externalId);
+        //then
+        assertThrows(ResourceNotFoundException.class, executable);
+    }
+
+    @Test
     void createInstitutionUsingExternalId() {
         //given
         String externalId = "externalId";
@@ -242,5 +253,6 @@ class PartyProcessRestClientTest extends BaseFeignRestClientTest {
         assertNotNull(response);
         TestUtils.checkNotNullFields(response);
     }
+
 
 }

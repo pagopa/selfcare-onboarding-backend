@@ -1,8 +1,8 @@
 package it.pagopa.selfcare.onboarding.web.handler;
 
 import it.pagopa.selfcare.commons.web.model.ErrorResource;
-import it.pagopa.selfcare.onboarding.core.exceptions.ManagerNotFoundException;
-import it.pagopa.selfcare.onboarding.core.exceptions.ResourceNotFoundException;
+import it.pagopa.selfcare.onboarding.connector.exceptions.ManagerNotFoundException;
+import it.pagopa.selfcare.onboarding.connector.exceptions.ResourceNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
