@@ -4,7 +4,7 @@ import feign.Response;
 import feign.codec.ErrorDecoder;
 import it.pagopa.selfcare.onboarding.connector.exceptions.ResourceNotFoundException;
 
-public class FeingErrorDecoder extends ErrorDecoder.Default {
+public class FeignErrorDecoder extends ErrorDecoder.Default {
 
     @Override
     public Exception decode(String methodKey, Response response) {
