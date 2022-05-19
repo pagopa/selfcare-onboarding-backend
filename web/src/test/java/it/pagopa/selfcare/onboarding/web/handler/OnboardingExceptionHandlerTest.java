@@ -1,8 +1,8 @@
 package it.pagopa.selfcare.onboarding.web.handler;
 
 import it.pagopa.selfcare.commons.web.model.ErrorResource;
-import it.pagopa.selfcare.onboarding.core.exceptions.ManagerNotFoundException;
-import it.pagopa.selfcare.onboarding.core.exceptions.ResourceNotFoundException;
+import it.pagopa.selfcare.onboarding.connector.exceptions.ManagerNotFoundException;
+import it.pagopa.selfcare.onboarding.connector.exceptions.ResourceNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
