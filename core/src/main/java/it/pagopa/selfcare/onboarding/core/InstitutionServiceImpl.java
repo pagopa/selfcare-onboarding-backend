@@ -86,7 +86,7 @@ class InstitutionServiceImpl implements InstitutionService {
                         .filter(user -> PartyRole.MANAGER.equals(user.getRole()))
                         .findAny()
                         .orElseThrow(() -> new ValidationException(ILLEGAL_LIST_OF_USERS));
-                final it.pagopa.selfcare.onboarding.connector.model.user.User baseProductManager = userConnector.getUserByInternalId(response.get(0).getTo(), EnumSet.of(fiscalCode));
+                final it.pagopa.selfcare.onboarding.connector.model.user.User baseProductManager = userConnector.getUserByInternalId(response.get(0).getFrom(), EnumSet.of(fiscalCode));
                 if (!providedManager.getTaxCode().equals(baseProductManager.getFiscalCode())) {
                     throw new ValidationException("The provided Manager is not valid for this product");
                 }

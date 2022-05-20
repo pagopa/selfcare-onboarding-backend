@@ -451,7 +451,7 @@ class InstitutionServiceImplTest {
         verify(productsConnectorMock, times(1))
                 .getProduct(onboardingData.getProductId());
         verify(userConnectorMock, times(1))
-                .getUserByInternalId(relationshipInfoMock.getTo(), EnumSet.of(fiscalCode));
+                .getUserByInternalId(relationshipInfoMock.getFrom(), EnumSet.of(fiscalCode));
         verifyNoMoreInteractions(partyConnectorMock, productsConnectorMock, userConnectorMock);
 
     }
@@ -579,7 +579,7 @@ class InstitutionServiceImplTest {
             assertNotNull(userInfo.getId());
         });
         verify(userConnectorMock, times(1))
-                .getUserByInternalId(relationshipInfoMock.getTo(), EnumSet.of(fiscalCode));
+                .getUserByInternalId(relationshipInfoMock.getFrom(), EnumSet.of(fiscalCode));
         verify(partyConnectorMock, times(1))
                 .getInstitutionByExternalId(onboardingData.getInstitutionExternalId());
         verifyNoMoreInteractions(productsConnectorMock, partyConnectorMock, userConnectorMock);
