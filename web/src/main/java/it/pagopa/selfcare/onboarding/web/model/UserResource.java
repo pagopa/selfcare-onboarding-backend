@@ -17,13 +17,13 @@ public class UserResource {
     private UUID id;
 
     @ApiModelProperty(value = "${swagger.onboarding.user.model.name}")
-    private CertifiedFieldResource<String> name;
+    private String name;
 
     @ApiModelProperty(value = "${swagger.onboarding.user.model.surname}")
-    private CertifiedFieldResource<String> surname;
+    private String surname;
 
     @ApiModelProperty(value = "${swagger.onboarding.user.model.institutionalEmail}")
-    private CertifiedFieldResource<String> email;
+    private String email;
 
     @ApiModelProperty(value = "${swagger.onboarding.user.model.fiscalCode}", required = true)
     @JsonProperty(required = true)

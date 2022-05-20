@@ -2,6 +2,7 @@ package it.pagopa.selfcare.onboarding.web.model.mapper;
 
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.User;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.UserInfo;
+import it.pagopa.selfcare.onboarding.connector.model.user.CertifiedField;
 import it.pagopa.selfcare.onboarding.connector.model.user.WorkContact;
 import it.pagopa.selfcare.onboarding.web.model.UserDto;
 import it.pagopa.selfcare.onboarding.web.model.UserResource;
@@ -39,13 +40,13 @@ public class UserMapper {
             resource.setStatus(model.getStatus());
             resource.setInstitutionId(UUID.fromString(model.getInstitutionId()));
             if (model.getUser() != null) {
-                resource.setName(CertifiedFieldMapper.map(model.getUser().getName()));
+                resource.setName(model.getUser().getName().getValue());
                 resource.setTaxCode(model.getUser().getFiscalCode());
-                resource.setSurname(CertifiedFieldMapper.map(model.getUser().getFamilyName()));
+                resource.setSurname(model.getUser().getFamilyName().getValue());
                 Optional.ofNullable(model.getUser().getWorkContacts())
                         .map(map -> map.get(model.getInstitutionId()))
                         .map(WorkContact::getEmail)
-                        .map(CertifiedFieldMapper::map)
+                        .map(CertifiedField::getValue)
                         .ifPresent(resource::setEmail);
             }
         }
