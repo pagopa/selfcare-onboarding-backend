@@ -18,6 +18,7 @@ import it.pagopa.selfcare.onboarding.connector.model.onboarding.PartyRole;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.User;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.UserInfo;
 import it.pagopa.selfcare.onboarding.connector.model.product.Product;
+import it.pagopa.selfcare.onboarding.connector.model.product.ProductRoleInfo;
 import it.pagopa.selfcare.onboarding.connector.model.user.mapper.UserMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,11 +27,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
-import javax.validation.ValidationException;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.EnumSet;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static it.pagopa.selfcare.onboarding.connector.model.user.User.Fields.*;
@@ -82,15 +79,33 @@ class InstitutionServiceImpl implements InstitutionService {
                         onboardingData.getInstitutionExternalId(),
                         product.getParentId()));
             } else {
-                final User providedManager = onboardingData.getUsers().stream()
-                        .filter(user -> PartyRole.MANAGER.equals(user.getRole()))
-                        .findAny()
-                        .orElseThrow(() -> new ValidationException(ILLEGAL_LIST_OF_USERS));
-                final it.pagopa.selfcare.onboarding.connector.model.user.User baseProductManager = userConnector.getUserByInternalId(response.get(0).getFrom(), EnumSet.of(fiscalCode));
-                if (!providedManager.getTaxCode().equals(baseProductManager.getFiscalCode())) {
-                    throw new ValidationException("The provided Manager is not valid for this product");
-                }
 
+                final it.pagopa.selfcare.onboarding.connector.model.user.User baseProductManager = userConnector.getUserByInternalId(response.get(0).getFrom(), EnumSet.of(fiscalCode));
+                User manager = new User();
+                manager.setId(baseProductManager.getId());
+                manager.setName(baseProductManager.getName().getValue());
+                manager.setSurname(baseProductManager.getFamilyName().getValue());
+                manager.setTaxCode(baseProductManager.getFiscalCode());
+                manager.setProduct(onboardingData.getProductId());
+                manager.setRole(PartyRole.MANAGER);
+                manager.setEmail(baseProductManager.getEmail().getValue());
+                EnumMap<PartyRole, ProductRoleInfo> roleMappings = product.getRoleMappings();
+                String productRole = roleMappings.get(PartyRole.MANAGER).getRoles().get(0).getCode();
+                manager.setProductRole(productRole);
+                List<User> collect = onboardingData.getUsers().stream()
+                        .peek(user -> {
+                            if (user.getRole().equals(PartyRole.MANAGER)) {
+                                user.setEmail(manager.getEmail());
+                                user.setSurname(manager.getSurname());
+                                user.setProductRole(manager.getProductRole());
+                                user.setProduct(manager.getProduct());
+                                user.setId(manager.getId());
+                                user.setName(manager.getName());
+                                user.setTaxCode(manager.getTaxCode());
+                            }
+                        })
+                        .collect(Collectors.toList());
+                onboardingData.setUsers(collect);
             }
             product = productsConnector.getProduct(product.getParentId());
         }

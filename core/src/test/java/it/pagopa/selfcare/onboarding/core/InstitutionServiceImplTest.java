@@ -31,7 +31,6 @@ import org.springframework.security.authentication.TestingAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.test.context.TestSecurityContextHolder;
 
-import javax.validation.ValidationException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -377,86 +376,6 @@ class InstitutionServiceImplTest {
     }
 
     @Test
-    void onboardingSubProduct_noManagerProvided() {
-        //given
-        User userInfo2 = mockInstance(new User(), 1, "setRole");
-        userInfo2.setRole(PartyRole.DELEGATE);
-        OnboardingData onboardingData = mockInstance(new OnboardingData());
-        Billing billing = mockInstance(new Billing());
-        onboardingData.setBilling(billing);
-        onboardingData.setUsers(List.of(userInfo2));
-        Product productMock = mockInstance(new Product(), "setRoleMappings");
-        when(productsConnectorMock.getProduct(onboardingData.getProductId()))
-                .thenReturn(productMock);
-        RelationshipInfo relationshipInfoMock = mockInstance(new RelationshipInfo());
-        RelationshipsResponse relationshipsResponse = new RelationshipsResponse();
-        relationshipsResponse.add(relationshipInfoMock);
-        when(partyConnectorMock.getUserInstitutionRelationships(any(), any()))
-                .thenReturn(relationshipsResponse);
-        //when
-        Executable executable = () -> institutionService.onboarding(onboardingData);
-        //then
-        ValidationException e = assertThrows(ValidationException.class, executable);
-        assertEquals(ILLEGAL_LIST_OF_USERS, e.getMessage());
-        verify(partyConnectorMock, times(1))
-                .getUserInstitutionRelationships(eq(onboardingData.getInstitutionExternalId()), userInfoFilterCaptor.capture());
-        assertEquals(Optional.of(EnumSet.of(PartyRole.MANAGER)), userInfoFilterCaptor.getValue().getRole());
-        assertEquals(Optional.of(EnumSet.of(RelationshipState.ACTIVE)), userInfoFilterCaptor.getValue().getAllowedStates());
-        assertEquals(Optional.of(productMock.getParentId()), userInfoFilterCaptor.getValue().getProductId());
-        verify(productsConnectorMock, times(1))
-                .getProduct(onboardingData.getProductId());
-        verifyNoMoreInteractions(partyConnectorMock, productsConnectorMock);
-        verifyNoInteractions(userConnectorMock);
-
-
-    }
-
-    @Test
-    void onboardingSubProduct_invalidManagerForProvidedProduct() {
-        //given
-        User userInfo1 = mockInstance(new User(), 1, "setRole");
-        userInfo1.setRole(PartyRole.MANAGER);
-        User userInfo2 = mockInstance(new User(), 2, "setRole");
-        userInfo2.setRole(PartyRole.DELEGATE);
-        OnboardingData onboardingData = mockInstance(new OnboardingData());
-        Billing billing = mockInstance(new Billing());
-        onboardingData.setBilling(billing);
-        onboardingData.setUsers(List.of(userInfo1, userInfo2));
-        Product productMock = mockInstance(new Product(), "setRoleMappings");
-        when(productsConnectorMock.getProduct(onboardingData.getProductId()))
-                .thenReturn(productMock);
-        RelationshipInfo relationshipInfoMock = mockInstance(new RelationshipInfo());
-        RelationshipsResponse relationshipsResponse = new RelationshipsResponse();
-        relationshipsResponse.add(relationshipInfoMock);
-        when(partyConnectorMock.getUserInstitutionRelationships(any(), any()))
-                .thenReturn(relationshipsResponse);
-        when(userConnectorMock.getUserByInternalId(any(), any()))
-                .thenAnswer(invocation -> {
-                    final it.pagopa.selfcare.onboarding.connector.model.user.User user =
-                            new it.pagopa.selfcare.onboarding.connector.model.user.User();
-                    user.setId(invocation.getArgument(0, String.class));
-                    user.setFiscalCode(userInfo2.getTaxCode());
-                    return user;
-                });
-        //when
-        Executable executable = () -> institutionService.onboarding(onboardingData);
-        //then
-        ValidationException e = assertThrows(ValidationException.class, executable);
-        assertEquals("The provided Manager is not valid for this product", e.getMessage());
-        verify(partyConnectorMock, times(1))
-                .getUserInstitutionRelationships(eq(onboardingData.getInstitutionExternalId()), userInfoFilterCaptor.capture());
-        assertEquals(Optional.of(EnumSet.of(PartyRole.MANAGER)), userInfoFilterCaptor.getValue().getRole());
-        assertEquals(Optional.of(EnumSet.of(RelationshipState.ACTIVE)), userInfoFilterCaptor.getValue().getAllowedStates());
-        assertEquals(Optional.of(productMock.getParentId()), userInfoFilterCaptor.getValue().getProductId());
-        verify(productsConnectorMock, times(1))
-                .getProduct(onboardingData.getProductId());
-        verify(userConnectorMock, times(1))
-                .getUserByInternalId(relationshipInfoMock.getFrom(), EnumSet.of(fiscalCode));
-        verifyNoMoreInteractions(partyConnectorMock, productsConnectorMock, userConnectorMock);
-
-    }
-
-    @Test
     void onboardingSubProduct_foundMoreThanOneManager() {
         //given
         User userInfo1 = mockInstance(new User(), 1, "setRole");
@@ -519,6 +438,7 @@ class InstitutionServiceImplTest {
             put(PartyRole.MANAGER, productRoleInfo1);
             put(PartyRole.DELEGATE, productRoleInfo2);
         }};
+        productMock.setRoleMappings(roleMappings);
         when(productsConnectorMock.getProduct(onboardingData.getProductId()))
                 .thenReturn(productMock);
         Product productMock2 = mockInstance(new Product());
@@ -534,7 +454,7 @@ class InstitutionServiceImplTest {
         when(userConnectorMock.getUserByInternalId(any(), any()))
                 .thenAnswer(invocation -> {
                     final it.pagopa.selfcare.onboarding.connector.model.user.User user =
-                            new it.pagopa.selfcare.onboarding.connector.model.user.User();
+                            mockInstance(new it.pagopa.selfcare.onboarding.connector.model.user.User());
                     user.setId(invocation.getArgument(0, String.class));
                     user.setFiscalCode(userInfo1.getTaxCode());
                     return user;
