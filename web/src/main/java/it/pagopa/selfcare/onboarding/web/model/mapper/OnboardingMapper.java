@@ -36,20 +36,21 @@ public class OnboardingMapper {
             resource = new InstitutionUpdate();
             resource.setAddress(dto.getRegisteredOffice());
             resource.setDigitalAddress(dto.getDigitalAddress());
+            resource.setZipCode(dto.getZipCode());
             resource.setDescription(dto.getBusinessName());
             resource.setTaxCode(dto.getTaxCode());
         }
         return resource;
     }
 
-    public static OnboardingData toOnboardingData(String institutionId, String productId, OnboardingDto model) {
+    public static OnboardingData toOnboardingData(String externalId, String productId, OnboardingDto model) {
         OnboardingData resource = null;
         if (model != null) {
             resource = new OnboardingData();
             resource.setUsers(model.getUsers().stream()
                     .map(UserMapper::toUser)
                     .collect(Collectors.toList()));
-            resource.setInstitutionId(institutionId);
+            resource.setInstitutionExternalId(externalId);
             resource.setProductId(productId);
             resource.setOrigin(model.getOrigin());
             resource.setPricingPlan(model.getPricingPlan());
@@ -82,6 +83,7 @@ public class OnboardingMapper {
             billing.setTaxCode(model.getTaxCode());
             billing.setBusinessName(model.getDescription());
             billing.setRegisteredOffice(model.getAddress());
+            billing.setZipCode(model.getZipCode());
             if (model.getBilling() != null) {
                 billing.setPublicServices(model.getBilling().getPublicServices());
                 billing.setRecipientCode(model.getBilling().getRecipientCode());

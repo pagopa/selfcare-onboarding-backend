@@ -76,10 +76,10 @@ class InstitutionServiceImpl implements InstitutionService {
             userInfoFilter.setRole(Optional.of(EnumSet.of(PartyRole.MANAGER)));
             userInfoFilter.setAllowedStates(Optional.of(EnumSet.of(RelationshipState.ACTIVE)));
             userInfoFilter.setProductId(Optional.of(product.getParentId()));
-            RelationshipsResponse response = partyConnector.getUserInstitutionRelationships(onboardingData.getInstitutionId(), userInfoFilter);
+            RelationshipsResponse response = partyConnector.getUserInstitutionRelationships(onboardingData.getInstitutionExternalId(), userInfoFilter);
             if (response == null || response.size() != 1) {
                 throw new ManagerNotFoundException(String.format("Unable to retrieve the manager related to institution external id = %s and base product %s",
-                        onboardingData.getInstitutionId(),
+                        onboardingData.getInstitutionExternalId(),
                         product.getParentId()));
             } else {
                 final User providedManager = onboardingData.getUsers().stream()
@@ -108,9 +108,9 @@ class InstitutionServiceImpl implements InstitutionService {
 
         Institution institution = null;
         try {
-            institution = partyConnector.getInstitutionByExternalId(onboardingData.getInstitutionId());
+            institution = partyConnector.getInstitutionByExternalId(onboardingData.getInstitutionExternalId());
         } catch (ResourceNotFoundException e) {
-            institution = partyConnector.createInstitutionUsingExternalId(onboardingData.getInstitutionId());
+            institution = partyConnector.createInstitutionUsingExternalId(onboardingData.getInstitutionExternalId());
         }
         String finalInstitutionInternalId = institution.getId();
         onboardingData.getUsers().forEach(user ->

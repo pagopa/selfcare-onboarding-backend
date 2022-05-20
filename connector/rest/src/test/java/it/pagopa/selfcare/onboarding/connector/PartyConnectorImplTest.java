@@ -91,7 +91,7 @@ class PartyConnectorImplTest {
         verify(restClientMock, times(1))
                 .onboardingOrganization(onboardingRequestCaptor.capture());
         OnboardingInstitutionRequest request = onboardingRequestCaptor.getValue();
-        assertEquals(onboardingData.getInstitutionId(), request.getInstitutionExternalId());
+        assertEquals(onboardingData.getInstitutionExternalId(), request.getInstitutionExternalId());
         assertNotNull(request.getUsers());
         assertTrue(request.getUsers().isEmpty());
         verifyNoMoreInteractions(restClientMock);
@@ -103,6 +103,8 @@ class PartyConnectorImplTest {
         // given
         OnboardingData onboardingData = mockInstance(new OnboardingData());
         Billing billing = mockInstance(new Billing());
+        InstitutionUpdate institutionUpdate = mockInstance(new InstitutionUpdate());
+        onboardingData.setInstitutionUpdate(institutionUpdate);
         onboardingData.setBilling(billing);
         onboardingData.setUsers(List.of(mockInstance(new User())));
         // when
@@ -111,9 +113,11 @@ class PartyConnectorImplTest {
         verify(restClientMock, times(1))
                 .onboardingOrganization(onboardingRequestCaptor.capture());
         OnboardingInstitutionRequest request = onboardingRequestCaptor.getValue();
-        assertEquals(onboardingData.getInstitutionId(), request.getInstitutionExternalId());
+        assertEquals(onboardingData.getInstitutionExternalId(), request.getInstitutionExternalId());
         assertNotNull(request.getUsers());
         assertEquals(1, request.getUsers().size());
+        TestUtils.reflectionEqualsByName(institutionUpdate, request.getInstitutionUpdate());
+        TestUtils.reflectionEqualsByName(billing, request.getBilling());
         assertEquals(onboardingData.getProductId(), request.getUsers().get(0).getProduct());
         assertEquals(onboardingData.getUsers().get(0).getName(), request.getUsers().get(0).getName());
         assertEquals(onboardingData.getUsers().get(0).getSurname(), request.getUsers().get(0).getSurname());
@@ -342,7 +346,7 @@ class PartyConnectorImplTest {
         assertNotNull(users);
         assertTrue(users.isEmpty());
         verify(restClientMock, times(1))
-                .getUserInstitutionRelationships(eq(institutionId), isNull(), Mockito.isNotNull(), isNull(), eq(userInfoFilter.getProductRoles().get()), isNull());
+                .getUserInstitutionRelationships(eq(institutionId), isNull(), isNotNull(), isNull(), eq(userInfoFilter.getProductRoles().get()), isNull());
         verifyNoMoreInteractions(restClientMock);
     }
 

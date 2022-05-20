@@ -23,7 +23,8 @@
           "description": "AGENCY X",
           "digitalAddress": "email@pec.mail.org",
           "address": "via del campo",
-          "taxCode": "string"
+          "taxCode": "string",
+          "zipCode": "string"
         },
         "billing": {
           "vatNumber": "string",

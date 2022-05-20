@@ -74,7 +74,7 @@ class PartyConnectorImpl implements PartyConnector {
     public void onboardingOrganization(OnboardingData onboardingData) {
         Assert.notNull(onboardingData, "Onboarding data is required");
         OnboardingInstitutionRequest onboardingInstitutionRequest = new OnboardingInstitutionRequest();
-        onboardingInstitutionRequest.setInstitutionExternalId(onboardingData.getInstitutionId());
+        onboardingInstitutionRequest.setInstitutionExternalId(onboardingData.getInstitutionExternalId());
         onboardingInstitutionRequest.setPricingPlan(onboardingData.getPricingPlan());
         onboardingInstitutionRequest.setBilling(onboardingData.getBilling());
         InstitutionUpdate institutionUpdate = new InstitutionUpdate();
@@ -83,6 +83,7 @@ class PartyConnectorImpl implements PartyConnector {
         institutionUpdate.setDescription(onboardingData.getInstitutionUpdate().getDescription());
         institutionUpdate.setDigitalAddress(onboardingData.getInstitutionUpdate().getDigitalAddress());
         institutionUpdate.setTaxCode(onboardingData.getInstitutionUpdate().getTaxCode());
+        institutionUpdate.setZipCode(onboardingData.getInstitutionUpdate().getZipCode());
         onboardingInstitutionRequest.setInstitutionUpdate(institutionUpdate);
 
         onboardingInstitutionRequest.setUsers(onboardingData.getUsers().stream()

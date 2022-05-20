@@ -274,10 +274,18 @@
   "components" : {
     "schemas" : {
       "BillingDataDto" : {
-        "title" : "BillingDataDto",
-        "required" : [ "businessName", "digitalAddress", "recipientCode", "registeredOffice", "taxCode", "vatNumber" ],
-        "type" : "object",
-        "properties" : {
+        "title": "BillingDataDto",
+        "required": [
+          "businessName",
+          "digitalAddress",
+          "recipientCode",
+          "registeredOffice",
+          "taxCode",
+          "vatNumber",
+          "zipCode"
+        ],
+        "type": "object",
+        "properties": {
           "businessName": {
             "type": "string",
             "description": "Institution's legal name"
@@ -306,6 +314,10 @@
           "vatNumber": {
             "type": "string",
             "description": "Institution's VAT number"
+          },
+          "zipCode": {
+            "type": "string",
+            "description": "Institution's zipCode"
           }
         }
       },
@@ -551,13 +563,13 @@
             "type": "string",
             "description": "User's status"
           },
-          "surname" : {
+          "surname": {
             "description": "User's surname",
             "$ref": "#/components/schemas/CertifiedFieldResourceOfstring"
           },
-          "taxCode" : {
-            "type" : "string",
-            "description" : "User's fiscal code"
+          "taxCode": {
+            "type": "string",
+            "description": "User's fiscal code"
           }
         }
       }
