@@ -92,20 +92,8 @@ class InstitutionServiceImpl implements InstitutionService {
                 EnumMap<PartyRole, ProductRoleInfo> roleMappings = product.getRoleMappings();
                 String productRole = roleMappings.get(PartyRole.MANAGER).getRoles().get(0).getCode();
                 manager.setProductRole(productRole);
-                List<User> collect = onboardingData.getUsers().stream()
-                        .peek(user -> {
-                            if (user.getRole().equals(PartyRole.MANAGER)) {
-                                user.setEmail(manager.getEmail());
-                                user.setSurname(manager.getSurname());
-                                user.setProductRole(manager.getProductRole());
-                                user.setProduct(manager.getProduct());
-                                user.setId(manager.getId());
-                                user.setName(manager.getName());
-                                user.setTaxCode(manager.getTaxCode());
-                            }
-                        })
-                        .collect(Collectors.toList());
-                onboardingData.setUsers(collect);
+
+                onboardingData.setUsers(List.of(manager));
             }
             product = productsConnector.getProduct(product.getParentId());
         }

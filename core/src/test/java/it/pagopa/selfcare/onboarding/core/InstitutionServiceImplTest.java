@@ -457,6 +457,7 @@ class InstitutionServiceImplTest {
                             mockInstance(new it.pagopa.selfcare.onboarding.connector.model.user.User());
                     user.setId(invocation.getArgument(0, String.class));
                     user.setFiscalCode(userInfo1.getTaxCode());
+
                     return user;
                 });
         Institution institution = TestUtils.mockInstance(new Institution());
@@ -485,19 +486,17 @@ class InstitutionServiceImplTest {
                 .onboardingOrganization(onboardingDataCaptor.capture());
         OnboardingData captured = onboardingDataCaptor.getValue();
         Assertions.assertNotNull(captured.getUsers());
-        Assertions.assertEquals(2, captured.getUsers().size());
-        captured.getUsers().forEach(userInfo -> Assertions.assertEquals(productRole, userInfo.getProductRole()));
-        ArgumentCaptor<SaveUserDto> saveUserCaptor = ArgumentCaptor.forClass(SaveUserDto.class);
-        verify(userConnectorMock, times(2))
-                .saveUser(saveUserCaptor.capture());
-        List<SaveUserDto> savedUsers = saveUserCaptor.getAllValues();
-        savedUsers.forEach(saveUserDto -> assertTrue(saveUserDto.getWorkContacts().containsKey(institution.getId())));
-        Assertions.assertNotNull(captured.getUsers());
-        Assertions.assertEquals(2, captured.getUsers().size());
+        Assertions.assertEquals(1, captured.getUsers().size());
         captured.getUsers().forEach(userInfo -> {
             Assertions.assertEquals(productRole, userInfo.getProductRole());
             assertNotNull(userInfo.getId());
         });
+        ArgumentCaptor<SaveUserDto> saveUserCaptor = ArgumentCaptor.forClass(SaveUserDto.class);
+        verify(userConnectorMock, times(1))
+                .saveUser(saveUserCaptor.capture());
+        List<SaveUserDto> savedUsers = saveUserCaptor.getAllValues();
+        savedUsers.forEach(saveUserDto -> assertTrue(saveUserDto.getWorkContacts().containsKey(institution.getId())));
+
         verify(userConnectorMock, times(1))
                 .getUserByInternalId(relationshipInfoMock.getFrom(), EnumSet.of(fiscalCode));
         verify(partyConnectorMock, times(1))
