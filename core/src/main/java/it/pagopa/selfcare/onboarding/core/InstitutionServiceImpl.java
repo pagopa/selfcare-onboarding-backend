@@ -80,7 +80,7 @@ class InstitutionServiceImpl implements InstitutionService {
                         product.getParentId()));
             } else {
 
-                final it.pagopa.selfcare.onboarding.connector.model.user.User baseProductManager = userConnector.getUserByInternalId(response.get(0).getFrom(), EnumSet.of(fiscalCode));
+                final it.pagopa.selfcare.onboarding.connector.model.user.User baseProductManager = userConnector.getUserByInternalId(response.get(0).getFrom(), EnumSet.of(fiscalCode, name, familyName, workContacts));
                 User manager = new User();
                 manager.setId(baseProductManager.getId());
                 manager.setName(baseProductManager.getName().getValue());
@@ -88,7 +88,7 @@ class InstitutionServiceImpl implements InstitutionService {
                 manager.setTaxCode(baseProductManager.getFiscalCode());
                 manager.setProduct(onboardingData.getProductId());
                 manager.setRole(PartyRole.MANAGER);
-                manager.setEmail(baseProductManager.getEmail().getValue());
+                manager.setEmail(baseProductManager.getWorkContacts().get(response.get(0).getTo()).getEmail().getValue());
                 EnumMap<PartyRole, ProductRoleInfo> roleMappings = product.getRoleMappings();
                 String productRole = roleMappings.get(PartyRole.MANAGER).getRoles().get(0).getCode();
                 manager.setProductRole(productRole);

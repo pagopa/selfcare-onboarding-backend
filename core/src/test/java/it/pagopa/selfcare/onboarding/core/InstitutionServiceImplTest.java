@@ -2,7 +2,6 @@ package it.pagopa.selfcare.onboarding.core;
 
 import it.pagopa.selfcare.commons.base.security.SelfCareAuthority;
 import it.pagopa.selfcare.commons.base.security.SelfCareUser;
-import it.pagopa.selfcare.commons.utils.TestUtils;
 import it.pagopa.selfcare.onboarding.connector.api.PartyConnector;
 import it.pagopa.selfcare.onboarding.connector.api.ProductsConnector;
 import it.pagopa.selfcare.onboarding.connector.api.UserRegistryConnector;
@@ -20,6 +19,7 @@ import it.pagopa.selfcare.onboarding.connector.model.product.Product;
 import it.pagopa.selfcare.onboarding.connector.model.product.ProductRoleInfo;
 import it.pagopa.selfcare.onboarding.connector.model.user.SaveUserDto;
 import it.pagopa.selfcare.onboarding.connector.model.user.UserId;
+import it.pagopa.selfcare.onboarding.connector.model.user.WorkContact;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -243,7 +243,7 @@ class InstitutionServiceImplTest {
             put(PartyRole.MANAGER, productRoleInfo1);
             put(PartyRole.DELEGATE, productRoleInfo2);
         }};
-        Institution institution = TestUtils.mockInstance(new Institution());
+        Institution institution = mockInstance(new Institution());
         institution.setId(UUID.randomUUID().toString());
         when(partyConnectorMock.getInstitutionByExternalId(Mockito.anyString()))
                 .thenReturn(institution);
@@ -307,7 +307,7 @@ class InstitutionServiceImplTest {
             put(PartyRole.MANAGER, productRoleInfo1);
             put(PartyRole.DELEGATE, productRoleInfo2);
         }};
-        Institution institution = TestUtils.mockInstance(new Institution());
+        Institution institution = mockInstance(new Institution());
         institution.setId(UUID.randomUUID().toString());
         when(partyConnectorMock.getInstitutionByExternalId(Mockito.anyString()))
                 .thenThrow(ResourceNotFoundException.class);
@@ -446,7 +446,10 @@ class InstitutionServiceImplTest {
         productMock2.setRoleMappings(roleMappings);
         when(productsConnectorMock.getProduct(productMock.getParentId()))
                 .thenReturn(productMock2);
+        Institution institution = mockInstance(new Institution());
+        institution.setId(UUID.randomUUID().toString());
         RelationshipInfo relationshipInfoMock = mockInstance(new RelationshipInfo());
+        relationshipInfoMock.setTo(institution.getId());
         RelationshipsResponse relationshipsResponse = new RelationshipsResponse();
         relationshipsResponse.add(relationshipInfoMock);
         when(partyConnectorMock.getUserInstitutionRelationships(any(), any()))
@@ -457,11 +460,12 @@ class InstitutionServiceImplTest {
                             mockInstance(new it.pagopa.selfcare.onboarding.connector.model.user.User());
                     user.setId(invocation.getArgument(0, String.class));
                     user.setFiscalCode(userInfo1.getTaxCode());
-
+                    WorkContact contact = mockInstance(new WorkContact());
+                    Map<String, WorkContact> workContacts = new HashMap<>();
+                    workContacts.put(institution.getId(), contact);
+                    user.setWorkContacts(workContacts);
                     return user;
                 });
-        Institution institution = TestUtils.mockInstance(new Institution());
-        institution.setId(UUID.randomUUID().toString());
         when(partyConnectorMock.getInstitutionByExternalId(Mockito.anyString()))
                 .thenReturn(institution);
         when(userConnectorMock.saveUser(Mockito.any()))
@@ -498,7 +502,7 @@ class InstitutionServiceImplTest {
         savedUsers.forEach(saveUserDto -> assertTrue(saveUserDto.getWorkContacts().containsKey(institution.getId())));
 
         verify(userConnectorMock, times(1))
-                .getUserByInternalId(relationshipInfoMock.getFrom(), EnumSet.of(fiscalCode));
+                .getUserByInternalId(relationshipInfoMock.getFrom(), EnumSet.of(fiscalCode, name, familyName, workContacts));
         verify(partyConnectorMock, times(1))
                 .getInstitutionByExternalId(onboardingData.getInstitutionExternalId());
         verifyNoMoreInteractions(productsConnectorMock, partyConnectorMock, userConnectorMock);
