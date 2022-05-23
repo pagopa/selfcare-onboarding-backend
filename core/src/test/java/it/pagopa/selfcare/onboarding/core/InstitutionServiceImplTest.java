@@ -442,7 +442,7 @@ class InstitutionServiceImplTest {
         when(productsConnectorMock.getProduct(onboardingData.getProductId()))
                 .thenReturn(productMock);
         Product productMock2 = mockInstance(new Product());
-        productMock2.setParentId(productMock2.getParentId());
+        productMock2.setParentId(productMock.getId());
         productMock2.setRoleMappings(roleMappings);
         when(productsConnectorMock.getProduct(productMock.getParentId()))
                 .thenReturn(productMock2);

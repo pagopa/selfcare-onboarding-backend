@@ -18,7 +18,6 @@ import it.pagopa.selfcare.onboarding.connector.model.onboarding.PartyRole;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.User;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.UserInfo;
 import it.pagopa.selfcare.onboarding.connector.model.product.Product;
-import it.pagopa.selfcare.onboarding.connector.model.product.ProductRoleInfo;
 import it.pagopa.selfcare.onboarding.connector.model.user.mapper.UserMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -89,13 +88,12 @@ class InstitutionServiceImpl implements InstitutionService {
                 manager.setProduct(onboardingData.getProductId());
                 manager.setRole(PartyRole.MANAGER);
                 manager.setEmail(baseProductManager.getWorkContacts().get(response.get(0).getTo()).getEmail().getValue());
-                EnumMap<PartyRole, ProductRoleInfo> roleMappings = product.getRoleMappings();
-                String productRole = roleMappings.get(PartyRole.MANAGER).getRoles().get(0).getCode();
+                product = productsConnector.getProduct(product.getParentId());
+                String productRole = product.getRoleMappings().get(PartyRole.MANAGER).getRoles().get(0).getCode();
                 manager.setProductRole(productRole);
 
                 onboardingData.setUsers(List.of(manager));
             }
-            product = productsConnector.getProduct(product.getParentId());
         }
         Assert.notNull(product.getRoleMappings(), "Role mappings is required");
         Product finalProduct = product;
