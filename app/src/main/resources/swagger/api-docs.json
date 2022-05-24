@@ -62,7 +62,7 @@
           "institutions"
         ],
         "summary": "getInstitutionData",
-        "description": "${swagger.onboarding.institutions.api.manager}",
+        "description": "The service retrieves the onboarded institution given its external id",
         "operationId": "getInstitutionDataUsingGET",
         "parameters": [
           {
@@ -226,39 +226,43 @@
     },
     "/product/{id}" : {
       "get" : {
-        "tags" : [ "product" ],
-        "summary" : "getProduct",
-        "description" : "${swagger.onboarding.operation.getProduct}",
-        "operationId" : "getProductUsingGET",
-        "parameters" : [ {
-          "name" : "id",
-          "in" : "path",
-          "description" : "Product id",
-          "required" : true,
-          "style" : "simple",
-          "schema" : {
-            "type" : "string"
+        "tags": [
+          "product"
+        ],
+        "summary": "getProduct",
+        "description": "The service retrieves the product given its internal id",
+        "operationId": "getProductUsingGET",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Product's unique identifier",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
           }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ProductResource"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductResource"
                 }
               }
             }
           },
-          "401" : {
-            "description" : "Unauthorized"
+          "401": {
+            "description": "Unauthorized"
           },
-          "403" : {
-            "description" : "Forbidden"
+          "403": {
+            "description": "Forbidden"
           },
-          "404" : {
-            "description" : "Not Found"
+          "404": {
+            "description": "Not Found"
           }
         },
         "security" : [ {
@@ -270,10 +274,18 @@
   "components" : {
     "schemas" : {
       "BillingDataDto" : {
-        "title" : "BillingDataDto",
-        "required" : [ "businessName", "digitalAddress", "recipientCode", "registeredOffice", "taxCode", "vatNumber" ],
-        "type" : "object",
-        "properties" : {
+        "title": "BillingDataDto",
+        "required": [
+          "businessName",
+          "digitalAddress",
+          "recipientCode",
+          "registeredOffice",
+          "taxCode",
+          "vatNumber",
+          "zipCode"
+        ],
+        "type": "object",
+        "properties": {
           "businessName": {
             "type": "string",
             "description": "Institution's legal name"
@@ -302,24 +314,52 @@
           "vatNumber": {
             "type": "string",
             "description": "Institution's VAT number"
+          },
+          "zipCode": {
+            "type": "string",
+            "description": "Institution's zipCode"
           }
         }
       },
-      "InstitutionData" : {
-        "title" : "InstitutionData",
-        "type" : "object",
-        "properties" : {
-          "billingData" : {
-            "description" : "Institution's billing informations",
-            "$ref" : "#/components/schemas/BillingDataDto"
+      "CertifiedFieldResourceOfstring": {
+        "title": "CertifiedFieldResourceOfstring",
+        "required": [
+          "certified",
+          "value"
+        ],
+        "type": "object",
+        "properties": {
+          "certified": {
+            "type": "boolean",
+            "description": "Indicates whether the value comes from a certified information source",
+            "example": false
           },
-          "institutionType" : {
-            "type" : "string",
-            "description" : "Institution's type",
-            "enum" : [ "GSP", "PA", "PT", "SCP" ]
+          "value": {
+            "type": "string",
+            "description": "Field value"
+          }
+        }
+      },
+      "InstitutionData": {
+        "title": "InstitutionData",
+        "type": "object",
+        "properties": {
+          "billingData": {
+            "description": "Institution's billing informations",
+            "$ref": "#/components/schemas/BillingDataDto"
           },
-          "origin" : {
-            "type" : "string"
+          "institutionType": {
+            "type": "string",
+            "description": "Institution's type",
+            "enum": [
+              "GSP",
+              "PA",
+              "PT",
+              "SCP"
+            ]
+          },
+          "origin": {
+            "type": "string"
           }
         }
       },
@@ -440,7 +480,7 @@
         "properties" : {
           "id": {
             "type": "string",
-            "description": "Product id"
+            "description": "Product's unique identifier"
           },
           "parentId": {
             "type": "string",
@@ -481,47 +521,55 @@
         }
       },
       "UserResource" : {
-        "title" : "UserResource",
-        "required" : [ "certified", "email", "id", "institutionId", "name", "role", "status", "surname", "taxCode" ],
-        "type" : "object",
-        "properties" : {
-          "certified" : {
-            "type" : "boolean",
-            "description" : "${swagger.onboarding.user.model.certified}",
-            "example" : false
+        "title": "UserResource",
+        "required": [
+          "id",
+          "institutionId",
+          "role",
+          "status",
+          "taxCode"
+        ],
+        "type": "object",
+        "properties": {
+          "email": {
+            "description": "User's institutional email",
+            "$ref": "#/components/schemas/CertifiedFieldResourceOfstring"
           },
-          "email" : {
-            "type" : "string",
-            "description" : "User's email"
+          "id": {
+            "type": "string",
+            "description": "User's unique identifier",
+            "format": "uuid"
           },
-          "id" : {
-            "type" : "string",
-            "description" : "${swagger.onboarding.user.model.id}"
+          "institutionId": {
+            "type": "string",
+            "description": "Institution's unique internal Id ",
+            "format": "uuid"
           },
-          "institutionId" : {
-            "type" : "string",
-            "description" : "${swagger.onboarding.user.model.institutionId}"
+          "name": {
+            "description": "User's name",
+            "$ref": "#/components/schemas/CertifiedFieldResourceOfstring"
           },
-          "name" : {
-            "type" : "string",
-            "description" : "User's name"
+          "role": {
+            "type": "string",
+            "description": "User's role",
+            "enum": [
+              "DELEGATE",
+              "MANAGER",
+              "OPERATOR",
+              "SUB_DELEGATE"
+            ]
           },
-          "role" : {
-            "type" : "string",
-            "description" : "User's role",
-            "enum" : [ "DELEGATE", "MANAGER", "OPERATOR", "SUB_DELEGATE" ]
+          "status": {
+            "type": "string",
+            "description": "User's status"
           },
-          "status" : {
-            "type" : "string",
-            "description" : "${swagger.onboarding.user.model.status}"
+          "surname": {
+            "description": "User's surname",
+            "$ref": "#/components/schemas/CertifiedFieldResourceOfstring"
           },
-          "surname" : {
-            "type" : "string",
-            "description" : "User's surname"
-          },
-          "taxCode" : {
-            "type" : "string",
-            "description" : "User's fiscal code"
+          "taxCode": {
+            "type": "string",
+            "description": "User's fiscal code"
           }
         }
       }

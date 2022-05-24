@@ -1,9 +1,8 @@
 package it.pagopa.selfcare.onboarding.web.handler;
 
 import it.pagopa.selfcare.commons.web.model.ErrorResource;
-import it.pagopa.selfcare.onboarding.core.exceptions.InternalServerException;
-import it.pagopa.selfcare.onboarding.core.exceptions.ProductHasNoRelationshipException;
-import it.pagopa.selfcare.onboarding.core.exceptions.ResourceNotFoundException;
+import it.pagopa.selfcare.onboarding.connector.exceptions.ManagerNotFoundException;
+import it.pagopa.selfcare.onboarding.connector.exceptions.ResourceNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -21,17 +20,11 @@ public class OnboardingExceptionHandler {
         return new ErrorResource(e.getMessage());
     }
 
-    @ExceptionHandler({ProductHasNoRelationshipException.class})
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    ErrorResource handleProductHasNoRelationshipException(ProductHasNoRelationshipException e) {
+    @ExceptionHandler({ManagerNotFoundException.class})
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    ErrorResource handleProductHasNoRelationshipException(ManagerNotFoundException e) {
         log.warn(e.getMessage());
         return new ErrorResource(e.getMessage());
     }
 
-    @ExceptionHandler({InternalServerException.class})
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    ErrorResource handleInternalServerException(InternalServerException e) {
-        log.warn(e.getMessage());
-        return new ErrorResource(e.getMessage());
-    }
 }

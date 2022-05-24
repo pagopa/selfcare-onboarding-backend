@@ -3,14 +3,13 @@ package it.pagopa.selfcare.onboarding.web.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModelProperty;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.PartyRole;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.UserInfoOperations;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 @Data
-public class UserDto implements UserInfoOperations {
+public class UserDto {
 
 
     @ApiModelProperty(value = "${swagger.onboarding.user.model.name}", required = true)

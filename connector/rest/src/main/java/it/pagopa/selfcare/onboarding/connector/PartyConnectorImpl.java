@@ -2,7 +2,6 @@ package it.pagopa.selfcare.onboarding.connector;
 
 import it.pagopa.selfcare.commons.base.logging.LogUtils;
 import it.pagopa.selfcare.onboarding.connector.api.PartyConnector;
-import it.pagopa.selfcare.onboarding.connector.model.Certification;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipInfo;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipsResponse;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
@@ -32,7 +31,7 @@ import static it.pagopa.selfcare.onboarding.connector.model.RelationshipState.AC
 @Slf4j
 class PartyConnectorImpl implements PartyConnector {
 
-    protected static final String REQUIRED_INSTITUTION_ID_MESSAGE = "An Institution id is required";
+    protected static final String REQUIRED_INSTITUTION_ID_MESSAGE = "An Institution external id is required";
     protected static final String REQUIRED_PRODUCT_ID_MESSAGE = "A product Id is required";
 
     private final PartyProcessRestClient restClient;
@@ -58,12 +57,7 @@ class PartyConnectorImpl implements PartyConnector {
     static final Function<RelationshipInfo, UserInfo> RELATIONSHIP_INFO_TO_USER_INFO_FUNCTION = relationshipInfo -> {
         UserInfo userInfo = new UserInfo();
         userInfo.setId(relationshipInfo.getFrom());
-        userInfo.setName(relationshipInfo.getName());
-        userInfo.setSurname(relationshipInfo.getSurname());
-        userInfo.setEmail(relationshipInfo.getEmail());
         userInfo.setStatus(relationshipInfo.getState().toString());
-        userInfo.setCertified(Certification.isCertified(relationshipInfo.getCertification()));
-        userInfo.setTaxCode(relationshipInfo.getTaxCode());
         userInfo.setRole(relationshipInfo.getRole());
         userInfo.setInstitutionId(relationshipInfo.getTo());
         return userInfo;
@@ -80,19 +74,22 @@ class PartyConnectorImpl implements PartyConnector {
     public void onboardingOrganization(OnboardingData onboardingData) {
         Assert.notNull(onboardingData, "Onboarding data is required");
         OnboardingInstitutionRequest onboardingInstitutionRequest = new OnboardingInstitutionRequest();
-        onboardingInstitutionRequest.setInstitutionExternalId(onboardingData.getInstitutionId());
-        onboardingInstitutionRequest.setBilling(onboardingData.getBillingData());
+        onboardingInstitutionRequest.setInstitutionExternalId(onboardingData.getInstitutionExternalId());
+        onboardingInstitutionRequest.setPricingPlan(onboardingData.getPricingPlan());
+        onboardingInstitutionRequest.setBilling(onboardingData.getBilling());
         InstitutionUpdate institutionUpdate = new InstitutionUpdate();
         institutionUpdate.setInstitutionType(onboardingData.getInstitutionType());
         institutionUpdate.setAddress(onboardingData.getInstitutionUpdate().getAddress());
         institutionUpdate.setDescription(onboardingData.getInstitutionUpdate().getDescription());
         institutionUpdate.setDigitalAddress(onboardingData.getInstitutionUpdate().getDigitalAddress());
         institutionUpdate.setTaxCode(onboardingData.getInstitutionUpdate().getTaxCode());
+        institutionUpdate.setZipCode(onboardingData.getInstitutionUpdate().getZipCode());
         onboardingInstitutionRequest.setInstitutionUpdate(institutionUpdate);
 
         onboardingInstitutionRequest.setUsers(onboardingData.getUsers().stream()
                 .map(userInfo -> {
                     User user = new User();
+                    user.setId(userInfo.getId());
                     user.setProduct(onboardingData.getProductId());
                     user.setName(userInfo.getName());
                     user.setSurname(userInfo.getSurname());
@@ -139,18 +136,18 @@ class PartyConnectorImpl implements PartyConnector {
     }
 
     @Override
-    public RelationshipsResponse getUserInstitutionRelationships(String externalInstitutionId, String productId) {
+    public RelationshipsResponse getUserInstitutionRelationships(String externalInstitutionId, UserInfo.UserInfoFilter userInfoFilter) {
         log.trace("getUserInstitutionRelationships start");
-        log.debug("getUserInstitutionRelationships externalInstitutionId = {}, productId = {}", externalInstitutionId, productId);
+        log.debug("getUserInstitutionRelationships externalInstitutionId = {}, userInfoFilter = {}", externalInstitutionId, userInfoFilter);
         Assert.hasText(externalInstitutionId, REQUIRED_INSTITUTION_ID_MESSAGE);
-        Assert.hasText(productId, REQUIRED_PRODUCT_ID_MESSAGE);
+        Assert.notNull(userInfoFilter, "A filter is required");
         RelationshipsResponse institutionRelationships = restClient.getUserInstitutionRelationships(
                 externalInstitutionId,
-                null,
-                EnumSet.of(ACTIVE),
-                Set.of(productId),
-                null,
-                null
+                userInfoFilter.getRole().orElse(null),
+                userInfoFilter.getAllowedStates().orElse(null),
+                userInfoFilter.getProductId().map(Set::of).orElse(null),
+                userInfoFilter.getProductRoles().orElse(null),
+                userInfoFilter.getUserId().orElse(null)
         );
         log.debug("getUserInstitutionRelationships institutionRelationships = {}", institutionRelationships);
         log.trace("getUserInstitutionRelationships end");
@@ -215,4 +212,17 @@ class PartyConnectorImpl implements PartyConnector {
         log.trace("getOnBoardedInstitution end");
         return result;
     }
+
+    @Override
+    public Institution createInstitutionUsingExternalId(String institutionExternalId) {
+        log.trace("createInstitutionUsingExternalId start");
+        log.debug("createInstitutionUsingExternalId externalId = {}", institutionExternalId);
+        Assert.hasText(institutionExternalId, REQUIRED_INSTITUTION_ID_MESSAGE);
+        Institution result = restClient.createInstitutionUsingExternalId(institutionExternalId);
+        log.debug("createInstitutionUsingExternalId result = {}", result);
+        log.trace("createInstitutionUsingExternalId end");
+        return result;
+    }
+
+
 }

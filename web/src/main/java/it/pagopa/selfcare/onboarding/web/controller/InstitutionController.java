@@ -9,6 +9,7 @@ import it.pagopa.selfcare.onboarding.core.InstitutionService;
 import it.pagopa.selfcare.onboarding.web.model.InstitutionOnboardingInfoResource;
 import it.pagopa.selfcare.onboarding.web.model.InstitutionResource;
 import it.pagopa.selfcare.onboarding.web.model.OnboardingDto;
+import it.pagopa.selfcare.onboarding.web.model.mapper.InstitutionMapper;
 import it.pagopa.selfcare.onboarding.web.model.mapper.OnboardingMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +42,7 @@ public class InstitutionController {
     public void onboarding(@ApiParam("${swagger.onboarding.institutions.model.externalId}")
                            @PathVariable("externalInstitutionId")
                                    String externalInstitutionId,
-                           @ApiParam("${swagger.onboarding.products.model.id}")
+                           @ApiParam("${swagger.onboarding.product.model.id}")
                            @PathVariable("productId")
                                    String productId,
                            @RequestBody
@@ -59,7 +60,7 @@ public class InstitutionController {
     public InstitutionOnboardingInfoResource getInstitutionOnboardingInfo(@ApiParam("${swagger.onboarding.institutions.model.externalId}")
                                                                           @PathVariable("externalInstitutionId")
                                                                                   String externalInstitutionId,
-                                                                          @ApiParam("${swagger.onboarding.products.model.id}")
+                                                                          @ApiParam("${swagger.onboarding.product.model.id}")
                                                                           @PathVariable("productId")
                                                                                   String productId) {
         log.trace("getInstitutionOnBoardingInfo start");
@@ -73,14 +74,14 @@ public class InstitutionController {
 
     @GetMapping(value = "/{externalInstitutionId}/data")
     @ResponseStatus(HttpStatus.OK)
-    @ApiOperation(value = "", notes = "${swagger.onboarding.institutions.api.manager}")
+    @ApiOperation(value = "", notes = "${swagger.onboarding.institutions.api.getInstitutionData}")
     public InstitutionResource getInstitutionData(@ApiParam("${swagger.onboarding.institutions.model.externalId}")
                                                   @PathVariable("externalInstitutionId")
                                                           String externalInstitutionId) {
         log.trace("getInstitutionData start");
         log.debug("getInstitutionData institutionId = {}", externalInstitutionId);
         Institution institution = institutionService.getInstitutionByExternalId(externalInstitutionId);
-        InstitutionResource result = OnboardingMapper.toResource(institution);
+        InstitutionResource result = InstitutionMapper.toResource(institution);
         log.debug("getInstitutionData result = {}", result);
         log.trace("getInstitutionData end");
         return result;
@@ -94,7 +95,7 @@ public class InstitutionController {
         log.trace("getInstitutions start");
         List<InstitutionResource> institutionResources = institutionService.getInstitutions()
                 .stream()
-                .map(OnboardingMapper::toResource)
+                .map(InstitutionMapper::toResource)
                 .collect(Collectors.toList());
         log.debug("getInstitutions result = {}", institutionResources);
         log.trace("getInstitutions end");

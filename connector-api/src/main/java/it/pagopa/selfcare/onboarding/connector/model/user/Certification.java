@@ -1,4 +1,4 @@
-package it.pagopa.selfcare.onboarding.connector.model;
+package it.pagopa.selfcare.onboarding.connector.model.user;
 
 public enum Certification {
     NONE, SPID;

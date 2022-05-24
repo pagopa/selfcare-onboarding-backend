@@ -1,24 +1,23 @@
 package it.pagopa.selfcare.onboarding.connector.model.onboarding;
 
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipState;
+import it.pagopa.selfcare.onboarding.connector.model.user.User;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.util.EnumSet;
 import java.util.Optional;
 import java.util.Set;
 
 @Data
+@EqualsAndHashCode(of = "id")
 public class UserInfo {
 
     private String id;
-    private String name;
-    private String surname;
-    private String taxCode;
+    private User user;
     private String institutionId;
-    private String email;
     private PartyRole role;
     private String status;
-    private boolean certified;
 
     @Data
     public static class UserInfoFilter {
@@ -44,7 +43,7 @@ public class UserInfo {
             this.userId = userId == null ? Optional.empty() : userId;
         }
 
-        public void setAllowedState(Optional<EnumSet<RelationshipState>> allowedStates) {
+        public void setAllowedStates(Optional<EnumSet<RelationshipState>> allowedStates) {
             this.allowedStates = allowedStates == null ? Optional.empty() : allowedStates;
         }
     }

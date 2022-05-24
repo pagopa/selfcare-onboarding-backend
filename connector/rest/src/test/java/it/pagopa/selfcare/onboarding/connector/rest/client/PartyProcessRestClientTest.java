@@ -4,6 +4,7 @@ import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import it.pagopa.selfcare.commons.connector.rest.BaseFeignRestClientTest;
 import it.pagopa.selfcare.commons.connector.rest.RestTestUtils;
 import it.pagopa.selfcare.commons.utils.TestUtils;
+import it.pagopa.selfcare.onboarding.connector.exceptions.ResourceNotFoundException;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipState;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipsResponse;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
@@ -122,11 +123,6 @@ class PartyProcessRestClientTest extends BaseFeignRestClientTest {
         assertNotNull(response.get(0));
         response.forEach(relationshipInfo -> {
             TestUtils.checkNotNullFields(relationshipInfo);
-            relationshipInfo.getInstitutionContacts().values().forEach(institutionContacts -> {
-                assertNotNull(institutionContacts);
-                assertFalse(institutionContacts.isEmpty());
-                institutionContacts.forEach(TestUtils::checkNotNullFields);
-            });
             TestUtils.checkNotNullFields(relationshipInfo.getInstitutionUpdate());
             TestUtils.checkNotNullFields(relationshipInfo.getBilling());
         });
@@ -191,13 +187,8 @@ class PartyProcessRestClientTest extends BaseFeignRestClientTest {
         OnBoardingInfo response = restClient.getOnBoardingInfo(testCase2instIdMap.get(TestCase.FULLY_NULL), EnumSet.of(ACTIVE));
         // then
         assertNotNull(response);
-        assertNotNull(response.getPerson());
-        assertNotNull(response.getInstitutions());
-        assertNull(response.getPerson().getName());
-        assertNull(response.getPerson().getSurname());
-        assertNull(response.getPerson().getTaxCode());
-        assertNull(response.getInstitutions().get(0).getExternalId());
-        assertNull(response.getInstitutions().get(0).getDescription());
+        assertNull(response.getUserId());
+        assertNull(response.getInstitutions());
     }
 
 
@@ -208,7 +199,7 @@ class PartyProcessRestClientTest extends BaseFeignRestClientTest {
         // then
         assertNotNull(response);
         assertTrue(response.getInstitutions().isEmpty());
-        assertNull(response.getPerson());
+        assertNull(response.getUserId());
     }
 
     @Test
@@ -229,6 +220,7 @@ class PartyProcessRestClientTest extends BaseFeignRestClientTest {
         String externalId = testCase2instIdMap.get(TestCase.FULLY_NULL);
         // when
         Institution response = restClient.getInstitutionByExternalId(externalId);
+        //then
         assertNotNull(response);
         assertNull(response.getAddress());
         assertNull(response.getDescription());
@@ -239,6 +231,27 @@ class PartyProcessRestClientTest extends BaseFeignRestClientTest {
         assertNull(response.getZipCode());
         assertNull(response.getOrigin());
         assertNull(response.getAttributes());
+    }
+
+    @Test
+    void getInstitutionExternalId_notFound() {
+        //given
+        String externalId = "externalIdNotFound";
+        //when
+        Executable executable = () -> restClient.getInstitutionByExternalId(externalId);
+        //then
+        assertThrows(ResourceNotFoundException.class, executable);
+    }
+
+    @Test
+    void createInstitutionUsingExternalId() {
+        //given
+        String externalId = "externalId";
+        //when
+        Institution response = restClient.createInstitutionUsingExternalId(externalId);
+        //then
+        assertNotNull(response);
+        TestUtils.checkNotNullFields(response);
     }
 
 

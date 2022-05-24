@@ -23,15 +23,16 @@ import java.util.Optional;
 @NoArgsConstructor
 public class OnboardingData {
 
-    private String institutionId;
+    private String institutionExternalId;
     private String productId;
     private List<User> users;
     private String contractPath;
     private String contractVersion;
-    private BillingData billingData;
+    private Billing billing;
     private InstitutionUpdate institutionUpdate;
     private InstitutionType institutionType;
     private String origin;
+    private String pricingPlan;
 
     public List<User> getUsers() {
         return Optional.ofNullable(users).orElse(Collections.emptyList());
