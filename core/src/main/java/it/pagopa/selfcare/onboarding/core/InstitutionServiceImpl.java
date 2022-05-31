@@ -18,6 +18,7 @@ import it.pagopa.selfcare.onboarding.connector.model.onboarding.PartyRole;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.User;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.UserInfo;
 import it.pagopa.selfcare.onboarding.connector.model.product.Product;
+import it.pagopa.selfcare.onboarding.connector.model.product.ProductRoleInfo;
 import it.pagopa.selfcare.onboarding.connector.model.user.mapper.UserMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +42,11 @@ class InstitutionServiceImpl implements InstitutionService {
     protected static final String REQUIRED_ONBOARDING_DATA_MESSAGE = "Onboarding data is required";
     protected static final String ATLEAST_ONE_PRODUCT_ROLE_REQUIRED = "At least one Product role related to %s Party role is required";
     protected static final String MORE_THAN_ONE_PRODUCT_ROLE_AVAILABLE = "More than one Product role related to %s Party role is available. Cannot automatically set the Product role";
-    protected static final String ILLEGAL_LIST_OF_USERS = "Illegal list of users, provide a Manager in the list";
+
+    private static final EnumSet<it.pagopa.selfcare.onboarding.connector.model.user.User.Fields> USER_FIELD_LIST = EnumSet.of(fiscalCode, name, familyName, workContacts);
+    private static final Optional<EnumSet<PartyRole>> MANAGER_ROLE_FILTER = Optional.of(EnumSet.of(PartyRole.MANAGER));
+    private static final Optional<EnumSet<RelationshipState>> ACTIVE_ALLOWED_STATES_FILTER = Optional.of(EnumSet.of(RelationshipState.ACTIVE));
+
     private final PartyConnector partyConnector;
     private final ProductsConnector productsConnector;
     private final UserRegistryConnector userConnector;
@@ -67,47 +72,30 @@ class InstitutionServiceImpl implements InstitutionService {
         onboardingData.setContractPath(product.getContractTemplatePath());
         onboardingData.setContractVersion(product.getContractTemplateVersion());
 
+        final EnumMap<PartyRole, ProductRoleInfo> roleMappings;
         if (product.getParentId() != null) {
-            UserInfo.UserInfoFilter userInfoFilter = new UserInfo.UserInfoFilter();
-            userInfoFilter.setRole(Optional.of(EnumSet.of(PartyRole.MANAGER)));
-            userInfoFilter.setAllowedStates(Optional.of(EnumSet.of(RelationshipState.ACTIVE)));
-            userInfoFilter.setProductId(Optional.of(product.getParentId()));
-            RelationshipsResponse response = partyConnector.getUserInstitutionRelationships(onboardingData.getInstitutionExternalId(), userInfoFilter);
-            if (response == null || response.size() != 1) {
-                throw new ManagerNotFoundException(String.format("Unable to retrieve the manager related to institution external id = %s and base product %s",
-                        onboardingData.getInstitutionExternalId(),
-                        product.getParentId()));
-            } else {
-
-                final it.pagopa.selfcare.onboarding.connector.model.user.User baseProductManager = userConnector.getUserByInternalId(response.get(0).getFrom(), EnumSet.of(fiscalCode, name, familyName, workContacts));
-                User manager = new User();
-                manager.setId(baseProductManager.getId());
-                manager.setName(baseProductManager.getName().getValue());
-                manager.setSurname(baseProductManager.getFamilyName().getValue());
-                manager.setTaxCode(baseProductManager.getFiscalCode());
-                manager.setProduct(onboardingData.getProductId());
-                manager.setRole(PartyRole.MANAGER);
-                manager.setEmail(baseProductManager.getWorkContacts().get(response.get(0).getTo()).getEmail().getValue());
-                product = productsConnector.getProduct(product.getParentId());
-                String productRole = product.getRoleMappings().get(PartyRole.MANAGER).getRoles().get(0).getCode();
-                manager.setProductRole(productRole);
-
-                onboardingData.setUsers(List.of(manager));
-            }
+            final Product baseProduct = productsConnector.getProduct(product.getParentId());
+            final Optional<User> manager = retrieveManager(onboardingData, baseProduct);
+            onboardingData.setUsers(List.of(manager.orElseThrow(() ->
+                    new ManagerNotFoundException(String.format("Unable to retrieve the manager related to institution external id = %s and base product %s",
+                            onboardingData.getInstitutionExternalId(),
+                            baseProduct.getId())))));
+            roleMappings = baseProduct.getRoleMappings();
+        } else {
+            roleMappings = product.getRoleMappings();
         }
-        Assert.notNull(product.getRoleMappings(), "Role mappings is required");
-        Product finalProduct = product;
+        Assert.notNull(roleMappings, "Role mappings is required");
         onboardingData.getUsers().forEach(userInfo -> {
-            Assert.notNull(finalProduct.getRoleMappings().get(userInfo.getRole()),
+            Assert.notNull(roleMappings.get(userInfo.getRole()),
                     String.format(ATLEAST_ONE_PRODUCT_ROLE_REQUIRED, userInfo.getRole()));
-            Assert.notEmpty(finalProduct.getRoleMappings().get(userInfo.getRole()).getRoles(),
+            Assert.notEmpty(roleMappings.get(userInfo.getRole()).getRoles(),
                     String.format(ATLEAST_ONE_PRODUCT_ROLE_REQUIRED, userInfo.getRole()));
-            Assert.state(finalProduct.getRoleMappings().get(userInfo.getRole()).getRoles().size() == 1,
+            Assert.state(roleMappings.get(userInfo.getRole()).getRoles().size() == 1,
                     String.format(MORE_THAN_ONE_PRODUCT_ROLE_AVAILABLE, userInfo.getRole()));
-            userInfo.setProductRole(finalProduct.getRoleMappings().get(userInfo.getRole()).getRoles().get(0).getCode());
+            userInfo.setProductRole(roleMappings.get(userInfo.getRole()).getRoles().get(0).getCode());
         });
 
-        Institution institution = null;
+        Institution institution;
         try {
             institution = partyConnector.getInstitutionByExternalId(onboardingData.getInstitutionExternalId());
         } catch (ResourceNotFoundException e) {
@@ -119,6 +107,34 @@ class InstitutionServiceImpl implements InstitutionService {
                         .getId().toString()));
         partyConnector.onboardingOrganization(onboardingData);
         log.trace("onboarding end");
+    }
+
+
+    private Optional<User> retrieveManager(OnboardingData onboardingData, Product product) {
+        Optional<User> managerOpt = Optional.empty();
+        UserInfo.UserInfoFilter userInfoFilter = new UserInfo.UserInfoFilter();
+        userInfoFilter.setRole(MANAGER_ROLE_FILTER);
+        userInfoFilter.setAllowedStates(ACTIVE_ALLOWED_STATES_FILTER);
+        userInfoFilter.setProductId(Optional.of(product.getId()));
+        RelationshipsResponse response = partyConnector.getUserInstitutionRelationships(onboardingData.getInstitutionExternalId(), userInfoFilter);
+
+        if (response != null && response.size() == 1) {
+            final it.pagopa.selfcare.onboarding.connector.model.user.User baseProductManager =
+                    userConnector.getUserByInternalId(response.get(0).getFrom(), USER_FIELD_LIST);
+            User manager = new User();
+            manager.setId(baseProductManager.getId());
+            manager.setName(baseProductManager.getName().getValue());
+            manager.setSurname(baseProductManager.getFamilyName().getValue());
+            manager.setTaxCode(baseProductManager.getFiscalCode());
+            manager.setProduct(onboardingData.getProductId());
+            manager.setRole(PartyRole.MANAGER);
+            manager.setEmail(baseProductManager.getWorkContacts().get(response.get(0).getTo()).getEmail().getValue());
+            String productRole = product.getRoleMappings().get(PartyRole.MANAGER).getRoles().get(0).getCode();
+            manager.setProductRole(productRole);
+
+            managerOpt = Optional.of(manager);
+        }
+        return managerOpt;
     }
 
 
@@ -145,11 +161,10 @@ class InstitutionServiceImpl implements InstitutionService {
         if (checkAuthority(externalInstitutionId, productId, roles)) {
             UserInfo.UserInfoFilter userInfoFilter = new UserInfo.UserInfoFilter();
             userInfoFilter.setProductId(Optional.of(productId));
-            userInfoFilter.setRole(Optional.of(EnumSet.of(PartyRole.MANAGER)));
-            userInfoFilter.setAllowedStates(Optional.of(EnumSet.of(RelationshipState.ACTIVE)));
-            final EnumSet<it.pagopa.selfcare.onboarding.connector.model.user.User.Fields> fieldList = EnumSet.of(name, familyName, workContacts, fiscalCode);
+            userInfoFilter.setRole(MANAGER_ROLE_FILTER);
+            userInfoFilter.setAllowedStates(ACTIVE_ALLOWED_STATES_FILTER);
             Collection<UserInfo> userInfos = partyConnector.getUsers(externalInstitutionId, userInfoFilter).stream()
-                    .peek(userInfo -> userInfo.setUser(userConnector.getUserByInternalId(userInfo.getId(), fieldList)))
+                    .peek(userInfo -> userInfo.setUser(userConnector.getUserByInternalId(userInfo.getId(), USER_FIELD_LIST)))
                     .collect(Collectors.toList());
             if (!userInfos.iterator().hasNext()) {
                 throw new ResourceNotFoundException(String.format("No Manager found for given institution: %s", externalInstitutionId));
@@ -176,7 +191,7 @@ class InstitutionServiceImpl implements InstitutionService {
         UserInfo.UserInfoFilter filter = new UserInfo.UserInfoFilter();
         filter.setUserId(Optional.of(principal.getId()));
         filter.setProductId(Optional.of(productId));
-        filter.setAllowedStates(Optional.of(EnumSet.of(RelationshipState.ACTIVE)));
+        filter.setAllowedStates(ACTIVE_ALLOWED_STATES_FILTER);
         filter.setRole(Optional.of(roles));
         Collection<UserInfo> userInfos = partyConnector.getUsers(externalInstitutionId, filter);
         return userInfos.iterator().hasNext();

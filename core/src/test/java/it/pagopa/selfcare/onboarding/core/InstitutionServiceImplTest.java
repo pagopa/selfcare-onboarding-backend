@@ -425,7 +425,7 @@ class InstitutionServiceImplTest {
         Billing billing = mockInstance(new Billing());
         onboardingData.setBilling(billing);
         onboardingData.setUsers(List.of(userInfo1, userInfo2));
-        Product productMock = mockInstance(new Product(), "setRoleMappings");
+        Product baseProductMock = mockInstance(new Product(), "setRoleMappings", "setParentId");
         ProductRoleInfo productRoleInfo1 = mockInstance(new ProductRoleInfo(), 1, "setRoles");
         ProductRoleInfo.ProductRole productRole1 = mockInstance(new ProductRoleInfo.ProductRole(), 1);
         productRole1.setCode(productRole);
@@ -438,14 +438,14 @@ class InstitutionServiceImplTest {
             put(PartyRole.MANAGER, productRoleInfo1);
             put(PartyRole.DELEGATE, productRoleInfo2);
         }};
-        productMock.setRoleMappings(roleMappings);
+        baseProductMock.setRoleMappings(roleMappings);
+        Product subProductMock = mockInstance(new Product(), "setId");
+        subProductMock.setId(onboardingData.getProductId());
+        subProductMock.setParentId(baseProductMock.getId());
         when(productsConnectorMock.getProduct(onboardingData.getProductId()))
-                .thenReturn(productMock);
-        Product productMock2 = mockInstance(new Product());
-        productMock2.setParentId(productMock.getId());
-        productMock2.setRoleMappings(roleMappings);
-        when(productsConnectorMock.getProduct(productMock.getParentId()))
-                .thenReturn(productMock2);
+                .thenReturn(subProductMock);
+        when(productsConnectorMock.getProduct(subProductMock.getParentId()))
+                .thenReturn(baseProductMock);
         Institution institution = mockInstance(new Institution());
         institution.setId(UUID.randomUUID().toString());
         RelationshipInfo relationshipInfoMock = mockInstance(new RelationshipInfo());
@@ -483,9 +483,9 @@ class InstitutionServiceImplTest {
                 .getUserInstitutionRelationships(eq(onboardingData.getInstitutionExternalId()), userInfoFilterCaptor.capture());
         assertEquals(Optional.of(EnumSet.of(PartyRole.MANAGER)), userInfoFilterCaptor.getValue().getRole());
         assertEquals(Optional.of(EnumSet.of(RelationshipState.ACTIVE)), userInfoFilterCaptor.getValue().getAllowedStates());
-        assertEquals(Optional.of(productMock.getParentId()), userInfoFilterCaptor.getValue().getProductId());
+        assertEquals(Optional.of(subProductMock.getParentId()), userInfoFilterCaptor.getValue().getProductId());
         verify(productsConnectorMock, times(1))
-                .getProduct(productMock.getParentId());
+                .getProduct(subProductMock.getParentId());
         verify(partyConnectorMock, times(1))
                 .onboardingOrganization(onboardingDataCaptor.capture());
         OnboardingData captured = onboardingDataCaptor.getValue();
