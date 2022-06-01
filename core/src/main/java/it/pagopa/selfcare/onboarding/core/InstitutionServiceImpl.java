@@ -127,19 +127,19 @@ class InstitutionServiceImpl implements InstitutionService {
 
     private Optional<MutableUserFieldsDto> createUpdateRequest(User user, it.pagopa.selfcare.onboarding.connector.model.user.User foundUser, String institutionInternalId) {
         MutableUserFieldsDto mutableUserFieldsDto = null;
-        if (!isFieldToUpdate(foundUser.getName(), user.getName())) {
+        if (isFieldToUpdate(foundUser.getName(), user.getName())) {
             mutableUserFieldsDto = new MutableUserFieldsDto();
             mutableUserFieldsDto.setName(CertifiedFieldMapper.map(user.getName()));
         }
-        if (!isFieldToUpdate(foundUser.getFamilyName(), user.getSurname())) {
+        if (isFieldToUpdate(foundUser.getFamilyName(), user.getSurname())) {
             if (mutableUserFieldsDto == null) {
                 mutableUserFieldsDto = new MutableUserFieldsDto();
             }
             mutableUserFieldsDto.setFamilyName(CertifiedFieldMapper.map(user.getSurname()));
         }
-        if (foundUser.getWorkContacts() != null
-                && foundUser.getWorkContacts().get(institutionInternalId) != null
-                && !isFieldToUpdate(foundUser.getWorkContacts().get(institutionInternalId).getEmail(), user.getEmail())) {
+        if (foundUser.getWorkContacts() == null
+                || !foundUser.getWorkContacts().containsKey(institutionInternalId)
+                || isFieldToUpdate(foundUser.getWorkContacts().get(institutionInternalId).getEmail(), user.getEmail())) {
             if (mutableUserFieldsDto == null) {
                 mutableUserFieldsDto = new MutableUserFieldsDto();
             }
@@ -162,7 +162,7 @@ class InstitutionServiceImpl implements InstitutionService {
                 if (certifiedField.getValue().equals(value)) {
                     isToUpdate = false;
                 } else {
-                    throw new UpdateNotAllowedException("Update request not allowed because of the following value: " + value);
+                    throw new UpdateNotAllowedException(String.format("Update user request not allowed because of value %s", value));
                 }
             }
         }
