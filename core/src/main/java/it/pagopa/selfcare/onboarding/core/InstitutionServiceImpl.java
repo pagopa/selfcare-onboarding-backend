@@ -143,18 +143,12 @@ class InstitutionServiceImpl implements InstitutionService {
                 .filter(partyRole -> SelfCareAuthority.ADMIN.equals(partyRole.getSelfCareAuthority()))
                 .collect(Collectors.toCollection(() -> EnumSet.noneOf(PartyRole.class)));
         if (checkAuthority(externalInstitutionId, productId, roles)) {
-            UserInfo.UserInfoFilter userInfoFilter = new UserInfo.UserInfoFilter();
-            userInfoFilter.setProductId(Optional.of(productId));
-            userInfoFilter.setRole(Optional.of(EnumSet.of(PartyRole.MANAGER)));
-            userInfoFilter.setAllowedStates(Optional.of(EnumSet.of(RelationshipState.ACTIVE)));
             final EnumSet<it.pagopa.selfcare.onboarding.connector.model.user.User.Fields> fieldList = EnumSet.of(name, familyName, workContacts, fiscalCode);
-            Collection<UserInfo> userInfos = partyConnector.getUsers(externalInstitutionId, userInfoFilter).stream()
-                    .peek(userInfo -> userInfo.setUser(userConnector.getUserByInternalId(userInfo.getId(), fieldList)))
-                    .collect(Collectors.toList());
-            if (!userInfos.iterator().hasNext()) {
+            UserInfo manager = partyConnector.getInstitutionManager(externalInstitutionId, productId);
+            if (manager == null) {
                 throw new ResourceNotFoundException(String.format("No Manager found for given institution: %s", externalInstitutionId));
             }
-            UserInfo manager = userInfos.iterator().next();
+            manager.setUser(userConnector.getUserByInternalId(manager.getId(), fieldList));
             result.setManager(manager);
         }
         InstitutionInfo institution = partyConnector.getOnboardedInstitution(externalInstitutionId);

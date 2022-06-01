@@ -663,21 +663,17 @@ class InstitutionServiceImplTest {
         assertEquals(String.format("No Manager found for given institution: %s", institutionId), e.getMessage());
 
         ArgumentCaptor<UserInfo.UserInfoFilter> filterCaptor = ArgumentCaptor.forClass(UserInfo.UserInfoFilter.class);
-        verify(partyConnectorMock, times(2))
+        verify(partyConnectorMock, times(1))
                 .getUsers(Mockito.eq(institutionId), filterCaptor.capture());
-        List<UserInfo.UserInfoFilter> capturedFilters = filterCaptor.getAllValues();
+        verify(partyConnectorMock, times(1))
+                .getInstitutionManager(institutionId, productId);
+        UserInfo.UserInfoFilter capturedFilters = filterCaptor.getValue();
 
-        assertEquals(roles, capturedFilters.get(0).getRole().get());
-        assertEquals(EnumSet.of(ACTIVE), capturedFilters.get(0).getAllowedStates().get());
-        assertEquals(loggedUser, capturedFilters.get(0).getUserId().get());
-        assertEquals(productId, capturedFilters.get(0).getProductId().get());
-        assertTrue(capturedFilters.get(0).getProductRoles().isEmpty());
-
-        assertEquals(EnumSet.of(PartyRole.MANAGER), capturedFilters.get(1).getRole().get());
-        assertEquals(productId, capturedFilters.get(1).getProductId().get());
-        assertTrue(capturedFilters.get(1).getProductRoles().isEmpty());
-        assertTrue(capturedFilters.get(1).getUserId().isEmpty());
-        assertEquals(EnumSet.of(ACTIVE), capturedFilters.get(1).getAllowedStates().get());
+        assertEquals(roles, capturedFilters.getRole().get());
+        assertEquals(EnumSet.of(ACTIVE), capturedFilters.getAllowedStates().get());
+        assertEquals(loggedUser, capturedFilters.getUserId().get());
+        assertEquals(productId, capturedFilters.getProductId().get());
+        assertTrue(capturedFilters.getProductRoles().isEmpty());
 
         verify(partyConnectorMock, times(0))
                 .getOnboardedInstitution(institutionId);
@@ -734,15 +730,10 @@ class InstitutionServiceImplTest {
         userInfoMock.setId(loggedUser);
         UserInfo userInfoManager = mockInstance(new UserInfo());
         userInfoManager.setRole(PartyRole.MANAGER);
+        when(partyConnectorMock.getInstitutionManager(any(), any()))
+                .thenReturn(userInfoManager);
         when(partyConnectorMock.getUsers(Mockito.anyString(), any()))
-                .thenAnswer(invocation -> {
-                            UserInfo.UserInfoFilter argument = invocation.getArgument(1, UserInfo.UserInfoFilter.class);
-                            if (argument.getUserId().isPresent())
-                                return Collections.singletonList(userInfoMock);
-                            else
-                                return Collections.singleton(userInfoManager);
-                        }
-                );
+                .thenReturn(Collections.singletonList(userInfoMock));
         final it.pagopa.selfcare.onboarding.connector.model.user.User userManagerMock =
                 new it.pagopa.selfcare.onboarding.connector.model.user.User();
         when(userConnectorMock.getUserByInternalId(any(), any()))
@@ -762,22 +753,18 @@ class InstitutionServiceImplTest {
         assertEquals(institutionInfoMock, institutionOnboardingData.getInstitution());
 
         ArgumentCaptor<UserInfo.UserInfoFilter> filterCaptor = ArgumentCaptor.forClass(UserInfo.UserInfoFilter.class);
-        verify(partyConnectorMock, times(2))
+        verify(partyConnectorMock, times(1))
                 .getUsers(Mockito.eq(institutionId), filterCaptor.capture());
-        List<UserInfo.UserInfoFilter> capturedFilters = filterCaptor.getAllValues();
+        UserInfo.UserInfoFilter capturedFilter = filterCaptor.getValue();
 
-        assertEquals(roles, capturedFilters.get(0).getRole().get());
-        assertEquals(EnumSet.of(ACTIVE), capturedFilters.get(0).getAllowedStates().get());
-        assertEquals(loggedUser, capturedFilters.get(0).getUserId().get());
-        assertEquals(productId, capturedFilters.get(0).getProductId().get());
-        assertTrue(capturedFilters.get(0).getProductRoles().isEmpty());
+        assertEquals(roles, capturedFilter.getRole().get());
+        assertEquals(EnumSet.of(ACTIVE), capturedFilter.getAllowedStates().get());
+        assertEquals(loggedUser, capturedFilter.getUserId().get());
+        assertEquals(productId, capturedFilter.getProductId().get());
+        assertTrue(capturedFilter.getProductRoles().isEmpty());
 
-        assertEquals(EnumSet.of(PartyRole.MANAGER), capturedFilters.get(1).getRole().get());
-        assertEquals(productId, capturedFilters.get(1).getProductId().get());
-        assertTrue(capturedFilters.get(1).getProductRoles().isEmpty());
-        assertTrue(capturedFilters.get(1).getUserId().isEmpty());
-        assertEquals(EnumSet.of(ACTIVE), capturedFilters.get(1).getAllowedStates().get());
-
+        verify(partyConnectorMock, times(1))
+                .getInstitutionManager(institutionId, productId);
         verify(partyConnectorMock, times(1))
                 .getOnboardedInstitution(institutionId);
         verify(userConnectorMock, times(1))
