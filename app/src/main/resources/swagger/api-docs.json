@@ -321,25 +321,6 @@
           }
         }
       },
-      "CertifiedFieldResourceOfstring": {
-        "title": "CertifiedFieldResourceOfstring",
-        "required": [
-          "certified",
-          "value"
-        ],
-        "type": "object",
-        "properties": {
-          "certified": {
-            "type": "boolean",
-            "description": "Indicates whether the value comes from a certified information source",
-            "example": false
-          },
-          "value": {
-            "type": "string",
-            "description": "Field value"
-          }
-        }
-      },
       "InstitutionData": {
         "title": "InstitutionData",
         "type": "object",
@@ -532,8 +513,8 @@
         "type": "object",
         "properties": {
           "email": {
-            "description": "User's institutional email",
-            "$ref": "#/components/schemas/CertifiedFieldResourceOfstring"
+            "type": "string",
+            "description": "User's institutional email"
           },
           "id": {
             "type": "string",
@@ -546,8 +527,8 @@
             "format": "uuid"
           },
           "name": {
-            "description": "User's name",
-            "$ref": "#/components/schemas/CertifiedFieldResourceOfstring"
+            "type": "string",
+            "description": "User's name"
           },
           "role": {
             "type": "string",
@@ -564,8 +545,8 @@
             "description": "User's status"
           },
           "surname": {
-            "description": "User's surname",
-            "$ref": "#/components/schemas/CertifiedFieldResourceOfstring"
+            "type": "string",
+            "description": "User's surname"
           },
           "taxCode": {
             "type": "string",

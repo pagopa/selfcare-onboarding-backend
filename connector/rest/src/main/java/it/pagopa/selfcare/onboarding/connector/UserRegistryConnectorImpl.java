@@ -1,5 +1,6 @@
 package it.pagopa.selfcare.onboarding.connector;
 
+import feign.FeignException;
 import it.pagopa.selfcare.commons.base.logging.LogUtils;
 import it.pagopa.selfcare.onboarding.connector.api.UserRegistryConnector;
 import it.pagopa.selfcare.onboarding.connector.model.user.MutableUserFieldsDto;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import java.util.EnumSet;
+import java.util.Optional;
 import java.util.UUID;
 
 @Slf4j
@@ -28,12 +30,17 @@ public class UserRegistryConnectorImpl implements UserRegistryConnector {
     }
 
     @Override
-    public User search(String externalId, EnumSet<User.Fields> fieldList) {
+    public Optional<User> search(String externalId, EnumSet<User.Fields> fieldList) {
         log.trace("getUserByExternalId start");
         log.debug(LogUtils.CONFIDENTIAL_MARKER, "getUserByExternalId externalId = {}", externalId);
         Assert.hasText(externalId, "A TaxCode is required");
         Assert.notEmpty(fieldList, "At least one user fields is required");
-        User user = restClient.search(new EmbeddedExternalId(externalId), fieldList);
+        Optional<User> user;
+        try {
+            user = Optional.of(restClient.search(new EmbeddedExternalId(externalId), fieldList));
+        } catch (FeignException.NotFound e) {
+            user = Optional.empty();
+        }
         log.debug(LogUtils.CONFIDENTIAL_MARKER, "getUserByExternalId result = {}", user);
         log.trace("getUserByExternalId end");
 

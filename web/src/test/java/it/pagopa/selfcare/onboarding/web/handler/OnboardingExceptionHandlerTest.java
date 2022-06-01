@@ -3,6 +3,7 @@ package it.pagopa.selfcare.onboarding.web.handler;
 import it.pagopa.selfcare.commons.web.model.ErrorResource;
 import it.pagopa.selfcare.onboarding.connector.exceptions.ManagerNotFoundException;
 import it.pagopa.selfcare.onboarding.connector.exceptions.ResourceNotFoundException;
+import it.pagopa.selfcare.onboarding.core.exception.UpdateNotAllowedException;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -44,6 +45,20 @@ class OnboardingExceptionHandlerTest {
         //then
         assertNotNull(resource);
         assertEquals(DETAIL_MESSAGE, resource.getMessage());
+    }
+
+
+    @Test
+    void handleUpdateNotAllowedException() {
+        // given
+        UpdateNotAllowedException mockException = Mockito.mock(UpdateNotAllowedException.class);
+        Mockito.when(mockException.getMessage())
+                .thenReturn(DETAIL_MESSAGE);
+        // when
+        ErrorResource response = handler.handleUpdateNotAllowedException(mockException);
+        // then
+        assertNotNull(response);
+        assertEquals(DETAIL_MESSAGE, response.getMessage());
     }
 
 }
