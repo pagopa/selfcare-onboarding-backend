@@ -1,5 +1,6 @@
 package it.pagopa.selfcare.onboarding.connector;
 
+import feign.FeignException;
 import it.pagopa.selfcare.commons.utils.TestUtils;
 import it.pagopa.selfcare.onboarding.connector.model.user.*;
 import it.pagopa.selfcare.onboarding.connector.rest.client.UserRegistryRestClient;
@@ -12,10 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 import static it.pagopa.selfcare.onboarding.connector.model.user.Certification.NONE;
 import static it.pagopa.selfcare.onboarding.connector.model.user.Certification.SPID;
@@ -44,7 +42,7 @@ class UserRegistryConnectorImplTest {
         Mockito.when(restClientMock.search(Mockito.any(), Mockito.any()))
                 .thenReturn(userMock);
         //when
-        User user = userConnector.search(externalId, fieldList);
+        User user = userConnector.search(externalId, fieldList).get();
         ///then
         assertNull(user.getName());
         assertNull(user.getFamilyName());
@@ -61,17 +59,18 @@ class UserRegistryConnectorImplTest {
     }
 
     @Test
-    void search_nullInfo_nullUserResponse() {
+    void search_nullInfo_userNotFound() {
         //given
         String externalId = "externalId";
         final EnumSet<User.Fields> fieldList = EnumSet.allOf(User.Fields.class);
-        User userMock = null;
-        Mockito.when(restClientMock.search(Mockito.any(), Mockito.any()))
-                .thenReturn(userMock);
+        Mockito.doThrow(FeignException.NotFound.class)
+                .when(restClientMock)
+                .search(Mockito.any(), Mockito.any());
         //when
-        User user = userConnector.search(externalId, fieldList);
+        Optional<User> user = userConnector.search(externalId, fieldList);
         ///then
-        assertNull(user);
+        assertNotNull(user);
+        assertTrue(user.isEmpty());
         ArgumentCaptor<EmbeddedExternalId> embeddedCaptor = ArgumentCaptor.forClass(EmbeddedExternalId.class);
         Mockito.verify(restClientMock, Mockito.times(1))
                 .search(embeddedCaptor.capture(), Mockito.eq(EnumSet.allOf(User.Fields.class)));
@@ -94,7 +93,7 @@ class UserRegistryConnectorImplTest {
         Mockito.when(restClientMock.search(Mockito.any(), Mockito.any()))
                 .thenReturn(userMock);
         //when
-        User user = userConnector.search(externalId, fieldList);
+        User user = userConnector.search(externalId, fieldList).get();
         ///then
         assertEquals(NONE, user.getName().getCertification());
         assertEquals(NONE, user.getEmail().getCertification());
@@ -141,7 +140,7 @@ class UserRegistryConnectorImplTest {
         Mockito.when(restClientMock.search(Mockito.any(), Mockito.any()))
                 .thenReturn(userMock);
         //when
-        User user = userConnector.search(externalId, fieldList);
+        User user = userConnector.search(externalId, fieldList).get();
         //then
         assertEquals(SPID, user.getName().getCertification());
         assertEquals(SPID, user.getEmail().getCertification());

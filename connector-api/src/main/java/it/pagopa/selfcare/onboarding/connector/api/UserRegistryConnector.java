@@ -6,11 +6,12 @@ import it.pagopa.selfcare.onboarding.connector.model.user.User;
 import it.pagopa.selfcare.onboarding.connector.model.user.UserId;
 
 import java.util.EnumSet;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface UserRegistryConnector {
 
-    User search(String externalId, EnumSet<User.Fields> fieldList);
+    Optional<User> search(String externalId, EnumSet<User.Fields> fieldList);
 
     User getUserByInternalId(String userId, EnumSet<User.Fields> fieldList);
 
