@@ -484,7 +484,7 @@ class InstitutionServiceImplTest {
                         final it.pagopa.selfcare.onboarding.connector.model.user.User user = new it.pagopa.selfcare.onboarding.connector.model.user.User();
                         final CertifiedField<String> name = new CertifiedField<>();
                         name.setCertification(Certification.NONE);
-                        name.setValue("setName1");
+                        name.setValue("setName2");
                         user.setName(name);
                         final CertifiedField<String> familyName = new CertifiedField<>();
                         familyName.setCertification(Certification.NONE);
@@ -578,15 +578,9 @@ class InstitutionServiceImplTest {
                         name.setValue("setName2");
                         user.setName(name);
                         final CertifiedField<String> familyName = new CertifiedField<>();
-                        familyName.setCertification(Certification.NONE);
-                        familyName.setValue("setSurname1");
+                        familyName.setCertification(Certification.SPID);
+                        familyName.setValue("setSurname2");
                         user.setFamilyName(familyName);
-                        final CertifiedField<String> email = new CertifiedField<>();
-                        email.setCertification(Certification.SPID);
-                        email.setValue("setEmail2");
-                        final WorkContact workContact = new WorkContact();
-                        workContact.setEmail(email);
-                        user.setWorkContacts(Map.of(institution.getId(), workContact));
                         user.setId(UUID.randomUUID().toString());
                         return Optional.of(user);
                     }
