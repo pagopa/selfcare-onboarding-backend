@@ -126,28 +126,27 @@ class InstitutionServiceImpl implements InstitutionService {
 
 
     private Optional<MutableUserFieldsDto> createUpdateRequest(User user, it.pagopa.selfcare.onboarding.connector.model.user.User foundUser, String institutionInternalId) {
-        MutableUserFieldsDto mutableUserFieldsDto = null;
+        Optional<MutableUserFieldsDto> mutableUserFieldsDto = Optional.empty();
         if (isFieldToUpdate(foundUser.getName(), user.getName())) {
-            mutableUserFieldsDto = new MutableUserFieldsDto();
-            mutableUserFieldsDto.setName(CertifiedFieldMapper.map(user.getName()));
+            MutableUserFieldsDto dto = new MutableUserFieldsDto();
+            dto.setName(CertifiedFieldMapper.map(user.getName()));
+            mutableUserFieldsDto = Optional.of(dto);
         }
         if (isFieldToUpdate(foundUser.getFamilyName(), user.getSurname())) {
-            if (mutableUserFieldsDto == null) {
-                mutableUserFieldsDto = new MutableUserFieldsDto();
-            }
-            mutableUserFieldsDto.setFamilyName(CertifiedFieldMapper.map(user.getSurname()));
+            MutableUserFieldsDto dto = mutableUserFieldsDto.orElseGet(MutableUserFieldsDto::new);
+            dto.setFamilyName(CertifiedFieldMapper.map(user.getSurname()));
+            mutableUserFieldsDto = Optional.of(dto);
         }
         if (foundUser.getWorkContacts() == null
                 || !foundUser.getWorkContacts().containsKey(institutionInternalId)
                 || isFieldToUpdate(foundUser.getWorkContacts().get(institutionInternalId).getEmail(), user.getEmail())) {
-            if (mutableUserFieldsDto == null) {
-                mutableUserFieldsDto = new MutableUserFieldsDto();
-            }
+            MutableUserFieldsDto dto = mutableUserFieldsDto.orElseGet(MutableUserFieldsDto::new);
             final WorkContact workContact = new WorkContact();
             workContact.setEmail(CertifiedFieldMapper.map(user.getEmail()));
-            mutableUserFieldsDto.setWorkContacts(Map.of(institutionInternalId, workContact));
+            dto.setWorkContacts(Map.of(institutionInternalId, workContact));
+            mutableUserFieldsDto = Optional.of(dto);
         }
-        return Optional.ofNullable(mutableUserFieldsDto);
+        return mutableUserFieldsDto;
     }
 
 
