@@ -581,6 +581,12 @@ class InstitutionServiceImplTest {
                         familyName.setCertification(Certification.SPID);
                         familyName.setValue("setSurname2");
                         user.setFamilyName(familyName);
+                        final CertifiedField<String> email = new CertifiedField<>();
+                        email.setCertification(Certification.NONE);
+                        email.setValue("setEmail1");
+                        final WorkContact workContact = new WorkContact();
+                        workContact.setEmail(email);
+                        user.setWorkContacts(Map.of(institution.getId(), workContact));
                         user.setId(UUID.randomUUID().toString());
                         return Optional.of(user);
                     }
@@ -671,7 +677,7 @@ class InstitutionServiceImplTest {
                         email.setValue("setEmail1");
                         final WorkContact workContact = new WorkContact();
                         workContact.setEmail(email);
-                        user.setWorkContacts(Map.of(institution.getId(), workContact));
+                        user.setWorkContacts(Map.of("differentKey", workContact));
                         user.setId(UUID.randomUUID().toString());
                         return Optional.of(user);
                     }
