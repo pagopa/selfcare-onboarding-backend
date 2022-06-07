@@ -1,6 +1,6 @@
 package it.pagopa.selfcare.onboarding.web.handler;
 
-import it.pagopa.selfcare.commons.web.model.ErrorResource;
+import it.pagopa.selfcare.commons.web.model.Problem;
 import it.pagopa.selfcare.onboarding.connector.exceptions.ManagerNotFoundException;
 import it.pagopa.selfcare.onboarding.connector.exceptions.ResourceNotFoundException;
 import it.pagopa.selfcare.onboarding.core.exception.UpdateNotAllowedException;
@@ -9,6 +9,7 @@ import org.mockito.Mockito;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.springframework.http.HttpStatus.*;
 
 class OnboardingExceptionHandlerTest {
 
@@ -27,10 +28,11 @@ class OnboardingExceptionHandlerTest {
         Mockito.when(exceptionMock.getMessage())
                 .thenReturn(DETAIL_MESSAGE);
         //when
-        ErrorResource resource = handler.handleResourceNotFoundException(exceptionMock);
+        Problem resource = handler.handleResourceNotFoundException(exceptionMock);
         //then
         assertNotNull(resource);
-        assertEquals(DETAIL_MESSAGE, resource.getMessage());
+        assertEquals(DETAIL_MESSAGE, resource.getDetail());
+        assertEquals(NOT_FOUND.value(), resource.getStatus());
     }
 
 
@@ -41,10 +43,11 @@ class OnboardingExceptionHandlerTest {
         Mockito.when(exceptionMock.getMessage())
                 .thenReturn(DETAIL_MESSAGE);
         //when
-        ErrorResource resource = handler.handleProductHasNoRelationshipException(exceptionMock);
+        Problem resource = handler.handleProductHasNoRelationshipException(exceptionMock);
         //then
         assertNotNull(resource);
-        assertEquals(DETAIL_MESSAGE, resource.getMessage());
+        assertEquals(DETAIL_MESSAGE, resource.getDetail());
+        assertEquals(INTERNAL_SERVER_ERROR.value(), resource.getStatus());
     }
 
 
@@ -55,10 +58,11 @@ class OnboardingExceptionHandlerTest {
         Mockito.when(mockException.getMessage())
                 .thenReturn(DETAIL_MESSAGE);
         // when
-        ErrorResource response = handler.handleUpdateNotAllowedException(mockException);
+        Problem resource = handler.handleUpdateNotAllowedException(mockException);
         // then
-        assertNotNull(response);
-        assertEquals(DETAIL_MESSAGE, response.getMessage());
+        assertNotNull(resource);
+        assertEquals(DETAIL_MESSAGE, resource.getDetail());
+        assertEquals(CONFLICT.value(), resource.getStatus());
     }
 
 }
