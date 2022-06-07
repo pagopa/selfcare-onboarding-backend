@@ -224,5 +224,18 @@ class PartyConnectorImpl implements PartyConnector {
         return result;
     }
 
+    @Override
+    public UserInfo getInstitutionManager(String externalInstitutionId, String productId) {
+        log.trace("getInstitutionManager start");
+        log.debug("getInstitutionManager externalId = {}, productId = {}", externalInstitutionId, productId);
+        Assert.hasText(externalInstitutionId, REQUIRED_INSTITUTION_ID_MESSAGE);
+        Assert.hasText(productId, REQUIRED_PRODUCT_ID_MESSAGE);
+        RelationshipInfo relationshipInfo = restClient.getInstitutionManager(externalInstitutionId, productId);
+        UserInfo result = RELATIONSHIP_INFO_TO_USER_INFO_FUNCTION.apply(relationshipInfo);
+        log.debug("getInstitutionManager result = {}", result);
+        log.trace("getInstitutionManager end");
+        return result;
+    }
+
 
 }

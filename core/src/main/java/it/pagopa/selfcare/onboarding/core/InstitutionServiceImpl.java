@@ -126,28 +126,27 @@ class InstitutionServiceImpl implements InstitutionService {
 
 
     private Optional<MutableUserFieldsDto> createUpdateRequest(User user, it.pagopa.selfcare.onboarding.connector.model.user.User foundUser, String institutionInternalId) {
-        MutableUserFieldsDto mutableUserFieldsDto = null;
+        Optional<MutableUserFieldsDto> mutableUserFieldsDto = Optional.empty();
         if (isFieldToUpdate(foundUser.getName(), user.getName())) {
-            mutableUserFieldsDto = new MutableUserFieldsDto();
-            mutableUserFieldsDto.setName(CertifiedFieldMapper.map(user.getName()));
+            MutableUserFieldsDto dto = new MutableUserFieldsDto();
+            dto.setName(CertifiedFieldMapper.map(user.getName()));
+            mutableUserFieldsDto = Optional.of(dto);
         }
         if (isFieldToUpdate(foundUser.getFamilyName(), user.getSurname())) {
-            if (mutableUserFieldsDto == null) {
-                mutableUserFieldsDto = new MutableUserFieldsDto();
-            }
-            mutableUserFieldsDto.setFamilyName(CertifiedFieldMapper.map(user.getSurname()));
+            MutableUserFieldsDto dto = mutableUserFieldsDto.orElseGet(MutableUserFieldsDto::new);
+            dto.setFamilyName(CertifiedFieldMapper.map(user.getSurname()));
+            mutableUserFieldsDto = Optional.of(dto);
         }
         if (foundUser.getWorkContacts() == null
                 || !foundUser.getWorkContacts().containsKey(institutionInternalId)
                 || isFieldToUpdate(foundUser.getWorkContacts().get(institutionInternalId).getEmail(), user.getEmail())) {
-            if (mutableUserFieldsDto == null) {
-                mutableUserFieldsDto = new MutableUserFieldsDto();
-            }
+            MutableUserFieldsDto dto = mutableUserFieldsDto.orElseGet(MutableUserFieldsDto::new);
             final WorkContact workContact = new WorkContact();
             workContact.setEmail(CertifiedFieldMapper.map(user.getEmail()));
-            mutableUserFieldsDto.setWorkContacts(Map.of(institutionInternalId, workContact));
+            dto.setWorkContacts(Map.of(institutionInternalId, workContact));
+            mutableUserFieldsDto = Optional.of(dto);
         }
-        return Optional.ofNullable(mutableUserFieldsDto);
+        return mutableUserFieldsDto;
     }
 
 
@@ -219,17 +218,12 @@ class InstitutionServiceImpl implements InstitutionService {
                 .filter(partyRole -> SelfCareAuthority.ADMIN.equals(partyRole.getSelfCareAuthority()))
                 .collect(Collectors.toCollection(() -> EnumSet.noneOf(PartyRole.class)));
         if (checkAuthority(externalInstitutionId, productId, roles)) {
-            UserInfo.UserInfoFilter userInfoFilter = new UserInfo.UserInfoFilter();
-            userInfoFilter.setProductId(Optional.of(productId));
-            userInfoFilter.setRole(MANAGER_ROLE_FILTER);
-            userInfoFilter.setAllowedStates(ACTIVE_ALLOWED_STATES_FILTER);
-            Collection<UserInfo> userInfos = partyConnector.getUsers(externalInstitutionId, userInfoFilter).stream()
-                    .peek(userInfo -> userInfo.setUser(userConnector.getUserByInternalId(userInfo.getId(), USER_FIELD_LIST_ENHANCED)))
-                    .collect(Collectors.toList());
-            if (!userInfos.iterator().hasNext()) {
+            final EnumSet<it.pagopa.selfcare.onboarding.connector.model.user.User.Fields> fieldList = EnumSet.of(name, familyName, workContacts, fiscalCode);
+            UserInfo manager = partyConnector.getInstitutionManager(externalInstitutionId, productId);
+            if (manager == null) {
                 throw new ResourceNotFoundException(String.format("No Manager found for given institution: %s", externalInstitutionId));
             }
-            UserInfo manager = userInfos.iterator().next();
+            manager.setUser(userConnector.getUserByInternalId(manager.getId(), fieldList));
             result.setManager(manager);
         }
         InstitutionInfo institution = partyConnector.getOnboardedInstitution(externalInstitutionId);

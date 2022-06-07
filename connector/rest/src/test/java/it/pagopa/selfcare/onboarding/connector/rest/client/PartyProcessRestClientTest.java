@@ -5,6 +5,7 @@ import it.pagopa.selfcare.commons.connector.rest.BaseFeignRestClientTest;
 import it.pagopa.selfcare.commons.connector.rest.RestTestUtils;
 import it.pagopa.selfcare.commons.utils.TestUtils;
 import it.pagopa.selfcare.onboarding.connector.exceptions.ResourceNotFoundException;
+import it.pagopa.selfcare.onboarding.connector.model.RelationshipInfo;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipState;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipsResponse;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
@@ -254,5 +255,36 @@ class PartyProcessRestClientTest extends BaseFeignRestClientTest {
         TestUtils.checkNotNullFields(response);
     }
 
+    @Test
+    void getInstitutionManager_fullyValued() {
+        //given
+        String externalId = "externalId1";
+        String productId = "productId";
+        //when
+        RelationshipInfo response = restClient.getInstitutionManager(externalId, productId);
+        //then
+        assertNotNull(response);
+        TestUtils.checkNotNullFields(response);
+    }
+
+    @Test
+    void getInstitutionManager_fullyNull() {
+        //given
+        String externalId = "externalId2";
+        String productId = "productId";
+        //when
+        RelationshipInfo response = restClient.getInstitutionManager(externalId, productId);
+        //then
+        assertNotNull(response);
+        assertNull(response.getId());
+        assertNull(response.getFrom());
+        assertNull(response.getRole());
+        assertNull(response.getState());
+        assertNull(response.getBilling());
+        assertNull(response.getPricingPlan());
+        assertNull(response.getCreatedAt());
+        assertNull(response.getInstitutionUpdate());
+
+    }
 
 }
