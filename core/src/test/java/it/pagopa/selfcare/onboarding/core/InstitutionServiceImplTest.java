@@ -1,7 +1,5 @@
 package it.pagopa.selfcare.onboarding.core;
 
-import it.pagopa.selfcare.commons.base.security.SelfCareAuthority;
-import it.pagopa.selfcare.commons.base.security.SelfCareUser;
 import it.pagopa.selfcare.onboarding.connector.api.PartyConnector;
 import it.pagopa.selfcare.onboarding.connector.api.ProductsConnector;
 import it.pagopa.selfcare.onboarding.connector.api.UserRegistryConnector;
@@ -27,15 +25,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.authentication.TestingAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.test.context.TestSecurityContextHolder;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static it.pagopa.selfcare.commons.utils.TestUtils.mockInstance;
-import static it.pagopa.selfcare.onboarding.connector.model.RelationshipState.ACTIVE;
 import static it.pagopa.selfcare.onboarding.connector.model.user.User.Fields.*;
 import static it.pagopa.selfcare.onboarding.core.InstitutionServiceImpl.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -699,8 +693,6 @@ class InstitutionServiceImplTest {
         onboardingData.getUsers().forEach(user ->
                 verify(userConnectorMock, times(1))
                         .search(user.getTaxCode(), EnumSet.of(name, familyName, workContacts)));
-        verify(userConnectorMock, times(1))
-                .updateUser(any(), any());
         verify(partyConnectorMock, times(1))
                 .onboardingOrganization(any());
         verifyNoMoreInteractions(productsConnectorMock);
@@ -1015,127 +1007,18 @@ class InstitutionServiceImplTest {
     }
 
     @Test
-    void getInstitutionOnboardingData_noAuthentication() {
-        //String
-        String institutionId = "institutionId";
-        String productId = "productId";
-        //when
-        Executable executable = () -> institutionService.getInstitutionOnboardingData(institutionId, productId);
-        //then
-        IllegalStateException e = assertThrows(IllegalStateException.class, executable);
-        assertEquals("Authentication is required", e.getMessage());
-        verifyNoInteractions(partyConnectorMock, productsConnectorMock, userConnectorMock);
-    }
-
-    @Test
-    void getInstitutionOnboardingData_nullPrincipal() {
-        //given
-        String institutionId = "institutionId";
-        String productId = "productId";
-        TestSecurityContextHolder.setAuthentication(new TestingAuthenticationToken(null, null));
-        //when
-        Executable executable = () -> institutionService.getInstitutionOnboardingData(institutionId, productId);
-        //then
-        IllegalStateException e = assertThrows(IllegalStateException.class, executable);
-        assertEquals("Not SelfCareUser principal", e.getMessage());
-        verifyNoInteractions(partyConnectorMock, productsConnectorMock, userConnectorMock);
-    }
-
-    @Test
-    void getInstitutionOnboardingData_notAdmin() {
-        //given
-        String institutionId = "institutionId";
-        String productId = "productId";
-        String loggedUser = "loggedUser";
-        SelfCareUser selfCareUser = SelfCareUser.builder(loggedUser).email("test@example.com").build();
-        TestingAuthenticationToken authenticationToken = new TestingAuthenticationToken(selfCareUser, null);
-        TestSecurityContextHolder.setAuthentication(authenticationToken);
-        UserInfo userInfoMock = mockInstance(new UserInfo(), "setId", "setRole");
-        userInfoMock.setId(loggedUser);
-        when(partyConnectorMock.getUsers(Mockito.anyString(), any()))
-                .thenReturn(Collections.emptyList());
-        InstitutionInfo institutionInfoMock = mockInstance(new InstitutionInfo());
-        Billing billingMock = mockInstance(new Billing());
-        institutionInfoMock.setBilling(billingMock);
-        when(partyConnectorMock.getOnboardedInstitution(Mockito.anyString()))
-                .thenReturn(institutionInfoMock);
-        //when
-        InstitutionOnboardingData institutionOnboardingData = institutionService.getInstitutionOnboardingData(institutionId, productId);
-        //then
-        assertNotNull(institutionOnboardingData);
-        assertNull(institutionOnboardingData.getManager());
-        assertNotNull(institutionOnboardingData.getInstitution());
-        assertEquals(institutionInfoMock.getId(), institutionOnboardingData.getInstitution().getId());
-        assertEquals(institutionInfoMock.getExternalId(), institutionOnboardingData.getInstitution().getExternalId());
-        assertEquals(institutionInfoMock.getAddress(), institutionOnboardingData.getInstitution().getAddress());
-        assertEquals(institutionInfoMock.getInstitutionType(), institutionOnboardingData.getInstitution().getInstitutionType());
-        assertEquals(institutionInfoMock.getCategory(), institutionOnboardingData.getInstitution().getCategory());
-        assertEquals(institutionInfoMock.getDescription(), institutionOnboardingData.getInstitution().getDescription());
-        assertEquals(institutionInfoMock.getDescription(), institutionOnboardingData.getInstitution().getDescription());
-        assertEquals(institutionInfoMock.getTaxCode(), institutionOnboardingData.getInstitution().getTaxCode());
-        assertEquals(institutionInfoMock.getZipCode(), institutionOnboardingData.getInstitution().getZipCode());
-        assertEquals(institutionInfoMock.getDigitalAddress(), institutionOnboardingData.getInstitution().getDigitalAddress());
-        assertEquals(institutionInfoMock.getBilling().getVatNumber(), institutionOnboardingData.getInstitution().getBilling().getVatNumber());
-        assertEquals(institutionInfoMock.getBilling().getRecipientCode(), institutionOnboardingData.getInstitution().getBilling().getRecipientCode());
-        assertEquals(institutionInfoMock.getBilling().getPublicServices(), institutionOnboardingData.getInstitution().getBilling().getPublicServices());
-        ArgumentCaptor<UserInfo.UserInfoFilter> filterCaptor = ArgumentCaptor.forClass(UserInfo.UserInfoFilter.class);
-        verify(partyConnectorMock, times(1))
-                .getUsers(Mockito.eq(institutionId), filterCaptor.capture());
-        UserInfo.UserInfoFilter capturedFilter = filterCaptor.getValue();
-        assertEquals(capturedFilter.getAllowedStates().get(), EnumSet.of(ACTIVE));
-        assertEquals(capturedFilter.getRole().get(), EnumSet.of(PartyRole.MANAGER, PartyRole.DELEGATE, PartyRole.SUB_DELEGATE));
-        assertEquals(capturedFilter.getProductId().get(), productId);
-        assertEquals(capturedFilter.getUserId().get(), loggedUser);
-        verify(partyConnectorMock, times(1))
-                .getOnboardedInstitution(institutionId);
-        verifyNoMoreInteractions(partyConnectorMock);
-        verifyNoInteractions(productsConnectorMock, userConnectorMock);
-    }
-
-    @Test
     void getInstitutionOnboardingData_ManagerNotFound() {
         //given
         String institutionId = "institutionId";
         String productId = "productId";
-        String loggedUser = "loggedUser";
-        EnumSet<PartyRole> roles = Arrays.stream(PartyRole.values())
-                .filter(partyRole -> SelfCareAuthority.ADMIN.equals(partyRole.getSelfCareAuthority()))
-                .collect(Collectors.toCollection(() -> EnumSet.noneOf(PartyRole.class)));
-        SelfCareUser selfCareUser = SelfCareUser.builder(loggedUser).email("test@example.com").build();
-        TestingAuthenticationToken authenticationToken = new TestingAuthenticationToken(selfCareUser, null);
-        TestSecurityContextHolder.setAuthentication(authenticationToken);
-        UserInfo userInfoMock = mockInstance(new UserInfo(), "setId", "setRole");
-        userInfoMock.setId(loggedUser);
-        UserInfo.UserInfoFilter filterLoggedUsers = new UserInfo.UserInfoFilter();
-        filterLoggedUsers.setRole(Optional.of(EnumSet.of(PartyRole.DELEGATE)));
-        when(partyConnectorMock.getUsers(Mockito.anyString(), any()))
-                .thenAnswer(invocation -> {
-                            UserInfo.UserInfoFilter argument = invocation.getArgument(1, UserInfo.UserInfoFilter.class);
-                            if (argument.getUserId().isPresent())
-                                return Collections.singletonList(userInfoMock);
-                            else
-                                return Collections.emptyList();
-                        }
-                );
         //when
         Executable executable = () -> institutionService.getInstitutionOnboardingData(institutionId, productId);
         //then
         ResourceNotFoundException e = assertThrows(ResourceNotFoundException.class, executable);
         assertEquals(String.format("No Manager found for given institution: %s", institutionId), e.getMessage());
 
-        ArgumentCaptor<UserInfo.UserInfoFilter> filterCaptor = ArgumentCaptor.forClass(UserInfo.UserInfoFilter.class);
-        verify(partyConnectorMock, times(1))
-                .getUsers(Mockito.eq(institutionId), filterCaptor.capture());
         verify(partyConnectorMock, times(1))
                 .getInstitutionManager(institutionId, productId);
-        UserInfo.UserInfoFilter capturedFilters = filterCaptor.getValue();
-
-        assertEquals(roles, capturedFilters.getRole().get());
-        assertEquals(EnumSet.of(ACTIVE), capturedFilters.getAllowedStates().get());
-        assertEquals(loggedUser, capturedFilters.getUserId().get());
-        assertEquals(productId, capturedFilters.getProductId().get());
-        assertTrue(capturedFilters.getProductRoles().isEmpty());
-
         verify(partyConnectorMock, times(0))
                 .getOnboardedInstitution(institutionId);
         verifyNoMoreInteractions(partyConnectorMock);
@@ -1147,31 +1030,27 @@ class InstitutionServiceImplTest {
         //given
         String institutionId = "institutionId";
         String productId = "productId";
-        String loggedUser = "loggedUser";
-        SelfCareUser selfCareUser = SelfCareUser.builder(loggedUser).email("test@example.com").build();
-        TestingAuthenticationToken authenticationToken = new TestingAuthenticationToken(selfCareUser, null);
-        TestSecurityContextHolder.setAuthentication(authenticationToken);
-        UserInfo userInfoMock = mockInstance(new UserInfo(), "setId", "setRole");
-        userInfoMock.setId(loggedUser);
-        when(partyConnectorMock.getUsers(Mockito.anyString(), any()))
-                .thenReturn(Collections.emptyList());
+        UserInfo userInfoManager = mockInstance(new UserInfo());
+        userInfoManager.setRole(PartyRole.MANAGER);
+        when(partyConnectorMock.getInstitutionManager(any(), any()))
+                .thenReturn(userInfoManager);
+        final it.pagopa.selfcare.onboarding.connector.model.user.User userManagerMock =
+                new it.pagopa.selfcare.onboarding.connector.model.user.User();
+        when(userConnectorMock.getUserByInternalId(any(), any()))
+                .thenReturn(userManagerMock);
         //when
         Executable executable = () -> institutionService.getInstitutionOnboardingData(institutionId, productId);
         //then
         ResourceNotFoundException e = assertThrows(ResourceNotFoundException.class, executable);
         assertEquals(String.format("Institution %s not found", institutionId), e.getMessage());
-        ArgumentCaptor<UserInfo.UserInfoFilter> filterCaptor = ArgumentCaptor.forClass(UserInfo.UserInfoFilter.class);
         verify(partyConnectorMock, times(1))
-                .getUsers(Mockito.eq(institutionId), filterCaptor.capture());
-        UserInfo.UserInfoFilter capturedFilter = filterCaptor.getValue();
-        assertEquals(capturedFilter.getAllowedStates().get(), EnumSet.of(ACTIVE));
-        assertEquals(capturedFilter.getRole().get(), EnumSet.of(PartyRole.MANAGER, PartyRole.DELEGATE, PartyRole.SUB_DELEGATE));
-        assertEquals(capturedFilter.getProductId().get(), productId);
-        assertEquals(capturedFilter.getUserId().get(), loggedUser);
+                .getInstitutionManager(institutionId, productId);
         verify(partyConnectorMock, times(1))
                 .getOnboardedInstitution(institutionId);
-        verifyNoMoreInteractions(partyConnectorMock);
-        verifyNoInteractions(productsConnectorMock, userConnectorMock);
+        verify(userConnectorMock, times(1))
+                .getUserByInternalId(userInfoManager.getId(), EnumSet.of(name, familyName, workContacts, fiscalCode));
+        verifyNoMoreInteractions(partyConnectorMock, userConnectorMock);
+        verifyNoInteractions(productsConnectorMock);
     }
 
 
@@ -1181,20 +1060,12 @@ class InstitutionServiceImplTest {
         String institutionId = "institutionId";
         String productId = "productId";
         String loggedUser = "loggedUser";
-        EnumSet<PartyRole> roles = Arrays.stream(PartyRole.values())
-                .filter(partyRole -> SelfCareAuthority.ADMIN.equals(partyRole.getSelfCareAuthority()))
-                .collect(Collectors.toCollection(() -> EnumSet.noneOf(PartyRole.class)));
-        SelfCareUser selfCareUser = SelfCareUser.builder(loggedUser).email("test@example.com").build();
-        TestingAuthenticationToken authenticationToken = new TestingAuthenticationToken(selfCareUser, null);
-        TestSecurityContextHolder.setAuthentication(authenticationToken);
         UserInfo userInfoMock = mockInstance(new UserInfo(), "setId", "setRole");
         userInfoMock.setId(loggedUser);
         UserInfo userInfoManager = mockInstance(new UserInfo());
         userInfoManager.setRole(PartyRole.MANAGER);
         when(partyConnectorMock.getInstitutionManager(any(), any()))
                 .thenReturn(userInfoManager);
-        when(partyConnectorMock.getUsers(Mockito.anyString(), any()))
-                .thenReturn(Collections.singletonList(userInfoMock));
         final it.pagopa.selfcare.onboarding.connector.model.user.User userManagerMock =
                 new it.pagopa.selfcare.onboarding.connector.model.user.User();
         when(userConnectorMock.getUserByInternalId(any(), any()))
@@ -1213,17 +1084,6 @@ class InstitutionServiceImplTest {
         assertNotNull(institutionOnboardingData.getInstitution());
         assertEquals(institutionInfoMock, institutionOnboardingData.getInstitution());
 
-        ArgumentCaptor<UserInfo.UserInfoFilter> filterCaptor = ArgumentCaptor.forClass(UserInfo.UserInfoFilter.class);
-        verify(partyConnectorMock, times(1))
-                .getUsers(Mockito.eq(institutionId), filterCaptor.capture());
-        UserInfo.UserInfoFilter capturedFilter = filterCaptor.getValue();
-
-        assertEquals(roles, capturedFilter.getRole().get());
-        assertEquals(EnumSet.of(ACTIVE), capturedFilter.getAllowedStates().get());
-        assertEquals(loggedUser, capturedFilter.getUserId().get());
-        assertEquals(productId, capturedFilter.getProductId().get());
-        assertTrue(capturedFilter.getProductRoles().isEmpty());
-
         verify(partyConnectorMock, times(1))
                 .getInstitutionManager(institutionId, productId);
         verify(partyConnectorMock, times(1))
@@ -1232,7 +1092,6 @@ class InstitutionServiceImplTest {
                 .getUserByInternalId(userInfoManager.getId(), EnumSet.of(name, familyName, workContacts, fiscalCode));
         verifyNoMoreInteractions(partyConnectorMock, userConnectorMock);
         verifyNoInteractions(productsConnectorMock);
-
     }
 
     @Test

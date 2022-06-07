@@ -1,8 +1,6 @@
 package it.pagopa.selfcare.onboarding.core;
 
 import it.pagopa.selfcare.commons.base.logging.LogUtils;
-import it.pagopa.selfcare.commons.base.security.SelfCareAuthority;
-import it.pagopa.selfcare.commons.base.security.SelfCareUser;
 import it.pagopa.selfcare.onboarding.connector.api.PartyConnector;
 import it.pagopa.selfcare.onboarding.connector.api.ProductsConnector;
 import it.pagopa.selfcare.onboarding.connector.api.UserRegistryConnector;
@@ -28,13 +26,10 @@ import it.pagopa.selfcare.onboarding.connector.model.user.mapper.UserMapper;
 import it.pagopa.selfcare.onboarding.core.exception.UpdateNotAllowedException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static it.pagopa.selfcare.onboarding.connector.model.user.User.Fields.*;
 
@@ -214,18 +209,14 @@ class InstitutionServiceImpl implements InstitutionService {
         Assert.hasText(externalInstitutionId, REQUIRED_INSTITUTION_ID_MESSAGE);
         InstitutionOnboardingData result = new InstitutionOnboardingData();
 
-        EnumSet<PartyRole> roles = Arrays.stream(PartyRole.values())
-                .filter(partyRole -> SelfCareAuthority.ADMIN.equals(partyRole.getSelfCareAuthority()))
-                .collect(Collectors.toCollection(() -> EnumSet.noneOf(PartyRole.class)));
-        if (checkAuthority(externalInstitutionId, productId, roles)) {
-            final EnumSet<it.pagopa.selfcare.onboarding.connector.model.user.User.Fields> fieldList = EnumSet.of(name, familyName, workContacts, fiscalCode);
-            UserInfo manager = partyConnector.getInstitutionManager(externalInstitutionId, productId);
-            if (manager == null) {
-                throw new ResourceNotFoundException(String.format("No Manager found for given institution: %s", externalInstitutionId));
-            }
-            manager.setUser(userConnector.getUserByInternalId(manager.getId(), fieldList));
-            result.setManager(manager);
+        final EnumSet<it.pagopa.selfcare.onboarding.connector.model.user.User.Fields> fieldList = EnumSet.of(name, familyName, workContacts, fiscalCode);
+        UserInfo manager = partyConnector.getInstitutionManager(externalInstitutionId, productId);
+        if (manager == null) {
+            throw new ResourceNotFoundException(String.format("No Manager found for given institution: %s", externalInstitutionId));
         }
+        manager.setUser(userConnector.getUserByInternalId(manager.getId(), fieldList));
+        result.setManager(manager);
+
         InstitutionInfo institution = partyConnector.getOnboardedInstitution(externalInstitutionId);
         if (institution == null) {
             throw new ResourceNotFoundException(String.format("Institution %s not found", externalInstitutionId));
@@ -234,21 +225,6 @@ class InstitutionServiceImpl implements InstitutionService {
         log.debug(LogUtils.CONFIDENTIAL_MARKER, "getManager result = {}", result);
         log.trace("getManager end");
         return result;
-    }
-
-
-    private Boolean checkAuthority(String externalInstitutionId, String productId, EnumSet<PartyRole> roles) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Assert.state(authentication != null, "Authentication is required");
-        Assert.state(authentication.getPrincipal() instanceof SelfCareUser, "Not SelfCareUser principal");
-        SelfCareUser principal = ((SelfCareUser) authentication.getPrincipal());
-        UserInfo.UserInfoFilter filter = new UserInfo.UserInfoFilter();
-        filter.setUserId(Optional.of(principal.getId()));
-        filter.setProductId(Optional.of(productId));
-        filter.setAllowedStates(ACTIVE_ALLOWED_STATES_FILTER);
-        filter.setRole(Optional.of(roles));
-        Collection<UserInfo> userInfos = partyConnector.getUsers(externalInstitutionId, filter);
-        return userInfos.iterator().hasNext();
     }
 
 
