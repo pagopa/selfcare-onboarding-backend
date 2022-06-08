@@ -5,17 +5,18 @@
     "description" : "Self Care OnBoarding API documentation",
     "version" : "0.0.1-SNAPSHOT"
   },
-  "servers" : [ {
-    "url": "{basePath}:{port}",
-    "variables": {
-      "basePath": {
-        "default": "http://localhost"
-      },
-      "port": {
-        "default": "80"
+  "servers": [
+    {
+      "url": "{basePath}:{port}",
+      "variables": {
+        "basePath": {
+          "default": "http://localhost"
+        },
+        "port": {
+          "default": "8080"
+        }
       }
     }
-  }
   ],
   "tags": [
     {
@@ -43,7 +44,7 @@
         "responses": {
           "200": {
             "description": "OK",
-            "content" : {
+            "content": {
               "application/json": {
                 "schema": {
                   "type": "array",
@@ -454,8 +455,8 @@
           }
         },
         "responses": {
-          "200": {
-            "description": "OK"
+          "204": {
+            "description": "No Content"
           },
           "400": {
             "description": "Bad Request",
@@ -783,19 +784,10 @@
       "UserDataValidationDto": {
         "title": "UserDataValidationDto",
         "required": [
-          "email",
-          "name",
-          "surname",
           "taxCode"
         ],
         "type": "object",
         "properties": {
-          "email": {
-            "type": "string",
-            "description": "User's email",
-            "format": "email",
-            "example": "email@example.com"
-          },
           "name": {
             "type": "string",
             "description": "User's name"
@@ -839,13 +831,13 @@
               "SUB_DELEGATE"
             ]
           },
-          "surname" : {
-            "type" : "string",
-            "description" : "User's surname"
+          "surname": {
+            "type": "string",
+            "description": "User's surname"
           },
-          "taxCode" : {
-            "type" : "string",
-            "description" : "User's fiscal code"
+          "taxCode": {
+            "type": "string",
+            "description": "User's fiscal code"
           }
         }
       },

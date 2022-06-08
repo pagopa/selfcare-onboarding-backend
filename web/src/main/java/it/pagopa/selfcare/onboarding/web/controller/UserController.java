@@ -8,8 +8,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import it.pagopa.selfcare.commons.base.logging.LogUtils;
 import it.pagopa.selfcare.commons.web.model.Problem;
-import it.pagopa.selfcare.onboarding.core.ProductService;
+import it.pagopa.selfcare.onboarding.core.UserService;
 import it.pagopa.selfcare.onboarding.web.model.UserDataValidationDto;
+import it.pagopa.selfcare.onboarding.web.model.mapper.UserMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,30 +26,31 @@ import javax.validation.Valid;
 @Api(tags = "user")
 public class UserController {
 
-    private final ProductService productService;
+    private final UserService userService;
 
 
     @Autowired
-    public UserController(ProductService productService) {
-        this.productService = productService;
+    public UserController(UserService userService) {
+        this.userService = userService;
     }
 
 
     @PostMapping("/validate")
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @ApiResponses({
             @ApiResponse(responseCode = "409",
                     description = "Conflict",
                     content = {
-                            @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = Problem.class))
+                            @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+                                    schema = @Schema(implementation = Problem.class))
                     })
     })
     @ApiOperation(value = "", notes = "${swagger.onboarding.user.api.validate}")
     public void validate(@RequestBody @Valid UserDataValidationDto request) {
         log.trace("validate start");
         log.debug(LogUtils.CONFIDENTIAL_MARKER, "validate request = {}", request);
+        userService.validate(UserMapper.toUser(request));
         log.trace("validate end");
-        throw new UnsupportedOperationException("Not yet implemented");
     }
 
 }

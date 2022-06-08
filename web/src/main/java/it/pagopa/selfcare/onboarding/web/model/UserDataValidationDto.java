@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 
 @Data
@@ -15,20 +14,10 @@ public class UserDataValidationDto {
     @NotBlank
     private String taxCode;
 
-    @ApiModelProperty(value = "${swagger.onboarding.user.model.name}", required = true)
-    @JsonProperty(required = true)
-    @NotBlank
+    @ApiModelProperty(value = "${swagger.onboarding.user.model.name}")
     private String name;
 
-    @ApiModelProperty(value = "${swagger.onboarding.user.model.surname}", required = true)
-    @JsonProperty(required = true)
-    @NotBlank
+    @ApiModelProperty(value = "${swagger.onboarding.user.model.surname}")
     private String surname;
-
-    @ApiModelProperty(value = "${swagger.onboarding.user.model.email}", required = true)
-    @JsonProperty(required = true)
-    @NotBlank
-    @Email
-    private String email;
 
 }

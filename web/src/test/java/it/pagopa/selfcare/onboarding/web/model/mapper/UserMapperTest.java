@@ -28,8 +28,9 @@ class UserMapperTest {
     @Test
     void toUser_null() {
         //given
+        final UserDto o = null;
         //when
-        User resource = UserMapper.toUser(null);
+        User resource = UserMapper.toUser(o);
         //then
         assertNull(resource);
     }

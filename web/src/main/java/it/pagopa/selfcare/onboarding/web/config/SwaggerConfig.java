@@ -142,7 +142,7 @@ class SwaggerConfig {
     }
 
     @Bean
-    public ServerSwaggerConfiguration workaround() {
+    public ServerSwaggerConfiguration serverSwaggerConfiguration() {
         return new ServerSwaggerConfiguration();
     }
 

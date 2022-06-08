@@ -20,12 +20,12 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Product getProduct(String id) {
-        log.trace("ProductServiceImpl.getProduct start");
-        log.debug("ProductServiceImpl.getProduct id = {}", id);
+        log.trace("getProduct start");
+        log.debug("getProduct id = {}", id);
         Assert.notNull(id, "ProductId is required");
         Product product = productsConnector.getProduct(id);
-        log.debug("ProductServiceImpl.getProduct result = {}", product);
-        log.trace("ProductServiceImpl.getProduct end");
+        log.debug("getProduct result = {}", product);
+        log.trace("getProduct end");
         return product;
     }
 }
