@@ -181,7 +181,6 @@ class InstitutionServiceImpl implements InstitutionService {
             manager.setName(baseProductManager.getName().getValue());
             manager.setSurname(baseProductManager.getFamilyName().getValue());
             manager.setTaxCode(baseProductManager.getFiscalCode());
-            manager.setProduct(onboardingData.getProductId());
             manager.setRole(PartyRole.MANAGER);
             manager.setEmail(baseProductManager.getWorkContacts().get(response.get(0).getTo()).getEmail().getValue());
             String productRole = product.getRoleMappings().get(PartyRole.MANAGER).getRoles().get(0).getCode();
