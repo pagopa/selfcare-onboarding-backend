@@ -6,10 +6,18 @@
     "version" : "0.0.1-SNAPSHOT"
   },
   "servers" : [ {
-    "url" : "http://localhost:80",
-    "description" : "Inferred Url"
-  } ],
-  "tags" : [
+    "url": "{basePath}:{port}",
+    "variables": {
+      "basePath": {
+        "default": "http://localhost"
+      },
+      "port": {
+        "default": "80"
+      }
+    }
+  }
+  ],
+  "tags": [
     {
       "name": "institutions",
       "description": "Institution operations"
@@ -23,16 +31,18 @@
       "description": "User Controller"
     }
   ],
-  "paths" : {
-    "/institutions" : {
-      "get" : {
-        "tags" : [ "institutions" ],
-        "summary" : "getInstitutions",
-        "description" : "The service retrieves all the onboarded institutions",
-        "operationId" : "getInstitutionsUsingGET",
-        "responses" : {
-          "200" : {
-            "description" : "OK",
+  "paths": {
+    "/institutions": {
+      "get": {
+        "tags": [
+          "institutions"
+        ],
+        "summary": "getInstitutions",
+        "description": "The service retrieves all the onboarded institutions",
+        "operationId": "getInstitutionsUsingGET",
+        "responses": {
+          "200": {
+            "description": "OK",
             "content" : {
               "application/json": {
                 "schema": {
@@ -682,17 +692,22 @@
             "$ref": "#/components/schemas/BillingDataDto"
           },
           "institutionType": {
-            "type" : "string",
-            "description" : "Institution's type",
-            "enum" : [ "GSP", "PA", "PT", "SCP" ]
+            "type": "string",
+            "description": "Institution's type",
+            "enum": [
+              "GSP",
+              "PA",
+              "PT",
+              "SCP"
+            ]
           },
-          "origin" : {
-            "type" : "string",
-            "description" : "Institution data origin"
+          "origin": {
+            "type": "string",
+            "description": "Institution data origin"
           },
-          "pricingPlan" : {
-            "type" : "string",
-            "description" : "Product's pricing plan"
+          "pricingPlan": {
+            "type": "string",
+            "description": "Product's pricing plan"
           },
           "users": {
             "type": "array",
@@ -811,13 +826,18 @@
             "description": "User's email"
           },
           "name": {
-            "type" : "string",
-            "description" : "User's name"
+            "type": "string",
+            "description": "User's name"
           },
-          "role" : {
-            "type" : "string",
-            "description" : "User's role",
-            "enum" : [ "DELEGATE", "MANAGER", "OPERATOR", "SUB_DELEGATE" ]
+          "role": {
+            "type": "string",
+            "description": "User's role",
+            "enum": [
+              "DELEGATE",
+              "MANAGER",
+              "OPERATOR",
+              "SUB_DELEGATE"
+            ]
           },
           "surname" : {
             "type" : "string",

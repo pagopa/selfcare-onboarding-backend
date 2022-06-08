@@ -2,6 +2,8 @@ package it.pagopa.selfcare.onboarding.web.config;
 
 import com.fasterxml.classmate.TypeResolver;
 import it.pagopa.selfcare.commons.web.model.Problem;
+import it.pagopa.selfcare.commons.web.swagger.EmailAnnotationSwaggerPlugin;
+import it.pagopa.selfcare.commons.web.swagger.ServerSwaggerConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.*;
 import org.springframework.core.env.Environment;
@@ -28,8 +30,8 @@ import java.util.List;
 @Import(BeanValidatorPluginsConfiguration.class)
 class SwaggerConfig {
 
-    public static final String AUTH_SCHEMA_NAME = "bearerAuth";
-    public static final Response INTERNAL_SERVER_ERROR_RESPONSE = new ResponseBuilder()
+    private static final String AUTH_SCHEMA_NAME = "bearerAuth";
+    private static final Response INTERNAL_SERVER_ERROR_RESPONSE = new ResponseBuilder()
             .code(String.valueOf(HttpStatus.INTERNAL_SERVER_ERROR.value()))
             .description(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase())
             .representation(MediaType.APPLICATION_PROBLEM_JSON).apply(repBuilder ->
@@ -40,7 +42,7 @@ class SwaggerConfig {
                                                     qualifiedModelNameBuilder.namespace(Problem.class.getPackageName())
                                                             .name(Problem.class.getSimpleName()))))))
             .build();
-    public static final Response BAD_REQUEST_RESPONSE = new ResponseBuilder()
+    private static final Response BAD_REQUEST_RESPONSE = new ResponseBuilder()
             .code(String.valueOf(HttpStatus.BAD_REQUEST.value()))
             .description(HttpStatus.BAD_REQUEST.getReasonPhrase())
             .representation(MediaType.APPLICATION_PROBLEM_JSON).apply(repBuilder ->
@@ -51,7 +53,7 @@ class SwaggerConfig {
                                                     qualifiedModelNameBuilder.namespace(Problem.class.getPackageName())
                                                             .name(Problem.class.getSimpleName()))))))
             .build();
-    public static final Response UNAUTHORIZED_RESPONSE = new ResponseBuilder()
+    private static final Response UNAUTHORIZED_RESPONSE = new ResponseBuilder()
             .code(String.valueOf(HttpStatus.UNAUTHORIZED.value()))
             .description(HttpStatus.UNAUTHORIZED.getReasonPhrase())
             .representation(MediaType.APPLICATION_PROBLEM_JSON).apply(repBuilder ->
@@ -62,7 +64,7 @@ class SwaggerConfig {
                                                     qualifiedModelNameBuilder.namespace(Problem.class.getPackageName())
                                                             .name(Problem.class.getSimpleName()))))))
             .build();
-    public static final Response NOT_FOUND_RESPONSE = new ResponseBuilder()
+    private static final Response NOT_FOUND_RESPONSE = new ResponseBuilder()
             .code(String.valueOf(HttpStatus.NOT_FOUND.value()))
             .description(HttpStatus.NOT_FOUND.getReasonPhrase())
             .representation(MediaType.APPLICATION_PROBLEM_JSON).apply(repBuilder ->
@@ -135,8 +137,13 @@ class SwaggerConfig {
 
 
     @Bean
-    public EmailAnnotationPlugin emailAnnotationPlugin() {
-        return new EmailAnnotationPlugin();
+    public EmailAnnotationSwaggerPlugin emailAnnotationPlugin() {
+        return new EmailAnnotationSwaggerPlugin();
+    }
+
+    @Bean
+    public ServerSwaggerConfiguration workaround() {
+        return new ServerSwaggerConfiguration();
     }
 
 }
