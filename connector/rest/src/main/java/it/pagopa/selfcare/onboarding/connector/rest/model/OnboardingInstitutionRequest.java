@@ -21,6 +21,8 @@ import java.util.List;
 @Data
 public class OnboardingInstitutionRequest {
 
+    private String productId;
+    private String productName;
     private List<User> users;
     private String institutionExternalId;
     private InstitutionUpdate institutionUpdate;

@@ -86,6 +86,7 @@ class InstitutionServiceImpl implements InstitutionService {
         } else {
             roleMappings = product.getRoleMappings();
         }
+        onboardingData.setProductName(product.getTitle());
         Assert.notNull(roleMappings, "Role mappings is required");
         onboardingData.getUsers().forEach(userInfo -> {
             Assert.notNull(roleMappings.get(userInfo.getRole()),

@@ -77,6 +77,8 @@ class PartyConnectorImpl implements PartyConnector {
         onboardingInstitutionRequest.setInstitutionExternalId(onboardingData.getInstitutionExternalId());
         onboardingInstitutionRequest.setPricingPlan(onboardingData.getPricingPlan());
         onboardingInstitutionRequest.setBilling(onboardingData.getBilling());
+        onboardingInstitutionRequest.setProductId(onboardingData.getProductId());
+        onboardingInstitutionRequest.setProductName(onboardingData.getProductName());
         InstitutionUpdate institutionUpdate = new InstitutionUpdate();
         institutionUpdate.setInstitutionType(onboardingData.getInstitutionType());
         institutionUpdate.setAddress(onboardingData.getInstitutionUpdate().getAddress());
@@ -90,7 +92,6 @@ class PartyConnectorImpl implements PartyConnector {
                 .map(userInfo -> {
                     User user = new User();
                     user.setId(userInfo.getId());
-                    user.setProduct(onboardingData.getProductId());
                     user.setName(userInfo.getName());
                     user.setSurname(userInfo.getSurname());
                     user.setTaxCode(userInfo.getTaxCode());
