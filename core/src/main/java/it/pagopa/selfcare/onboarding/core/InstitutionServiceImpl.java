@@ -204,8 +204,8 @@ class InstitutionServiceImpl implements InstitutionService {
 
     @Override
     public InstitutionOnboardingData getInstitutionOnboardingData(String externalInstitutionId, String productId) {
-        log.trace("getManager start");
-        log.debug("getManager externalInstitutionId = {}, productId = {}", externalInstitutionId, productId);
+        log.trace("getInstitutionOnboardingData start");
+        log.debug("getInstitutionOnboardingData externalInstitutionId = {}, productId = {}", externalInstitutionId, productId);
         Assert.hasText(externalInstitutionId, REQUIRED_INSTITUTION_ID_MESSAGE);
         InstitutionOnboardingData result = new InstitutionOnboardingData();
 
@@ -222,8 +222,8 @@ class InstitutionServiceImpl implements InstitutionService {
             throw new ResourceNotFoundException(String.format("Institution %s not found", externalInstitutionId));
         }
         result.setInstitution(institution);
-        log.debug(LogUtils.CONFIDENTIAL_MARKER, "getManager result = {}", result);
-        log.trace("getManager end");
+        log.debug(LogUtils.CONFIDENTIAL_MARKER, "getInstitutionOnboardingData result = {}", result);
+        log.trace("getInstitutionOnboardingData end");
         return result;
     }
 
