@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.ToString;
 
+import java.io.Serializable;
 import java.util.List;
 
 @Getter
@@ -27,7 +28,7 @@ public class InvalidUserFieldsException extends RuntimeException {
 
     @Data
     @AllArgsConstructor
-    public static class InvalidField {
+    public static class InvalidField implements Serializable {
         private String name;
         private String reason;
     }

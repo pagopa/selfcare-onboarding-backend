@@ -5,7 +5,6 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import it.pagopa.selfcare.commons.base.logging.LogUtils;
 import it.pagopa.selfcare.commons.web.model.Problem;
 import it.pagopa.selfcare.onboarding.core.UserService;
@@ -37,14 +36,12 @@ public class UserController {
 
     @PostMapping("/validate")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @ApiResponses({
-            @ApiResponse(responseCode = "409",
-                    description = "Conflict",
-                    content = {
-                            @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
-                                    schema = @Schema(implementation = Problem.class))
-                    })
-    })
+    @ApiResponse(responseCode = "409",
+            description = "Conflict",
+            content = {
+                    @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+                            schema = @Schema(implementation = Problem.class))
+            })
     @ApiOperation(value = "", notes = "${swagger.onboarding.user.api.validate}")
     public void validate(@RequestBody @Valid UserDataValidationDto request) {
         log.trace("validate start");
