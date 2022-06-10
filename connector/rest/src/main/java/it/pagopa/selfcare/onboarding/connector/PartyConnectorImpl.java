@@ -50,7 +50,7 @@ class PartyConnectorImpl implements PartyConnector {
         institutionInfo.setInstitutionType(onboardingData.getInstitutionType());
         return institutionInfo;
     };
-    private static final Function<BillingDataResponse, InstitutionInfo> BILLING_DATA_RESPONSE_INSTITUTION_INFO_FUNCTION = billingDataResponse -> {
+    private static final Function<BillingDataResponse, InstitutionInfo> BILLING_DATA_RESPONSE_TO_INSTITUTION_INFO_FUNCTION = billingDataResponse -> {
         InstitutionInfo institutionInfo = new InstitutionInfo();
         institutionInfo.setId(billingDataResponse.getInstitutionId());
         institutionInfo.setExternalId(billingDataResponse.getExternalId());
@@ -257,7 +257,7 @@ class PartyConnectorImpl implements PartyConnector {
         Assert.hasText(externalId, REQUIRED_INSTITUTION_ID_MESSAGE);
         Assert.hasText(productId, REQUIRED_PRODUCT_ID_MESSAGE);
         BillingDataResponse billingDataResponse = restClient.getInstitutionBillingData(externalId, productId);
-        InstitutionInfo result = BILLING_DATA_RESPONSE_INSTITUTION_INFO_FUNCTION.apply(billingDataResponse);
+        InstitutionInfo result = BILLING_DATA_RESPONSE_TO_INSTITUTION_INFO_FUNCTION.apply(billingDataResponse);
         log.debug("getInstitutionBillingData result = {}", result);
         log.trace("getInstitutionBillingData end");
         return result;
