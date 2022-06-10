@@ -6,6 +6,7 @@ import lombok.Data;
 
 @Data
 public class BillingDataResponse {
+
     private String institutionId;
     private String externalId;
     private String origin;
@@ -18,4 +19,5 @@ public class BillingDataResponse {
     private InstitutionType institutionType;
     private String pricingPlan;
     private Billing billing;
+
 }

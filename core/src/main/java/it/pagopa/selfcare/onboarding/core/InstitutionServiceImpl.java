@@ -43,6 +43,7 @@ class InstitutionServiceImpl implements InstitutionService {
     protected static final String REQUIRED_ONBOARDING_DATA_MESSAGE = "Onboarding data is required";
     protected static final String ATLEAST_ONE_PRODUCT_ROLE_REQUIRED = "At least one Product role related to %s Party role is required";
     protected static final String MORE_THAN_ONE_PRODUCT_ROLE_AVAILABLE = "More than one Product role related to %s Party role is available. Cannot automatically set the Product role";
+    protected static final String A_PRODUCT_ID_IS_REQUIRED = "A Product Id is required";
 
     private static final EnumSet<it.pagopa.selfcare.onboarding.connector.model.user.User.Fields> USER_FIELD_LIST_ENHANCED = EnumSet.of(fiscalCode, name, familyName, workContacts);
     private static final EnumSet<it.pagopa.selfcare.onboarding.connector.model.user.User.Fields> USER_FIELD_LIST = EnumSet.of(name, familyName, workContacts);
@@ -207,6 +208,7 @@ class InstitutionServiceImpl implements InstitutionService {
         log.trace("getInstitutionOnboardingData start");
         log.debug("getInstitutionOnboardingData externalInstitutionId = {}, productId = {}", externalInstitutionId, productId);
         Assert.hasText(externalInstitutionId, REQUIRED_INSTITUTION_ID_MESSAGE);
+        Assert.hasText(productId, A_PRODUCT_ID_IS_REQUIRED);
         InstitutionOnboardingData result = new InstitutionOnboardingData();
 
         final EnumSet<it.pagopa.selfcare.onboarding.connector.model.user.User.Fields> fieldList = EnumSet.of(name, familyName, workContacts, fiscalCode);
@@ -217,7 +219,7 @@ class InstitutionServiceImpl implements InstitutionService {
         manager.setUser(userConnector.getUserByInternalId(manager.getId(), fieldList));
         result.setManager(manager);
 
-        InstitutionInfo institution = partyConnector.getOnboardedInstitution(externalInstitutionId);
+        InstitutionInfo institution = partyConnector.getInstitutionBillingData(externalInstitutionId, productId);
         if (institution == null) {
             throw new ResourceNotFoundException(String.format("Institution %s not found", externalInstitutionId));
         }

@@ -11,10 +11,7 @@ import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingRespon
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.User;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.UserInfo;
 import it.pagopa.selfcare.onboarding.connector.rest.client.PartyProcessRestClient;
-import it.pagopa.selfcare.onboarding.connector.rest.model.InstitutionUpdate;
-import it.pagopa.selfcare.onboarding.connector.rest.model.OnBoardingInfo;
-import it.pagopa.selfcare.onboarding.connector.rest.model.OnboardingContract;
-import it.pagopa.selfcare.onboarding.connector.rest.model.OnboardingInstitutionRequest;
+import it.pagopa.selfcare.onboarding.connector.rest.model.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -53,7 +50,22 @@ class PartyConnectorImpl implements PartyConnector {
         institutionInfo.setInstitutionType(onboardingData.getInstitutionType());
         return institutionInfo;
     };
-
+    private static final Function<BillingDataResponse, InstitutionInfo> BILLING_DATA_RESPONSE_INSTITUTION_INFO_FUNCTION = billingDataResponse -> {
+        InstitutionInfo institutionInfo = new InstitutionInfo();
+        institutionInfo.setId(billingDataResponse.getInstitutionId());
+        institutionInfo.setExternalId(billingDataResponse.getExternalId());
+        institutionInfo.setOrigin(billingDataResponse.getOrigin());
+        institutionInfo.setOriginId(billingDataResponse.getOriginId());
+        institutionInfo.setDescription(billingDataResponse.getDescription());
+        institutionInfo.setTaxCode(billingDataResponse.getTaxCode());
+        institutionInfo.setDigitalAddress(billingDataResponse.getDigitalAddress());
+        institutionInfo.setAddress(billingDataResponse.getAddress());
+        institutionInfo.setZipCode(billingDataResponse.getZipCode());
+        institutionInfo.setInstitutionType(billingDataResponse.getInstitutionType());
+        institutionInfo.setPricingPlan(billingDataResponse.getPricingPlan());
+        institutionInfo.setBilling(billingDataResponse.getBilling());
+        return institutionInfo;
+    };
     static final Function<RelationshipInfo, UserInfo> RELATIONSHIP_INFO_TO_USER_INFO_FUNCTION = relationshipInfo -> {
         UserInfo userInfo = new UserInfo();
         userInfo.setId(relationshipInfo.getFrom());
@@ -235,6 +247,19 @@ class PartyConnectorImpl implements PartyConnector {
         UserInfo result = RELATIONSHIP_INFO_TO_USER_INFO_FUNCTION.apply(relationshipInfo);
         log.debug("getInstitutionManager result = {}", result);
         log.trace("getInstitutionManager end");
+        return result;
+    }
+
+    @Override
+    public InstitutionInfo getInstitutionBillingData(String externalId, String productId) {
+        log.trace("getInstitutionBillingData start");
+        log.debug("getInstitutionBillingData externalId = {}, productId = {}", externalId, productId);
+        Assert.hasText(externalId, REQUIRED_INSTITUTION_ID_MESSAGE);
+        Assert.hasText(productId, REQUIRED_PRODUCT_ID_MESSAGE);
+        BillingDataResponse billingDataResponse = restClient.getInstitutionBillingData(externalId, productId);
+        InstitutionInfo result = BILLING_DATA_RESPONSE_INSTITUTION_INFO_FUNCTION.apply(billingDataResponse);
+        log.debug("getInstitutionBillingData result = {}", result);
+        log.trace("getInstitutionBillingData end");
         return result;
     }
 
