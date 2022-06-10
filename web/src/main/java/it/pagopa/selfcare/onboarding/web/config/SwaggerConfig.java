@@ -2,8 +2,8 @@ package it.pagopa.selfcare.onboarding.web.config;
 
 import com.fasterxml.classmate.TypeResolver;
 import it.pagopa.selfcare.commons.web.model.Problem;
-import it.pagopa.selfcare.commons.web.swagger.EmailAnnotationSwaggerPlugin;
-import it.pagopa.selfcare.commons.web.swagger.ServerSwaggerConfiguration;
+import it.pagopa.selfcare.commons.web.swagger.EmailAnnotationSwaggerPluginConfig;
+import it.pagopa.selfcare.commons.web.swagger.ServerSwaggerConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.*;
 import org.springframework.core.env.Environment;
@@ -137,13 +137,13 @@ class SwaggerConfig {
 
 
     @Bean
-    public EmailAnnotationSwaggerPlugin emailAnnotationPlugin() {
-        return new EmailAnnotationSwaggerPlugin();
+    public EmailAnnotationSwaggerPluginConfig emailAnnotationPlugin() {
+        return new EmailAnnotationSwaggerPluginConfig();
     }
 
     @Bean
-    public ServerSwaggerConfiguration serverSwaggerConfiguration() {
-        return new ServerSwaggerConfiguration();
+    public ServerSwaggerConfig serverSwaggerConfiguration() {
+        return new ServerSwaggerConfig();
     }
 
 }

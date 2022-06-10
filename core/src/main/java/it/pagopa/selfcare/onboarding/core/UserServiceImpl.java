@@ -9,6 +9,7 @@ import it.pagopa.selfcare.onboarding.core.exception.InvalidUserFieldsException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
@@ -22,7 +23,7 @@ import static it.pagopa.selfcare.onboarding.connector.model.user.User.Fields.nam
 public class UserServiceImpl implements UserService {
 
     private static final EnumSet<it.pagopa.selfcare.onboarding.connector.model.user.User.Fields> FIELD_LIST = EnumSet.of(name, familyName);
-    public static final String INVALID_FIELD_REASON = "the value does not match with the certified data";
+    private static final String INVALID_FIELD_REASON = "the value does not match with the certified data";
 
     private final UserRegistryConnector userRegistryConnector;
 
@@ -37,10 +38,10 @@ public class UserServiceImpl implements UserService {
     public void validate(User user) {
         log.trace("validate start");
         log.debug(LogUtils.CONFIDENTIAL_MARKER, "validate user = {}", user);
+        Assert.notNull(user, "An user is required");
         final Optional<it.pagopa.selfcare.onboarding.connector.model.user.User> searchResult =
                 userRegistryConnector.search(user.getTaxCode(), FIELD_LIST);
         searchResult.ifPresent(foundUser -> {
-            Optional<InvalidUserFieldsException> exception = Optional.empty();
             final ArrayList<InvalidUserFieldsException.InvalidField> invalidFields = new ArrayList<>();
             if (!isValid(user.getName(), foundUser.getName())) {
                 invalidFields.add(new InvalidUserFieldsException.InvalidField("name", INVALID_FIELD_REASON));
