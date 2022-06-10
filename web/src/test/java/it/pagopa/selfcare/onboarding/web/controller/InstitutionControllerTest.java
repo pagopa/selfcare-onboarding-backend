@@ -7,20 +7,21 @@ import it.pagopa.selfcare.onboarding.connector.model.institutions.Attribute;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionInfo;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.Billing;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.InstitutionType;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.UserInfo;
 import it.pagopa.selfcare.onboarding.core.InstitutionService;
 import it.pagopa.selfcare.onboarding.web.config.WebTestConfig;
-import it.pagopa.selfcare.onboarding.web.model.*;
+import it.pagopa.selfcare.onboarding.web.model.BillingDataDto;
+import it.pagopa.selfcare.onboarding.web.model.InstitutionOnboardingInfoResource;
+import it.pagopa.selfcare.onboarding.web.model.InstitutionResource;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.core.io.Resource;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -32,11 +33,13 @@ import java.util.UUID;
 
 import static it.pagopa.selfcare.commons.utils.TestUtils.mockInstance;
 import static java.util.UUID.randomUUID;
+import static org.hamcrest.Matchers.emptyString;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(value = {InstitutionController.class}, excludeAutoConfiguration = SecurityAutoConfiguration.class)
@@ -54,48 +57,24 @@ class InstitutionControllerTest {
     @MockBean
     private InstitutionService institutionServiceMock;
 
-    @Captor
-    private ArgumentCaptor<OnboardingData> onboardingDataCaptor;
-
 
     @Test
-    void onboarding() throws Exception {
+    void onboarding(@Value("classpath:stubs/onboardingDto.json") Resource onboardingDto) throws Exception {
         // given
         String institutionId = "institutionId";
         String productId = "productId";
-        List<UserDto> userDtos = List.of(mockInstance(new UserDto()));
-        OnboardingDto onboardingDto = mockInstance(new OnboardingDto());
-        BillingDataDto billingData = mockInstance(new BillingDataDto());
-        onboardingDto.setUsers(userDtos);
-        onboardingDto.setBillingData(billingData);
-        onboardingDto.setInstitutionType(InstitutionType.PA);
         // when
-        MvcResult result = mvc.perform(MockMvcRequestBuilders
+        mvc.perform(MockMvcRequestBuilders
                 .post(BASE_URL + "/{institutionId}/products/{productId}/onboarding", institutionId, productId)
-                .content(objectMapper.writeValueAsString(onboardingDto))
+                .content(onboardingDto.getInputStream().readAllBytes())
                 .contentType(APPLICATION_JSON_VALUE)
                 .accept(APPLICATION_JSON_VALUE))
                 .andExpect(status().isCreated())
-                .andReturn();
+                .andExpect(content().string(emptyString()));
         // then
-        assertEquals(0, result.getResponse().getContentLength());
         verify(institutionServiceMock, times(1))
-                .onboarding(onboardingDataCaptor.capture());
-        OnboardingData captured = onboardingDataCaptor.getValue();
-        assertNotNull(captured);
-        assertEquals(institutionId, captured.getInstitutionExternalId());
-        assertEquals(productId, captured.getProductId());
-        assertNotNull(captured.getUsers());
-        assertEquals(1, captured.getUsers().size());
-        assertEquals(billingData.getRecipientCode(), captured.getBilling().getRecipientCode());
-        assertEquals(billingData.getVatNumber(), captured.getBilling().getVatNumber());
-        assertEquals(billingData.getPublicServices(), captured.getBilling().getPublicServices());
-        assertEquals(userDtos.get(0).getName(), captured.getUsers().get(0).getName());
-        assertEquals(userDtos.get(0).getSurname(), captured.getUsers().get(0).getSurname());
-        assertEquals(userDtos.get(0).getTaxCode(), captured.getUsers().get(0).getTaxCode());
-        assertEquals(userDtos.get(0).getEmail(), captured.getUsers().get(0).getEmail());
-        assertEquals(userDtos.get(0).getRole(), captured.getUsers().get(0).getRole());
-        assertEquals(userDtos.get(0).getProductRole(), captured.getUsers().get(0).getProductRole());
+                .onboarding(any(OnboardingData.class));
+        verifyNoMoreInteractions(institutionServiceMock);
     }
 
     @Test

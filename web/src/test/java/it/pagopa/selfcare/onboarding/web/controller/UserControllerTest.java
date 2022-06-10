@@ -17,6 +17,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import static org.hamcrest.Matchers.emptyString;
+import static org.hamcrest.Matchers.not;
 import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -47,7 +49,8 @@ class UserControllerTest {
                 .content(userDataValidationDto.getInputStream().readAllBytes())
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .accept(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(status().isNoContent());
+                .andExpect(status().isNoContent())
+                .andExpect(content().string(emptyString()));
         //then
         Mockito.verify(userServiceMock, Mockito.times(1))
                 .validate(any());
@@ -69,7 +72,8 @@ class UserControllerTest {
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .accept(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isConflict())
-                .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON));
+                .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON))
+                .andExpect(content().string(not(emptyString())));
         //then
         Mockito.verify(userServiceMock, Mockito.times(1))
                 .validate(any());
