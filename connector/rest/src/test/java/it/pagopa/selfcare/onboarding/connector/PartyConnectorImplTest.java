@@ -119,7 +119,8 @@ class PartyConnectorImplTest {
         assertEquals(1, request.getUsers().size());
         TestUtils.reflectionEqualsByName(institutionUpdate, request.getInstitutionUpdate());
         TestUtils.reflectionEqualsByName(billing, request.getBilling());
-        assertEquals(onboardingData.getProductId(), request.getUsers().get(0).getProduct());
+        assertEquals(onboardingData.getProductId(), request.getProductId());
+        assertEquals(onboardingData.getProductName(), request.getProductName());
         assertEquals(onboardingData.getUsers().get(0).getName(), request.getUsers().get(0).getName());
         assertEquals(onboardingData.getUsers().get(0).getSurname(), request.getUsers().get(0).getSurname());
         assertEquals(onboardingData.getUsers().get(0).getTaxCode(), request.getUsers().get(0).getTaxCode());
