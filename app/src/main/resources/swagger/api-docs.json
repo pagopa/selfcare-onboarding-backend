@@ -1,9 +1,9 @@
 {
-  "openapi" : "3.0.3",
-  "info" : {
-    "title" : "selc-onboarding",
-    "description" : "Self Care OnBoarding API documentation",
-    "version" : "0.0.1-SNAPSHOT"
+  "openapi": "3.0.3",
+  "info": {
+    "title": "selc-onboarding",
+    "description": "Self Care OnBoarding API documentation",
+    "version": "0.0.1-SNAPSHOT"
   },
   "servers": [
     {
@@ -815,7 +815,9 @@
         "properties": {
           "email": {
             "type": "string",
-            "description": "User's email"
+            "description": "User's email",
+            "format": "email",
+            "example": "email@example.com"
           },
           "name": {
             "type": "string",
@@ -854,7 +856,9 @@
         "properties": {
           "email": {
             "type": "string",
-            "description": "User's institutional email"
+            "description": "User's institutional email",
+            "format": "email",
+            "example": "email@example.com"
           },
           "id": {
             "type": "string",

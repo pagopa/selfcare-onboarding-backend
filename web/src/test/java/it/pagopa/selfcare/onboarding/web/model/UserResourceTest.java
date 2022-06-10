@@ -1,5 +1,6 @@
 package it.pagopa.selfcare.onboarding.web.model;
 
+import it.pagopa.selfcare.commons.utils.TestUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -7,6 +8,7 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.lang.annotation.Annotation;
@@ -37,6 +39,37 @@ class UserResourceTest {
         toCheckMap.put("status", NotBlank.class);
         toCheckMap.put("institutionId", NotNull.class);
         UserResource model = new UserResource();
+        // when
+        Set<ConstraintViolation<Object>> violations = validator.validate(model);
+        // then
+        List<ConstraintViolation<Object>> filteredViolations = violations.stream()
+                .filter(violation -> {
+                    Class<? extends Annotation> annotationToCheck = toCheckMap.get(violation.getPropertyPath().toString());
+                    return !violation.getConstraintDescriptor().getAnnotation().annotationType().equals(annotationToCheck);
+                })
+                .collect(Collectors.toList());
+        assertTrue(filteredViolations.isEmpty());
+    }
+
+
+    @Test
+    void validateNotNullFields() {
+        // given
+        UserResource model = TestUtils.mockInstance(new UserResource());
+        model.setEmail("email@example.com");
+        // when
+        Set<ConstraintViolation<Object>> violations = validator.validate(model);
+        // then
+        assertTrue(violations.isEmpty());
+    }
+
+
+    @Test
+    void validate_emailFieldsNotValid() {
+        // given
+        HashMap<String, Class<? extends Annotation>> toCheckMap = new HashMap<>();
+        toCheckMap.put("email", Email.class);
+        UserResource model = TestUtils.mockInstance(new UserResource());
         // when
         Set<ConstraintViolation<Object>> violations = validator.validate(model);
         // then

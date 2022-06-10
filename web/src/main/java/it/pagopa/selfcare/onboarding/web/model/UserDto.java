@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.PartyRole;
 import lombok.Data;
 
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
@@ -34,7 +35,8 @@ public class UserDto {
 
     @ApiModelProperty(value = "${swagger.onboarding.user.model.email}", required = true)
     @JsonProperty(required = true)
-    @NotBlank
+    @NotNull
+    @Email
     private String email;
 
     @ApiModelProperty(hidden = true)
