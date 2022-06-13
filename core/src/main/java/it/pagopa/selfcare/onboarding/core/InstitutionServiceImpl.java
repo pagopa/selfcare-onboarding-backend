@@ -150,11 +150,11 @@ class InstitutionServiceImpl implements InstitutionService {
         boolean isToUpdate = true;
         if (certifiedField != null) {
             if (Certification.NONE.equals(certifiedField.getCertification())) {
-                if (certifiedField.getValue().equals(value)) {
+                if (certifiedField.getValue().equalsIgnoreCase(value)) {
                     isToUpdate = false;
                 }
             } else {
-                if (certifiedField.getValue().equals(value)) {
+                if (certifiedField.getValue().equalsIgnoreCase(value)) {
                     isToUpdate = false;
                 } else {
                     throw new UpdateNotAllowedException(String.format("Update user request not allowed because of value %s", value));
