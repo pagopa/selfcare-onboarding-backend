@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.PartyRole;
 import lombok.Data;
 
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.UUID;
@@ -23,6 +24,7 @@ public class UserResource {
     private String surname;
 
     @ApiModelProperty(value = "${swagger.onboarding.user.model.institutionalEmail}")
+    @Email
     private String email;
 
     @ApiModelProperty(value = "${swagger.onboarding.user.model.fiscalCode}", required = true)

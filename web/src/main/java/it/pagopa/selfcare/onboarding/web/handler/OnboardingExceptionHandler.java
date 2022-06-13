@@ -1,38 +1,55 @@
 package it.pagopa.selfcare.onboarding.web.handler;
 
-import it.pagopa.selfcare.commons.web.model.ErrorResource;
+import it.pagopa.selfcare.commons.web.model.Problem;
+import it.pagopa.selfcare.commons.web.model.mapper.ProblemMapper;
 import it.pagopa.selfcare.onboarding.connector.exceptions.ManagerNotFoundException;
 import it.pagopa.selfcare.onboarding.connector.exceptions.ResourceNotFoundException;
+import it.pagopa.selfcare.onboarding.core.exception.InvalidUserFieldsException;
 import it.pagopa.selfcare.onboarding.core.exception.UpdateNotAllowedException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import java.util.stream.Collectors;
+
+import static org.springframework.http.HttpStatus.*;
 
 @Slf4j
 @RestControllerAdvice
 public class OnboardingExceptionHandler {
 
     @ExceptionHandler({ResourceNotFoundException.class})
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    ErrorResource handleResourceNotFoundException(ResourceNotFoundException e) {
+    ResponseEntity<Problem> handleResourceNotFoundException(ResourceNotFoundException e) {
         log.warn(e.toString());
-        return new ErrorResource(e.getMessage());
+        return ProblemMapper.toResponseEntity(new Problem(NOT_FOUND, e.getMessage()));
     }
+
 
     @ExceptionHandler({ManagerNotFoundException.class})
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    ErrorResource handleProductHasNoRelationshipException(ManagerNotFoundException e) {
+    ResponseEntity<Problem> handleProductHasNoRelationshipException(ManagerNotFoundException e) {
         log.warn(e.toString());
-        return new ErrorResource(e.getMessage());
+        return ProblemMapper.toResponseEntity(new Problem(INTERNAL_SERVER_ERROR, e.getMessage()));
     }
 
+
     @ExceptionHandler({UpdateNotAllowedException.class})
-    @ResponseStatus(HttpStatus.CONFLICT)
-    ErrorResource handleUpdateNotAllowedException(UpdateNotAllowedException e) {
+    ResponseEntity<Problem> handleUpdateNotAllowedException(UpdateNotAllowedException e) {
         log.warn(e.toString());
-        return new ErrorResource(e.getMessage());
+        return ProblemMapper.toResponseEntity(new Problem(CONFLICT, e.getMessage()));
+    }
+
+
+    @ExceptionHandler({InvalidUserFieldsException.class})
+    ResponseEntity<Problem> handleInvalidUserFieldsException(InvalidUserFieldsException e) {
+        log.warn(e.toString());
+        final Problem problem = new Problem(CONFLICT, e.getMessage());
+        if (e.getInvalidFields() != null) {
+            problem.setInvalidParams(e.getInvalidFields().stream()
+                    .map(invalidField -> new Problem.InvalidParam(invalidField.getName(), invalidField.getReason()))
+                    .collect(Collectors.toList()));
+        }
+        return ProblemMapper.toResponseEntity(problem);
     }
 
 }
