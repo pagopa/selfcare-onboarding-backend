@@ -150,7 +150,7 @@ class InstitutionServiceImpl implements InstitutionService {
         boolean isToUpdate = true;
         if (certifiedField != null) {
             if (Certification.NONE.equals(certifiedField.getCertification())) {
-                if (certifiedField.getValue().equalsIgnoreCase(value)) {
+                if (certifiedField.getValue().equals(value)) {
                     isToUpdate = false;
                 }
             } else {

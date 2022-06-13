@@ -654,7 +654,7 @@ class InstitutionServiceImplTest {
                         final it.pagopa.selfcare.onboarding.connector.model.user.User user = new it.pagopa.selfcare.onboarding.connector.model.user.User();
                         final CertifiedField<String> name = new CertifiedField<>();
                         name.setCertification(Certification.NONE);
-                        name.setValue(userInfo2.getName().toUpperCase());
+                        name.setValue(userInfo2.getName());
                         user.setName(name);
                         final CertifiedField<String> familyName = new CertifiedField<>();
                         familyName.setCertification(Certification.SPID);
