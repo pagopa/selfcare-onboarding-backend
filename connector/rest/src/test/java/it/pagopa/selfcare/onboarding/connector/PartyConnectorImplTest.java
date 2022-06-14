@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static it.pagopa.selfcare.commons.utils.TestUtils.checkNotNullFields;
 import static it.pagopa.selfcare.commons.utils.TestUtils.mockInstance;
 import static it.pagopa.selfcare.onboarding.connector.PartyConnectorImpl.REQUIRED_INSTITUTION_ID_MESSAGE;
 import static it.pagopa.selfcare.onboarding.connector.model.RelationshipState.ACTIVE;
@@ -118,7 +119,8 @@ class PartyConnectorImplTest {
         assertEquals(1, request.getUsers().size());
         TestUtils.reflectionEqualsByName(institutionUpdate, request.getInstitutionUpdate());
         TestUtils.reflectionEqualsByName(billing, request.getBilling());
-        assertEquals(onboardingData.getProductId(), request.getUsers().get(0).getProduct());
+        assertEquals(onboardingData.getProductId(), request.getProductId());
+        assertEquals(onboardingData.getProductName(), request.getProductName());
         assertEquals(onboardingData.getUsers().get(0).getName(), request.getUsers().get(0).getName());
         assertEquals(onboardingData.getUsers().get(0).getSurname(), request.getUsers().get(0).getSurname());
         assertEquals(onboardingData.getUsers().get(0).getTaxCode(), request.getUsers().get(0).getTaxCode());
@@ -638,4 +640,46 @@ class PartyConnectorImplTest {
                 .createInstitutionUsingExternalId(externalId);
     }
 
+    @Test
+    void getInstitutionManager_nullInstitutionId() {
+        //given
+        String institutionId = null;
+        String productId = "productId";
+        //when
+        Executable executable = () -> partyConnector.getInstitutionManager(institutionId, productId);
+        //then
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, executable);
+        assertEquals("An Institution external id is required", e.getMessage());
+        verifyNoInteractions(restClientMock);
+    }
+
+    @Test
+    void getInstitutionManager_nullProductId() {
+        //given
+        String institutionId = "institutionId";
+        String productId = null;
+        //when
+        Executable executable = () -> partyConnector.getInstitutionManager(institutionId, productId);
+        //then
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, executable);
+        assertEquals("A product Id is required", e.getMessage());
+        verifyNoInteractions(restClientMock);
+    }
+
+    @Test
+    void getInstitutionManager() {
+        //given
+        String institutionId = "institutionId";
+        String productId = "productId";
+        RelationshipInfo relationshipInfo = mockInstance(new RelationshipInfo());
+        when(restClientMock.getInstitutionManager(anyString(), anyString()))
+                .thenReturn(relationshipInfo);
+        //when
+        UserInfo userInfo = partyConnector.getInstitutionManager(institutionId, productId);
+        //then
+        checkNotNullFields(userInfo, "user");
+        verify(restClientMock, times(1))
+                .getInstitutionManager(institutionId, productId);
+
+    }
 }

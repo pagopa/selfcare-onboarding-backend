@@ -1,5 +1,6 @@
 package it.pagopa.selfcare.onboarding.connector.rest.client;
 
+import it.pagopa.selfcare.onboarding.connector.model.RelationshipInfo;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipState;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipsResponse;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
@@ -48,4 +49,9 @@ public interface PartyProcessRestClient {
     @PostMapping(value = "${rest-client.party-process.createInstitutionUsingExternalId.path}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     Institution createInstitutionUsingExternalId(@PathVariable("externalId") String externalId);
+
+    @GetMapping(value = "${rest-client.party-process.getInstitutionManager.path}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    RelationshipInfo getInstitutionManager(@PathVariable("externalId") String externalId,
+                                           @PathVariable("productId") String productId);
 }

@@ -4,6 +4,7 @@ import it.pagopa.selfcare.onboarding.connector.model.onboarding.User;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.UserInfo;
 import it.pagopa.selfcare.onboarding.connector.model.user.CertifiedField;
 import it.pagopa.selfcare.onboarding.connector.model.user.WorkContact;
+import it.pagopa.selfcare.onboarding.web.model.UserDataValidationDto;
 import it.pagopa.selfcare.onboarding.web.model.UserDto;
 import it.pagopa.selfcare.onboarding.web.model.UserResource;
 import lombok.AccessLevel;
@@ -49,6 +50,18 @@ public class UserMapper {
                         .map(CertifiedField::getValue)
                         .ifPresent(resource::setEmail);
             }
+        }
+        return resource;
+    }
+
+
+    public static User toUser(UserDataValidationDto model) {
+        User resource = null;
+        if (model != null) {
+            resource = new User();
+            resource.setTaxCode(model.getTaxCode());
+            resource.setName(model.getName());
+            resource.setSurname(model.getSurname());
         }
         return resource;
     }

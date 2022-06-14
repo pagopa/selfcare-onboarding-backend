@@ -77,6 +77,8 @@ class PartyConnectorImpl implements PartyConnector {
         onboardingInstitutionRequest.setInstitutionExternalId(onboardingData.getInstitutionExternalId());
         onboardingInstitutionRequest.setPricingPlan(onboardingData.getPricingPlan());
         onboardingInstitutionRequest.setBilling(onboardingData.getBilling());
+        onboardingInstitutionRequest.setProductId(onboardingData.getProductId());
+        onboardingInstitutionRequest.setProductName(onboardingData.getProductName());
         InstitutionUpdate institutionUpdate = new InstitutionUpdate();
         institutionUpdate.setInstitutionType(onboardingData.getInstitutionType());
         institutionUpdate.setAddress(onboardingData.getInstitutionUpdate().getAddress());
@@ -90,7 +92,6 @@ class PartyConnectorImpl implements PartyConnector {
                 .map(userInfo -> {
                     User user = new User();
                     user.setId(userInfo.getId());
-                    user.setProduct(onboardingData.getProductId());
                     user.setName(userInfo.getName());
                     user.setSurname(userInfo.getSurname());
                     user.setTaxCode(userInfo.getTaxCode());
@@ -221,6 +222,19 @@ class PartyConnectorImpl implements PartyConnector {
         Institution result = restClient.createInstitutionUsingExternalId(institutionExternalId);
         log.debug("createInstitutionUsingExternalId result = {}", result);
         log.trace("createInstitutionUsingExternalId end");
+        return result;
+    }
+
+    @Override
+    public UserInfo getInstitutionManager(String externalInstitutionId, String productId) {
+        log.trace("getInstitutionManager start");
+        log.debug("getInstitutionManager externalId = {}, productId = {}", externalInstitutionId, productId);
+        Assert.hasText(externalInstitutionId, REQUIRED_INSTITUTION_ID_MESSAGE);
+        Assert.hasText(productId, REQUIRED_PRODUCT_ID_MESSAGE);
+        RelationshipInfo relationshipInfo = restClient.getInstitutionManager(externalInstitutionId, productId);
+        UserInfo result = RELATIONSHIP_INFO_TO_USER_INFO_FUNCTION.apply(relationshipInfo);
+        log.debug("getInstitutionManager result = {}", result);
+        log.trace("getInstitutionManager end");
         return result;
     }
 

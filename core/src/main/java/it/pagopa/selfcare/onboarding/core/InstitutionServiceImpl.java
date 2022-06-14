@@ -1,8 +1,6 @@
 package it.pagopa.selfcare.onboarding.core;
 
 import it.pagopa.selfcare.commons.base.logging.LogUtils;
-import it.pagopa.selfcare.commons.base.security.SelfCareAuthority;
-import it.pagopa.selfcare.commons.base.security.SelfCareUser;
 import it.pagopa.selfcare.onboarding.connector.api.PartyConnector;
 import it.pagopa.selfcare.onboarding.connector.api.ProductsConnector;
 import it.pagopa.selfcare.onboarding.connector.api.UserRegistryConnector;
@@ -28,13 +26,10 @@ import it.pagopa.selfcare.onboarding.connector.model.user.mapper.UserMapper;
 import it.pagopa.selfcare.onboarding.core.exception.UpdateNotAllowedException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static it.pagopa.selfcare.onboarding.connector.model.user.User.Fields.*;
 
@@ -91,6 +86,7 @@ class InstitutionServiceImpl implements InstitutionService {
         } else {
             roleMappings = product.getRoleMappings();
         }
+        onboardingData.setProductName(product.getTitle());
         Assert.notNull(roleMappings, "Role mappings is required");
         onboardingData.getUsers().forEach(userInfo -> {
             Assert.notNull(roleMappings.get(userInfo.getRole()),
@@ -126,28 +122,27 @@ class InstitutionServiceImpl implements InstitutionService {
 
 
     private Optional<MutableUserFieldsDto> createUpdateRequest(User user, it.pagopa.selfcare.onboarding.connector.model.user.User foundUser, String institutionInternalId) {
-        MutableUserFieldsDto mutableUserFieldsDto = null;
+        Optional<MutableUserFieldsDto> mutableUserFieldsDto = Optional.empty();
         if (isFieldToUpdate(foundUser.getName(), user.getName())) {
-            mutableUserFieldsDto = new MutableUserFieldsDto();
-            mutableUserFieldsDto.setName(CertifiedFieldMapper.map(user.getName()));
+            MutableUserFieldsDto dto = new MutableUserFieldsDto();
+            dto.setName(CertifiedFieldMapper.map(user.getName()));
+            mutableUserFieldsDto = Optional.of(dto);
         }
         if (isFieldToUpdate(foundUser.getFamilyName(), user.getSurname())) {
-            if (mutableUserFieldsDto == null) {
-                mutableUserFieldsDto = new MutableUserFieldsDto();
-            }
-            mutableUserFieldsDto.setFamilyName(CertifiedFieldMapper.map(user.getSurname()));
+            MutableUserFieldsDto dto = mutableUserFieldsDto.orElseGet(MutableUserFieldsDto::new);
+            dto.setFamilyName(CertifiedFieldMapper.map(user.getSurname()));
+            mutableUserFieldsDto = Optional.of(dto);
         }
         if (foundUser.getWorkContacts() == null
                 || !foundUser.getWorkContacts().containsKey(institutionInternalId)
                 || isFieldToUpdate(foundUser.getWorkContacts().get(institutionInternalId).getEmail(), user.getEmail())) {
-            if (mutableUserFieldsDto == null) {
-                mutableUserFieldsDto = new MutableUserFieldsDto();
-            }
+            MutableUserFieldsDto dto = mutableUserFieldsDto.orElseGet(MutableUserFieldsDto::new);
             final WorkContact workContact = new WorkContact();
             workContact.setEmail(CertifiedFieldMapper.map(user.getEmail()));
-            mutableUserFieldsDto.setWorkContacts(Map.of(institutionInternalId, workContact));
+            dto.setWorkContacts(Map.of(institutionInternalId, workContact));
+            mutableUserFieldsDto = Optional.of(dto);
         }
-        return Optional.ofNullable(mutableUserFieldsDto);
+        return mutableUserFieldsDto;
     }
 
 
@@ -159,7 +154,7 @@ class InstitutionServiceImpl implements InstitutionService {
                     isToUpdate = false;
                 }
             } else {
-                if (certifiedField.getValue().equals(value)) {
+                if (certifiedField.getValue().equalsIgnoreCase(value)) {
                     isToUpdate = false;
                 } else {
                     throw new UpdateNotAllowedException(String.format("Update user request not allowed because of value %s", value));
@@ -186,7 +181,6 @@ class InstitutionServiceImpl implements InstitutionService {
             manager.setName(baseProductManager.getName().getValue());
             manager.setSurname(baseProductManager.getFamilyName().getValue());
             manager.setTaxCode(baseProductManager.getFiscalCode());
-            manager.setProduct(onboardingData.getProductId());
             manager.setRole(PartyRole.MANAGER);
             manager.setEmail(baseProductManager.getWorkContacts().get(response.get(0).getTo()).getEmail().getValue());
             String productRole = product.getRoleMappings().get(PartyRole.MANAGER).getRoles().get(0).getCode();
@@ -210,51 +204,27 @@ class InstitutionServiceImpl implements InstitutionService {
 
     @Override
     public InstitutionOnboardingData getInstitutionOnboardingData(String externalInstitutionId, String productId) {
-        log.trace("getManager start");
-        log.debug("getManager externalInstitutionId = {}, productId = {}", externalInstitutionId, productId);
+        log.trace("getInstitutionOnboardingData start");
+        log.debug("getInstitutionOnboardingData externalInstitutionId = {}, productId = {}", externalInstitutionId, productId);
         Assert.hasText(externalInstitutionId, REQUIRED_INSTITUTION_ID_MESSAGE);
         InstitutionOnboardingData result = new InstitutionOnboardingData();
 
-        EnumSet<PartyRole> roles = Arrays.stream(PartyRole.values())
-                .filter(partyRole -> SelfCareAuthority.ADMIN.equals(partyRole.getSelfCareAuthority()))
-                .collect(Collectors.toCollection(() -> EnumSet.noneOf(PartyRole.class)));
-        if (checkAuthority(externalInstitutionId, productId, roles)) {
-            UserInfo.UserInfoFilter userInfoFilter = new UserInfo.UserInfoFilter();
-            userInfoFilter.setProductId(Optional.of(productId));
-            userInfoFilter.setRole(MANAGER_ROLE_FILTER);
-            userInfoFilter.setAllowedStates(ACTIVE_ALLOWED_STATES_FILTER);
-            Collection<UserInfo> userInfos = partyConnector.getUsers(externalInstitutionId, userInfoFilter).stream()
-                    .peek(userInfo -> userInfo.setUser(userConnector.getUserByInternalId(userInfo.getId(), USER_FIELD_LIST_ENHANCED)))
-                    .collect(Collectors.toList());
-            if (!userInfos.iterator().hasNext()) {
-                throw new ResourceNotFoundException(String.format("No Manager found for given institution: %s", externalInstitutionId));
-            }
-            UserInfo manager = userInfos.iterator().next();
-            result.setManager(manager);
+        final EnumSet<it.pagopa.selfcare.onboarding.connector.model.user.User.Fields> fieldList = EnumSet.of(name, familyName, workContacts, fiscalCode);
+        UserInfo manager = partyConnector.getInstitutionManager(externalInstitutionId, productId);
+        if (manager == null) {
+            throw new ResourceNotFoundException(String.format("No Manager found for given institution: %s", externalInstitutionId));
         }
+        manager.setUser(userConnector.getUserByInternalId(manager.getId(), fieldList));
+        result.setManager(manager);
+
         InstitutionInfo institution = partyConnector.getOnboardedInstitution(externalInstitutionId);
         if (institution == null) {
             throw new ResourceNotFoundException(String.format("Institution %s not found", externalInstitutionId));
         }
         result.setInstitution(institution);
-        log.debug(LogUtils.CONFIDENTIAL_MARKER, "getManager result = {}", result);
-        log.trace("getManager end");
+        log.debug(LogUtils.CONFIDENTIAL_MARKER, "getInstitutionOnboardingData result = {}", result);
+        log.trace("getInstitutionOnboardingData end");
         return result;
-    }
-
-
-    private Boolean checkAuthority(String externalInstitutionId, String productId, EnumSet<PartyRole> roles) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Assert.state(authentication != null, "Authentication is required");
-        Assert.state(authentication.getPrincipal() instanceof SelfCareUser, "Not SelfCareUser principal");
-        SelfCareUser principal = ((SelfCareUser) authentication.getPrincipal());
-        UserInfo.UserInfoFilter filter = new UserInfo.UserInfoFilter();
-        filter.setUserId(Optional.of(principal.getId()));
-        filter.setProductId(Optional.of(productId));
-        filter.setAllowedStates(ACTIVE_ALLOWED_STATES_FILTER);
-        filter.setRole(Optional.of(roles));
-        Collection<UserInfo> userInfos = partyConnector.getUsers(externalInstitutionId, filter);
-        return userInfos.iterator().hasNext();
     }
 
 
