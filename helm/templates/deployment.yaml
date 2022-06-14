@@ -45,6 +45,8 @@ spec:
                 name: common
             - configMapRef:
                 name: {{ include "this.fullname" . }}
+            - secretRef:
+                name: common-secrets
           ports:
             - name: http
               containerPort: {{ .Values.containers.portNumber }}

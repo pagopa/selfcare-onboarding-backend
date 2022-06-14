@@ -10,19 +10,9 @@
  * Do not edit the class manually.
  */
 
-package it.pagopa.selfcare.onboarding.connector.rest.model;
+package it.pagopa.selfcare.onboarding.connector.model;
 
-import lombok.Getter;
-import lombok.Setter;
+import java.util.ArrayList;
 
-import java.util.List;
-
-@Setter
-@Getter
-public class OnboardingRequest {
-
-    private String institutionId;
-    private List<User> users;
-    private OnboardingContract contract;
-
+public class RelationshipsResponse extends ArrayList<RelationshipInfo> {
 }

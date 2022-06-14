@@ -1,0 +1,66 @@
+package it.pagopa.selfcare.onboarding.core;
+
+import it.pagopa.selfcare.commons.base.logging.LogUtils;
+import it.pagopa.selfcare.onboarding.connector.api.UserRegistryConnector;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.User;
+import it.pagopa.selfcare.onboarding.connector.model.user.Certification;
+import it.pagopa.selfcare.onboarding.connector.model.user.CertifiedField;
+import it.pagopa.selfcare.onboarding.core.exception.InvalidUserFieldsException;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
+
+import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.Optional;
+
+import static it.pagopa.selfcare.onboarding.connector.model.user.User.Fields.familyName;
+import static it.pagopa.selfcare.onboarding.connector.model.user.User.Fields.name;
+
+@Slf4j
+@Service
+public class UserServiceImpl implements UserService {
+
+    private static final EnumSet<it.pagopa.selfcare.onboarding.connector.model.user.User.Fields> FIELD_LIST = EnumSet.of(name, familyName);
+    private static final String INVALID_FIELD_REASON = "the value does not match with the certified data";
+
+    private final UserRegistryConnector userRegistryConnector;
+
+
+    @Autowired
+    public UserServiceImpl(UserRegistryConnector userRegistryConnector) {
+        this.userRegistryConnector = userRegistryConnector;
+    }
+
+
+    @Override
+    public void validate(User user) {
+        log.trace("validate start");
+        log.debug(LogUtils.CONFIDENTIAL_MARKER, "validate user = {}", user);
+        Assert.notNull(user, "An user is required");
+        final Optional<it.pagopa.selfcare.onboarding.connector.model.user.User> searchResult =
+                userRegistryConnector.search(user.getTaxCode(), FIELD_LIST);
+        searchResult.ifPresent(foundUser -> {
+            final ArrayList<InvalidUserFieldsException.InvalidField> invalidFields = new ArrayList<>();
+            if (!isValid(user.getName(), foundUser.getName())) {
+                invalidFields.add(new InvalidUserFieldsException.InvalidField("name", INVALID_FIELD_REASON));
+            }
+            if (!isValid(user.getSurname(), foundUser.getFamilyName())) {
+                invalidFields.add(new InvalidUserFieldsException.InvalidField("surname", INVALID_FIELD_REASON));
+            }
+            if (!invalidFields.isEmpty()) {
+                throw new InvalidUserFieldsException(invalidFields);
+            }
+        });
+        log.trace("validate end");
+    }
+
+
+    private <T> boolean isValid(T field, CertifiedField<T> certifiedField) {
+        return certifiedField == null
+                || !Certification.isCertified(certifiedField.getCertification())
+                || certifiedField.getValue().equals(field);
+    }
+
+}

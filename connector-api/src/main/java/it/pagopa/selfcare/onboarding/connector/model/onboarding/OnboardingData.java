@@ -12,31 +12,30 @@
 
 package it.pagopa.selfcare.onboarding.connector.model.onboarding;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-@Getter
+@Data
+@NoArgsConstructor
 public class OnboardingData {
 
-    private final String institutionId;
-    private final String productId;
-    private final List<? extends UserInfo> users;
-    @Setter
+    private String institutionExternalId;
+    private String productId;
+    private String productName;
+    private List<User> users;
     private String contractPath;
-    @Setter
     private String contractVersion;
+    private Billing billing;
+    private InstitutionUpdate institutionUpdate;
+    private InstitutionType institutionType;
+    private String origin;
+    private String pricingPlan;
 
-    public OnboardingData(String institutionId, String productId, List<? extends UserInfo> users) {
-        this.institutionId = institutionId;
-        this.productId = productId;
-        this.users = users;
-    }
-
-    public List<? extends UserInfo> getUsers() {
+    public List<User> getUsers() {
         return Optional.ofNullable(users).orElse(Collections.emptyList());
     }
 

@@ -9,9 +9,6 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import java.io.File;
-import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.util.HashMap;
 import java.util.List;
@@ -20,10 +17,8 @@ import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class OnboardingResponseTest {
-
+class InstitutionResourceTest {
     private Validator validator;
-
 
     @BeforeEach
     void setUp() {
@@ -31,16 +26,26 @@ class OnboardingResponseTest {
         validator = validatorFactory.getValidator();
     }
 
-
     @Test
     void validateNullFields() {
         // given
         HashMap<String, Class<? extends Annotation>> toCheckMap = new HashMap<>();
-        toCheckMap.put("token", NotBlank.class);
-        toCheckMap.put("document", NotNull.class);
-        OnboardingResponse model = new OnboardingResponse();
+        toCheckMap.put("id", NotBlank.class);
+        toCheckMap.put("description", NotBlank.class);
+        toCheckMap.put("externalId", NotBlank.class);
+        toCheckMap.put("digitalAddress", NotBlank.class);
+        toCheckMap.put("address", NotBlank.class);
+        toCheckMap.put("zipCode", NotBlank.class);
+        toCheckMap.put("taxCode", NotBlank.class);
+        toCheckMap.put("origin", NotBlank.class);
+        toCheckMap.put("originId", NotBlank.class);
+
+        InstitutionResource institutionResource = new InstitutionResource();
+        institutionResource.setExternalId(null);
+        institutionResource.setDescription(null);
+
         // when
-        Set<ConstraintViolation<Object>> violations = validator.validate(model);
+        Set<ConstraintViolation<Object>> violations = validator.validate(institutionResource);
         // then
         List<ConstraintViolation<Object>> filteredViolations = violations.stream()
                 .filter(violation -> {
@@ -52,19 +57,12 @@ class OnboardingResponseTest {
     }
 
     @Test
-    void validateNotNullFields() throws IOException {
-        File tempFile = File.createTempFile("hello", ".file");
-        try {
-            // given
-            OnboardingResponse model = TestUtils.mockInstance(new OnboardingResponse(), "setDocument");
-            model.setDocument(tempFile);
-            // when
-            Set<ConstraintViolation<Object>> violations = validator.validate(model);
-            // then
-            assertTrue(violations.isEmpty());
-        } finally {
-            tempFile.deleteOnExit();
-        }
+    void validateNotNullFields() {
+        // given
+        InstitutionResource institutionResource = TestUtils.mockInstance(new InstitutionResource());
+        // when
+        Set<ConstraintViolation<Object>> violations = validator.validate(institutionResource);
+        // then
+        assertTrue(violations.isEmpty());
     }
-
 }

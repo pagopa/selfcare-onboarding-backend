@@ -3,6 +3,7 @@ package it.pagopa.selfcare.onboarding.web.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.pagopa.selfcare.onboarding.core.InstitutionService;
 import it.pagopa.selfcare.onboarding.core.ProductService;
+import it.pagopa.selfcare.onboarding.core.UserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -40,6 +41,9 @@ class SwaggerConfigTest {
     @MockBean
     private ProductService productService;
 
+    @MockBean
+    private UserService userService;
+
     @Autowired
     WebApplicationContext context;
 
@@ -53,8 +57,10 @@ class SwaggerConfigTest {
                 .andDo((result) -> {
                     assertNotNull(result);
                     assertNotNull(result.getResponse());
-                    assertFalse(result.getResponse().getContentAsString().isBlank());
-                    Object swagger = objectMapper.readValue(result.getResponse().getContentAsString(), Object.class);
+                    final String content = result.getResponse().getContentAsString();
+                    assertFalse(content.isBlank());
+                    assertFalse(content.contains("${"), "Generated swagger contains placeholders");
+                    Object swagger = objectMapper.readValue(content, Object.class);
                     String formatted = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(swagger);
                     Path basePath = Paths.get("src/main/resources/swagger/");
                     Files.createDirectories(basePath);
