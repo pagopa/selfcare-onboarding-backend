@@ -52,13 +52,18 @@ class InstitutionServiceImpl implements InstitutionService {
     private final PartyConnector partyConnector;
     private final ProductsConnector productsConnector;
     private final UserRegistryConnector userConnector;
+    private final OnboardingRequestValidationStrategy onboardingRequestValidationStrategy;
 
 
     @Autowired
-    InstitutionServiceImpl(PartyConnector partyConnector, ProductsConnector productsConnector, UserRegistryConnector userConnector) {
+    InstitutionServiceImpl(PartyConnector partyConnector,
+                           ProductsConnector productsConnector,
+                           UserRegistryConnector userConnector,
+                           OnboardingRequestValidationStrategy onboardingRequestValidationStrategy) {
         this.partyConnector = partyConnector;
         this.productsConnector = productsConnector;
         this.userConnector = userConnector;
+        this.onboardingRequestValidationStrategy = onboardingRequestValidationStrategy;
     }
 
 
@@ -69,6 +74,7 @@ class InstitutionServiceImpl implements InstitutionService {
         Assert.notNull(onboardingData, REQUIRED_ONBOARDING_DATA_MESSAGE);
         Assert.notNull(onboardingData.getBilling(), REQUIRED_INSTITUTION_BILLING_DATA_MESSAGE);
         Assert.notNull(onboardingData.getInstitutionType(), REQUIRED_INSTITUTION_TYPE_MESSAGE);
+
         Product product = productsConnector.getProduct(onboardingData.getProductId());
         Assert.notNull(product, "Product is required");
         onboardingData.setContractPath(product.getContractTemplatePath());
@@ -77,6 +83,7 @@ class InstitutionServiceImpl implements InstitutionService {
         final EnumMap<PartyRole, ProductRoleInfo> roleMappings;
         if (product.getParentId() != null) {
             final Product baseProduct = productsConnector.getProduct(product.getParentId());
+            onboardingRequestValidationStrategy.validate(baseProduct.getId(), onboardingData.getInstitutionExternalId());
             final Optional<User> manager = retrieveManager(onboardingData, baseProduct);
             onboardingData.setUsers(List.of(manager.orElseThrow(() ->
                     new ManagerNotFoundException(String.format("Unable to retrieve the manager related to institution external id = %s and base product %s",
@@ -84,6 +91,7 @@ class InstitutionServiceImpl implements InstitutionService {
                             baseProduct.getId())))));
             roleMappings = baseProduct.getRoleMappings();
         } else {
+            onboardingRequestValidationStrategy.validate(product.getId(), onboardingData.getInstitutionExternalId());
             roleMappings = product.getRoleMappings();
         }
         onboardingData.setProductName(product.getTitle());
