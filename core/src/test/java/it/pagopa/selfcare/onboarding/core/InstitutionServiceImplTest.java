@@ -18,6 +18,7 @@ import it.pagopa.selfcare.onboarding.connector.model.product.Product;
 import it.pagopa.selfcare.onboarding.connector.model.product.ProductRoleInfo;
 import it.pagopa.selfcare.onboarding.connector.model.user.*;
 import it.pagopa.selfcare.onboarding.core.exception.UpdateNotAllowedException;
+import it.pagopa.selfcare.onboarding.core.strategy.OnboardingValidationStrategy;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,6 +28,7 @@ import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import javax.validation.ValidationException;
 import java.util.*;
 
 import static it.pagopa.selfcare.commons.utils.TestUtils.mockInstance;
@@ -51,6 +53,9 @@ class InstitutionServiceImplTest {
     @Mock
     private UserRegistryConnector userConnectorMock;
 
+    @Mock
+    private OnboardingValidationStrategy onboardingValidationStrategyMock;
+
     @Captor
     private ArgumentCaptor<OnboardingData> onboardingDataCaptor;
 
@@ -71,7 +76,7 @@ class InstitutionServiceImplTest {
         // then
         IllegalArgumentException e = Assertions.assertThrows(IllegalArgumentException.class, executable);
         Assertions.assertEquals(REQUIRED_ONBOARDING_DATA_MESSAGE, e.getMessage());
-        verifyNoInteractions(partyConnectorMock, productsConnectorMock, userConnectorMock);
+        verifyNoInteractions(partyConnectorMock, productsConnectorMock, userConnectorMock, onboardingValidationStrategyMock);
     }
 
 
@@ -79,9 +84,12 @@ class InstitutionServiceImplTest {
     void onboarding_nullRoleMapping() {
         // given
         OnboardingData onboardingData = mockInstance(new OnboardingData());
-        Product product = mockInstance(new Product(), "setParentId");
+        Product product = mockInstance(new Product(), "setId", "setParentId");
+        product.setId(onboardingData.getProductId());
         when(productsConnectorMock.getProduct(onboardingData.getProductId()))
                 .thenReturn(product);
+        when(onboardingValidationStrategyMock.validate(Mockito.any(), Mockito.any()))
+                .thenReturn(true);
         // when
         Executable executable = () -> institutionService.onboarding(onboardingData);
         // then
@@ -89,7 +97,9 @@ class InstitutionServiceImplTest {
         Assertions.assertEquals("Role mappings is required", e.getMessage());
         verify(productsConnectorMock, times(1))
                 .getProduct(onboardingData.getProductId());
-        verifyNoMoreInteractions(productsConnectorMock);
+        verify(onboardingValidationStrategyMock, times(1))
+                .validate(onboardingData.getProductId(), onboardingData.getInstitutionExternalId());
+        verifyNoMoreInteractions(productsConnectorMock, onboardingValidationStrategyMock);
         verifyNoInteractions(partyConnectorMock, userConnectorMock);
     }
 
@@ -102,7 +112,7 @@ class InstitutionServiceImplTest {
         //then
         IllegalArgumentException e = assertThrows(IllegalArgumentException.class, executable);
         assertEquals(REQUIRED_INSTITUTION_BILLING_DATA_MESSAGE, e.getMessage());
-        verifyNoInteractions(productsConnectorMock, partyConnectorMock, userConnectorMock);
+        verifyNoInteractions(productsConnectorMock, partyConnectorMock, userConnectorMock, onboardingValidationStrategyMock);
     }
 
     @Test
@@ -116,8 +126,41 @@ class InstitutionServiceImplTest {
         //then
         IllegalArgumentException e = assertThrows(IllegalArgumentException.class, executable);
         assertEquals(REQUIRED_INSTITUTION_TYPE_MESSAGE, e.getMessage());
-        verifyNoInteractions(productsConnectorMock, partyConnectorMock, userConnectorMock);
+        verifyNoInteractions(productsConnectorMock, partyConnectorMock, userConnectorMock, onboardingValidationStrategyMock);
     }
+
+    @Test
+    void onboarding_notAllowed() {
+        // given
+        User userInfo = mockInstance(new User(), "setRole");
+        userInfo.setRole(PartyRole.MANAGER);
+        OnboardingData onboardingData = mockInstance(new OnboardingData());
+        Billing billing = mockInstance(new Billing());
+        onboardingData.setUsers(List.of(userInfo));
+        onboardingData.setBilling(billing);
+        Product product = mockInstance(new Product(), "setId", "setParentId");
+        product.setId(onboardingData.getProductId());
+        product.setRoleMappings(new EnumMap<>(PartyRole.class) {{
+            put(PartyRole.MANAGER, null);
+        }});
+        when(productsConnectorMock.getProduct(onboardingData.getProductId()))
+                .thenReturn(product);
+        when(onboardingValidationStrategyMock.validate(Mockito.any(), Mockito.any()))
+                .thenReturn(false);
+        // when
+        Executable executable = () -> institutionService.onboarding(onboardingData);
+        // then
+        ValidationException e = Assertions.assertThrows(ValidationException.class, executable);
+        Assertions.assertEquals("Institution with external id '" + onboardingData.getInstitutionExternalId() + "' is not allowed to onboard '" + onboardingData.getProductId() + "' product",
+                e.getMessage());
+        verify(productsConnectorMock, times(1))
+                .getProduct(onboardingData.getProductId());
+        verify(onboardingValidationStrategyMock, times(1))
+                .validate(onboardingData.getProductId(), onboardingData.getInstitutionExternalId());
+        verifyNoMoreInteractions(productsConnectorMock, onboardingValidationStrategyMock);
+        verifyNoInteractions(partyConnectorMock, userConnectorMock);
+    }
+
 
     @Test
     void onboarding_nullProductRoles() {
@@ -128,12 +171,15 @@ class InstitutionServiceImplTest {
         Billing billing = mockInstance(new Billing());
         onboardingData.setUsers(List.of(userInfo));
         onboardingData.setBilling(billing);
-        Product product = mockInstance(new Product(), "setParentId");
+        Product product = mockInstance(new Product(), "setParentId", "setId");
+        product.setId(onboardingData.getProductId());
         product.setRoleMappings(new EnumMap<>(PartyRole.class) {{
             put(PartyRole.MANAGER, null);
         }});
         when(productsConnectorMock.getProduct(onboardingData.getProductId()))
                 .thenReturn(product);
+        when(onboardingValidationStrategyMock.validate(Mockito.any(), Mockito.any()))
+                .thenReturn(true);
         // when
         Executable executable = () -> institutionService.onboarding(onboardingData);
         // then
@@ -141,7 +187,9 @@ class InstitutionServiceImplTest {
         Assertions.assertEquals(String.format(ATLEAST_ONE_PRODUCT_ROLE_REQUIRED, userInfo.getRole()), e.getMessage());
         verify(productsConnectorMock, times(1))
                 .getProduct(onboardingData.getProductId());
-        verifyNoMoreInteractions(productsConnectorMock);
+        verify(onboardingValidationStrategyMock, times(1))
+                .validate(onboardingData.getProductId(), onboardingData.getInstitutionExternalId());
+        verifyNoMoreInteractions(productsConnectorMock, onboardingValidationStrategyMock);
         verifyNoInteractions(partyConnectorMock, userConnectorMock);
     }
 
@@ -155,7 +203,8 @@ class InstitutionServiceImplTest {
         Billing billing = mockInstance(new Billing());
         onboardingData.setBilling(billing);
         onboardingData.setUsers(List.of(userInfo));
-        Product productMock = mockInstance(new Product(), "setRoleMappings", "setParentId");
+        Product productMock = mockInstance(new Product(), "setRoleMappings", "setParentId", "setId");
+        productMock.setId(onboardingData.getProductId());
         ProductRoleInfo productRoleInfo1 = mockInstance(new ProductRoleInfo(), 1, "setRoles");
         productRoleInfo1.setRoles(List.of(mockInstance(new ProductRoleInfo.ProductRole(), 1)));
         ProductRoleInfo productRoleInfo2 = mockInstance(new ProductRoleInfo(), 2, "setRoles");
@@ -167,6 +216,8 @@ class InstitutionServiceImplTest {
         productMock.setRoleMappings(roleMappings);
         when(productsConnectorMock.getProduct(onboardingData.getProductId()))
                 .thenReturn(productMock);
+        when(onboardingValidationStrategyMock.validate(Mockito.any(), Mockito.any()))
+                .thenReturn(true);
         // when
         Executable executable = () -> institutionService.onboarding(onboardingData);
         // then
@@ -174,7 +225,9 @@ class InstitutionServiceImplTest {
         Assertions.assertEquals(String.format(ATLEAST_ONE_PRODUCT_ROLE_REQUIRED, userInfo.getRole()), e.getMessage());
         verify(productsConnectorMock, times(1))
                 .getProduct(onboardingData.getProductId());
-        verifyNoMoreInteractions(productsConnectorMock);
+        verify(onboardingValidationStrategyMock, times(1))
+                .validate(onboardingData.getProductId(), onboardingData.getInstitutionExternalId());
+        verifyNoMoreInteractions(productsConnectorMock, onboardingValidationStrategyMock);
         verifyNoInteractions(partyConnectorMock, userConnectorMock);
     }
 
@@ -187,7 +240,8 @@ class InstitutionServiceImplTest {
         Billing billing = mockInstance(new Billing());
         onboardingData.setBilling(billing);
         onboardingData.setUsers(List.of(userInfo));
-        Product productMock = mockInstance(new Product(), "setRoleMappings", "setParentId");
+        Product productMock = mockInstance(new Product(), "setRoleMappings", "setParentId", "setId");
+        productMock.setId(onboardingData.getProductId());
         ProductRoleInfo productRoleInfo1 = mockInstance(new ProductRoleInfo(), 1, "setRoles");
         productRoleInfo1.setRoles(List.of(mockInstance(new ProductRoleInfo.ProductRole(), 1)));
         ProductRoleInfo productRoleInfo2 = mockInstance(new ProductRoleInfo(), 2, "setRoles");
@@ -200,6 +254,8 @@ class InstitutionServiceImplTest {
         productMock.setRoleMappings(roleMappings);
         when(productsConnectorMock.getProduct(onboardingData.getProductId()))
                 .thenReturn(productMock);
+        when(onboardingValidationStrategyMock.validate(Mockito.any(), Mockito.any()))
+                .thenReturn(true);
         // when
         Executable executable = () -> institutionService.onboarding(onboardingData);
         // then
@@ -207,7 +263,9 @@ class InstitutionServiceImplTest {
         Assertions.assertEquals(String.format(MORE_THAN_ONE_PRODUCT_ROLE_AVAILABLE, userInfo.getRole()), e.getMessage());
         verify(productsConnectorMock, times(1))
                 .getProduct(onboardingData.getProductId());
-        verifyNoMoreInteractions(productsConnectorMock);
+        verify(onboardingValidationStrategyMock, times(1))
+                .validate(onboardingData.getProductId(), onboardingData.getInstitutionExternalId());
+        verifyNoMoreInteractions(productsConnectorMock, onboardingValidationStrategyMock);
         verifyNoInteractions(partyConnectorMock, userConnectorMock);
     }
 
@@ -224,7 +282,8 @@ class InstitutionServiceImplTest {
         Billing billing = mockInstance(new Billing());
         onboardingData.setBilling(billing);
         onboardingData.setUsers(List.of(userInfo1, userInfo2));
-        Product productMock = mockInstance(new Product(), "setRoleMappings", "setParentId");
+        Product productMock = mockInstance(new Product(), "setRoleMappings", "setParentId", "setId");
+        productMock.setId(onboardingData.getProductId());
         ProductRoleInfo productRoleInfo1 = mockInstance(new ProductRoleInfo(), 1, "setRoles");
         ProductRoleInfo.ProductRole productRole1 = mockInstance(new ProductRoleInfo.ProductRole(), 1);
         productRole1.setCode(productRole);
@@ -244,14 +303,14 @@ class InstitutionServiceImplTest {
         productMock.setRoleMappings(roleMappings);
         when(productsConnectorMock.getProduct(onboardingData.getProductId()))
                 .thenReturn(productMock);
-
         when(userConnectorMock.saveUser(Mockito.any()))
                 .thenAnswer(invocation -> {
                     UserId userId = new UserId();
                     userId.setId(UUID.randomUUID());
                     return userId;
                 });
-
+        when(onboardingValidationStrategyMock.validate(Mockito.any(), Mockito.any()))
+                .thenReturn(true);
         // when
         institutionService.onboarding(onboardingData);
         // then
@@ -259,6 +318,8 @@ class InstitutionServiceImplTest {
                 .getInstitutionByExternalId(onboardingData.getInstitutionExternalId());
         verify(productsConnectorMock, times(1))
                 .getProduct(onboardingData.getProductId());
+        verify(onboardingValidationStrategyMock, times(1))
+                .validate(onboardingData.getProductId(), onboardingData.getInstitutionExternalId());
         verify(partyConnectorMock, times(1))
                 .onboardingOrganization(onboardingDataCaptor.capture());
         ArgumentCaptor<SaveUserDto> saveUserCaptor = ArgumentCaptor.forClass(SaveUserDto.class);
@@ -276,7 +337,7 @@ class InstitutionServiceImplTest {
             Assertions.assertEquals(productRole, userInfo.getProductRole());
             assertNotNull(userInfo.getId());
         });
-        verifyNoMoreInteractions(productsConnectorMock, partyConnectorMock, userConnectorMock);
+        verifyNoMoreInteractions(productsConnectorMock, partyConnectorMock, userConnectorMock, onboardingValidationStrategyMock);
     }
 
     @Test
@@ -291,7 +352,8 @@ class InstitutionServiceImplTest {
         Billing billing = mockInstance(new Billing());
         onboardingData.setBilling(billing);
         onboardingData.setUsers(List.of(userInfo1, userInfo2));
-        Product productMock = mockInstance(new Product(), "setRoleMappings", "setParentId");
+        Product productMock = mockInstance(new Product(), "setRoleMappings", "setParentId", "setId");
+        productMock.setId(onboardingData.getProductId());
         ProductRoleInfo productRoleInfo1 = mockInstance(new ProductRoleInfo(), 1, "setRoles");
         ProductRoleInfo.ProductRole productRole1 = mockInstance(new ProductRoleInfo.ProductRole(), 1);
         productRole1.setCode(productRole);
@@ -313,14 +375,14 @@ class InstitutionServiceImplTest {
         productMock.setRoleMappings(roleMappings);
         when(productsConnectorMock.getProduct(onboardingData.getProductId()))
                 .thenReturn(productMock);
-
         when(userConnectorMock.saveUser(Mockito.any()))
                 .thenAnswer(invocation -> {
                     UserId userId = new UserId();
                     userId.setId(UUID.randomUUID());
                     return userId;
                 });
-
+        when(onboardingValidationStrategyMock.validate(Mockito.any(), Mockito.any()))
+                .thenReturn(true);
         // when
         institutionService.onboarding(onboardingData);
         // then
@@ -330,6 +392,8 @@ class InstitutionServiceImplTest {
                 .createInstitutionUsingExternalId(onboardingData.getInstitutionExternalId());
         verify(productsConnectorMock, times(1))
                 .getProduct(onboardingData.getProductId());
+        verify(onboardingValidationStrategyMock, times(1))
+                .validate(onboardingData.getProductId(), onboardingData.getInstitutionExternalId());
         verify(partyConnectorMock, times(1))
                 .onboardingOrganization(onboardingDataCaptor.capture());
         ArgumentCaptor<SaveUserDto> saveUserCaptor = ArgumentCaptor.forClass(SaveUserDto.class);
@@ -347,7 +411,7 @@ class InstitutionServiceImplTest {
             Assertions.assertEquals(productRole, userInfo.getProductRole());
             assertNotNull(userInfo.getId());
         });
-        verifyNoMoreInteractions(productsConnectorMock, partyConnectorMock, userConnectorMock);
+        verifyNoMoreInteractions(productsConnectorMock, partyConnectorMock, userConnectorMock, onboardingValidationStrategyMock);
     }
 
 
@@ -363,7 +427,8 @@ class InstitutionServiceImplTest {
         Billing billing = mockInstance(new Billing());
         onboardingData.setBilling(billing);
         onboardingData.setUsers(List.of(userInfo1, userInfo2));
-        Product productMock = mockInstance(new Product(), "setRoleMappings", "setParentId");
+        Product productMock = mockInstance(new Product(), "setRoleMappings", "setParentId", "setId");
+        productMock.setId(onboardingData.getProductId());
         ProductRoleInfo productRoleInfo1 = mockInstance(new ProductRoleInfo(), 1, "setRoles");
         ProductRoleInfo.ProductRole productRole1 = mockInstance(new ProductRoleInfo.ProductRole(), 1);
         productRole1.setCode(productRole);
@@ -412,7 +477,8 @@ class InstitutionServiceImplTest {
                     userId.setId(UUID.randomUUID());
                     return userId;
                 });
-
+        when(onboardingValidationStrategyMock.validate(Mockito.any(), Mockito.any()))
+                .thenReturn(true);
         // when
         final Executable executable = () -> institutionService.onboarding(onboardingData);
         // then
@@ -423,13 +489,15 @@ class InstitutionServiceImplTest {
                 .createInstitutionUsingExternalId(onboardingData.getInstitutionExternalId());
         verify(productsConnectorMock, times(1))
                 .getProduct(onboardingData.getProductId());
+        verify(onboardingValidationStrategyMock, times(1))
+                .validate(onboardingData.getProductId(), onboardingData.getInstitutionExternalId());
         ArgumentCaptor<SaveUserDto> saveUserCaptor = ArgumentCaptor.forClass(SaveUserDto.class);
         verify(userConnectorMock, times(1))
                 .saveUser(Mockito.any());
         onboardingData.getUsers().forEach(user ->
                 verify(userConnectorMock, times(1))
                         .search(user.getTaxCode(), EnumSet.of(name, familyName, workContacts)));
-        verifyNoMoreInteractions(productsConnectorMock, partyConnectorMock, userConnectorMock);
+        verifyNoMoreInteractions(productsConnectorMock, partyConnectorMock, userConnectorMock, onboardingValidationStrategyMock);
     }
 
     @Test
@@ -446,7 +514,8 @@ class InstitutionServiceImplTest {
         onboardingData.setBilling(billing);
         onboardingData.setUsers(List.of(userInfo1, userInfo2));
 
-        Product productMock = mockInstance(new Product(), "setRoleMappings", "setParentId");
+        Product productMock = mockInstance(new Product(), "setRoleMappings", "setParentId", "setId");
+        productMock.setId(onboardingData.getProductId());
         ProductRoleInfo productRoleInfo1 = mockInstance(new ProductRoleInfo(), 1, "setRoles");
         ProductRoleInfo.ProductRole productRole1 = mockInstance(new ProductRoleInfo.ProductRole(), 1);
         productRole1.setCode(productRole);
@@ -500,6 +569,8 @@ class InstitutionServiceImplTest {
                     userId.setId(UUID.randomUUID());
                     return userId;
                 });
+        when(onboardingValidationStrategyMock.validate(Mockito.any(), Mockito.any()))
+                .thenReturn(true);
         //when
         final Executable executable = () -> institutionService.onboarding(onboardingData);
         //then
@@ -510,6 +581,8 @@ class InstitutionServiceImplTest {
                 .createInstitutionUsingExternalId(onboardingData.getInstitutionExternalId());
         verify(productsConnectorMock, times(1))
                 .getProduct(onboardingData.getProductId());
+        verify(onboardingValidationStrategyMock, times(1))
+                .validate(onboardingData.getProductId(), onboardingData.getInstitutionExternalId());
         ArgumentCaptor<SaveUserDto> saveUserCaptor = ArgumentCaptor.forClass(SaveUserDto.class);
         verify(userConnectorMock, times(1))
                 .saveUser(saveUserCaptor.capture());
@@ -520,7 +593,7 @@ class InstitutionServiceImplTest {
                 .updateUser(any(), any());
         verify(partyConnectorMock, times(1))
                 .onboardingOrganization(any());
-        verifyNoMoreInteractions(productsConnectorMock);
+        verifyNoMoreInteractions(productsConnectorMock, onboardingValidationStrategyMock);
     }
 
     @Test
@@ -537,7 +610,8 @@ class InstitutionServiceImplTest {
         onboardingData.setBilling(billing);
         onboardingData.setUsers(List.of(userInfo1, userInfo2));
 
-        Product productMock = mockInstance(new Product(), "setRoleMappings", "setParentId");
+        Product productMock = mockInstance(new Product(), "setRoleMappings", "setParentId", "setId");
+        productMock.setId(onboardingData.getProductId());
         ProductRoleInfo productRoleInfo1 = mockInstance(new ProductRoleInfo(), 1, "setRoles");
         ProductRoleInfo.ProductRole productRole1 = mockInstance(new ProductRoleInfo.ProductRole(), 1);
         productRole1.setCode(productRole);
@@ -585,6 +659,8 @@ class InstitutionServiceImplTest {
                     userId.setId(UUID.randomUUID());
                     return userId;
                 });
+        when(onboardingValidationStrategyMock.validate(Mockito.any(), Mockito.any()))
+                .thenReturn(true);
         //when
         final Executable executable = () -> institutionService.onboarding(onboardingData);
         //then
@@ -595,6 +671,8 @@ class InstitutionServiceImplTest {
                 .createInstitutionUsingExternalId(onboardingData.getInstitutionExternalId());
         verify(productsConnectorMock, times(1))
                 .getProduct(onboardingData.getProductId());
+        verify(onboardingValidationStrategyMock, times(1))
+                .validate(onboardingData.getProductId(), onboardingData.getInstitutionExternalId());
         ArgumentCaptor<SaveUserDto> saveUserCaptor = ArgumentCaptor.forClass(SaveUserDto.class);
         verify(userConnectorMock, times(1))
                 .saveUser(saveUserCaptor.capture());
@@ -605,7 +683,7 @@ class InstitutionServiceImplTest {
                 .updateUser(any(), any());
         verify(partyConnectorMock, times(1))
                 .onboardingOrganization(any());
-        verifyNoMoreInteractions(productsConnectorMock);
+        verifyNoMoreInteractions(productsConnectorMock, onboardingValidationStrategyMock);
     }
 
     @Test
@@ -622,7 +700,8 @@ class InstitutionServiceImplTest {
         onboardingData.setBilling(billing);
         onboardingData.setUsers(List.of(userInfo1, userInfo2));
 
-        Product productMock = mockInstance(new Product(), "setRoleMappings", "setParentId");
+        Product productMock = mockInstance(new Product(), "setRoleMappings", "setParentId", "setId");
+        productMock.setId(onboardingData.getProductId());
         ProductRoleInfo productRoleInfo1 = mockInstance(new ProductRoleInfo(), 1, "setRoles");
         ProductRoleInfo.ProductRole productRole1 = mockInstance(new ProductRoleInfo.ProductRole(), 1);
         productRole1.setCode(productRole);
@@ -677,6 +756,8 @@ class InstitutionServiceImplTest {
                     userId.setId(UUID.randomUUID());
                     return userId;
                 });
+        when(onboardingValidationStrategyMock.validate(Mockito.any(), Mockito.any()))
+                .thenReturn(true);
         //when
         final Executable executable = () -> institutionService.onboarding(onboardingData);
         //then
@@ -687,6 +768,8 @@ class InstitutionServiceImplTest {
                 .createInstitutionUsingExternalId(onboardingData.getInstitutionExternalId());
         verify(productsConnectorMock, times(1))
                 .getProduct(onboardingData.getProductId());
+        verify(onboardingValidationStrategyMock, times(1))
+                .validate(onboardingData.getProductId(), onboardingData.getInstitutionExternalId());
         ArgumentCaptor<SaveUserDto> saveUserCaptor = ArgumentCaptor.forClass(SaveUserDto.class);
         verify(userConnectorMock, times(1))
                 .saveUser(saveUserCaptor.capture());
@@ -695,7 +778,7 @@ class InstitutionServiceImplTest {
                         .search(user.getTaxCode(), EnumSet.of(name, familyName, workContacts)));
         verify(partyConnectorMock, times(1))
                 .onboardingOrganization(any());
-        verifyNoMoreInteractions(productsConnectorMock);
+        verifyNoMoreInteractions(productsConnectorMock, onboardingValidationStrategyMock);
     }
 
     @Test
@@ -712,7 +795,8 @@ class InstitutionServiceImplTest {
         onboardingData.setBilling(billing);
         onboardingData.setUsers(List.of(userInfo1, userInfo2));
 
-        Product productMock = mockInstance(new Product(), "setRoleMappings", "setParentId");
+        Product productMock = mockInstance(new Product(), "setRoleMappings", "setParentId", "setId");
+        productMock.setId(onboardingData.getProductId());
         ProductRoleInfo productRoleInfo1 = mockInstance(new ProductRoleInfo(), 1, "setRoles");
         ProductRoleInfo.ProductRole productRole1 = mockInstance(new ProductRoleInfo.ProductRole(), 1);
         productRole1.setCode(productRole);
@@ -766,6 +850,8 @@ class InstitutionServiceImplTest {
                     userId.setId(UUID.randomUUID());
                     return userId;
                 });
+        when(onboardingValidationStrategyMock.validate(Mockito.any(), Mockito.any()))
+                .thenReturn(true);
         //when
         final Executable executable = () -> institutionService.onboarding(onboardingData);
         //then
@@ -776,6 +862,8 @@ class InstitutionServiceImplTest {
                 .createInstitutionUsingExternalId(onboardingData.getInstitutionExternalId());
         verify(productsConnectorMock, times(1))
                 .getProduct(onboardingData.getProductId());
+        verify(onboardingValidationStrategyMock, times(1))
+                .validate(onboardingData.getProductId(), onboardingData.getInstitutionExternalId());
         ArgumentCaptor<SaveUserDto> saveUserCaptor = ArgumentCaptor.forClass(SaveUserDto.class);
         verify(userConnectorMock, times(1))
                 .saveUser(saveUserCaptor.capture());
@@ -786,7 +874,39 @@ class InstitutionServiceImplTest {
                 .updateUser(any(), any());
         verify(partyConnectorMock, times(1))
                 .onboardingOrganization(any());
-        verifyNoMoreInteractions(productsConnectorMock);
+        verifyNoMoreInteractions(productsConnectorMock, onboardingValidationStrategyMock);
+    }
+
+    @Test
+    void onboarding_subProduct_notAllowed() {
+        //given
+        OnboardingData onboardingData = mockInstance(new OnboardingData());
+        Billing billing = mockInstance(new Billing());
+        onboardingData.setBilling(billing);
+        Product baseProductMock = mockInstance(new Product(), 1, "setParentId");
+        Product subProductMock = mockInstance(new Product(), 2, "setId", "setParentId", "setRoleMappings");
+        subProductMock.setId(onboardingData.getProductId());
+        subProductMock.setParentId(baseProductMock.getId());
+        when(productsConnectorMock.getProduct(onboardingData.getProductId()))
+                .thenReturn(subProductMock);
+        when(productsConnectorMock.getProduct(subProductMock.getParentId()))
+                .thenReturn(baseProductMock);
+        when(onboardingValidationStrategyMock.validate(Mockito.any(), Mockito.any()))
+                .thenReturn(false);
+        //when
+        Executable executable = () -> institutionService.onboarding(onboardingData);
+        //then
+        ValidationException e = Assertions.assertThrows(ValidationException.class, executable);
+        assertEquals("Institution with external id '" + onboardingData.getInstitutionExternalId() + "' is not allowed to onboard '" + baseProductMock.getId() + "' product",
+                e.getMessage());
+        verify(productsConnectorMock, times(1))
+                .getProduct(onboardingData.getProductId());
+        verify(productsConnectorMock, times(1))
+                .getProduct(subProductMock.getParentId());
+        verify(onboardingValidationStrategyMock, times(1))
+                .validate(baseProductMock.getId(), onboardingData.getInstitutionExternalId());
+        verifyNoMoreInteractions(productsConnectorMock, onboardingValidationStrategyMock);
+        verifyNoInteractions(partyConnectorMock, userConnectorMock);
     }
 
     @Test
@@ -802,6 +922,8 @@ class InstitutionServiceImplTest {
                 .thenReturn(subProductMock);
         when(productsConnectorMock.getProduct(subProductMock.getParentId()))
                 .thenReturn(baseProductMock);
+        when(onboardingValidationStrategyMock.validate(Mockito.any(), Mockito.any()))
+                .thenReturn(true);
         //when
         Executable executable = () -> institutionService.onboarding(onboardingData);
         //then
@@ -811,12 +933,14 @@ class InstitutionServiceImplTest {
                 .getProduct(onboardingData.getProductId());
         verify(productsConnectorMock, times(1))
                 .getProduct(subProductMock.getParentId());
+        verify(onboardingValidationStrategyMock, times(1))
+                .validate(baseProductMock.getId(), onboardingData.getInstitutionExternalId());
         verify(partyConnectorMock, times(1))
                 .getUserInstitutionRelationships(eq(onboardingData.getInstitutionExternalId()), userInfoFilterCaptor.capture());
         assertEquals(Optional.of(EnumSet.of(PartyRole.MANAGER)), userInfoFilterCaptor.getValue().getRole());
         assertEquals(Optional.of(EnumSet.of(RelationshipState.ACTIVE)), userInfoFilterCaptor.getValue().getAllowedStates());
         assertEquals(Optional.of(baseProductMock.getId()), userInfoFilterCaptor.getValue().getProductId());
-        verifyNoMoreInteractions(partyConnectorMock, productsConnectorMock);
+        verifyNoMoreInteractions(partyConnectorMock, productsConnectorMock, onboardingValidationStrategyMock);
         verifyNoInteractions(userConnectorMock);
     }
 
@@ -845,6 +969,8 @@ class InstitutionServiceImplTest {
         relationshipsResponse.add(relationshipInfoMock);
         when(partyConnectorMock.getUserInstitutionRelationships(any(), any()))
                 .thenReturn(relationshipsResponse);
+        when(onboardingValidationStrategyMock.validate(Mockito.any(), Mockito.any()))
+                .thenReturn(true);
         //when
         Executable executable = () -> institutionService.onboarding(onboardingData);
         //then
@@ -857,7 +983,9 @@ class InstitutionServiceImplTest {
         assertEquals(Optional.of(baseProductMock.getId()), userInfoFilterCaptor.getValue().getProductId());
         verify(productsConnectorMock, times(1))
                 .getProduct(onboardingData.getProductId());
-        verifyNoMoreInteractions(partyConnectorMock, productsConnectorMock);
+        verify(onboardingValidationStrategyMock, times(1))
+                .validate(baseProductMock.getId(), onboardingData.getInstitutionExternalId());
+        verifyNoMoreInteractions(partyConnectorMock, productsConnectorMock, onboardingValidationStrategyMock);
         verifyNoInteractions(userConnectorMock);
     }
 
@@ -923,6 +1051,8 @@ class InstitutionServiceImplTest {
                     userId.setId(UUID.randomUUID());
                     return userId;
                 });
+        when(onboardingValidationStrategyMock.validate(Mockito.any(), Mockito.any()))
+                .thenReturn(true);
         // when
         institutionService.onboarding(onboardingData);
         // then
@@ -952,12 +1082,13 @@ class InstitutionServiceImplTest {
                 .saveUser(saveUserCaptor.capture());
         List<SaveUserDto> savedUsers = saveUserCaptor.getAllValues();
         savedUsers.forEach(saveUserDto -> assertTrue(saveUserDto.getWorkContacts().containsKey(institution.getId())));
-
+        verify(onboardingValidationStrategyMock, times(1))
+                .validate(baseProductMock.getId(), onboardingData.getInstitutionExternalId());
         verify(userConnectorMock, times(1))
                 .getUserByInternalId(relationshipInfoMock.getFrom(), EnumSet.of(fiscalCode, name, familyName, workContacts));
         verify(partyConnectorMock, times(1))
                 .getInstitutionByExternalId(onboardingData.getInstitutionExternalId());
-        verifyNoMoreInteractions(productsConnectorMock, partyConnectorMock, userConnectorMock);
+        verifyNoMoreInteractions(productsConnectorMock, partyConnectorMock, userConnectorMock, onboardingValidationStrategyMock);
     }
 
 

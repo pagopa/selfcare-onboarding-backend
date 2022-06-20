@@ -60,7 +60,9 @@ public class UserServiceImpl implements UserService {
     private <T> boolean isValid(T field, CertifiedField<T> certifiedField) {
         return certifiedField == null
                 || !Certification.isCertified(certifiedField.getCertification())
-                || certifiedField.getValue().equals(field);
+                || String.class.isAssignableFrom(certifiedField.getValue().getClass())
+                ? ((String) certifiedField.getValue()).equalsIgnoreCase((String) field)
+                : certifiedField.getValue().equals(field);
     }
 
 }
