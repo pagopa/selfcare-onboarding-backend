@@ -27,6 +27,8 @@ class ConfigMapAllowedListOnboardingValidationStrategy implements OnboardingVali
 
     @Autowired
     public ConfigMapAllowedListOnboardingValidationStrategy(@Value("#{${onboarding.institutions-allowed-list}}") Map<String, Set<String>> institutionProductsAllowedMap) {
+        log.trace("Initializing {}", ConfigMapAllowedListOnboardingValidationStrategy.class.getSimpleName());
+        log.debug("ConfigMapAllowedListOnboardingValidationStrategy institutionProductsAllowedMap = {}", institutionProductsAllowedMap);
         validateSpecialcharecterUsage(institutionProductsAllowedMap);
         this.institutionProductsAllowedMap = Optional.ofNullable(institutionProductsAllowedMap);
     }
@@ -54,11 +56,16 @@ class ConfigMapAllowedListOnboardingValidationStrategy implements OnboardingVali
      */
     @Override
     public boolean validate(String productId, String institutionExternalId) {
-        return institutionProductsAllowedMap.isEmpty() ||
+        log.trace("validate start");
+        log.debug("validate productId = {}, institutionExternalId = {}", productId, institutionExternalId);
+        final boolean valid = institutionProductsAllowedMap.isEmpty() ||
                 Optional.ofNullable(institutionProductsAllowedMap.get().get(productId))
                         .map(institutionExternalIds -> institutionExternalIds.contains("*")
                                 || institutionExternalIds.contains(institutionExternalId))
                         .orElse(false);
+        log.debug("validate result = {}", valid);
+        log.trace("validate end");
+        return valid;
     }
 
 }
