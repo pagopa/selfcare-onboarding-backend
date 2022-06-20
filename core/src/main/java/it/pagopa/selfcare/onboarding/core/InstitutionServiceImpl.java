@@ -24,11 +24,13 @@ import it.pagopa.selfcare.onboarding.connector.model.user.WorkContact;
 import it.pagopa.selfcare.onboarding.connector.model.user.mapper.CertifiedFieldMapper;
 import it.pagopa.selfcare.onboarding.connector.model.user.mapper.UserMapper;
 import it.pagopa.selfcare.onboarding.core.exception.UpdateNotAllowedException;
+import it.pagopa.selfcare.onboarding.core.strategy.OnboardingValidationStrategy;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
+import javax.validation.ValidationException;
 import java.util.*;
 
 import static it.pagopa.selfcare.onboarding.connector.model.user.User.Fields.*;
@@ -48,17 +50,23 @@ class InstitutionServiceImpl implements InstitutionService {
     private static final EnumSet<it.pagopa.selfcare.onboarding.connector.model.user.User.Fields> USER_FIELD_LIST = EnumSet.of(name, familyName, workContacts);
     private static final Optional<EnumSet<PartyRole>> MANAGER_ROLE_FILTER = Optional.of(EnumSet.of(PartyRole.MANAGER));
     private static final Optional<EnumSet<RelationshipState>> ACTIVE_ALLOWED_STATES_FILTER = Optional.of(EnumSet.of(RelationshipState.ACTIVE));
+    private static final String ONBOARDING_NOT_ALLOWED_ERROR_MESSAGE_TEMPLATE = "Institution with external id '%s' is not allowed to onboard '%s' product";
 
     private final PartyConnector partyConnector;
     private final ProductsConnector productsConnector;
     private final UserRegistryConnector userConnector;
+    private final OnboardingValidationStrategy onboardingValidationStrategy;
 
 
     @Autowired
-    InstitutionServiceImpl(PartyConnector partyConnector, ProductsConnector productsConnector, UserRegistryConnector userConnector) {
+    InstitutionServiceImpl(PartyConnector partyConnector,
+                           ProductsConnector productsConnector,
+                           UserRegistryConnector userConnector,
+                           OnboardingValidationStrategy onboardingValidationStrategy) {
         this.partyConnector = partyConnector;
         this.productsConnector = productsConnector;
         this.userConnector = userConnector;
+        this.onboardingValidationStrategy = onboardingValidationStrategy;
     }
 
 
@@ -69,6 +77,7 @@ class InstitutionServiceImpl implements InstitutionService {
         Assert.notNull(onboardingData, REQUIRED_ONBOARDING_DATA_MESSAGE);
         Assert.notNull(onboardingData.getBilling(), REQUIRED_INSTITUTION_BILLING_DATA_MESSAGE);
         Assert.notNull(onboardingData.getInstitutionType(), REQUIRED_INSTITUTION_TYPE_MESSAGE);
+
         Product product = productsConnector.getProduct(onboardingData.getProductId());
         Assert.notNull(product, "Product is required");
         onboardingData.setContractPath(product.getContractTemplatePath());
@@ -77,6 +86,11 @@ class InstitutionServiceImpl implements InstitutionService {
         final EnumMap<PartyRole, ProductRoleInfo> roleMappings;
         if (product.getParentId() != null) {
             final Product baseProduct = productsConnector.getProduct(product.getParentId());
+            if (!onboardingValidationStrategy.validate(baseProduct.getId(), onboardingData.getInstitutionExternalId())) {
+                throw new ValidationException(String.format(ONBOARDING_NOT_ALLOWED_ERROR_MESSAGE_TEMPLATE,
+                        onboardingData.getInstitutionExternalId(),
+                        baseProduct.getId()));
+            }
             final Optional<User> manager = retrieveManager(onboardingData, baseProduct);
             onboardingData.setUsers(List.of(manager.orElseThrow(() ->
                     new ManagerNotFoundException(String.format("Unable to retrieve the manager related to institution external id = %s and base product %s",
@@ -84,6 +98,11 @@ class InstitutionServiceImpl implements InstitutionService {
                             baseProduct.getId())))));
             roleMappings = baseProduct.getRoleMappings();
         } else {
+            if (!onboardingValidationStrategy.validate(product.getId(), onboardingData.getInstitutionExternalId())) {
+                throw new ValidationException(String.format(ONBOARDING_NOT_ALLOWED_ERROR_MESSAGE_TEMPLATE,
+                        onboardingData.getInstitutionExternalId(),
+                        product.getId()));
+            }
             roleMappings = product.getRoleMappings();
         }
         onboardingData.setProductName(product.getTitle());
