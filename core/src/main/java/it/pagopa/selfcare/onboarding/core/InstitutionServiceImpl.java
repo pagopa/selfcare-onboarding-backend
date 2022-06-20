@@ -8,7 +8,6 @@ import it.pagopa.selfcare.onboarding.connector.exceptions.ManagerNotFoundExcepti
 import it.pagopa.selfcare.onboarding.connector.exceptions.ResourceNotFoundException;
 import it.pagopa.selfcare.onboarding.connector.model.InstitutionOnboardingData;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipState;
-import it.pagopa.selfcare.onboarding.connector.model.RelationshipsResponse;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionInfo;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
@@ -33,6 +32,7 @@ import org.springframework.util.Assert;
 import javax.validation.ValidationException;
 import java.util.*;
 
+import static it.pagopa.selfcare.onboarding.connector.model.onboarding.PartyRole.MANAGER;
 import static it.pagopa.selfcare.onboarding.connector.model.user.User.Fields.*;
 
 @Slf4j
@@ -49,7 +49,7 @@ class InstitutionServiceImpl implements InstitutionService {
 
     private static final EnumSet<it.pagopa.selfcare.onboarding.connector.model.user.User.Fields> USER_FIELD_LIST_ENHANCED = EnumSet.of(fiscalCode, name, familyName, workContacts);
     private static final EnumSet<it.pagopa.selfcare.onboarding.connector.model.user.User.Fields> USER_FIELD_LIST = EnumSet.of(name, familyName, workContacts);
-    private static final Optional<EnumSet<PartyRole>> MANAGER_ROLE_FILTER = Optional.of(EnumSet.of(PartyRole.MANAGER));
+    private static final Optional<EnumSet<PartyRole>> MANAGER_ROLE_FILTER = Optional.of(EnumSet.of(MANAGER));
     private static final Optional<EnumSet<RelationshipState>> ACTIVE_ALLOWED_STATES_FILTER = Optional.of(EnumSet.of(RelationshipState.ACTIVE));
     private static final String ONBOARDING_NOT_ALLOWED_ERROR_MESSAGE_TEMPLATE = "Institution with external id '%s' is not allowed to onboard '%s' product";
 
@@ -126,6 +126,7 @@ class InstitutionServiceImpl implements InstitutionService {
         }
         String finalInstitutionInternalId = institution.getId();
         onboardingData.getUsers().forEach(user -> {
+
             final Optional<it.pagopa.selfcare.onboarding.connector.model.user.User> searchResult =
                     userConnector.search(user.getTaxCode(), USER_FIELD_LIST);
             searchResult.ifPresentOrElse(foundUser -> {
@@ -136,6 +137,7 @@ class InstitutionServiceImpl implements InstitutionService {
             }, () -> user.setId(userConnector.saveUser(UserMapper.toSaveUserDto(user, finalInstitutionInternalId))
                     .getId().toString()));
         });
+
         partyConnector.onboardingOrganization(onboardingData);
         log.trace("onboarding end");
     }
@@ -187,23 +189,18 @@ class InstitutionServiceImpl implements InstitutionService {
 
     private Optional<User> retrieveManager(OnboardingData onboardingData, Product product) {
         Optional<User> managerOpt = Optional.empty();
-        UserInfo.UserInfoFilter userInfoFilter = new UserInfo.UserInfoFilter();
-        userInfoFilter.setRole(MANAGER_ROLE_FILTER);
-        userInfoFilter.setAllowedStates(ACTIVE_ALLOWED_STATES_FILTER);
-        userInfoFilter.setProductId(Optional.of(product.getId()));
-        RelationshipsResponse response = partyConnector.getUserInstitutionRelationships(onboardingData.getInstitutionExternalId(), userInfoFilter);
-
-        if (response != null && response.size() == 1) {
+        UserInfo managerInfo = partyConnector.getInstitutionManager(onboardingData.getInstitutionExternalId(), onboardingData.getProductId());
+        if (managerInfo != null) {
             final it.pagopa.selfcare.onboarding.connector.model.user.User baseProductManager =
-                    userConnector.getUserByInternalId(response.get(0).getFrom(), USER_FIELD_LIST_ENHANCED);
+                    userConnector.getUserByInternalId(managerInfo.getId(), USER_FIELD_LIST_ENHANCED);
             User manager = new User();
             manager.setId(baseProductManager.getId());
             manager.setName(baseProductManager.getName().getValue());
             manager.setSurname(baseProductManager.getFamilyName().getValue());
             manager.setTaxCode(baseProductManager.getFiscalCode());
-            manager.setRole(PartyRole.MANAGER);
-            manager.setEmail(baseProductManager.getWorkContacts().get(response.get(0).getTo()).getEmail().getValue());
-            String productRole = product.getRoleMappings().get(PartyRole.MANAGER).getRoles().get(0).getCode();
+            manager.setRole(MANAGER);
+            manager.setEmail(baseProductManager.getWorkContacts().get(managerInfo.getInstitutionId()).getEmail().getValue());
+            String productRole = product.getRoleMappings().get(MANAGER).getRoles().get(0).getCode();
             manager.setProductRole(productRole);
 
             managerOpt = Optional.of(manager);

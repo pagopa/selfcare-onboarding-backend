@@ -6,9 +6,6 @@ import it.pagopa.selfcare.onboarding.connector.api.UserRegistryConnector;
 import it.pagopa.selfcare.onboarding.connector.exceptions.ManagerNotFoundException;
 import it.pagopa.selfcare.onboarding.connector.exceptions.ResourceNotFoundException;
 import it.pagopa.selfcare.onboarding.connector.model.InstitutionOnboardingData;
-import it.pagopa.selfcare.onboarding.connector.model.RelationshipInfo;
-import it.pagopa.selfcare.onboarding.connector.model.RelationshipState;
-import it.pagopa.selfcare.onboarding.connector.model.RelationshipsResponse;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Attribute;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionInfo;
@@ -31,6 +28,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import javax.validation.ValidationException;
 import java.util.*;
 
+import static it.pagopa.selfcare.commons.utils.TestUtils.checkNotNullFields;
 import static it.pagopa.selfcare.commons.utils.TestUtils.mockInstance;
 import static it.pagopa.selfcare.onboarding.connector.model.user.User.Fields.*;
 import static it.pagopa.selfcare.onboarding.core.InstitutionServiceImpl.*;
@@ -910,7 +908,7 @@ class InstitutionServiceImplTest {
     }
 
     @Test
-    void onboarding_noRelationshipForSubProduct() {
+    void onboarding_noManagaerFoundForSubProduct() {
         //given
         OnboardingData onboardingData = mockInstance(new OnboardingData());
         Billing billing = mockInstance(new Billing());
@@ -936,59 +934,10 @@ class InstitutionServiceImplTest {
         verify(onboardingValidationStrategyMock, times(1))
                 .validate(baseProductMock.getId(), onboardingData.getInstitutionExternalId());
         verify(partyConnectorMock, times(1))
-                .getUserInstitutionRelationships(eq(onboardingData.getInstitutionExternalId()), userInfoFilterCaptor.capture());
-        assertEquals(Optional.of(EnumSet.of(PartyRole.MANAGER)), userInfoFilterCaptor.getValue().getRole());
-        assertEquals(Optional.of(EnumSet.of(RelationshipState.ACTIVE)), userInfoFilterCaptor.getValue().getAllowedStates());
-        assertEquals(Optional.of(baseProductMock.getId()), userInfoFilterCaptor.getValue().getProductId());
+                .getInstitutionManager(onboardingData.getInstitutionExternalId(), onboardingData.getProductId());
         verifyNoMoreInteractions(partyConnectorMock, productsConnectorMock, onboardingValidationStrategyMock);
         verifyNoInteractions(userConnectorMock);
     }
-
-    @Test
-    void onboardingSubProduct_foundMoreThanOneManager() {
-        //given
-        User userInfo1 = mockInstance(new User(), 1, "setRole");
-        userInfo1.setRole(PartyRole.MANAGER);
-        User userInfo2 = mockInstance(new User(), 2, "setRole");
-        userInfo2.setRole(PartyRole.DELEGATE);
-        OnboardingData onboardingData = mockInstance(new OnboardingData());
-        Billing billing = mockInstance(new Billing());
-        onboardingData.setBilling(billing);
-        onboardingData.setUsers(List.of(userInfo1, userInfo2));
-        Product baseProductMock = mockInstance(new Product(), 1, "setParentId", "setRoleMappings");
-        Product subProductMock = mockInstance(new Product(), 2, "setParentId", "setRoleMappings");
-        subProductMock.setParentId(baseProductMock.getId());
-        when(productsConnectorMock.getProduct(onboardingData.getProductId()))
-                .thenReturn(subProductMock);
-        when(productsConnectorMock.getProduct(subProductMock.getParentId()))
-                .thenReturn(baseProductMock);
-        RelationshipInfo relationshipInfoMock = mockInstance(new RelationshipInfo());
-        relationshipInfoMock.setRole(PartyRole.MANAGER);
-        RelationshipsResponse relationshipsResponse = new RelationshipsResponse();
-        relationshipsResponse.add(relationshipInfoMock);
-        relationshipsResponse.add(relationshipInfoMock);
-        when(partyConnectorMock.getUserInstitutionRelationships(any(), any()))
-                .thenReturn(relationshipsResponse);
-        when(onboardingValidationStrategyMock.validate(Mockito.any(), Mockito.any()))
-                .thenReturn(true);
-        //when
-        Executable executable = () -> institutionService.onboarding(onboardingData);
-        //then
-        ManagerNotFoundException e = assertThrows(ManagerNotFoundException.class, executable);
-        assertEquals("Unable to retrieve the manager related to institution external id = " + onboardingData.getInstitutionExternalId() + " and base product " + baseProductMock.getId(), e.getMessage());
-        verify(partyConnectorMock, times(1))
-                .getUserInstitutionRelationships(eq(onboardingData.getInstitutionExternalId()), userInfoFilterCaptor.capture());
-        assertEquals(Optional.of(EnumSet.of(PartyRole.MANAGER)), userInfoFilterCaptor.getValue().getRole());
-        assertEquals(Optional.of(EnumSet.of(RelationshipState.ACTIVE)), userInfoFilterCaptor.getValue().getAllowedStates());
-        assertEquals(Optional.of(baseProductMock.getId()), userInfoFilterCaptor.getValue().getProductId());
-        verify(productsConnectorMock, times(1))
-                .getProduct(onboardingData.getProductId());
-        verify(onboardingValidationStrategyMock, times(1))
-                .validate(baseProductMock.getId(), onboardingData.getInstitutionExternalId());
-        verifyNoMoreInteractions(partyConnectorMock, productsConnectorMock, onboardingValidationStrategyMock);
-        verifyNoInteractions(userConnectorMock);
-    }
-
 
     @Test
     void onboardingSubProduct() {
@@ -1025,12 +974,10 @@ class InstitutionServiceImplTest {
                 .thenReturn(baseProductMock);
         Institution institution = mockInstance(new Institution());
         institution.setId(UUID.randomUUID().toString());
-        RelationshipInfo relationshipInfoMock = mockInstance(new RelationshipInfo());
-        relationshipInfoMock.setTo(institution.getId());
-        RelationshipsResponse relationshipsResponse = new RelationshipsResponse();
-        relationshipsResponse.add(relationshipInfoMock);
-        when(partyConnectorMock.getUserInstitutionRelationships(any(), any()))
-                .thenReturn(relationshipsResponse);
+        UserInfo managerInfo = mockInstance(new UserInfo());
+        managerInfo.setInstitutionId(institution.getId());
+        when(partyConnectorMock.getInstitutionManager(any(), any()))
+                .thenReturn(managerInfo);
         when(userConnectorMock.getUserByInternalId(any(), any()))
                 .thenAnswer(invocation -> {
                     final it.pagopa.selfcare.onboarding.connector.model.user.User user =
@@ -1059,10 +1006,7 @@ class InstitutionServiceImplTest {
         verify(productsConnectorMock, times(1))
                 .getProduct(onboardingData.getProductId());
         verify(partyConnectorMock, times(1))
-                .getUserInstitutionRelationships(eq(onboardingData.getInstitutionExternalId()), userInfoFilterCaptor.capture());
-        assertEquals(Optional.of(EnumSet.of(PartyRole.MANAGER)), userInfoFilterCaptor.getValue().getRole());
-        assertEquals(Optional.of(EnumSet.of(RelationshipState.ACTIVE)), userInfoFilterCaptor.getValue().getAllowedStates());
-        assertEquals(Optional.of(subProductMock.getParentId()), userInfoFilterCaptor.getValue().getProductId());
+                .getInstitutionManager(onboardingData.getInstitutionExternalId(), onboardingData.getProductId());
         verify(productsConnectorMock, times(1))
                 .getProduct(subProductMock.getParentId());
         verify(partyConnectorMock, times(1))
@@ -1073,6 +1017,7 @@ class InstitutionServiceImplTest {
         captured.getUsers().forEach(userInfo -> {
             Assertions.assertEquals(productRole, userInfo.getProductRole());
             assertNotNull(userInfo.getId());
+            checkNotNullFields(userInfo);
         });
         onboardingData.getUsers().forEach(user ->
                 verify(userConnectorMock, times(1))
@@ -1085,7 +1030,7 @@ class InstitutionServiceImplTest {
         verify(onboardingValidationStrategyMock, times(1))
                 .validate(baseProductMock.getId(), onboardingData.getInstitutionExternalId());
         verify(userConnectorMock, times(1))
-                .getUserByInternalId(relationshipInfoMock.getFrom(), EnumSet.of(fiscalCode, name, familyName, workContacts));
+                .getUserByInternalId(managerInfo.getId(), EnumSet.of(fiscalCode, name, familyName, workContacts));
         verify(partyConnectorMock, times(1))
                 .getInstitutionByExternalId(onboardingData.getInstitutionExternalId());
         verifyNoMoreInteractions(productsConnectorMock, partyConnectorMock, userConnectorMock, onboardingValidationStrategyMock);
