@@ -1138,6 +1138,19 @@ class InstitutionServiceImplTest {
     }
 
     @Test
+    void getInstitutionOnboardingData_nullProductId() {
+        //given
+        String institutionId = "institutionId";
+        String productId = null;
+        //when
+        Executable executable = () -> institutionService.getInstitutionOnboardingData(institutionId, productId);
+        //then
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, executable);
+        assertEquals(A_PRODUCT_ID_IS_REQUIRED, e.getMessage());
+        verifyNoInteractions(partyConnectorMock, productsConnectorMock, userConnectorMock);
+    }
+
+    @Test
     void getInstitutionOnboardingData_ManagerNotFound() {
         //given
         String institutionId = "institutionId";
@@ -1177,7 +1190,7 @@ class InstitutionServiceImplTest {
         verify(partyConnectorMock, times(1))
                 .getInstitutionManager(institutionId, productId);
         verify(partyConnectorMock, times(1))
-                .getOnboardedInstitution(institutionId);
+                .getInstitutionBillingData(institutionId, productId);
         verify(userConnectorMock, times(1))
                 .getUserByInternalId(userInfoManager.getId(), EnumSet.of(name, familyName, workContacts, fiscalCode));
         verifyNoMoreInteractions(partyConnectorMock, userConnectorMock);
@@ -1204,7 +1217,7 @@ class InstitutionServiceImplTest {
         InstitutionInfo institutionInfoMock = mockInstance(new InstitutionInfo());
         Billing billingMock = mockInstance(new Billing());
         institutionInfoMock.setBilling(billingMock);
-        when(partyConnectorMock.getOnboardedInstitution(Mockito.anyString()))
+        when(partyConnectorMock.getInstitutionBillingData(anyString(), anyString()))
                 .thenReturn(institutionInfoMock);
         //when
         InstitutionOnboardingData institutionOnboardingData = institutionService.getInstitutionOnboardingData(institutionId, productId);
@@ -1218,7 +1231,7 @@ class InstitutionServiceImplTest {
         verify(partyConnectorMock, times(1))
                 .getInstitutionManager(institutionId, productId);
         verify(partyConnectorMock, times(1))
-                .getOnboardedInstitution(institutionId);
+                .getInstitutionBillingData(institutionId, productId);
         verify(userConnectorMock, times(1))
                 .getUserByInternalId(userInfoManager.getId(), EnumSet.of(name, familyName, workContacts, fiscalCode));
         verifyNoMoreInteractions(partyConnectorMock, userConnectorMock);
