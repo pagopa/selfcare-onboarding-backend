@@ -7,7 +7,6 @@ import it.pagopa.selfcare.onboarding.connector.api.UserRegistryConnector;
 import it.pagopa.selfcare.onboarding.connector.exceptions.ManagerNotFoundException;
 import it.pagopa.selfcare.onboarding.connector.exceptions.ResourceNotFoundException;
 import it.pagopa.selfcare.onboarding.connector.model.InstitutionOnboardingData;
-import it.pagopa.selfcare.onboarding.connector.model.RelationshipState;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionInfo;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
@@ -49,8 +48,6 @@ class InstitutionServiceImpl implements InstitutionService {
 
     private static final EnumSet<it.pagopa.selfcare.onboarding.connector.model.user.User.Fields> USER_FIELD_LIST_ENHANCED = EnumSet.of(fiscalCode, name, familyName, workContacts);
     private static final EnumSet<it.pagopa.selfcare.onboarding.connector.model.user.User.Fields> USER_FIELD_LIST = EnumSet.of(name, familyName, workContacts);
-    private static final Optional<EnumSet<PartyRole>> MANAGER_ROLE_FILTER = Optional.of(EnumSet.of(MANAGER));
-    private static final Optional<EnumSet<RelationshipState>> ACTIVE_ALLOWED_STATES_FILTER = Optional.of(EnumSet.of(RelationshipState.ACTIVE));
     private static final String ONBOARDING_NOT_ALLOWED_ERROR_MESSAGE_TEMPLATE = "Institution with external id '%s' is not allowed to onboard '%s' product";
 
     private final PartyConnector partyConnector;
