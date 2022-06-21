@@ -12,6 +12,7 @@ import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.PartyRole;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.User;
 import it.pagopa.selfcare.onboarding.connector.rest.config.PartyProcessRestClientTestConfig;
+import it.pagopa.selfcare.onboarding.connector.rest.model.BillingDataResponse;
 import it.pagopa.selfcare.onboarding.connector.rest.model.OnBoardingInfo;
 import it.pagopa.selfcare.onboarding.connector.rest.model.OnboardingInstitutionRequest;
 import lombok.SneakyThrows;
@@ -284,7 +285,35 @@ class PartyProcessRestClientTest extends BaseFeignRestClientTest {
         assertNull(response.getPricingPlan());
         assertNull(response.getCreatedAt());
         assertNull(response.getInstitutionUpdate());
+    }
 
+    @Test
+    void getInstitutionBillingData_fullyValued() {
+        //given
+        String externalId = "externalId1";
+        String productId = "productId";
+        //when
+        BillingDataResponse response = restClient.getInstitutionBillingData(externalId, productId);
+        //then
+        assertNotNull(response);
+        TestUtils.checkNotNullFields(response);
+    }
+
+    @Test
+    void getInstitutionBillingData_fullyNull() {
+        //given
+        String externalId = "externalId2";
+        String productId = "productId";
+        //when
+        BillingDataResponse response = restClient.getInstitutionBillingData(externalId, productId);
+        //then
+        assertNotNull(response);
+        assertNull(response.getBilling());
+        assertNull(response.getAddress());
+        assertNull(response.getInstitutionId());
+        assertNull(response.getInstitutionType());
+        assertNull(response.getPricingPlan());
+        assertNull(response.getExternalId());
     }
 
 }

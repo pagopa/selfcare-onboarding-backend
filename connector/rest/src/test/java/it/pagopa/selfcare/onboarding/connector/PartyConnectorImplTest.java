@@ -16,6 +16,7 @@ import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionInfo;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.*;
 import it.pagopa.selfcare.onboarding.connector.rest.client.PartyProcessRestClient;
+import it.pagopa.selfcare.onboarding.connector.rest.model.BillingDataResponse;
 import it.pagopa.selfcare.onboarding.connector.rest.model.OnBoardingInfo;
 import it.pagopa.selfcare.onboarding.connector.rest.model.OnboardingInstitutionRequest;
 import org.junit.jupiter.api.Assertions;
@@ -31,9 +32,9 @@ import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static it.pagopa.selfcare.commons.utils.TestUtils.checkNotNullFields;
-import static it.pagopa.selfcare.commons.utils.TestUtils.mockInstance;
+import static it.pagopa.selfcare.commons.utils.TestUtils.*;
 import static it.pagopa.selfcare.onboarding.connector.PartyConnectorImpl.REQUIRED_INSTITUTION_ID_MESSAGE;
+import static it.pagopa.selfcare.onboarding.connector.PartyConnectorImpl.REQUIRED_PRODUCT_ID_MESSAGE;
 import static it.pagopa.selfcare.onboarding.connector.model.RelationshipState.ACTIVE;
 import static it.pagopa.selfcare.onboarding.connector.model.RelationshipState.PENDING;
 import static org.junit.jupiter.api.Assertions.*;
@@ -682,4 +683,52 @@ class PartyConnectorImplTest {
                 .getInstitutionManager(institutionId, productId);
 
     }
+
+    @Test
+    void getInstitutionBillingData_nullExternalId() {
+        //given
+        String externalId = null;
+        String productId = "productId";
+        //when
+        Executable executable = () -> partyConnector.getInstitutionBillingData(externalId, productId);
+        //then
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, executable);
+        assertEquals(REQUIRED_INSTITUTION_ID_MESSAGE, e.getMessage());
+        verifyNoInteractions(restClientMock);
+    }
+
+    @Test
+    void getInstitutionBillingData_nullProductId() {
+        //given
+        String externalId = "externalId";
+        String productId = null;
+        //when
+        Executable executable = () -> partyConnector.getInstitutionBillingData(externalId, productId);
+        //then
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, executable);
+        assertEquals(REQUIRED_PRODUCT_ID_MESSAGE, e.getMessage());
+        verifyNoInteractions(restClientMock);
+    }
+
+    @Test
+    void getInstitutionBillingData() {
+        //given
+        String externalId = "externalId";
+        String productId = "productId";
+        BillingDataResponse billingDataResponseMock = mockInstance(new BillingDataResponse());
+        Billing billingMock = mockInstance(new Billing());
+        billingDataResponseMock.setBilling(billingMock);
+        when(restClientMock.getInstitutionBillingData(anyString(), anyString()))
+                .thenReturn(billingDataResponseMock);
+        //when
+        InstitutionInfo institutionInfo = partyConnector.getInstitutionBillingData(externalId, productId);
+        //then
+        assertNotNull(institutionInfo);
+        checkNotNullFields(institutionInfo, "status", "category");
+        reflectionEqualsByName(billingDataResponseMock, institutionInfo);
+        verify(restClientMock, times(1))
+                .getInstitutionBillingData(externalId, productId);
+        verifyNoMoreInteractions(restClientMock);
+    }
+
 }
