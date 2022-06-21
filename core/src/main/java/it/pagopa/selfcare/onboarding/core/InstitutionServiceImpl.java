@@ -186,7 +186,7 @@ class InstitutionServiceImpl implements InstitutionService {
 
     private Optional<User> retrieveManager(OnboardingData onboardingData, Product product) {
         Optional<User> managerOpt = Optional.empty();
-        UserInfo managerInfo = partyConnector.getInstitutionManager(onboardingData.getInstitutionExternalId(), product.getParentId());
+        UserInfo managerInfo = partyConnector.getInstitutionManager(onboardingData.getInstitutionExternalId(), product.getId());
         if (managerInfo != null) {
             final it.pagopa.selfcare.onboarding.connector.model.user.User baseProductManager =
                     userConnector.getUserByInternalId(managerInfo.getId(), USER_FIELD_LIST_ENHANCED);
