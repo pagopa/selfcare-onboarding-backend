@@ -934,7 +934,7 @@ class InstitutionServiceImplTest {
         verify(onboardingValidationStrategyMock, times(1))
                 .validate(baseProductMock.getId(), onboardingData.getInstitutionExternalId());
         verify(partyConnectorMock, times(1))
-                .getInstitutionManager(onboardingData.getInstitutionExternalId(), onboardingData.getProductId());
+                .getInstitutionManager(onboardingData.getInstitutionExternalId(), baseProductMock.getId());
         verifyNoMoreInteractions(partyConnectorMock, productsConnectorMock, onboardingValidationStrategyMock);
         verifyNoInteractions(userConnectorMock);
     }
@@ -1006,7 +1006,7 @@ class InstitutionServiceImplTest {
         verify(productsConnectorMock, times(1))
                 .getProduct(onboardingData.getProductId());
         verify(partyConnectorMock, times(1))
-                .getInstitutionManager(onboardingData.getInstitutionExternalId(), onboardingData.getProductId());
+                .getInstitutionManager(onboardingData.getInstitutionExternalId(), baseProductMock.getId());
         verify(productsConnectorMock, times(1))
                 .getProduct(subProductMock.getParentId());
         verify(partyConnectorMock, times(1))
