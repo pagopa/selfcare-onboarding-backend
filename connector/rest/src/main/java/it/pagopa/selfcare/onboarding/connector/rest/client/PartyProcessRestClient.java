@@ -5,6 +5,7 @@ import it.pagopa.selfcare.onboarding.connector.model.RelationshipState;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipsResponse;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.PartyRole;
+import it.pagopa.selfcare.onboarding.connector.rest.model.BillingDataResponse;
 import it.pagopa.selfcare.onboarding.connector.rest.model.OnBoardingInfo;
 import it.pagopa.selfcare.onboarding.connector.rest.model.OnboardingInstitutionRequest;
 import org.springframework.cloud.openfeign.CollectionFormat;
@@ -54,4 +55,9 @@ public interface PartyProcessRestClient {
     @ResponseBody
     RelationshipInfo getInstitutionManager(@PathVariable("externalId") String externalId,
                                            @PathVariable("productId") String productId);
+
+    @GetMapping(value = "${rest-client.party-process.getInstitutionBillingData.path}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    BillingDataResponse getInstitutionBillingData(@PathVariable("externalId") String externalId,
+                                                  @PathVariable("productId") String productId);
 }

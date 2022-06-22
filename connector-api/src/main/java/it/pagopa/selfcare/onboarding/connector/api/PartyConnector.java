@@ -26,4 +26,6 @@ public interface PartyConnector {
 
     UserInfo getInstitutionManager(String externalInstitutionId, String productId);
 
+    InstitutionInfo getInstitutionBillingData(String externalId, String productId);
+
 }

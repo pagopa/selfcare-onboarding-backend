@@ -7,8 +7,6 @@ import it.pagopa.selfcare.onboarding.connector.api.UserRegistryConnector;
 import it.pagopa.selfcare.onboarding.connector.exceptions.ManagerNotFoundException;
 import it.pagopa.selfcare.onboarding.connector.exceptions.ResourceNotFoundException;
 import it.pagopa.selfcare.onboarding.connector.model.InstitutionOnboardingData;
-import it.pagopa.selfcare.onboarding.connector.model.RelationshipState;
-import it.pagopa.selfcare.onboarding.connector.model.RelationshipsResponse;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionInfo;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
@@ -24,13 +22,16 @@ import it.pagopa.selfcare.onboarding.connector.model.user.WorkContact;
 import it.pagopa.selfcare.onboarding.connector.model.user.mapper.CertifiedFieldMapper;
 import it.pagopa.selfcare.onboarding.connector.model.user.mapper.UserMapper;
 import it.pagopa.selfcare.onboarding.core.exception.UpdateNotAllowedException;
+import it.pagopa.selfcare.onboarding.core.strategy.OnboardingValidationStrategy;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
+import javax.validation.ValidationException;
 import java.util.*;
 
+import static it.pagopa.selfcare.onboarding.connector.model.onboarding.PartyRole.MANAGER;
 import static it.pagopa.selfcare.onboarding.connector.model.user.User.Fields.*;
 
 @Slf4j
@@ -43,22 +44,27 @@ class InstitutionServiceImpl implements InstitutionService {
     protected static final String REQUIRED_ONBOARDING_DATA_MESSAGE = "Onboarding data is required";
     protected static final String ATLEAST_ONE_PRODUCT_ROLE_REQUIRED = "At least one Product role related to %s Party role is required";
     protected static final String MORE_THAN_ONE_PRODUCT_ROLE_AVAILABLE = "More than one Product role related to %s Party role is available. Cannot automatically set the Product role";
+    protected static final String A_PRODUCT_ID_IS_REQUIRED = "A Product Id is required";
 
     private static final EnumSet<it.pagopa.selfcare.onboarding.connector.model.user.User.Fields> USER_FIELD_LIST_ENHANCED = EnumSet.of(fiscalCode, name, familyName, workContacts);
     private static final EnumSet<it.pagopa.selfcare.onboarding.connector.model.user.User.Fields> USER_FIELD_LIST = EnumSet.of(name, familyName, workContacts);
-    private static final Optional<EnumSet<PartyRole>> MANAGER_ROLE_FILTER = Optional.of(EnumSet.of(PartyRole.MANAGER));
-    private static final Optional<EnumSet<RelationshipState>> ACTIVE_ALLOWED_STATES_FILTER = Optional.of(EnumSet.of(RelationshipState.ACTIVE));
+    private static final String ONBOARDING_NOT_ALLOWED_ERROR_MESSAGE_TEMPLATE = "Institution with external id '%s' is not allowed to onboard '%s' product";
 
     private final PartyConnector partyConnector;
     private final ProductsConnector productsConnector;
     private final UserRegistryConnector userConnector;
+    private final OnboardingValidationStrategy onboardingValidationStrategy;
 
 
     @Autowired
-    InstitutionServiceImpl(PartyConnector partyConnector, ProductsConnector productsConnector, UserRegistryConnector userConnector) {
+    InstitutionServiceImpl(PartyConnector partyConnector,
+                           ProductsConnector productsConnector,
+                           UserRegistryConnector userConnector,
+                           OnboardingValidationStrategy onboardingValidationStrategy) {
         this.partyConnector = partyConnector;
         this.productsConnector = productsConnector;
         this.userConnector = userConnector;
+        this.onboardingValidationStrategy = onboardingValidationStrategy;
     }
 
 
@@ -69,6 +75,7 @@ class InstitutionServiceImpl implements InstitutionService {
         Assert.notNull(onboardingData, REQUIRED_ONBOARDING_DATA_MESSAGE);
         Assert.notNull(onboardingData.getBilling(), REQUIRED_INSTITUTION_BILLING_DATA_MESSAGE);
         Assert.notNull(onboardingData.getInstitutionType(), REQUIRED_INSTITUTION_TYPE_MESSAGE);
+
         Product product = productsConnector.getProduct(onboardingData.getProductId());
         Assert.notNull(product, "Product is required");
         onboardingData.setContractPath(product.getContractTemplatePath());
@@ -77,6 +84,11 @@ class InstitutionServiceImpl implements InstitutionService {
         final EnumMap<PartyRole, ProductRoleInfo> roleMappings;
         if (product.getParentId() != null) {
             final Product baseProduct = productsConnector.getProduct(product.getParentId());
+            if (!onboardingValidationStrategy.validate(baseProduct.getId(), onboardingData.getInstitutionExternalId())) {
+                throw new ValidationException(String.format(ONBOARDING_NOT_ALLOWED_ERROR_MESSAGE_TEMPLATE,
+                        onboardingData.getInstitutionExternalId(),
+                        baseProduct.getId()));
+            }
             final Optional<User> manager = retrieveManager(onboardingData, baseProduct);
             onboardingData.setUsers(List.of(manager.orElseThrow(() ->
                     new ManagerNotFoundException(String.format("Unable to retrieve the manager related to institution external id = %s and base product %s",
@@ -84,6 +96,11 @@ class InstitutionServiceImpl implements InstitutionService {
                             baseProduct.getId())))));
             roleMappings = baseProduct.getRoleMappings();
         } else {
+            if (!onboardingValidationStrategy.validate(product.getId(), onboardingData.getInstitutionExternalId())) {
+                throw new ValidationException(String.format(ONBOARDING_NOT_ALLOWED_ERROR_MESSAGE_TEMPLATE,
+                        onboardingData.getInstitutionExternalId(),
+                        product.getId()));
+            }
             roleMappings = product.getRoleMappings();
         }
         onboardingData.setProductName(product.getTitle());
@@ -106,6 +123,7 @@ class InstitutionServiceImpl implements InstitutionService {
         }
         String finalInstitutionInternalId = institution.getId();
         onboardingData.getUsers().forEach(user -> {
+
             final Optional<it.pagopa.selfcare.onboarding.connector.model.user.User> searchResult =
                     userConnector.search(user.getTaxCode(), USER_FIELD_LIST);
             searchResult.ifPresentOrElse(foundUser -> {
@@ -116,6 +134,7 @@ class InstitutionServiceImpl implements InstitutionService {
             }, () -> user.setId(userConnector.saveUser(UserMapper.toSaveUserDto(user, finalInstitutionInternalId))
                     .getId().toString()));
         });
+
         partyConnector.onboardingOrganization(onboardingData);
         log.trace("onboarding end");
     }
@@ -167,23 +186,18 @@ class InstitutionServiceImpl implements InstitutionService {
 
     private Optional<User> retrieveManager(OnboardingData onboardingData, Product product) {
         Optional<User> managerOpt = Optional.empty();
-        UserInfo.UserInfoFilter userInfoFilter = new UserInfo.UserInfoFilter();
-        userInfoFilter.setRole(MANAGER_ROLE_FILTER);
-        userInfoFilter.setAllowedStates(ACTIVE_ALLOWED_STATES_FILTER);
-        userInfoFilter.setProductId(Optional.of(product.getId()));
-        RelationshipsResponse response = partyConnector.getUserInstitutionRelationships(onboardingData.getInstitutionExternalId(), userInfoFilter);
-
-        if (response != null && response.size() == 1) {
+        UserInfo managerInfo = partyConnector.getInstitutionManager(onboardingData.getInstitutionExternalId(), product.getId());
+        if (managerInfo != null) {
             final it.pagopa.selfcare.onboarding.connector.model.user.User baseProductManager =
-                    userConnector.getUserByInternalId(response.get(0).getFrom(), USER_FIELD_LIST_ENHANCED);
+                    userConnector.getUserByInternalId(managerInfo.getId(), USER_FIELD_LIST_ENHANCED);
             User manager = new User();
             manager.setId(baseProductManager.getId());
             manager.setName(baseProductManager.getName().getValue());
             manager.setSurname(baseProductManager.getFamilyName().getValue());
             manager.setTaxCode(baseProductManager.getFiscalCode());
-            manager.setRole(PartyRole.MANAGER);
-            manager.setEmail(baseProductManager.getWorkContacts().get(response.get(0).getTo()).getEmail().getValue());
-            String productRole = product.getRoleMappings().get(PartyRole.MANAGER).getRoles().get(0).getCode();
+            manager.setRole(MANAGER);
+            manager.setEmail(baseProductManager.getWorkContacts().get(managerInfo.getInstitutionId()).getEmail().getValue());
+            String productRole = product.getRoleMappings().get(MANAGER).getRoles().get(0).getCode();
             manager.setProductRole(productRole);
 
             managerOpt = Optional.of(manager);
@@ -207,6 +221,7 @@ class InstitutionServiceImpl implements InstitutionService {
         log.trace("getInstitutionOnboardingData start");
         log.debug("getInstitutionOnboardingData externalInstitutionId = {}, productId = {}", externalInstitutionId, productId);
         Assert.hasText(externalInstitutionId, REQUIRED_INSTITUTION_ID_MESSAGE);
+        Assert.hasText(productId, A_PRODUCT_ID_IS_REQUIRED);
         InstitutionOnboardingData result = new InstitutionOnboardingData();
 
         final EnumSet<it.pagopa.selfcare.onboarding.connector.model.user.User.Fields> fieldList = EnumSet.of(name, familyName, workContacts, fiscalCode);
@@ -217,7 +232,7 @@ class InstitutionServiceImpl implements InstitutionService {
         manager.setUser(userConnector.getUserByInternalId(manager.getId(), fieldList));
         result.setManager(manager);
 
-        InstitutionInfo institution = partyConnector.getOnboardedInstitution(externalInstitutionId);
+        InstitutionInfo institution = partyConnector.getInstitutionBillingData(externalInstitutionId, productId);
         if (institution == null) {
             throw new ResourceNotFoundException(String.format("Institution %s not found", externalInstitutionId));
         }
