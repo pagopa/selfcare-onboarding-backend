@@ -72,6 +72,7 @@ public class InstitutionController {
         return result;
     }
 
+    @Deprecated
     @GetMapping(value = "/{externalInstitutionId}/data")
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "", notes = "${swagger.onboarding.institutions.api.getInstitutionData}")

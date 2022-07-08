@@ -12,6 +12,7 @@
 
 package it.pagopa.selfcare.onboarding.connector.model.onboarding;
 
+import it.pagopa.selfcare.commons.base.security.PartyRole;
 import lombok.Data;
 
 @Data

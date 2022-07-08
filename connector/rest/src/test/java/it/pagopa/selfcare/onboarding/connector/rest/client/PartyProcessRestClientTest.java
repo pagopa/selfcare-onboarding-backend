@@ -1,6 +1,7 @@
 package it.pagopa.selfcare.onboarding.connector.rest.client;
 
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
+import it.pagopa.selfcare.commons.base.security.PartyRole;
 import it.pagopa.selfcare.commons.connector.rest.BaseFeignRestClientTest;
 import it.pagopa.selfcare.commons.connector.rest.RestTestUtils;
 import it.pagopa.selfcare.commons.utils.TestUtils;
@@ -9,7 +10,6 @@ import it.pagopa.selfcare.onboarding.connector.model.RelationshipInfo;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipState;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipsResponse;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.PartyRole;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.User;
 import it.pagopa.selfcare.onboarding.connector.rest.config.PartyProcessRestClientTestConfig;
 import it.pagopa.selfcare.onboarding.connector.rest.model.BillingDataResponse;
@@ -30,10 +30,10 @@ import org.springframework.test.context.support.TestPropertySourceUtils;
 
 import java.util.*;
 
+import static it.pagopa.selfcare.commons.base.security.PartyRole.MANAGER;
+import static it.pagopa.selfcare.commons.base.security.PartyRole.OPERATOR;
 import static it.pagopa.selfcare.onboarding.connector.model.RelationshipState.ACTIVE;
 import static it.pagopa.selfcare.onboarding.connector.model.RelationshipState.PENDING;
-import static it.pagopa.selfcare.onboarding.connector.model.onboarding.PartyRole.MANAGER;
-import static it.pagopa.selfcare.onboarding.connector.model.onboarding.PartyRole.OPERATOR;
 import static org.junit.jupiter.api.Assertions.*;
 
 @TestPropertySource(

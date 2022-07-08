@@ -12,9 +12,9 @@
 
 package it.pagopa.selfcare.onboarding.connector.model;
 
+import it.pagopa.selfcare.commons.base.security.PartyRole;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.Billing;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.InstitutionUpdate;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.PartyRole;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.ProductInfo;
 import lombok.Data;
 

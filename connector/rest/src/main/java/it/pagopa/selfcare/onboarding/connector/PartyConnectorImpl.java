@@ -32,8 +32,10 @@ class PartyConnectorImpl implements PartyConnector {
     protected static final String REQUIRED_PRODUCT_ID_MESSAGE = "A product Id is required";
 
     private final PartyProcessRestClient restClient;
+    //    private static final BinaryOperator<InstitutionInfo> MERGE_FUNCTION =
+//            (inst1, inst2) -> ACTIVE.name().equals(inst1.getStatus()) ? inst1 : inst2;
     private static final BinaryOperator<InstitutionInfo> MERGE_FUNCTION =
-            (inst1, inst2) -> ACTIVE.name().equals(inst1.getStatus()) ? inst1 : inst2;
+            (inst1, inst2) -> inst1.getUserRole().compareTo(inst2.getUserRole()) < 0 ? inst1 : inst2;
     private static final Function<OnboardingResponseData, InstitutionInfo> ONBOARDING_DATA_TO_INSTITUTION_INFO_FUNCTION = onboardingData -> {
         InstitutionInfo institutionInfo = new InstitutionInfo();
         institutionInfo.setId(onboardingData.getId());
@@ -48,6 +50,7 @@ class PartyConnectorImpl implements PartyConnector {
         institutionInfo.setOrigin(onboardingData.getOrigin());
         institutionInfo.setOriginId(onboardingData.getOriginId());
         institutionInfo.setInstitutionType(onboardingData.getInstitutionType());
+        institutionInfo.setUserRole(onboardingData.getRole());
         return institutionInfo;
     };
     private static final Function<BillingDataResponse, InstitutionInfo> BILLING_DATA_RESPONSE_TO_INSTITUTION_INFO_FUNCTION = billingDataResponse -> {
@@ -133,7 +136,7 @@ class PartyConnectorImpl implements PartyConnector {
 
     private Collection<InstitutionInfo> parseOnBoardingInfo(OnBoardingInfo onBoardingInfo) {
         log.trace("parseOnBoardingInfo start");
-        log.debug(LogUtils.CONFIDENTIAL_MARKER, "parseOnBoardingInfo onBoardingInfo = {}", onBoardingInfo);
+        log.debug("parseOnBoardingInfo onBoardingInfo = {}", onBoardingInfo);
         Collection<InstitutionInfo> institutions = Collections.emptyList();
         if (onBoardingInfo != null && onBoardingInfo.getInstitutions() != null) {
             institutions = onBoardingInfo.getInstitutions().stream()
@@ -143,7 +146,7 @@ class PartyConnectorImpl implements PartyConnector {
                             Map::values
                     ));
         }
-        log.debug(LogUtils.CONFIDENTIAL_MARKER, "parseOnBoardingInfo result = {}", institutions);
+        log.debug("parseOnBoardingInfo result = {}", institutions);
         log.trace("parseOnBoardingInfo end");
         return institutions;
     }
