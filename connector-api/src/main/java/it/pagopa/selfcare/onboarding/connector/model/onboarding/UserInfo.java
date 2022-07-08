@@ -1,5 +1,6 @@
 package it.pagopa.selfcare.onboarding.connector.model.onboarding;
 
+import it.pagopa.selfcare.commons.base.security.PartyRole;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipState;
 import it.pagopa.selfcare.onboarding.connector.model.user.User;
 import lombok.Data;

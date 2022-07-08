@@ -1,6 +1,7 @@
 package it.pagopa.selfcare.onboarding.core;
 
 import it.pagopa.selfcare.commons.base.logging.LogUtils;
+import it.pagopa.selfcare.commons.base.security.PartyRole;
 import it.pagopa.selfcare.onboarding.connector.api.PartyConnector;
 import it.pagopa.selfcare.onboarding.connector.api.ProductsConnector;
 import it.pagopa.selfcare.onboarding.connector.api.UserRegistryConnector;
@@ -10,7 +11,6 @@ import it.pagopa.selfcare.onboarding.connector.model.InstitutionOnboardingData;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionInfo;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.PartyRole;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.User;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.UserInfo;
 import it.pagopa.selfcare.onboarding.connector.model.product.Product;
@@ -31,7 +31,7 @@ import org.springframework.util.Assert;
 import javax.validation.ValidationException;
 import java.util.*;
 
-import static it.pagopa.selfcare.onboarding.connector.model.onboarding.PartyRole.MANAGER;
+import static it.pagopa.selfcare.commons.base.security.PartyRole.MANAGER;
 import static it.pagopa.selfcare.onboarding.connector.model.user.User.Fields.*;
 
 @Slf4j

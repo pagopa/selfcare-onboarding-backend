@@ -1,6 +1,6 @@
 package it.pagopa.selfcare.onboarding.connector.model.product;
 
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.PartyRole;
+import it.pagopa.selfcare.commons.base.security.PartyRole;
 import lombok.Data;
 
 import java.util.EnumMap;
