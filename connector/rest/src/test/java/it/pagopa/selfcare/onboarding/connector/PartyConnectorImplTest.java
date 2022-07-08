@@ -141,14 +141,14 @@ class PartyConnectorImplTest {
         onboardingData2.setState(ACTIVE);
         onboardingData2.setId(onboardingData1.getId());
         onboardingData2.setRole(PartyRole.MANAGER);
-        OnboardingResponseData onboardingData4 = mockInstance(new OnboardingResponseData(), 2, "setState", "setId", "setRole");
+        OnboardingResponseData onboardingData4 = mockInstance(new OnboardingResponseData(), 4, "setState", "setId", "setRole");
         onboardingData4.setState(ACTIVE);
         onboardingData4.setId(onboardingData1.getId());
         onboardingData4.setRole(PartyRole.SUB_DELEGATE);
         OnboardingResponseData onboardingData3 = mockInstance(new OnboardingResponseData(), 3, "setState", "setRole");
         onboardingData3.setState(ACTIVE);
         onboardingData3.setRole(PartyRole.OPERATOR);
-        onBoardingInfo.setInstitutions(List.of(onboardingData1, onboardingData2, onboardingData3, onboardingData3));
+        onBoardingInfo.setInstitutions(List.of(onboardingData1, onboardingData2, onboardingData3, onboardingData3, onboardingData4));
         when(restClientMock.getOnBoardingInfo(any(), any()))
                 .thenReturn(onBoardingInfo);
         // when
@@ -157,7 +157,7 @@ class PartyConnectorImplTest {
         assertNotNull(institutions);
         assertEquals(2, institutions.size());
         Map<PartyRole, List<InstitutionInfo>> map = institutions.stream()
-                .collect(Collectors.groupingBy(institutionInfo -> institutionInfo.getUserRole()));
+                .collect(Collectors.groupingBy(InstitutionInfo::getUserRole));
         List<InstitutionInfo> institutionInfos = map.get(PartyRole.MANAGER);
         assertNotNull(institutionInfos);
         assertEquals(1, institutionInfos.size());
