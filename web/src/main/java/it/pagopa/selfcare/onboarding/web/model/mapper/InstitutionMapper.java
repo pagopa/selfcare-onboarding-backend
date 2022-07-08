@@ -25,6 +25,9 @@ public class InstitutionMapper {
             resource.setTaxCode(model.getTaxCode());
             resource.setZipCode(model.getZipCode());
             resource.setOrigin(model.getOrigin());
+            if (model.getUserRole() != null) {
+                resource.setUserRole(model.getUserRole().getSelfCareAuthority());
+            }
         }
         return resource;
     }

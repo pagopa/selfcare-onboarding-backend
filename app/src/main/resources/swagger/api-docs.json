@@ -34,7 +34,7 @@
       "get" : {
         "tags" : [ "institutions" ],
         "summary" : "getInstitutions",
-        "description" : "The service retrieves all the onboarded institutions",
+        "description" : "The service retrieves all the onboarded institutions related to the logged user",
         "operationId" : "getInstitutionsUsingGET",
         "responses" : {
           "200" : {
@@ -164,6 +164,7 @@
             }
           }
         },
+        "deprecated" : true,
         "security" : [ {
           "bearerAuth" : [ "global" ]
         } ]
@@ -540,7 +541,7 @@
       },
       "InstitutionResource" : {
         "title" : "InstitutionResource",
-        "required" : [ "address", "description", "digitalAddress", "externalId", "id", "institutionType", "origin", "originId", "taxCode", "zipCode" ],
+        "required" : [ "address", "description", "digitalAddress", "externalId", "id", "institutionType", "origin", "originId", "taxCode", "userRole", "zipCode" ],
         "type" : "object",
         "properties" : {
           "address" : {
@@ -580,6 +581,11 @@
           "taxCode" : {
             "type" : "string",
             "description" : "Institution's taxCode"
+          },
+          "userRole" : {
+            "type" : "string",
+            "description" : "Logged user's role",
+            "enum" : [ "ADMIN", "LIMITED" ]
           },
           "zipCode" : {
             "type" : "string",

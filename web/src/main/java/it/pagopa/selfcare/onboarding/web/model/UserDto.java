@@ -2,7 +2,7 @@ package it.pagopa.selfcare.onboarding.web.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModelProperty;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.PartyRole;
+import it.pagopa.selfcare.commons.base.security.PartyRole;
 import lombok.Data;
 
 import javax.validation.constraints.Email;
