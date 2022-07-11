@@ -3,6 +3,10 @@ package it.pagopa.selfcare.onboarding.web.controller;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import it.pagopa.selfcare.commons.web.model.Problem;
 import it.pagopa.selfcare.onboarding.connector.model.InstitutionOnboardingData;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
 import it.pagopa.selfcare.onboarding.core.InstitutionService;
@@ -36,6 +40,12 @@ public class InstitutionController {
     }
 
 
+    @ApiResponse(responseCode = "403",
+            description = "Forbidden",
+            content = {
+                    @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+                            schema = @Schema(implementation = Problem.class))
+            })
     @PostMapping(value = "/{externalInstitutionId}/products/{productId}/onboarding")
     @ResponseStatus(HttpStatus.CREATED)
     @ApiOperation(value = "", notes = "${swagger.onboarding.institutions.api.onboarding}")
@@ -53,6 +63,7 @@ public class InstitutionController {
         institutionService.onboarding(OnboardingMapper.toOnboardingData(externalInstitutionId, productId, request));
         log.trace("onboarding end");
     }
+
 
     @GetMapping(value = "/{externalInstitutionId}/products/{productId}/onboarded-institution-info")
     @ResponseStatus(HttpStatus.OK)

@@ -21,6 +21,7 @@ import it.pagopa.selfcare.onboarding.connector.model.user.MutableUserFieldsDto;
 import it.pagopa.selfcare.onboarding.connector.model.user.WorkContact;
 import it.pagopa.selfcare.onboarding.connector.model.user.mapper.CertifiedFieldMapper;
 import it.pagopa.selfcare.onboarding.connector.model.user.mapper.UserMapper;
+import it.pagopa.selfcare.onboarding.core.exception.OnboardingNotAllowedException;
 import it.pagopa.selfcare.onboarding.core.exception.UpdateNotAllowedException;
 import it.pagopa.selfcare.onboarding.core.strategy.OnboardingValidationStrategy;
 import lombok.extern.slf4j.Slf4j;
@@ -28,7 +29,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
-import javax.validation.ValidationException;
 import java.util.*;
 
 import static it.pagopa.selfcare.commons.base.security.PartyRole.MANAGER;
@@ -85,7 +85,7 @@ class InstitutionServiceImpl implements InstitutionService {
         if (product.getParentId() != null) {
             final Product baseProduct = productsConnector.getProduct(product.getParentId());
             if (!onboardingValidationStrategy.validate(baseProduct.getId(), onboardingData.getInstitutionExternalId())) {
-                throw new ValidationException(String.format(ONBOARDING_NOT_ALLOWED_ERROR_MESSAGE_TEMPLATE,
+                throw new OnboardingNotAllowedException(String.format(ONBOARDING_NOT_ALLOWED_ERROR_MESSAGE_TEMPLATE,
                         onboardingData.getInstitutionExternalId(),
                         baseProduct.getId()));
             }
@@ -97,7 +97,7 @@ class InstitutionServiceImpl implements InstitutionService {
             roleMappings = baseProduct.getRoleMappings();
         } else {
             if (!onboardingValidationStrategy.validate(product.getId(), onboardingData.getInstitutionExternalId())) {
-                throw new ValidationException(String.format(ONBOARDING_NOT_ALLOWED_ERROR_MESSAGE_TEMPLATE,
+                throw new OnboardingNotAllowedException(String.format(ONBOARDING_NOT_ALLOWED_ERROR_MESSAGE_TEMPLATE,
                         onboardingData.getInstitutionExternalId(),
                         product.getId()));
             }
