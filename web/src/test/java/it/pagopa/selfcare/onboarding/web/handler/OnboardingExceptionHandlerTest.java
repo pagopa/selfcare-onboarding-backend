@@ -4,15 +4,17 @@ import it.pagopa.selfcare.commons.web.model.Problem;
 import it.pagopa.selfcare.onboarding.connector.exceptions.ManagerNotFoundException;
 import it.pagopa.selfcare.onboarding.connector.exceptions.ResourceNotFoundException;
 import it.pagopa.selfcare.onboarding.core.exception.InvalidUserFieldsException;
+import it.pagopa.selfcare.onboarding.core.exception.OnboardingNotAllowedException;
 import it.pagopa.selfcare.onboarding.core.exception.UpdateNotAllowedException;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpStatus.*;
 
 class OnboardingExceptionHandlerTest {
@@ -28,8 +30,8 @@ class OnboardingExceptionHandlerTest {
     @Test
     void handleResourceNotFoundException() {
         //given
-        ResourceNotFoundException exceptionMock = Mockito.mock(ResourceNotFoundException.class);
-        Mockito.when(exceptionMock.getMessage())
+        ResourceNotFoundException exceptionMock = mock(ResourceNotFoundException.class);
+        when(exceptionMock.getMessage())
                 .thenReturn(DETAIL_MESSAGE);
         //when
         ResponseEntity<Problem> responseEntity = handler.handleResourceNotFoundException(exceptionMock);
@@ -45,8 +47,8 @@ class OnboardingExceptionHandlerTest {
     @Test
     void handleProductHasNoRelationshipException() {
         //given
-        ManagerNotFoundException exceptionMock = Mockito.mock(ManagerNotFoundException.class);
-        Mockito.when(exceptionMock.getMessage())
+        ManagerNotFoundException exceptionMock = mock(ManagerNotFoundException.class);
+        when(exceptionMock.getMessage())
                 .thenReturn(DETAIL_MESSAGE);
         //when
         ResponseEntity<Problem> responseEntity = handler.handleProductHasNoRelationshipException(exceptionMock);
@@ -62,8 +64,8 @@ class OnboardingExceptionHandlerTest {
     @Test
     void handleUpdateNotAllowedException() {
         // given
-        UpdateNotAllowedException mockException = Mockito.mock(UpdateNotAllowedException.class);
-        Mockito.when(mockException.getMessage())
+        UpdateNotAllowedException mockException = mock(UpdateNotAllowedException.class);
+        when(mockException.getMessage())
                 .thenReturn(DETAIL_MESSAGE);
         // when
         ResponseEntity<Problem> responseEntity = handler.handleUpdateNotAllowedException(mockException);
@@ -79,11 +81,11 @@ class OnboardingExceptionHandlerTest {
     @Test
     void handleInvalidUserFieldsException() {
         // given
-        InvalidUserFieldsException mockException = Mockito.mock(InvalidUserFieldsException.class);
-        Mockito.when(mockException.getMessage())
+        InvalidUserFieldsException mockException = mock(InvalidUserFieldsException.class);
+        when(mockException.getMessage())
                 .thenReturn(DETAIL_MESSAGE);
         final InvalidUserFieldsException.InvalidField invalidField = new InvalidUserFieldsException.InvalidField("name", "reason");
-        Mockito.when(mockException.getInvalidFields())
+        when(mockException.getInvalidFields())
                 .thenReturn(List.of(invalidField));
         // when
         ResponseEntity<Problem> responseEntity = handler.handleInvalidUserFieldsException(mockException);
@@ -97,6 +99,23 @@ class OnboardingExceptionHandlerTest {
         assertEquals(1, responseEntity.getBody().getInvalidParams().size());
         assertEquals(invalidField.getName(), responseEntity.getBody().getInvalidParams().get(0).getName());
         assertEquals(invalidField.getReason(), responseEntity.getBody().getInvalidParams().get(0).getReason());
+    }
+
+
+    @Test
+    void handleOnboardingNotAllowedException() {
+        // given
+        OnboardingNotAllowedException mockException = mock(OnboardingNotAllowedException.class);
+        when(mockException.getMessage())
+                .thenReturn(DETAIL_MESSAGE);
+        // when
+        ResponseEntity<Problem> responseEntity = handler.handleOnboardingNotAllowedException(mockException);
+        // then
+        assertNotNull(responseEntity);
+        assertEquals(FORBIDDEN, responseEntity.getStatusCode());
+        assertNotNull(responseEntity.getBody());
+        assertEquals(DETAIL_MESSAGE, responseEntity.getBody().getDetail());
+        assertEquals(FORBIDDEN.value(), responseEntity.getBody().getStatus());
     }
 
 }
