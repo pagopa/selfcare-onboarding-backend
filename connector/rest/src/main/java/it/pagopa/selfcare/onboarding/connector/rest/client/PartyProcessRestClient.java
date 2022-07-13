@@ -1,10 +1,10 @@
 package it.pagopa.selfcare.onboarding.connector.rest.client;
 
+import it.pagopa.selfcare.commons.base.security.PartyRole;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipInfo;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipState;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipsResponse;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.PartyRole;
 import it.pagopa.selfcare.onboarding.connector.rest.model.BillingDataResponse;
 import it.pagopa.selfcare.onboarding.connector.rest.model.OnBoardingInfo;
 import it.pagopa.selfcare.onboarding.connector.rest.model.OnboardingInstitutionRequest;

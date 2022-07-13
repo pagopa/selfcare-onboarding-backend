@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import it.pagopa.selfcare.commons.base.security.PartyRole;
 import it.pagopa.selfcare.commons.utils.TestUtils;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipInfo;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipState;
@@ -36,7 +37,6 @@ import static it.pagopa.selfcare.commons.utils.TestUtils.*;
 import static it.pagopa.selfcare.onboarding.connector.PartyConnectorImpl.REQUIRED_INSTITUTION_ID_MESSAGE;
 import static it.pagopa.selfcare.onboarding.connector.PartyConnectorImpl.REQUIRED_PRODUCT_ID_MESSAGE;
 import static it.pagopa.selfcare.onboarding.connector.model.RelationshipState.ACTIVE;
-import static it.pagopa.selfcare.onboarding.connector.model.RelationshipState.PENDING;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
@@ -134,14 +134,21 @@ class PartyConnectorImplTest {
     void getOnboardedInstitutions() {
         // given
         OnBoardingInfo onBoardingInfo = new OnBoardingInfo();
-        OnboardingResponseData onboardingData1 = mockInstance(new OnboardingResponseData(), 1, "setState");
+        OnboardingResponseData onboardingData1 = mockInstance(new OnboardingResponseData(), 1, "setState", "setRole");
         onboardingData1.setState(ACTIVE);
-        OnboardingResponseData onboardingData2 = mockInstance(new OnboardingResponseData(), 2, "setState", "setId");
-        onboardingData2.setState(PENDING);
+        onboardingData1.setRole(PartyRole.OPERATOR);
+        OnboardingResponseData onboardingData2 = mockInstance(new OnboardingResponseData(), 2, "setState", "setId", "setRole");
+        onboardingData2.setState(ACTIVE);
         onboardingData2.setId(onboardingData1.getId());
-        OnboardingResponseData onboardingData3 = mockInstance(new OnboardingResponseData(), 3, "setState");
-        onboardingData3.setState(PENDING);
-        onBoardingInfo.setInstitutions(List.of(onboardingData1, onboardingData2, onboardingData3, onboardingData3));
+        onboardingData2.setRole(PartyRole.MANAGER);
+        OnboardingResponseData onboardingData4 = mockInstance(new OnboardingResponseData(), 4, "setState", "setId", "setRole");
+        onboardingData4.setState(ACTIVE);
+        onboardingData4.setId(onboardingData1.getId());
+        onboardingData4.setRole(PartyRole.SUB_DELEGATE);
+        OnboardingResponseData onboardingData3 = mockInstance(new OnboardingResponseData(), 3, "setState", "setRole");
+        onboardingData3.setState(ACTIVE);
+        onboardingData3.setRole(PartyRole.OPERATOR);
+        onBoardingInfo.setInstitutions(List.of(onboardingData1, onboardingData2, onboardingData3, onboardingData3, onboardingData4));
         when(restClientMock.getOnBoardingInfo(any(), any()))
                 .thenReturn(onBoardingInfo);
         // when
@@ -149,22 +156,24 @@ class PartyConnectorImplTest {
         // then
         assertNotNull(institutions);
         assertEquals(2, institutions.size());
-        Map<String, List<InstitutionInfo>> map = institutions.stream()
-                .collect(Collectors.groupingBy(InstitutionInfo::getStatus));
-        List<InstitutionInfo> institutionInfos = map.get(ACTIVE.name());
+        Map<PartyRole, List<InstitutionInfo>> map = institutions.stream()
+                .collect(Collectors.groupingBy(InstitutionInfo::getUserRole));
+        List<InstitutionInfo> institutionInfos = map.get(PartyRole.MANAGER);
         assertNotNull(institutionInfos);
         assertEquals(1, institutionInfos.size());
-        assertEquals(onboardingData1.getId(), institutionInfos.get(0).getId());
-        assertEquals(onboardingData1.getDescription(), institutionInfos.get(0).getDescription());
-        assertEquals(onboardingData1.getExternalId(), institutionInfos.get(0).getExternalId());
-        assertEquals(onboardingData1.getState().toString(), institutionInfos.get(0).getStatus());
-        institutionInfos = map.get(PENDING.name());
+        assertEquals(onboardingData2.getId(), institutionInfos.get(0).getId());
+        assertEquals(onboardingData2.getDescription(), institutionInfos.get(0).getDescription());
+        assertEquals(onboardingData2.getExternalId(), institutionInfos.get(0).getExternalId());
+        assertEquals(onboardingData2.getState().toString(), institutionInfos.get(0).getStatus());
+        assertEquals(onboardingData2.getRole(), institutionInfos.get(0).getUserRole());
+        institutionInfos = map.get(PartyRole.OPERATOR);
         assertNotNull(institutionInfos);
         assertEquals(1, institutionInfos.size());
         assertEquals(onboardingData3.getId(), institutionInfos.get(0).getId());
         assertEquals(onboardingData3.getDescription(), institutionInfos.get(0).getDescription());
         assertEquals(onboardingData3.getExternalId(), institutionInfos.get(0).getExternalId());
         assertEquals(onboardingData3.getState().toString(), institutionInfos.get(0).getStatus());
+        assertEquals(onboardingData3.getRole(), institutionInfos.get(0).getUserRole());
         verify(restClientMock, times(1))
                 .getOnBoardingInfo(isNull(), eq(EnumSet.of(ACTIVE)));
         verifyNoMoreInteractions(restClientMock);
@@ -724,7 +733,7 @@ class PartyConnectorImplTest {
         InstitutionInfo institutionInfo = partyConnector.getInstitutionBillingData(externalId, productId);
         //then
         assertNotNull(institutionInfo);
-        checkNotNullFields(institutionInfo, "status", "category");
+        checkNotNullFields(institutionInfo, "status", "category", "userRole");
         reflectionEqualsByName(billingDataResponseMock, institutionInfo);
         verify(restClientMock, times(1))
                 .getInstitutionBillingData(externalId, productId);
