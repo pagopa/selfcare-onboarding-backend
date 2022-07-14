@@ -740,4 +740,47 @@ class PartyConnectorImplTest {
         verifyNoMoreInteractions(restClientMock);
     }
 
+
+    @Test
+    void verifyOnboarding_nullExternalInstitutionId() {
+        // given
+        final String externalInstitutionId = null;
+        final String productId = "productId";
+        // when
+        final Executable executable = () -> partyConnector.verifyOnboarding(externalInstitutionId, productId);
+        // then
+        final Exception e = assertThrows(IllegalArgumentException.class, executable);
+        assertEquals("An Institution external id is required", e.getMessage());
+        verifyNoInteractions(restClientMock);
+    }
+
+
+    @Test
+    void verifyOnboarding_nullProductId() {
+        // given
+        final String externalInstitutionId = "externalInstitutionId";
+        final String productId = null;
+        // when
+        final Executable executable = () -> partyConnector.verifyOnboarding(externalInstitutionId, productId);
+        // then
+        final Exception e = assertThrows(IllegalArgumentException.class, executable);
+        assertEquals("A product Id is required", e.getMessage());
+        verifyNoInteractions(restClientMock);
+    }
+
+
+    @Test
+    void verifyOnboarding() {
+        // given
+        final String externalInstitutionId = "externalInstitutionId";
+        final String productId = "productId";
+        // when
+        final Executable executable = () -> partyConnector.verifyOnboarding(externalInstitutionId, productId);
+        // then
+        assertDoesNotThrow(executable);
+        verify(restClientMock, times(1))
+                .verifyOnboarding(externalInstitutionId, productId);
+        verifyNoMoreInteractions(restClientMock);
+    }
+
 }

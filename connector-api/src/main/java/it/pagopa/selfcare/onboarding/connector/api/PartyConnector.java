@@ -28,4 +28,6 @@ public interface PartyConnector {
 
     InstitutionInfo getInstitutionBillingData(String externalId, String productId);
 
+    void verifyOnboarding(String externalInstitutionId, String productId);
+
 }

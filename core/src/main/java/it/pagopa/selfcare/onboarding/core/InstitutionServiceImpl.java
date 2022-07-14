@@ -84,11 +84,7 @@ class InstitutionServiceImpl implements InstitutionService {
         final EnumMap<PartyRole, ProductRoleInfo> roleMappings;
         if (product.getParentId() != null) {
             final Product baseProduct = productsConnector.getProduct(product.getParentId());
-            if (!onboardingValidationStrategy.validate(baseProduct.getId(), onboardingData.getInstitutionExternalId())) {
-                throw new OnboardingNotAllowedException(String.format(ONBOARDING_NOT_ALLOWED_ERROR_MESSAGE_TEMPLATE,
-                        onboardingData.getInstitutionExternalId(),
-                        baseProduct.getId()));
-            }
+            validateOnboarding(onboardingData.getInstitutionExternalId(), baseProduct.getId());
             final Optional<User> manager = retrieveManager(onboardingData, baseProduct);
             onboardingData.setUsers(List.of(manager.orElseThrow(() ->
                     new ManagerNotFoundException(String.format("Unable to retrieve the manager related to institution external id = %s and base product %s",
@@ -96,11 +92,7 @@ class InstitutionServiceImpl implements InstitutionService {
                             baseProduct.getId())))));
             roleMappings = baseProduct.getRoleMappings();
         } else {
-            if (!onboardingValidationStrategy.validate(product.getId(), onboardingData.getInstitutionExternalId())) {
-                throw new OnboardingNotAllowedException(String.format(ONBOARDING_NOT_ALLOWED_ERROR_MESSAGE_TEMPLATE,
-                        onboardingData.getInstitutionExternalId(),
-                        product.getId()));
-            }
+            validateOnboarding(onboardingData.getInstitutionExternalId(), product.getId());
             roleMappings = product.getRoleMappings();
         }
         onboardingData.setProductName(product.getTitle());
@@ -252,6 +244,25 @@ class InstitutionServiceImpl implements InstitutionService {
         log.debug("getInstitutionData result = {}", institution);
         log.trace("getInstitutionData end");
         return institution;
+    }
+
+
+    @Override
+    public void verifyOnboarding(String externalInstitutionId, String productId) {
+        log.trace("verifyOnboarding start");
+        log.debug("verifyOnboarding externalInstitutionId = {}", externalInstitutionId);
+        validateOnboarding(externalInstitutionId, productId);
+        partyConnector.verifyOnboarding(externalInstitutionId, productId);
+        log.trace("verifyOnboarding end");
+    }
+
+
+    private void validateOnboarding(String externalInstitutionId, String productId) {
+        if (!onboardingValidationStrategy.validate(productId, externalInstitutionId)) {
+            throw new OnboardingNotAllowedException(String.format(ONBOARDING_NOT_ALLOWED_ERROR_MESSAGE_TEMPLATE,
+                    externalInstitutionId,
+                    productId));
+        }
     }
 
 }

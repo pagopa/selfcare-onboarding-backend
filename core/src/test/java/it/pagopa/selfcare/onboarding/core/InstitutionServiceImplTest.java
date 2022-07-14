@@ -1228,4 +1228,41 @@ class InstitutionServiceImplTest {
         verifyNoInteractions(productsConnectorMock, userConnectorMock);
     }
 
+
+    @Test
+    void verifyOnboarding_notAllowed() {
+        // given
+        final String externalInstitutionId = "externalInstitutionId";
+        final String productId = "productId";
+        // when
+        final Executable executable = () -> institutionService.verifyOnboarding(externalInstitutionId, productId);
+        // then
+        final Exception e = assertThrows(OnboardingNotAllowedException.class, executable);
+        assertEquals("Institution with external id '" + externalInstitutionId + "' is not allowed to onboard '" + productId + "' product", e.getMessage());
+        verify(onboardingValidationStrategyMock, times(1))
+                .validate(productId, externalInstitutionId);
+        verifyNoMoreInteractions(onboardingValidationStrategyMock);
+        verifyNoInteractions(productsConnectorMock, userConnectorMock, partyConnectorMock);
+    }
+
+
+    @Test
+    void verifyOnboarding_allowed() {
+        // given
+        final String externalInstitutionId = "externalInstitutionId";
+        final String productId = "productId";
+        when(onboardingValidationStrategyMock.validate(productId, externalInstitutionId))
+                .thenReturn(true);
+        // when
+        final Executable executable = () -> institutionService.verifyOnboarding(externalInstitutionId, productId);
+        // then
+        assertDoesNotThrow(executable);
+        verify(onboardingValidationStrategyMock, times(1))
+                .validate(productId, externalInstitutionId);
+        verify(partyConnectorMock, times(1))
+                .verifyOnboarding(externalInstitutionId, productId);
+        verifyNoMoreInteractions(onboardingValidationStrategyMock, partyConnectorMock);
+        verifyNoInteractions(productsConnectorMock, userConnectorMock);
+    }
+
 }
