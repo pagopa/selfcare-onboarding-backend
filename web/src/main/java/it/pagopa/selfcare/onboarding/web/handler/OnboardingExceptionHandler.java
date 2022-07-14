@@ -5,6 +5,7 @@ import it.pagopa.selfcare.commons.web.model.mapper.ProblemMapper;
 import it.pagopa.selfcare.onboarding.connector.exceptions.ManagerNotFoundException;
 import it.pagopa.selfcare.onboarding.connector.exceptions.ResourceNotFoundException;
 import it.pagopa.selfcare.onboarding.core.exception.InvalidUserFieldsException;
+import it.pagopa.selfcare.onboarding.core.exception.OnboardingNotAllowedException;
 import it.pagopa.selfcare.onboarding.core.exception.UpdateNotAllowedException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -50,6 +51,13 @@ public class OnboardingExceptionHandler {
                     .collect(Collectors.toList()));
         }
         return ProblemMapper.toResponseEntity(problem);
+    }
+
+
+    @ExceptionHandler({OnboardingNotAllowedException.class})
+    ResponseEntity<Problem> handleOnboardingNotAllowedException(OnboardingNotAllowedException e) {
+        log.warn(e.toString());
+        return ProblemMapper.toResponseEntity(new Problem(FORBIDDEN, e.getMessage()));
     }
 
 }
