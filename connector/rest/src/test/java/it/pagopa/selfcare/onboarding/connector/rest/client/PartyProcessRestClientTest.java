@@ -316,4 +316,27 @@ class PartyProcessRestClientTest extends BaseFeignRestClientTest {
         assertNull(response.getExternalId());
     }
 
+
+    @Test
+    void verifyOnboarding_found() {
+        // given
+        String externalId = "externalId";
+        final String productId = "productId";
+        // when
+        Executable executable = () -> restClient.verifyOnboarding(externalId, productId);
+        //then
+        assertDoesNotThrow(executable);
+    }
+
+    @Test
+    void verifyOnboarding_notFound() {
+        //given
+        String externalId = "externalIdNotFound";
+        final String productId = "productId";
+        //when
+        Executable executable = () -> restClient.verifyOnboarding(externalId, productId);
+        //then
+        assertThrows(ResourceNotFoundException.class, executable);
+    }
+
 }

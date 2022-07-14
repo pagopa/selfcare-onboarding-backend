@@ -145,9 +145,8 @@ class InstitutionControllerTest {
         verify(institutionServiceMock, times(1))
                 .getInstitutionByExternalId(institutionId);
         verifyNoMoreInteractions(institutionServiceMock);
-
-
     }
+
 
     @Test
     void getInstitutions() throws Exception {
@@ -176,6 +175,19 @@ class InstitutionControllerTest {
         verify(institutionServiceMock, times(1))
                 .getInstitutions();
         verifyNoMoreInteractions(institutionServiceMock);
+    }
+
+
+    @Test
+    void verifyOnboarding() throws Exception {
+        final String externalInstitutionId = "externalInstitutionId";
+        final String productId = "productId";
+        //when
+        mvc.perform(MockMvcRequestBuilders
+                .head(BASE_URL + "/{externalInstitutionId}/products/{productId}", externalInstitutionId, productId)
+                .contentType(APPLICATION_JSON_VALUE)
+                .accept(APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk());
     }
 
 }

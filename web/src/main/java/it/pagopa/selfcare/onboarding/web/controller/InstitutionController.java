@@ -25,6 +25,9 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static org.springframework.http.MediaType.APPLICATION_PROBLEM_JSON_VALUE;
+import static org.springframework.web.bind.annotation.RequestMethod.HEAD;
+
 @Slf4j
 @RestController
 @RequestMapping(value = "/institutions", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -43,7 +46,7 @@ public class InstitutionController {
     @ApiResponse(responseCode = "403",
             description = "Forbidden",
             content = {
-                    @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+                    @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE,
                             schema = @Schema(implementation = Problem.class))
             })
     @PostMapping(value = "/{externalInstitutionId}/products/{productId}/onboarding")
@@ -120,6 +123,28 @@ public class InstitutionController {
         log.debug("getInstitutions result = {}", institutionResources);
         log.trace("getInstitutions end");
         return institutionResources;
+    }
+
+
+    @ApiResponse(responseCode = "403",
+            description = "Forbidden",
+            content = {
+                    @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE,
+                            schema = @Schema(implementation = Problem.class))
+            })
+    @RequestMapping(method = HEAD, value = "/{externalInstitutionId}/products/{productId}")
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "", notes = "${swagger.onboarding.institutions.api.verifyOnboarding}")
+    public void verifyOnboarding(@ApiParam("${swagger.onboarding.institutions.model.externalId}")
+                                 @PathVariable("externalInstitutionId")
+                                         String externalInstitutionId,
+                                 @ApiParam("${swagger.onboarding.product.model.id}")
+                                 @PathVariable("productId")
+                                         String productId) {
+        log.trace("verifyOnboarding start");
+        log.debug("verifyOnboarding externalInstitutionId = {}, productId = {}", externalInstitutionId, productId);
+        institutionService.verifyOnboarding(externalInstitutionId, productId);
+        log.trace("verifyOnboarding end");
     }
 
 }
