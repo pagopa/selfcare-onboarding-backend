@@ -187,7 +187,7 @@ class InstitutionControllerTest {
                 .head(BASE_URL + "/{externalInstitutionId}/products/{productId}", externalInstitutionId, productId)
                 .contentType(APPLICATION_JSON_VALUE)
                 .accept(APPLICATION_JSON_VALUE))
-                .andExpect(status().isOk());
+                .andExpect(status().isNoContent());
     }
 
 }

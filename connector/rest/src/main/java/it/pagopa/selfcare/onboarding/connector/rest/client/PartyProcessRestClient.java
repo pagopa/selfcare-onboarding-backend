@@ -64,7 +64,7 @@ public interface PartyProcessRestClient {
     BillingDataResponse getInstitutionBillingData(@PathVariable("externalId") String externalId,
                                                   @PathVariable("productId") String productId);
 
-    @RequestMapping(method = HEAD, value = "${rest-client.party-process.verifyOnboarding.path}", produces = APPLICATION_JSON_VALUE)
+    @RequestMapping(method = HEAD, value = "${rest-client.party-process.verifyOnboarding.path}")
     @ResponseBody
     void verifyOnboarding(@PathVariable("externalId") String externalInstitutionId,
                           @PathVariable("productId") String productId);

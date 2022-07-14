@@ -8,9 +8,6 @@
     "jsonBody": {
       "status": "Error",
       "message": "Resource not found"
-    },
-    "headers": {
-      "Content-Type": "application/json"
     }
   }
 }

@@ -133,7 +133,7 @@ public class InstitutionController {
                             schema = @Schema(implementation = Problem.class))
             })
     @RequestMapping(method = HEAD, value = "/{externalInstitutionId}/products/{productId}")
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @ApiOperation(value = "", notes = "${swagger.onboarding.institutions.api.verifyOnboarding}")
     public void verifyOnboarding(@ApiParam("${swagger.onboarding.institutions.model.externalId}")
                                  @PathVariable("externalInstitutionId")
