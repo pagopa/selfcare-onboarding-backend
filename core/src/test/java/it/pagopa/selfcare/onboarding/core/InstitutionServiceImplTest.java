@@ -17,18 +17,20 @@ import it.pagopa.selfcare.onboarding.connector.model.onboarding.UserInfo;
 import it.pagopa.selfcare.onboarding.connector.model.product.Product;
 import it.pagopa.selfcare.onboarding.connector.model.product.ProductRoleInfo;
 import it.pagopa.selfcare.onboarding.connector.model.user.*;
+import it.pagopa.selfcare.onboarding.core.exception.OnboardingNotAllowedException;
 import it.pagopa.selfcare.onboarding.core.exception.UpdateNotAllowedException;
 import it.pagopa.selfcare.onboarding.core.strategy.OnboardingValidationStrategy;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
-import org.mockito.*;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import javax.validation.ValidationException;
 import java.util.*;
 
 import static it.pagopa.selfcare.commons.utils.TestUtils.checkNotNullFields;
@@ -37,6 +39,7 @@ import static it.pagopa.selfcare.onboarding.connector.model.user.User.Fields.*;
 import static it.pagopa.selfcare.onboarding.core.InstitutionServiceImpl.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -75,8 +78,8 @@ class InstitutionServiceImplTest {
         // when
         Executable executable = () -> institutionService.onboarding(onboardingData);
         // then
-        IllegalArgumentException e = Assertions.assertThrows(IllegalArgumentException.class, executable);
-        Assertions.assertEquals(REQUIRED_ONBOARDING_DATA_MESSAGE, e.getMessage());
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, executable);
+        assertEquals(REQUIRED_ONBOARDING_DATA_MESSAGE, e.getMessage());
         verifyNoInteractions(partyConnectorMock, productsConnectorMock, userConnectorMock, onboardingValidationStrategyMock);
     }
 
@@ -89,13 +92,13 @@ class InstitutionServiceImplTest {
         product.setId(onboardingData.getProductId());
         when(productsConnectorMock.getProduct(onboardingData.getProductId()))
                 .thenReturn(product);
-        when(onboardingValidationStrategyMock.validate(Mockito.any(), Mockito.any()))
+        when(onboardingValidationStrategyMock.validate(any(), any()))
                 .thenReturn(true);
         // when
         Executable executable = () -> institutionService.onboarding(onboardingData);
         // then
-        IllegalArgumentException e = Assertions.assertThrows(IllegalArgumentException.class, executable);
-        Assertions.assertEquals("Role mappings is required", e.getMessage());
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, executable);
+        assertEquals("Role mappings is required", e.getMessage());
         verify(productsConnectorMock, times(1))
                 .getProduct(onboardingData.getProductId());
         verify(onboardingValidationStrategyMock, times(1))
@@ -146,13 +149,13 @@ class InstitutionServiceImplTest {
         }});
         when(productsConnectorMock.getProduct(onboardingData.getProductId()))
                 .thenReturn(product);
-        when(onboardingValidationStrategyMock.validate(Mockito.any(), Mockito.any()))
+        when(onboardingValidationStrategyMock.validate(any(), any()))
                 .thenReturn(false);
         // when
         Executable executable = () -> institutionService.onboarding(onboardingData);
         // then
-        ValidationException e = Assertions.assertThrows(ValidationException.class, executable);
-        Assertions.assertEquals("Institution with external id '" + onboardingData.getInstitutionExternalId() + "' is not allowed to onboard '" + onboardingData.getProductId() + "' product",
+        Exception e = assertThrows(OnboardingNotAllowedException.class, executable);
+        assertEquals("Institution with external id '" + onboardingData.getInstitutionExternalId() + "' is not allowed to onboard '" + onboardingData.getProductId() + "' product",
                 e.getMessage());
         verify(productsConnectorMock, times(1))
                 .getProduct(onboardingData.getProductId());
@@ -179,13 +182,13 @@ class InstitutionServiceImplTest {
         }});
         when(productsConnectorMock.getProduct(onboardingData.getProductId()))
                 .thenReturn(product);
-        when(onboardingValidationStrategyMock.validate(Mockito.any(), Mockito.any()))
+        when(onboardingValidationStrategyMock.validate(any(), any()))
                 .thenReturn(true);
         // when
         Executable executable = () -> institutionService.onboarding(onboardingData);
         // then
-        IllegalArgumentException e = Assertions.assertThrows(IllegalArgumentException.class, executable);
-        Assertions.assertEquals(String.format(ATLEAST_ONE_PRODUCT_ROLE_REQUIRED, userInfo.getRole()), e.getMessage());
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, executable);
+        assertEquals(String.format(ATLEAST_ONE_PRODUCT_ROLE_REQUIRED, userInfo.getRole()), e.getMessage());
         verify(productsConnectorMock, times(1))
                 .getProduct(onboardingData.getProductId());
         verify(onboardingValidationStrategyMock, times(1))
@@ -217,13 +220,13 @@ class InstitutionServiceImplTest {
         productMock.setRoleMappings(roleMappings);
         when(productsConnectorMock.getProduct(onboardingData.getProductId()))
                 .thenReturn(productMock);
-        when(onboardingValidationStrategyMock.validate(Mockito.any(), Mockito.any()))
+        when(onboardingValidationStrategyMock.validate(any(), any()))
                 .thenReturn(true);
         // when
         Executable executable = () -> institutionService.onboarding(onboardingData);
         // then
-        IllegalArgumentException e = Assertions.assertThrows(IllegalArgumentException.class, executable);
-        Assertions.assertEquals(String.format(ATLEAST_ONE_PRODUCT_ROLE_REQUIRED, userInfo.getRole()), e.getMessage());
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, executable);
+        assertEquals(String.format(ATLEAST_ONE_PRODUCT_ROLE_REQUIRED, userInfo.getRole()), e.getMessage());
         verify(productsConnectorMock, times(1))
                 .getProduct(onboardingData.getProductId());
         verify(onboardingValidationStrategyMock, times(1))
@@ -255,13 +258,13 @@ class InstitutionServiceImplTest {
         productMock.setRoleMappings(roleMappings);
         when(productsConnectorMock.getProduct(onboardingData.getProductId()))
                 .thenReturn(productMock);
-        when(onboardingValidationStrategyMock.validate(Mockito.any(), Mockito.any()))
+        when(onboardingValidationStrategyMock.validate(any(), any()))
                 .thenReturn(true);
         // when
         Executable executable = () -> institutionService.onboarding(onboardingData);
         // then
-        IllegalStateException e = Assertions.assertThrows(IllegalStateException.class, executable);
-        Assertions.assertEquals(String.format(MORE_THAN_ONE_PRODUCT_ROLE_AVAILABLE, userInfo.getRole()), e.getMessage());
+        IllegalStateException e = assertThrows(IllegalStateException.class, executable);
+        assertEquals(String.format(MORE_THAN_ONE_PRODUCT_ROLE_AVAILABLE, userInfo.getRole()), e.getMessage());
         verify(productsConnectorMock, times(1))
                 .getProduct(onboardingData.getProductId());
         verify(onboardingValidationStrategyMock, times(1))
@@ -299,18 +302,18 @@ class InstitutionServiceImplTest {
         }};
         Institution institution = mockInstance(new Institution());
         institution.setId(UUID.randomUUID().toString());
-        when(partyConnectorMock.getInstitutionByExternalId(Mockito.anyString()))
+        when(partyConnectorMock.getInstitutionByExternalId(anyString()))
                 .thenReturn(institution);
         productMock.setRoleMappings(roleMappings);
         when(productsConnectorMock.getProduct(onboardingData.getProductId()))
                 .thenReturn(productMock);
-        when(userConnectorMock.saveUser(Mockito.any()))
+        when(userConnectorMock.saveUser(any()))
                 .thenAnswer(invocation -> {
                     UserId userId = new UserId();
                     userId.setId(UUID.randomUUID());
                     return userId;
                 });
-        when(onboardingValidationStrategyMock.validate(Mockito.any(), Mockito.any()))
+        when(onboardingValidationStrategyMock.validate(any(), any()))
                 .thenReturn(true);
         // when
         institutionService.onboarding(onboardingData);
@@ -332,10 +335,10 @@ class InstitutionServiceImplTest {
         List<SaveUserDto> savedUsers = saveUserCaptor.getAllValues();
         savedUsers.forEach(saveUserDto -> assertTrue(saveUserDto.getWorkContacts().containsKey(institution.getId())));
         OnboardingData captured = onboardingDataCaptor.getValue();
-        Assertions.assertNotNull(captured.getUsers());
-        Assertions.assertEquals(2, captured.getUsers().size());
+        assertNotNull(captured.getUsers());
+        assertEquals(2, captured.getUsers().size());
         captured.getUsers().forEach(userInfo -> {
-            Assertions.assertEquals(productRole, userInfo.getProductRole());
+            assertEquals(productRole, userInfo.getProductRole());
             assertNotNull(userInfo.getId());
         });
         verifyNoMoreInteractions(productsConnectorMock, partyConnectorMock, userConnectorMock, onboardingValidationStrategyMock);
@@ -369,20 +372,20 @@ class InstitutionServiceImplTest {
         }};
         Institution institution = mockInstance(new Institution());
         institution.setId(UUID.randomUUID().toString());
-        when(partyConnectorMock.getInstitutionByExternalId(Mockito.anyString()))
+        when(partyConnectorMock.getInstitutionByExternalId(anyString()))
                 .thenThrow(ResourceNotFoundException.class);
-        when(partyConnectorMock.createInstitutionUsingExternalId(Mockito.anyString()))
+        when(partyConnectorMock.createInstitutionUsingExternalId(anyString()))
                 .thenReturn(institution);
         productMock.setRoleMappings(roleMappings);
         when(productsConnectorMock.getProduct(onboardingData.getProductId()))
                 .thenReturn(productMock);
-        when(userConnectorMock.saveUser(Mockito.any()))
+        when(userConnectorMock.saveUser(any()))
                 .thenAnswer(invocation -> {
                     UserId userId = new UserId();
                     userId.setId(UUID.randomUUID());
                     return userId;
                 });
-        when(onboardingValidationStrategyMock.validate(Mockito.any(), Mockito.any()))
+        when(onboardingValidationStrategyMock.validate(any(), any()))
                 .thenReturn(true);
         // when
         institutionService.onboarding(onboardingData);
@@ -406,10 +409,10 @@ class InstitutionServiceImplTest {
         List<SaveUserDto> savedUsers = saveUserCaptor.getAllValues();
         savedUsers.forEach(saveUserDto -> assertTrue(saveUserDto.getWorkContacts().containsKey(institution.getId())));
         OnboardingData captured = onboardingDataCaptor.getValue();
-        Assertions.assertNotNull(captured.getUsers());
-        Assertions.assertEquals(2, captured.getUsers().size());
+        assertNotNull(captured.getUsers());
+        assertEquals(2, captured.getUsers().size());
         captured.getUsers().forEach(userInfo -> {
-            Assertions.assertEquals(productRole, userInfo.getProductRole());
+            assertEquals(productRole, userInfo.getProductRole());
             assertNotNull(userInfo.getId());
         });
         verifyNoMoreInteractions(productsConnectorMock, partyConnectorMock, userConnectorMock, onboardingValidationStrategyMock);
@@ -444,15 +447,15 @@ class InstitutionServiceImplTest {
         }};
         Institution institution = mockInstance(new Institution());
         institution.setId(UUID.randomUUID().toString());
-        when(partyConnectorMock.getInstitutionByExternalId(Mockito.anyString()))
+        when(partyConnectorMock.getInstitutionByExternalId(anyString()))
                 .thenThrow(ResourceNotFoundException.class);
-        when(partyConnectorMock.createInstitutionUsingExternalId(Mockito.anyString()))
+        when(partyConnectorMock.createInstitutionUsingExternalId(anyString()))
                 .thenReturn(institution);
         productMock.setRoleMappings(roleMappings);
         when(productsConnectorMock.getProduct(onboardingData.getProductId()))
                 .thenReturn(productMock);
 
-        when(userConnectorMock.search(Mockito.any(), Mockito.any()))
+        when(userConnectorMock.search(any(), any()))
                 .thenAnswer(invocation -> {
                     final String taxCode = invocation.getArgument(0, String.class);
                     if (userInfo1.getTaxCode().equals(taxCode)) {
@@ -472,13 +475,13 @@ class InstitutionServiceImplTest {
                         return Optional.of(user);
                     }
                 });
-        when(userConnectorMock.saveUser(Mockito.any()))
+        when(userConnectorMock.saveUser(any()))
                 .thenAnswer(invocation -> {
                     UserId userId = new UserId();
                     userId.setId(UUID.randomUUID());
                     return userId;
                 });
-        when(onboardingValidationStrategyMock.validate(Mockito.any(), Mockito.any()))
+        when(onboardingValidationStrategyMock.validate(any(), any()))
                 .thenReturn(true);
         // when
         final Executable executable = () -> institutionService.onboarding(onboardingData);
@@ -492,9 +495,8 @@ class InstitutionServiceImplTest {
                 .getProduct(onboardingData.getProductId());
         verify(onboardingValidationStrategyMock, times(1))
                 .validate(onboardingData.getProductId(), onboardingData.getInstitutionExternalId());
-        ArgumentCaptor<SaveUserDto> saveUserCaptor = ArgumentCaptor.forClass(SaveUserDto.class);
         verify(userConnectorMock, times(1))
-                .saveUser(Mockito.any());
+                .saveUser(any());
         onboardingData.getUsers().forEach(user ->
                 verify(userConnectorMock, times(1))
                         .search(user.getTaxCode(), EnumSet.of(name, familyName, workContacts)));
@@ -534,12 +536,12 @@ class InstitutionServiceImplTest {
                 .thenReturn(productMock);
         Institution institution = mockInstance(new Institution());
         institution.setId(UUID.randomUUID().toString());
-        when(partyConnectorMock.getInstitutionByExternalId(Mockito.anyString()))
+        when(partyConnectorMock.getInstitutionByExternalId(anyString()))
                 .thenThrow(ResourceNotFoundException.class);
-        when(partyConnectorMock.createInstitutionUsingExternalId(Mockito.anyString()))
+        when(partyConnectorMock.createInstitutionUsingExternalId(anyString()))
                 .thenReturn(institution);
 
-        when(userConnectorMock.search(Mockito.any(), Mockito.any()))
+        when(userConnectorMock.search(any(), any()))
                 .thenAnswer(invocation -> {
                     final String taxCode = invocation.getArgument(0, String.class);
                     if (userInfo1.getTaxCode().equals(taxCode)) {
@@ -564,13 +566,13 @@ class InstitutionServiceImplTest {
                         return Optional.of(user);
                     }
                 });
-        when(userConnectorMock.saveUser(Mockito.any()))
+        when(userConnectorMock.saveUser(any()))
                 .thenAnswer(invocation -> {
                     UserId userId = new UserId();
                     userId.setId(UUID.randomUUID());
                     return userId;
                 });
-        when(onboardingValidationStrategyMock.validate(Mockito.any(), Mockito.any()))
+        when(onboardingValidationStrategyMock.validate(any(), any()))
                 .thenReturn(true);
         //when
         final Executable executable = () -> institutionService.onboarding(onboardingData);
@@ -630,12 +632,12 @@ class InstitutionServiceImplTest {
                 .thenReturn(productMock);
         Institution institution = mockInstance(new Institution());
         institution.setId(UUID.randomUUID().toString());
-        when(partyConnectorMock.getInstitutionByExternalId(Mockito.anyString()))
+        when(partyConnectorMock.getInstitutionByExternalId(anyString()))
                 .thenThrow(ResourceNotFoundException.class);
-        when(partyConnectorMock.createInstitutionUsingExternalId(Mockito.anyString()))
+        when(partyConnectorMock.createInstitutionUsingExternalId(anyString()))
                 .thenReturn(institution);
 
-        when(userConnectorMock.search(Mockito.any(), Mockito.any()))
+        when(userConnectorMock.search(any(), any()))
                 .thenAnswer(invocation -> {
                     final String taxCode = invocation.getArgument(0, String.class);
                     if (userInfo1.getTaxCode().equals(taxCode)) {
@@ -654,13 +656,13 @@ class InstitutionServiceImplTest {
                         return Optional.of(user);
                     }
                 });
-        when(userConnectorMock.saveUser(Mockito.any()))
+        when(userConnectorMock.saveUser(any()))
                 .thenAnswer(invocation -> {
                     UserId userId = new UserId();
                     userId.setId(UUID.randomUUID());
                     return userId;
                 });
-        when(onboardingValidationStrategyMock.validate(Mockito.any(), Mockito.any()))
+        when(onboardingValidationStrategyMock.validate(any(), any()))
                 .thenReturn(true);
         //when
         final Executable executable = () -> institutionService.onboarding(onboardingData);
@@ -720,12 +722,12 @@ class InstitutionServiceImplTest {
                 .thenReturn(productMock);
         Institution institution = mockInstance(new Institution());
         institution.setId(UUID.randomUUID().toString());
-        when(partyConnectorMock.getInstitutionByExternalId(Mockito.anyString()))
+        when(partyConnectorMock.getInstitutionByExternalId(anyString()))
                 .thenThrow(ResourceNotFoundException.class);
-        when(partyConnectorMock.createInstitutionUsingExternalId(Mockito.anyString()))
+        when(partyConnectorMock.createInstitutionUsingExternalId(anyString()))
                 .thenReturn(institution);
 
-        when(userConnectorMock.search(Mockito.any(), Mockito.any()))
+        when(userConnectorMock.search(any(), any()))
                 .thenAnswer(invocation -> {
                     final String taxCode = invocation.getArgument(0, String.class);
                     if (userInfo1.getTaxCode().equals(taxCode)) {
@@ -751,13 +753,13 @@ class InstitutionServiceImplTest {
                         return Optional.of(user);
                     }
                 });
-        when(userConnectorMock.saveUser(Mockito.any()))
+        when(userConnectorMock.saveUser(any()))
                 .thenAnswer(invocation -> {
                     UserId userId = new UserId();
                     userId.setId(UUID.randomUUID());
                     return userId;
                 });
-        when(onboardingValidationStrategyMock.validate(Mockito.any(), Mockito.any()))
+        when(onboardingValidationStrategyMock.validate(any(), any()))
                 .thenReturn(true);
         //when
         final Executable executable = () -> institutionService.onboarding(onboardingData);
@@ -815,12 +817,12 @@ class InstitutionServiceImplTest {
                 .thenReturn(productMock);
         Institution institution = mockInstance(new Institution());
         institution.setId(UUID.randomUUID().toString());
-        when(partyConnectorMock.getInstitutionByExternalId(Mockito.anyString()))
+        when(partyConnectorMock.getInstitutionByExternalId(anyString()))
                 .thenThrow(ResourceNotFoundException.class);
-        when(partyConnectorMock.createInstitutionUsingExternalId(Mockito.anyString()))
+        when(partyConnectorMock.createInstitutionUsingExternalId(anyString()))
                 .thenReturn(institution);
 
-        when(userConnectorMock.search(Mockito.any(), Mockito.any()))
+        when(userConnectorMock.search(any(), any()))
                 .thenAnswer(invocation -> {
                     final String taxCode = invocation.getArgument(0, String.class);
                     if (userInfo1.getTaxCode().equals(taxCode)) {
@@ -845,13 +847,13 @@ class InstitutionServiceImplTest {
                         return Optional.of(user);
                     }
                 });
-        when(userConnectorMock.saveUser(Mockito.any()))
+        when(userConnectorMock.saveUser(any()))
                 .thenAnswer(invocation -> {
                     UserId userId = new UserId();
                     userId.setId(UUID.randomUUID());
                     return userId;
                 });
-        when(onboardingValidationStrategyMock.validate(Mockito.any(), Mockito.any()))
+        when(onboardingValidationStrategyMock.validate(any(), any()))
                 .thenReturn(true);
         //when
         final Executable executable = () -> institutionService.onboarding(onboardingData);
@@ -892,12 +894,12 @@ class InstitutionServiceImplTest {
                 .thenReturn(subProductMock);
         when(productsConnectorMock.getProduct(subProductMock.getParentId()))
                 .thenReturn(baseProductMock);
-        when(onboardingValidationStrategyMock.validate(Mockito.any(), Mockito.any()))
+        when(onboardingValidationStrategyMock.validate(any(), any()))
                 .thenReturn(false);
         //when
         Executable executable = () -> institutionService.onboarding(onboardingData);
         //then
-        ValidationException e = Assertions.assertThrows(ValidationException.class, executable);
+        Exception e = assertThrows(OnboardingNotAllowedException.class, executable);
         assertEquals("Institution with external id '" + onboardingData.getInstitutionExternalId() + "' is not allowed to onboard '" + baseProductMock.getId() + "' product",
                 e.getMessage());
         verify(productsConnectorMock, times(1))
@@ -923,12 +925,12 @@ class InstitutionServiceImplTest {
                 .thenReturn(subProductMock);
         when(productsConnectorMock.getProduct(subProductMock.getParentId()))
                 .thenReturn(baseProductMock);
-        when(onboardingValidationStrategyMock.validate(Mockito.any(), Mockito.any()))
+        when(onboardingValidationStrategyMock.validate(any(), any()))
                 .thenReturn(true);
         //when
         Executable executable = () -> institutionService.onboarding(onboardingData);
         //then
-        ManagerNotFoundException e = Assertions.assertThrows(ManagerNotFoundException.class, executable);
+        ManagerNotFoundException e = assertThrows(ManagerNotFoundException.class, executable);
         assertEquals("Unable to retrieve the manager related to institution external id = " + onboardingData.getInstitutionExternalId() + " and base product " + subProductMock.getParentId(), e.getMessage());
         verify(productsConnectorMock, times(1))
                 .getProduct(onboardingData.getProductId());
@@ -993,15 +995,15 @@ class InstitutionServiceImplTest {
                     user.setWorkContacts(workContacts);
                     return user;
                 });
-        when(partyConnectorMock.getInstitutionByExternalId(Mockito.anyString()))
+        when(partyConnectorMock.getInstitutionByExternalId(anyString()))
                 .thenReturn(institution);
-        when(userConnectorMock.saveUser(Mockito.any()))
+        when(userConnectorMock.saveUser(any()))
                 .thenAnswer(invocation -> {
                     UserId userId = new UserId();
                     userId.setId(UUID.randomUUID());
                     return userId;
                 });
-        when(onboardingValidationStrategyMock.validate(Mockito.any(), Mockito.any()))
+        when(onboardingValidationStrategyMock.validate(any(), any()))
                 .thenReturn(true);
         // when
         institutionService.onboarding(onboardingData);
@@ -1015,10 +1017,10 @@ class InstitutionServiceImplTest {
         verify(partyConnectorMock, times(1))
                 .onboardingOrganization(onboardingDataCaptor.capture());
         OnboardingData captured = onboardingDataCaptor.getValue();
-        Assertions.assertNotNull(captured.getUsers());
-        Assertions.assertEquals(1, captured.getUsers().size());
+        assertNotNull(captured.getUsers());
+        assertEquals(1, captured.getUsers().size());
         captured.getUsers().forEach(userInfo -> {
-            Assertions.assertEquals(productRole, userInfo.getProductRole());
+            assertEquals(productRole, userInfo.getProductRole());
             assertNotNull(userInfo.getId());
             checkNotNullFields(userInfo);
         });
@@ -1205,7 +1207,7 @@ class InstitutionServiceImplTest {
         Institution institutionMock = mockInstance(new Institution());
         Attribute attribute = mockInstance(new Attribute());
         institutionMock.setAttributes(List.of(attribute));
-        when(partyConnectorMock.getInstitutionByExternalId(Mockito.anyString()))
+        when(partyConnectorMock.getInstitutionByExternalId(anyString()))
                 .thenReturn(institutionMock);
         //when
         Institution result = institutionService.getInstitutionByExternalId(institutionId);
@@ -1223,6 +1225,43 @@ class InstitutionServiceImplTest {
         verify(partyConnectorMock, times(1))
                 .getInstitutionByExternalId(institutionId);
         verifyNoMoreInteractions(partyConnectorMock);
+        verifyNoInteractions(productsConnectorMock, userConnectorMock);
+    }
+
+
+    @Test
+    void verifyOnboarding_notAllowed() {
+        // given
+        final String externalInstitutionId = "externalInstitutionId";
+        final String productId = "productId";
+        // when
+        final Executable executable = () -> institutionService.verifyOnboarding(externalInstitutionId, productId);
+        // then
+        final Exception e = assertThrows(OnboardingNotAllowedException.class, executable);
+        assertEquals("Institution with external id '" + externalInstitutionId + "' is not allowed to onboard '" + productId + "' product", e.getMessage());
+        verify(onboardingValidationStrategyMock, times(1))
+                .validate(productId, externalInstitutionId);
+        verifyNoMoreInteractions(onboardingValidationStrategyMock);
+        verifyNoInteractions(productsConnectorMock, userConnectorMock, partyConnectorMock);
+    }
+
+
+    @Test
+    void verifyOnboarding_allowed() {
+        // given
+        final String externalInstitutionId = "externalInstitutionId";
+        final String productId = "productId";
+        when(onboardingValidationStrategyMock.validate(productId, externalInstitutionId))
+                .thenReturn(true);
+        // when
+        final Executable executable = () -> institutionService.verifyOnboarding(externalInstitutionId, productId);
+        // then
+        assertDoesNotThrow(executable);
+        verify(onboardingValidationStrategyMock, times(1))
+                .validate(productId, externalInstitutionId);
+        verify(partyConnectorMock, times(1))
+                .verifyOnboarding(externalInstitutionId, productId);
+        verifyNoMoreInteractions(onboardingValidationStrategyMock, partyConnectorMock);
         verifyNoInteractions(productsConnectorMock, userConnectorMock);
     }
 

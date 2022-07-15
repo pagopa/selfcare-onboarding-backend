@@ -17,5 +17,6 @@ public interface InstitutionService {
 
     Institution getInstitutionByExternalId(String externalInstitutionId);
 
+    void verifyOnboarding(String externalInstitutionId, String productId);
 
 }
