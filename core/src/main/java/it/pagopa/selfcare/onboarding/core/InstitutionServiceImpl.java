@@ -5,7 +5,6 @@ import it.pagopa.selfcare.commons.base.security.PartyRole;
 import it.pagopa.selfcare.onboarding.connector.api.PartyConnector;
 import it.pagopa.selfcare.onboarding.connector.api.ProductsConnector;
 import it.pagopa.selfcare.onboarding.connector.api.UserRegistryConnector;
-import it.pagopa.selfcare.onboarding.connector.exceptions.ManagerNotFoundException;
 import it.pagopa.selfcare.onboarding.connector.exceptions.ResourceNotFoundException;
 import it.pagopa.selfcare.onboarding.connector.model.InstitutionOnboardingData;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
@@ -29,9 +28,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
+import javax.validation.ValidationException;
 import java.util.*;
 
-import static it.pagopa.selfcare.commons.base.security.PartyRole.MANAGER;
 import static it.pagopa.selfcare.onboarding.connector.model.user.User.Fields.*;
 
 @Slf4j
@@ -85,11 +84,14 @@ class InstitutionServiceImpl implements InstitutionService {
         if (product.getParentId() != null) {
             final Product baseProduct = productsConnector.getProduct(product.getParentId());
             validateOnboarding(onboardingData.getInstitutionExternalId(), baseProduct.getId());
-            final Optional<User> manager = retrieveManager(onboardingData, baseProduct);
-            onboardingData.setUsers(List.of(manager.orElseThrow(() ->
-                    new ManagerNotFoundException(String.format("Unable to retrieve the manager related to institution external id = %s and base product %s",
-                            onboardingData.getInstitutionExternalId(),
-                            baseProduct.getId())))));
+            try {
+                partyConnector.verifyOnboarding(onboardingData.getInstitutionExternalId(), baseProduct.getId());
+            } catch (RuntimeException e) {
+                throw new ValidationException(String.format("Unable to complete the onboarding for institution with external id '%s' to product '%s'. Please onboard first the '%s' product for the same institution",
+                        onboardingData.getInstitutionExternalId(),
+                        product.getId(),
+                        baseProduct.getId()));
+            }
             roleMappings = baseProduct.getRoleMappings();
         } else {
             validateOnboarding(onboardingData.getInstitutionExternalId(), product.getId());
@@ -176,28 +178,6 @@ class InstitutionServiceImpl implements InstitutionService {
     }
 
 
-    private Optional<User> retrieveManager(OnboardingData onboardingData, Product product) {
-        Optional<User> managerOpt = Optional.empty();
-        UserInfo managerInfo = partyConnector.getInstitutionManager(onboardingData.getInstitutionExternalId(), product.getId());
-        if (managerInfo != null) {
-            final it.pagopa.selfcare.onboarding.connector.model.user.User baseProductManager =
-                    userConnector.getUserByInternalId(managerInfo.getId(), USER_FIELD_LIST_ENHANCED);
-            User manager = new User();
-            manager.setId(baseProductManager.getId());
-            manager.setName(baseProductManager.getName().getValue());
-            manager.setSurname(baseProductManager.getFamilyName().getValue());
-            manager.setTaxCode(baseProductManager.getFiscalCode());
-            manager.setRole(MANAGER);
-            manager.setEmail(baseProductManager.getWorkContacts().get(managerInfo.getInstitutionId()).getEmail().getValue());
-            String productRole = product.getRoleMappings().get(MANAGER).getRoles().get(0).getCode();
-            manager.setProductRole(productRole);
-
-            managerOpt = Optional.of(manager);
-        }
-        return managerOpt;
-    }
-
-
     @Override
     public Collection<InstitutionInfo> getInstitutions() {
         log.trace("getInstitutions start");
@@ -216,12 +196,11 @@ class InstitutionServiceImpl implements InstitutionService {
         Assert.hasText(productId, A_PRODUCT_ID_IS_REQUIRED);
         InstitutionOnboardingData result = new InstitutionOnboardingData();
 
-        final EnumSet<it.pagopa.selfcare.onboarding.connector.model.user.User.Fields> fieldList = EnumSet.of(name, familyName, workContacts, fiscalCode);
         UserInfo manager = partyConnector.getInstitutionManager(externalInstitutionId, productId);
         if (manager == null) {
             throw new ResourceNotFoundException(String.format("No Manager found for given institution: %s", externalInstitutionId));
         }
-        manager.setUser(userConnector.getUserByInternalId(manager.getId(), fieldList));
+        manager.setUser(userConnector.getUserByInternalId(manager.getId(), USER_FIELD_LIST_ENHANCED));
         result.setManager(manager);
 
         InstitutionInfo institution = partyConnector.getInstitutionBillingData(externalInstitutionId, productId);
