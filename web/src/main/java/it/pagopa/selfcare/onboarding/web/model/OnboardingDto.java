@@ -34,4 +34,9 @@ public class OnboardingDto {
 
     @ApiModelProperty(value = "${swagger.onboarding.institutions.model.pricingPlan}")
     private String pricingPlan;
+
+    @ApiModelProperty(value = "${swagger.onboarding.institutions.model.pspData}")
+    @Valid
+    private PspDataDto pspData;
+
 }
