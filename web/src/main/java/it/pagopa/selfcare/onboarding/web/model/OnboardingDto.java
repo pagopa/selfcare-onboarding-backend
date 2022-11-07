@@ -1,12 +1,10 @@
 package it.pagopa.selfcare.onboarding.web.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModelProperty;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.InstitutionType;
 import lombok.Data;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
@@ -28,8 +26,6 @@ public class OnboardingDto {
     private InstitutionType institutionType;
 
     @ApiModelProperty(value = "${swagger.onboarding.institutions.model.origin}")
-    @JsonProperty(required = true)
-    @NotBlank
     private String origin;
 
     @ApiModelProperty(value = "${swagger.onboarding.institutions.model.pricingPlan}")
