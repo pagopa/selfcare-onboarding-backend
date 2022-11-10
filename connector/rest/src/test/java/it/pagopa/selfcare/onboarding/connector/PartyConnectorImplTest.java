@@ -680,7 +680,6 @@ class PartyConnectorImplTest {
                 .createInstitutionRaw(eq(onboardingData.getInstitutionExternalId()),
                         argumentCaptor.capture());
         final InstitutionSeed institutionSeed = argumentCaptor.getValue();
-        assertEquals(onboardingData.getInstitutionExternalId(), institutionSeed.getExternalId());
         assertEquals(onboardingData.getInstitutionUpdate().getDescription(), institutionSeed.getDescription());
         assertEquals(onboardingData.getInstitutionUpdate().getDigitalAddress(), institutionSeed.getDigitalAddress());
         assertEquals(onboardingData.getInstitutionUpdate().getAddress(), institutionSeed.getAddress());

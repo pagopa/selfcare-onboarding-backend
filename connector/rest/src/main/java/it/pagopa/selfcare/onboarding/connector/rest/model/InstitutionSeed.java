@@ -15,7 +15,6 @@ import java.util.List;
 public class InstitutionSeed {
 
     public InstitutionSeed(OnboardingData onboardingData) {
-        externalId = onboardingData.getInstitutionExternalId();
         description = onboardingData.getInstitutionUpdate().getDescription();
         digitalAddress = onboardingData.getInstitutionUpdate().getDigitalAddress();
         address = onboardingData.getInstitutionUpdate().getAddress();
@@ -28,7 +27,6 @@ public class InstitutionSeed {
     }
 
 
-    private String externalId;
     private String description;
     private String digitalAddress;
     private String address;
