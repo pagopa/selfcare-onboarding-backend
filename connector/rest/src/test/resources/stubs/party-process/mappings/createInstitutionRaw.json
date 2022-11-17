@@ -1,7 +1,12 @@
 {
   "request": {
     "method": "POST",
-    "urlPath": "/pdnd-interop-uservice-party-process/0.0.1/institutions/externalId"
+    "urlPath": "/pdnd-interop-uservice-party-process/0.0.1/institutions/insert/externalId",
+    "bodyPatterns": [
+          {
+            "matchesJsonPath": "*"
+          }
+        ]
   },
   "response": {
     "status": "200",

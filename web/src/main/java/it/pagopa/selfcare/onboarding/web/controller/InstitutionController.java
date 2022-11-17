@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import it.pagopa.selfcare.commons.web.model.Problem;
 import it.pagopa.selfcare.onboarding.connector.model.InstitutionOnboardingData;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.InstitutionType;
 import it.pagopa.selfcare.onboarding.core.InstitutionService;
 import it.pagopa.selfcare.onboarding.web.model.InstitutionOnboardingInfoResource;
 import it.pagopa.selfcare.onboarding.web.model.InstitutionResource;
@@ -22,6 +23,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.ValidationException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -63,6 +65,9 @@ public class InstitutionController {
                                    OnboardingDto request) {
         log.trace("onboarding start");
         log.debug("onboarding institutionId = {}, productId = {}, request = {}", externalInstitutionId, productId, request);
+        if (InstitutionType.PSP.equals(request.getInstitutionType()) && request.getPspData() == null) {
+            throw new ValidationException("Field 'pspData' is required for PSP institution onboarding");
+        }
         institutionService.onboarding(OnboardingMapper.toOnboardingData(externalInstitutionId, productId, request));
         log.trace("onboarding end");
     }

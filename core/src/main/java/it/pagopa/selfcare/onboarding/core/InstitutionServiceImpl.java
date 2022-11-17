@@ -9,6 +9,7 @@ import it.pagopa.selfcare.onboarding.connector.exceptions.ResourceNotFoundExcept
 import it.pagopa.selfcare.onboarding.connector.model.InstitutionOnboardingData;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionInfo;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.InstitutionType;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.User;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.UserInfo;
@@ -113,7 +114,11 @@ class InstitutionServiceImpl implements InstitutionService {
         try {
             institution = partyConnector.getInstitutionByExternalId(onboardingData.getInstitutionExternalId());
         } catch (ResourceNotFoundException e) {
-            institution = partyConnector.createInstitutionUsingExternalId(onboardingData.getInstitutionExternalId());
+            if (InstitutionType.PA.equals(onboardingData.getInstitutionType())) {
+                institution = partyConnector.createInstitutionUsingExternalId(onboardingData.getInstitutionExternalId());
+            } else {
+                institution = partyConnector.createInstitutionRaw(onboardingData);
+            }
         }
         String finalInstitutionInternalId = institution.getId();
         onboardingData.getUsers().forEach(user -> {
