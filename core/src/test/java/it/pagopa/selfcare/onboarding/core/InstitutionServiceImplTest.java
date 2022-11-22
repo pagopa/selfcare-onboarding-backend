@@ -148,7 +148,7 @@ class InstitutionServiceImplTest {
                 .thenReturn(product2);
         // when
         Executable executable = () -> institutionService.onboarding(onboardingData);
-        // then
+        //then
         ValidationException e = assertThrows(ValidationException.class, executable);
         assertEquals(String.format("Unable to complete the onboarding for institution with external id '%s' to product '%s', the base product is dismissed.",
                         onboardingData.getInstitutionExternalId(),
