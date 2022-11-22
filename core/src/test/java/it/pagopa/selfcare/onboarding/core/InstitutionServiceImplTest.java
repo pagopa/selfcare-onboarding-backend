@@ -13,6 +13,7 @@ import it.pagopa.selfcare.onboarding.connector.model.onboarding.User;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.*;
 import it.pagopa.selfcare.onboarding.connector.model.product.Product;
 import it.pagopa.selfcare.onboarding.connector.model.product.ProductRoleInfo;
+import it.pagopa.selfcare.onboarding.connector.model.product.ProductStatus;
 import it.pagopa.selfcare.onboarding.connector.model.user.*;
 import it.pagopa.selfcare.onboarding.core.exception.OnboardingNotAllowedException;
 import it.pagopa.selfcare.onboarding.core.exception.UpdateNotAllowedException;
@@ -102,6 +103,62 @@ class InstitutionServiceImplTest {
         verify(onboardingValidationStrategyMock, times(1))
                 .validate(onboardingData.getProductId(), onboardingData.getInstitutionExternalId());
         verifyNoMoreInteractions(productsConnectorMock, onboardingValidationStrategyMock);
+        verifyNoInteractions(partyConnectorMock, userConnectorMock);
+    }
+
+    @Test
+    void onboarding_subProductPhaseOutException(){
+        // given
+        OnboardingData onboardingData = mockInstance(new OnboardingData());
+        Product product = mockInstance(new Product(), "setId", "setParentId");
+        product.setId(onboardingData.getProductId());
+        product.setStatus(ProductStatus.PHASE_OUT);
+        when(productsConnectorMock.getProduct(onboardingData.getProductId()))
+                .thenReturn(product);
+        // when
+        Executable executable = () -> institutionService.onboarding(onboardingData);
+        // then
+        ValidationException e = assertThrows(ValidationException.class, executable);
+        assertEquals(String.format("Unable to complete the onboarding for institution with external id '%s' to product '%s', the product is dismissed.",
+                onboardingData.getInstitutionExternalId(),
+                product.getId()),
+                e.getMessage());
+        verify(productsConnectorMock, times(1))
+                .getProduct(onboardingData.getProductId());
+        verifyNoMoreInteractions(productsConnectorMock);
+        verifyNoInteractions(partyConnectorMock, userConnectorMock);
+    }
+
+    @Test
+    void onboarding_baseProductPhaseOutException() {
+        // given
+        OnboardingData onboardingData = mockInstance(new OnboardingData());
+        Product product = mockInstance(new Product(), "setId", "setParentId");
+        Product product2 = mockInstance(new Product(), "setId", "setParentId");
+        String parentId = "parentId";
+        product2.setId(parentId);
+        product2.setStatus(ProductStatus.PHASE_OUT);
+        product.setId(onboardingData.getProductId());
+        product.setStatus(ProductStatus.ACTIVE);
+        product.setParentId(parentId);
+
+        when(productsConnectorMock.getProduct(onboardingData.getProductId()))
+                .thenReturn(product);
+        when(productsConnectorMock.getProduct(product.getParentId()))
+                .thenReturn(product2);
+        // when
+        Executable executable = () -> institutionService.onboarding(onboardingData);
+        // then
+        ValidationException e = assertThrows(ValidationException.class, executable);
+        assertEquals(String.format("Unable to complete the onboarding for institution with external id '%s' to product '%s', the base product is dismissed.",
+                        onboardingData.getInstitutionExternalId(),
+                        product.getParentId()),
+                e.getMessage());
+        verify(productsConnectorMock, times(1))
+                .getProduct(onboardingData.getProductId());
+        verify(productsConnectorMock, times(1))
+                .getProduct(product.getParentId());
+        verifyNoMoreInteractions(productsConnectorMock);
         verifyNoInteractions(partyConnectorMock, userConnectorMock);
     }
 
