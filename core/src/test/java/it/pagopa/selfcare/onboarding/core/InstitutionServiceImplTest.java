@@ -131,7 +131,7 @@ class InstitutionServiceImplTest {
 
     @Test
     void onboarding_baseProductPhaseOutException() {
-        //given
+        // given
         OnboardingData onboardingData = mockInstance(new OnboardingData());
         Product product = mockInstance(new Product(), "setId", "setParentId");
         Product product2 = mockInstance(new Product(), "setId", "setParentId");
@@ -146,9 +146,9 @@ class InstitutionServiceImplTest {
                 .thenReturn(product);
         when(productsConnectorMock.getProduct(product.getParentId()))
                 .thenReturn(product2);
-        //when
+        // when
         Executable executable = () -> institutionService.onboarding(onboardingData);
-        //then
+        // then
         ValidationException e = assertThrows(ValidationException.class, executable);
         assertEquals(String.format("Unable to complete the onboarding for institution with external id '%s' to product '%s', the base product is dismissed.",
                         onboardingData.getInstitutionExternalId(),
