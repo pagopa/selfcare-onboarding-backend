@@ -99,6 +99,8 @@ class PartyConnectorImpl implements PartyConnector {
         institutionUpdate.setDigitalAddress(onboardingData.getInstitutionUpdate().getDigitalAddress());
         institutionUpdate.setTaxCode(onboardingData.getInstitutionUpdate().getTaxCode());
         institutionUpdate.setZipCode(onboardingData.getInstitutionUpdate().getZipCode());
+        institutionUpdate.setPaymentServiceProvider(onboardingData.getInstitutionUpdate().getPaymentServiceProvider());
+        institutionUpdate.setDataProtectionOfficer(onboardingData.getInstitutionUpdate().getDataProtectionOfficer());
         onboardingInstitutionRequest.setInstitutionUpdate(institutionUpdate);
 
         onboardingInstitutionRequest.setUsers(onboardingData.getUsers().stream()
@@ -233,6 +235,16 @@ class PartyConnectorImpl implements PartyConnector {
         log.debug("createInstitutionUsingExternalId externalId = {}", institutionExternalId);
         Assert.hasText(institutionExternalId, REQUIRED_INSTITUTION_ID_MESSAGE);
         Institution result = restClient.createInstitutionUsingExternalId(institutionExternalId);
+        log.debug("createInstitutionUsingExternalId result = {}", result);
+        log.trace("createInstitutionUsingExternalId end");
+        return result;
+    }
+
+    @Override
+    public Institution createInstitutionRaw(OnboardingData onboardingData) {
+        log.trace("createInstitutionUsingExternalId start");
+        Assert.notNull(onboardingData, "An OnboardingData is required");
+        Institution result = restClient.createInstitutionRaw(onboardingData.getInstitutionExternalId(), new InstitutionSeed(onboardingData));
         log.debug("createInstitutionUsingExternalId result = {}", result);
         log.trace("createInstitutionUsingExternalId end");
         return result;

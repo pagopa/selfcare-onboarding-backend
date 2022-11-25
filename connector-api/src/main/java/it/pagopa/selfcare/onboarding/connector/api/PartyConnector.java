@@ -24,6 +24,8 @@ public interface PartyConnector {
 
     Institution createInstitutionUsingExternalId(String institutionExternalId);
 
+    Institution createInstitutionRaw(OnboardingData onboardingData);
+
     UserInfo getInstitutionManager(String externalInstitutionId, String productId);
 
     InstitutionInfo getInstitutionBillingData(String externalId, String productId);

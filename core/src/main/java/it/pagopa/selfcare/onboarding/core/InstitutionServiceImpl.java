@@ -9,11 +9,13 @@ import it.pagopa.selfcare.onboarding.connector.exceptions.ResourceNotFoundExcept
 import it.pagopa.selfcare.onboarding.connector.model.InstitutionOnboardingData;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionInfo;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.InstitutionType;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.User;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.UserInfo;
 import it.pagopa.selfcare.onboarding.connector.model.product.Product;
 import it.pagopa.selfcare.onboarding.connector.model.product.ProductRoleInfo;
+import it.pagopa.selfcare.onboarding.connector.model.product.ProductStatus;
 import it.pagopa.selfcare.onboarding.connector.model.user.Certification;
 import it.pagopa.selfcare.onboarding.connector.model.user.CertifiedField;
 import it.pagopa.selfcare.onboarding.connector.model.user.MutableUserFieldsDto;
@@ -77,12 +79,24 @@ class InstitutionServiceImpl implements InstitutionService {
 
         Product product = productsConnector.getProduct(onboardingData.getProductId());
         Assert.notNull(product, "Product is required");
+
+        if(product.getStatus() == ProductStatus.PHASE_OUT){
+            throw new ValidationException(String.format("Unable to complete the onboarding for institution with external id '%s' to product '%s', the product is dismissed.",
+                    onboardingData.getInstitutionExternalId(),
+                    product.getId()));
+        }
+
         onboardingData.setContractPath(product.getContractTemplatePath());
         onboardingData.setContractVersion(product.getContractTemplateVersion());
 
         final EnumMap<PartyRole, ProductRoleInfo> roleMappings;
         if (product.getParentId() != null) {
             final Product baseProduct = productsConnector.getProduct(product.getParentId());
+            if(baseProduct.getStatus() == ProductStatus.PHASE_OUT){
+                throw new ValidationException(String.format("Unable to complete the onboarding for institution with external id '%s' to product '%s', the base product is dismissed.",
+                        onboardingData.getInstitutionExternalId(),
+                        baseProduct.getId()));
+            }
             validateOnboarding(onboardingData.getInstitutionExternalId(), baseProduct.getId());
             try {
                 partyConnector.verifyOnboarding(onboardingData.getInstitutionExternalId(), baseProduct.getId());
@@ -113,7 +127,11 @@ class InstitutionServiceImpl implements InstitutionService {
         try {
             institution = partyConnector.getInstitutionByExternalId(onboardingData.getInstitutionExternalId());
         } catch (ResourceNotFoundException e) {
-            institution = partyConnector.createInstitutionUsingExternalId(onboardingData.getInstitutionExternalId());
+            if (InstitutionType.PA.equals(onboardingData.getInstitutionType())) {
+                institution = partyConnector.createInstitutionUsingExternalId(onboardingData.getInstitutionExternalId());
+            } else {
+                institution = partyConnector.createInstitutionRaw(onboardingData);
+            }
         }
         String finalInstitutionInternalId = institution.getId();
         onboardingData.getUsers().forEach(user -> {

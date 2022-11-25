@@ -14,4 +14,5 @@ public class Product {
     private String contractTemplateVersion;
     private String title;
     private String parentId;
+    private ProductStatus status;
 }

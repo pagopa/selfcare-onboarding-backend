@@ -4,7 +4,6 @@ import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import it.pagopa.selfcare.commons.base.security.PartyRole;
 import it.pagopa.selfcare.commons.connector.rest.BaseFeignRestClientTest;
 import it.pagopa.selfcare.commons.connector.rest.RestTestUtils;
-import it.pagopa.selfcare.commons.utils.TestUtils;
 import it.pagopa.selfcare.onboarding.connector.exceptions.ResourceNotFoundException;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipInfo;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipState;
@@ -13,6 +12,7 @@ import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.User;
 import it.pagopa.selfcare.onboarding.connector.rest.config.PartyProcessRestClientTestConfig;
 import it.pagopa.selfcare.onboarding.connector.rest.model.BillingDataResponse;
+import it.pagopa.selfcare.onboarding.connector.rest.model.InstitutionSeed;
 import it.pagopa.selfcare.onboarding.connector.rest.model.OnBoardingInfo;
 import it.pagopa.selfcare.onboarding.connector.rest.model.OnboardingInstitutionRequest;
 import lombok.SneakyThrows;
@@ -32,6 +32,8 @@ import java.util.*;
 
 import static it.pagopa.selfcare.commons.base.security.PartyRole.MANAGER;
 import static it.pagopa.selfcare.commons.base.security.PartyRole.OPERATOR;
+import static it.pagopa.selfcare.commons.utils.TestUtils.checkNotNullFields;
+import static it.pagopa.selfcare.commons.utils.TestUtils.mockInstance;
 import static it.pagopa.selfcare.onboarding.connector.model.RelationshipState.ACTIVE;
 import static it.pagopa.selfcare.onboarding.connector.model.RelationshipState.PENDING;
 import static org.junit.jupiter.api.Assertions.*;
@@ -88,7 +90,7 @@ class PartyProcessRestClientTest extends BaseFeignRestClientTest {
         // given
         OnboardingInstitutionRequest onboardingRequest = new OnboardingInstitutionRequest();
         onboardingRequest.setInstitutionExternalId(testCase2instIdMap.get(TestCase.FULLY_VALUED));
-        onboardingRequest.setUsers(List.of(TestUtils.mockInstance(new User())));
+        onboardingRequest.setUsers(List.of(mockInstance(new User())));
         // when
         Executable executable = () -> restClient.onboardingOrganization(onboardingRequest);
         // then
@@ -101,7 +103,7 @@ class PartyProcessRestClientTest extends BaseFeignRestClientTest {
         // given
         OnboardingInstitutionRequest onboardingRequest = new OnboardingInstitutionRequest();
         onboardingRequest.setInstitutionExternalId(testCase2instIdMap.get(TestCase.FULLY_NULL));
-        onboardingRequest.setUsers(List.of(TestUtils.mockInstance(new User())));
+        onboardingRequest.setUsers(List.of(mockInstance(new User())));
         // when
         Executable executable = () -> restClient.onboardingOrganization(onboardingRequest);
         // then
@@ -124,9 +126,9 @@ class PartyProcessRestClientTest extends BaseFeignRestClientTest {
         assertFalse(response.isEmpty());
         assertNotNull(response.get(0));
         response.forEach(relationshipInfo -> {
-            TestUtils.checkNotNullFields(relationshipInfo);
-            TestUtils.checkNotNullFields(relationshipInfo.getInstitutionUpdate());
-            TestUtils.checkNotNullFields(relationshipInfo.getBilling());
+            checkNotNullFields(relationshipInfo);
+            checkNotNullFields(relationshipInfo.getInstitutionUpdate());
+            checkNotNullFields(relationshipInfo.getBilling());
         });
     }
 
@@ -175,9 +177,9 @@ class PartyProcessRestClientTest extends BaseFeignRestClientTest {
         // then
         assertNotNull(response);
         response.getInstitutions().forEach(onboardingResponseData -> {
-            TestUtils.checkNotNullFields(onboardingResponseData);
-            TestUtils.checkNotNullFields(onboardingResponseData.getBilling());
-            TestUtils.checkNotNullFields(onboardingResponseData.getProductInfo());
+            checkNotNullFields(onboardingResponseData);
+            checkNotNullFields(onboardingResponseData.getBilling());
+            checkNotNullFields(onboardingResponseData.getProductInfo());
         });
 
     }
@@ -253,7 +255,18 @@ class PartyProcessRestClientTest extends BaseFeignRestClientTest {
         Institution response = restClient.createInstitutionUsingExternalId(externalId);
         //then
         assertNotNull(response);
-        TestUtils.checkNotNullFields(response);
+        checkNotNullFields(response);
+    }
+
+    @Test
+    void createInstitutionRaw() {
+        //given
+        String externalId = "externalId";
+        //when
+        Institution response = restClient.createInstitutionRaw(externalId, mockInstance(new InstitutionSeed()));
+        //then
+        assertNotNull(response);
+        checkNotNullFields(response);
     }
 
     @Test
@@ -265,7 +278,7 @@ class PartyProcessRestClientTest extends BaseFeignRestClientTest {
         RelationshipInfo response = restClient.getInstitutionManager(externalId, productId);
         //then
         assertNotNull(response);
-        TestUtils.checkNotNullFields(response);
+        checkNotNullFields(response);
     }
 
     @Test
@@ -296,7 +309,7 @@ class PartyProcessRestClientTest extends BaseFeignRestClientTest {
         BillingDataResponse response = restClient.getInstitutionBillingData(externalId, productId);
         //then
         assertNotNull(response);
-        TestUtils.checkNotNullFields(response);
+        checkNotNullFields(response);
     }
 
     @Test

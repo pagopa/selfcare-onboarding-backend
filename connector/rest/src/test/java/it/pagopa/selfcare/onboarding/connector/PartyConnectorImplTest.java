@@ -18,6 +18,7 @@ import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionInf
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.*;
 import it.pagopa.selfcare.onboarding.connector.rest.client.PartyProcessRestClient;
 import it.pagopa.selfcare.onboarding.connector.rest.model.BillingDataResponse;
+import it.pagopa.selfcare.onboarding.connector.rest.model.InstitutionSeed;
 import it.pagopa.selfcare.onboarding.connector.rest.model.OnBoardingInfo;
 import it.pagopa.selfcare.onboarding.connector.rest.model.OnboardingInstitutionRequest;
 import org.junit.jupiter.api.Assertions;
@@ -502,7 +503,7 @@ class PartyConnectorImplTest {
         //given
         String institutionId = "institutionId";
         Institution institutionMock = mockInstance(new Institution());
-        when(restClientMock.getInstitutionByExternalId(Mockito.anyString()))
+        when(restClientMock.getInstitutionByExternalId(anyString()))
                 .thenReturn(institutionMock);
         //when
         Institution institution = partyConnector.getInstitutionByExternalId(institutionId);
@@ -638,8 +639,8 @@ class PartyConnectorImplTest {
     void createInstitutionUsingExternalId() {
         //given
         String externalId = "externalId";
-        Institution institution = TestUtils.mockInstance(new Institution());
-        when(restClientMock.createInstitutionUsingExternalId(Mockito.anyString()))
+        Institution institution = mockInstance(new Institution());
+        when(restClientMock.createInstitutionUsingExternalId(anyString()))
                 .thenReturn(institution);
         //when
         Institution result = partyConnector.createInstitutionUsingExternalId(externalId);
@@ -648,6 +649,47 @@ class PartyConnectorImplTest {
         assertSame(institution, result);
         verify(restClientMock, times(1))
                 .createInstitutionUsingExternalId(externalId);
+    }
+
+    @Test
+    void createInstitutionRaw_nullInput() {
+        //given
+        final OnboardingData onboardingData = null;
+        //when
+        Executable executable = () -> partyConnector.createInstitutionRaw(onboardingData);
+        //then
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, executable);
+        assertEquals("An OnboardingData is required", e.getMessage());
+        verifyNoInteractions(restClientMock);
+    }
+
+    @Test
+    void createInstitutionRaw() {
+        //given
+        final OnboardingData onboardingData = mockInstance(new OnboardingData());
+        Institution institution = mockInstance(new Institution());
+        when(restClientMock.createInstitutionRaw(anyString(), any()))
+                .thenReturn(institution);
+        //when
+        Institution result = partyConnector.createInstitutionRaw(onboardingData);
+        //then
+        assertNotNull(result);
+        assertSame(institution, result);
+        final ArgumentCaptor<InstitutionSeed> argumentCaptor = ArgumentCaptor.forClass(InstitutionSeed.class);
+        verify(restClientMock, times(1))
+                .createInstitutionRaw(eq(onboardingData.getInstitutionExternalId()),
+                        argumentCaptor.capture());
+        final InstitutionSeed institutionSeed = argumentCaptor.getValue();
+        assertEquals(onboardingData.getInstitutionUpdate().getDescription(), institutionSeed.getDescription());
+        assertEquals(onboardingData.getInstitutionUpdate().getDigitalAddress(), institutionSeed.getDigitalAddress());
+        assertEquals(onboardingData.getInstitutionUpdate().getAddress(), institutionSeed.getAddress());
+        assertEquals(onboardingData.getInstitutionUpdate().getZipCode(), institutionSeed.getZipCode());
+        assertEquals(onboardingData.getInstitutionUpdate().getTaxCode(), institutionSeed.getTaxCode());
+        assertEquals(onboardingData.getInstitutionType(), institutionSeed.getInstitutionType());
+        assertTrue(institutionSeed.getAttributes().isEmpty());
+        assertEquals(onboardingData.getInstitutionUpdate().getPaymentServiceProvider(), institutionSeed.getPaymentServiceProvider());
+        assertEquals(onboardingData.getInstitutionUpdate().getDataProtectionOfficer(), institutionSeed.getDataProtectionOfficer());
+        verifyNoMoreInteractions(restClientMock);
     }
 
     @Test

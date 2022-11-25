@@ -2,13 +2,8 @@ package it.pagopa.selfcare.onboarding.web.model.mapper;
 
 import it.pagopa.selfcare.onboarding.connector.model.InstitutionOnboardingData;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionInfo;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.Billing;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.InstitutionUpdate;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
-import it.pagopa.selfcare.onboarding.web.model.BillingDataDto;
-import it.pagopa.selfcare.onboarding.web.model.InstitutionData;
-import it.pagopa.selfcare.onboarding.web.model.InstitutionOnboardingInfoResource;
-import it.pagopa.selfcare.onboarding.web.model.OnboardingDto;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.*;
+import it.pagopa.selfcare.onboarding.web.model.*;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -30,18 +25,48 @@ public class OnboardingMapper {
         return resource;
     }
 
-    public static InstitutionUpdate mapInstitutionUpdate(BillingDataDto dto) {
+
+    private static InstitutionUpdate mapInstitutionUpdate(OnboardingDto dto) {
         InstitutionUpdate resource = null;
-        if (dto != null) {
+        if (dto != null && dto.getBillingData() != null) {
             resource = new InstitutionUpdate();
-            resource.setAddress(dto.getRegisteredOffice());
-            resource.setDigitalAddress(dto.getDigitalAddress());
-            resource.setZipCode(dto.getZipCode());
-            resource.setDescription(dto.getBusinessName());
-            resource.setTaxCode(dto.getTaxCode());
+            resource.setAddress(dto.getBillingData().getRegisteredOffice());
+            resource.setDigitalAddress(dto.getBillingData().getDigitalAddress());
+            resource.setZipCode(dto.getBillingData().getZipCode());
+            resource.setDescription(dto.getBillingData().getBusinessName());
+            resource.setTaxCode(dto.getBillingData().getTaxCode());
+            resource.setPaymentServiceProvider(mapPaymentServiceProvider(dto.getPspData()));
+            resource.setDataProtectionOfficer(mapDataProtectionOfficer(dto.getPspData()));
         }
         return resource;
     }
+
+
+    private static PaymentServiceProvider mapPaymentServiceProvider(PspDataDto dto) {
+        PaymentServiceProvider resource = null;
+        if (dto != null) {
+            resource = new PaymentServiceProvider();
+            resource.setAbiCode(dto.getAbiCode());
+            resource.setBusinessRegisterNumber(dto.getBusinessRegisterNumber());
+            resource.setLegalRegisterName(dto.getLegalRegisterName());
+            resource.setLegalRegisterNumber(dto.getLegalRegisterNumber());
+            resource.setVatNumberGroup(dto.getVatNumberGroup());
+        }
+        return resource;
+    }
+
+
+    private static DataProtectionOfficer mapDataProtectionOfficer(PspDataDto dto) {
+        DataProtectionOfficer resource = null;
+        if (dto != null && dto.getDpoData() != null) {
+            resource = new DataProtectionOfficer();
+            resource.setAddress(dto.getDpoData().getAddress());
+            resource.setEmail(dto.getDpoData().getEmail());
+            resource.setPec(dto.getDpoData().getPec());
+        }
+        return resource;
+    }
+
 
     public static OnboardingData toOnboardingData(String externalId, String productId, OnboardingDto model) {
         OnboardingData resource = null;
@@ -54,7 +79,7 @@ public class OnboardingMapper {
             resource.setProductId(productId);
             resource.setOrigin(model.getOrigin());
             resource.setPricingPlan(model.getPricingPlan());
-            resource.setInstitutionUpdate(mapInstitutionUpdate(model.getBillingData()));
+            resource.setInstitutionUpdate(mapInstitutionUpdate(model));
             if (model.getBillingData() != null) {
                 resource.setBilling(fromDto(model.getBillingData()));
             }
