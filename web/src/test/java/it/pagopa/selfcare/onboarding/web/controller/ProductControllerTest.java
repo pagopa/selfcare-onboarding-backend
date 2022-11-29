@@ -39,7 +39,7 @@ class ProductControllerTest {
 
     @Test
     void getProduct() throws Exception {
-        // given
+        //given
         String productId = "productId";
         Mockito.when(productServiceMock.getProduct(productId)).thenReturn(TestUtils.mockInstance(new Product()));
         //when
