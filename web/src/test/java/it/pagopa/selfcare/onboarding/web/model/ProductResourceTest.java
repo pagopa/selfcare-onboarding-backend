@@ -9,6 +9,7 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.lang.annotation.Annotation;
 import java.util.HashMap;
 import java.util.List;
@@ -33,10 +34,12 @@ class ProductResourceTest {
         HashMap<String, Class<? extends Annotation>> toCheckMap = new HashMap<>();
         toCheckMap.put("id", NotBlank.class);
         toCheckMap.put("title", NotBlank.class);
+        toCheckMap.put("status", NotNull.class);
 
         ProductResource productResource = new ProductResource();
         productResource.setId(null);
         productResource.setTitle(null);
+        productResource.setStatus(null);
 
         // when
         Set<ConstraintViolation<Object>> violations = validator.validate(productResource);

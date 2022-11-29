@@ -6,6 +6,7 @@ import it.pagopa.selfcare.onboarding.connector.model.product.ProductStatus;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Data
 public class ProductResource {
@@ -25,6 +26,6 @@ public class ProductResource {
 
     @ApiModelProperty(value = "${swagger.onboarding.product.model.status}", required = true)
     @JsonProperty(required = true)
-    @NotBlank
+    @NotNull
     private ProductStatus status;
 }

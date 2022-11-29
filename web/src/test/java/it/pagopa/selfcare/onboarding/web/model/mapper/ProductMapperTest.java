@@ -19,6 +19,7 @@ class ProductMapperTest {
         // then
         assertEquals(product.getId(), productResource.getId());
         assertEquals(product.getTitle(), productResource.getTitle());
+        assertEquals(product.getStatus(), productResource.getStatus());
 
         TestUtils.reflectionEqualsByName(productResource, product);
     }
