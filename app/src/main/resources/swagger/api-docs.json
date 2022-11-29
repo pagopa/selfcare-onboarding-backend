@@ -800,7 +800,7 @@
       },
       "ProductResource" : {
         "title" : "ProductResource",
-        "required" : [ "id", "title" ],
+        "required" : [ "id", "status", "title" ],
         "type" : "object",
         "properties" : {
           "id" : {
@@ -810,6 +810,11 @@
           "parentId" : {
             "type" : "string",
             "description" : "Product's parent's Id"
+          },
+          "status" : {
+            "type" : "string",
+            "description" : "Product's status",
+            "enum" : [ "ACTIVE", "INACTIVE", "PHASE_OUT", "TESTING" ]
           },
           "title" : {
             "type" : "string",
