@@ -12,6 +12,7 @@ public class ProductMapper {
             resource.setId(model.getId());
             resource.setTitle(model.getTitle());
             resource.setParentId(model.getParentId());
+            resource.setStatus(model.getStatus());
         }
         return resource;
     }
