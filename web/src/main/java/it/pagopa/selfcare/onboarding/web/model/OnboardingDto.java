@@ -5,7 +5,6 @@ import it.pagopa.selfcare.onboarding.connector.model.onboarding.InstitutionType;
 import lombok.Data;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
@@ -13,7 +12,7 @@ import java.util.List;
 public class OnboardingDto {
 
     @ApiModelProperty(value = "${swagger.onboarding.institutions.model.users}", required = true)
-    @NotEmpty
+    @NotNull
     @Valid
     private List<UserDto> users;
 
@@ -37,7 +36,7 @@ public class OnboardingDto {
     private PspDataDto pspData;
 
     @ApiModelProperty(value = "${swagger.onboarding.institutions.model.geographicTaxonomies}", required = true)
-    @NotEmpty
+    @NotNull
     @Valid
     private List<GeographicTaxonomyDto> geographicTaxonomies;
 
