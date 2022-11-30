@@ -6,12 +6,10 @@ import it.pagopa.selfcare.onboarding.connector.model.RelationshipInfo;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipsResponse;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionInfo;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingResponseData;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.User;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.UserInfo;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.*;
 import it.pagopa.selfcare.onboarding.connector.rest.client.PartyProcessRestClient;
 import it.pagopa.selfcare.onboarding.connector.rest.model.*;
+import it.pagopa.selfcare.onboarding.connector.rest.model.InstitutionUpdate;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -101,6 +99,8 @@ class PartyConnectorImpl implements PartyConnector {
         institutionUpdate.setZipCode(onboardingData.getInstitutionUpdate().getZipCode());
         institutionUpdate.setPaymentServiceProvider(onboardingData.getInstitutionUpdate().getPaymentServiceProvider());
         institutionUpdate.setDataProtectionOfficer(onboardingData.getInstitutionUpdate().getDataProtectionOfficer());
+        institutionUpdate.setGeographicTaxonomyCodes(onboardingData.getInstitutionUpdate().getGeographicTaxonomies().stream()
+                .map(GeographicTaxonomy::getCode).collect(Collectors.toList()));
         onboardingInstitutionRequest.setInstitutionUpdate(institutionUpdate);
 
         onboardingInstitutionRequest.setUsers(onboardingData.getUsers().stream()
