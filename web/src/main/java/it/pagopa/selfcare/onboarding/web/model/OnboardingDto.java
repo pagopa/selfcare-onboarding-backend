@@ -35,4 +35,10 @@ public class OnboardingDto {
     @Valid
     private PspDataDto pspData;
 
+    @ApiModelProperty(value = "${swagger.onboarding.institutions.model.geographicTaxonomies}", required = true)
+    @NotNull
+    @Valid
+    private List<GeographicTaxonomyDto> geographicTaxonomies;
+
+
 }
