@@ -39,7 +39,13 @@
         "address": "string",
         "email": "string",
         "pec": "string"
-      }
+      },
+      "geographicTaxonomies": [
+        {
+          "code": "string",
+          "desc": "string"
+        }
+      ]
     },
     "headers": {
       "Content-Type": "application/json"
