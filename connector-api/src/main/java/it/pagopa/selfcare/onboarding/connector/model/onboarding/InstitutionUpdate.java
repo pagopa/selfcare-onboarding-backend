@@ -11,5 +11,7 @@ public class InstitutionUpdate {
     private String address;
     private String taxCode;
     private String zipCode;
+    private PaymentServiceProvider paymentServiceProvider;
+    private DataProtectionOfficer dataProtectionOfficer;
 
 }

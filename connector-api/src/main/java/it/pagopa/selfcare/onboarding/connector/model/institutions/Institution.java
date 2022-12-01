@@ -1,6 +1,8 @@
 package it.pagopa.selfcare.onboarding.connector.model.institutions;
 
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.DataProtectionOfficer;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.InstitutionType;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.PaymentServiceProvider;
 import lombok.Data;
 
 import java.util.List;
@@ -19,5 +21,7 @@ public class Institution {
     private String origin;
     private InstitutionType institutionType;
     private List<Attribute> attributes;
+    private PaymentServiceProvider paymentServiceProvider;
+    private DataProtectionOfficer dataProtectionOfficer;
 
 }

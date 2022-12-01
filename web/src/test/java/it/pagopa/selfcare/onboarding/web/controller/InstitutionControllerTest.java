@@ -34,13 +34,13 @@ import java.util.UUID;
 import static it.pagopa.selfcare.commons.utils.TestUtils.mockInstance;
 import static java.util.UUID.randomUUID;
 import static org.hamcrest.Matchers.emptyString;
+import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(value = {InstitutionController.class}, excludeAutoConfiguration = SecurityAutoConfiguration.class)
 @ContextConfiguration(classes = {InstitutionController.class, WebTestConfig.class})
@@ -75,6 +75,23 @@ class InstitutionControllerTest {
         verify(institutionServiceMock, times(1))
                 .onboarding(any(OnboardingData.class));
         verifyNoMoreInteractions(institutionServiceMock);
+    }
+
+    @Test
+    void onboardingInvalidPspOnboardingRequest(@Value("classpath:stubs/invalidPspOnboardingDto.json") Resource onboardingDto) throws Exception {
+        // given
+        String institutionId = "institutionId";
+        String productId = "productId";
+        // when
+        mvc.perform(MockMvcRequestBuilders
+                .post(BASE_URL + "/{institutionId}/products/{productId}/onboarding", institutionId, productId)
+                .content(onboardingDto.getInputStream().readAllBytes())
+                .contentType(APPLICATION_JSON_VALUE)
+                .accept(APPLICATION_JSON_VALUE))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.detail", is("Field 'pspData' is required for PSP institution onboarding")));
+        // then
+        verifyNoInteractions(institutionServiceMock);
     }
 
     @Test
