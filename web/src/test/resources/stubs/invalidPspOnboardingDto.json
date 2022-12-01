@@ -20,5 +20,11 @@
       "surname": "string",
       "taxCode": "string"
     }
+  ],
+  "geographicTaxonomies": [
+    {
+      "code": "string",
+      "desc": "string"
+    }
   ]
 }
