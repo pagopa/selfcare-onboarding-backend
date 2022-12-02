@@ -1,7 +1,10 @@
 package it.pagopa.selfcare.onboarding.connector.rest.model;
 
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Attribute;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.*;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.DataProtectionOfficer;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.InstitutionType;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.PaymentServiceProvider;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -21,7 +24,6 @@ public class InstitutionSeed {
         attributes = List.of();
         paymentServiceProvider = onboardingData.getInstitutionUpdate().getPaymentServiceProvider();
         dataProtectionOfficer = onboardingData.getInstitutionUpdate().getDataProtectionOfficer();
-        geographicTaxonomies = onboardingData.getInstitutionUpdate().getGeographicTaxonomies();
     }
 
 
@@ -34,6 +36,5 @@ public class InstitutionSeed {
     private List<Attribute> attributes;
     private PaymentServiceProvider paymentServiceProvider;
     private DataProtectionOfficer dataProtectionOfficer;
-    private List<GeographicTaxonomy> geographicTaxonomies;
 
 }

@@ -625,21 +625,6 @@
           }
         }
       },
-      "GeographicTaxonomyDto" : {
-        "title" : "GeographicTaxonomyDto",
-        "required" : [ "code", "desc" ],
-        "type" : "object",
-        "properties" : {
-          "code" : {
-            "type" : "string",
-            "description" : "Institution's geographic taxonomy ISTAT code"
-          },
-          "desc" : {
-            "type" : "string",
-            "description" : "Institution's geographic taxonomy extended name"
-          }
-        }
-      },
       "InstitutionData" : {
         "title" : "InstitutionData",
         "type" : "object",
@@ -743,19 +728,12 @@
       },
       "OnboardingDto" : {
         "title" : "OnboardingDto",
-        "required" : [ "billingData", "geographicTaxonomies", "institutionType", "users" ],
+        "required" : [ "billingData", "institutionType", "users" ],
         "type" : "object",
         "properties" : {
           "billingData" : {
             "description" : "Institution's billing information",
             "$ref" : "#/components/schemas/BillingDataDto"
-          },
-          "geographicTaxonomies" : {
-            "type" : "array",
-            "description" : "List of geographic Taxonomies",
-            "items" : {
-              "$ref" : "#/components/schemas/GeographicTaxonomyDto"
-            }
           },
           "institutionType" : {
             "type" : "string",

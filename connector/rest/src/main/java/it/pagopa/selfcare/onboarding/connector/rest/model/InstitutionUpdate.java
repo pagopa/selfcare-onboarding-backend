@@ -5,8 +5,6 @@ import it.pagopa.selfcare.onboarding.connector.model.onboarding.InstitutionType;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.PaymentServiceProvider;
 import lombok.Data;
 
-import java.util.List;
-
 @Data
 public class InstitutionUpdate {
 
@@ -18,6 +16,5 @@ public class InstitutionUpdate {
     private String zipCode;
     private PaymentServiceProvider paymentServiceProvider;
     private DataProtectionOfficer dataProtectionOfficer;
-    private List<String> geographicTaxonomyCodes;
 
 }
