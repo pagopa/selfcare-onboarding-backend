@@ -86,10 +86,7 @@ class PartyConnectorImplTest {
         // given
         OnboardingData onboardingData = mockInstance(new OnboardingData());
         Billing billing = mockInstance(new Billing());
-        InstitutionUpdate institutionUpdate = mockInstance(new InstitutionUpdate());
-        institutionUpdate.setGeographicTaxonomies(List.of(mockInstance(new GeographicTaxonomy())));
         onboardingData.setBilling(billing);
-        onboardingData.setInstitutionUpdate(institutionUpdate);
 
         // when
         partyConnector.onboardingOrganization(onboardingData);
@@ -103,28 +100,6 @@ class PartyConnectorImplTest {
         verifyNoMoreInteractions(restClientMock);
     }
 
-    @Test
-    void onboardingOrganization_emptyGeographicTaxonomies() {
-        // given
-        OnboardingData onboardingData = mockInstance(new OnboardingData());
-        Billing billing = mockInstance(new Billing());
-        InstitutionUpdate institutionUpdate = mockInstance(new InstitutionUpdate());
-        institutionUpdate.setGeographicTaxonomies(List.of());
-        onboardingData.setBilling(billing);
-        onboardingData.setUsers(List.of(mockInstance(new User())));
-        onboardingData.setInstitutionUpdate(institutionUpdate);
-        // when
-        partyConnector.onboardingOrganization(onboardingData);
-        // then
-        verify(restClientMock, times(1))
-                .onboardingOrganization(onboardingRequestCaptor.capture());
-        OnboardingInstitutionRequest request = onboardingRequestCaptor.getValue();
-        assertEquals(onboardingData.getInstitutionExternalId(), request.getInstitutionExternalId());
-        assertNotNull(request.getInstitutionUpdate().getGeographicTaxonomyCodes());
-        assertTrue(request.getInstitutionUpdate().getGeographicTaxonomyCodes().isEmpty());
-        verifyNoMoreInteractions(restClientMock);
-    }
-
 
     @Test
     void onboardingOrganization() {
@@ -132,7 +107,6 @@ class PartyConnectorImplTest {
         OnboardingData onboardingData = mockInstance(new OnboardingData());
         Billing billing = mockInstance(new Billing());
         InstitutionUpdate institutionUpdate = mockInstance(new InstitutionUpdate());
-        institutionUpdate.setGeographicTaxonomies(List.of(mockInstance(new GeographicTaxonomy())));
         onboardingData.setInstitutionUpdate(institutionUpdate);
         onboardingData.setBilling(billing);
         onboardingData.setUsers(List.of(mockInstance(new User())));
@@ -145,7 +119,6 @@ class PartyConnectorImplTest {
         assertEquals(onboardingData.getInstitutionExternalId(), request.getInstitutionExternalId());
         assertNotNull(request.getUsers());
         assertEquals(1, request.getUsers().size());
-        assertEquals(1, request.getInstitutionUpdate().getGeographicTaxonomyCodes().size());
         TestUtils.reflectionEqualsByName(institutionUpdate, request.getInstitutionUpdate());
         TestUtils.reflectionEqualsByName(billing, request.getBilling());
         assertEquals(onboardingData.getProductId(), request.getProductId());
@@ -155,7 +128,6 @@ class PartyConnectorImplTest {
         assertEquals(onboardingData.getUsers().get(0).getTaxCode(), request.getUsers().get(0).getTaxCode());
         assertEquals(onboardingData.getUsers().get(0).getRole(), request.getUsers().get(0).getRole());
         assertEquals(onboardingData.getUsers().get(0).getEmail(), request.getUsers().get(0).getEmail());
-        assertEquals(onboardingData.getInstitutionUpdate().getGeographicTaxonomies().get(0).getCode(), request.getInstitutionUpdate().getGeographicTaxonomyCodes().get(0));
         verifyNoMoreInteractions(restClientMock);
     }
 
@@ -696,10 +668,6 @@ class PartyConnectorImplTest {
         //given
         final OnboardingData onboardingData = mockInstance(new OnboardingData());
         Institution institution = mockInstance(new Institution());
-        List<GeographicTaxonomy> geographicTaxonomyList = List.of(mockInstance(new GeographicTaxonomy()));
-        InstitutionUpdate institutionUpdate = mockInstance(new InstitutionUpdate());
-        institutionUpdate.setGeographicTaxonomies(geographicTaxonomyList);
-        institution.setGeographicTaxonomies(geographicTaxonomyList);
         when(restClientMock.createInstitutionRaw(anyString(), any()))
                 .thenReturn(institution);
         //when
@@ -721,7 +689,6 @@ class PartyConnectorImplTest {
         assertTrue(institutionSeed.getAttributes().isEmpty());
         assertEquals(onboardingData.getInstitutionUpdate().getPaymentServiceProvider(), institutionSeed.getPaymentServiceProvider());
         assertEquals(onboardingData.getInstitutionUpdate().getDataProtectionOfficer(), institutionSeed.getDataProtectionOfficer());
-        assertEquals(onboardingData.getInstitutionUpdate().getGeographicTaxonomies(), institutionSeed.getGeographicTaxonomies());
         verifyNoMoreInteractions(restClientMock);
     }
 

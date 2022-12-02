@@ -37,9 +37,6 @@ public class OnboardingMapper {
             resource.setTaxCode(dto.getBillingData().getTaxCode());
             resource.setPaymentServiceProvider(mapPaymentServiceProvider(dto.getPspData()));
             resource.setDataProtectionOfficer(mapDataProtectionOfficer(dto.getPspData()));
-            resource.setGeographicTaxonomies(dto.getGeographicTaxonomies().stream()
-                    .map(GeographicTaxonomyMapper::toGeographicTaxonomy)
-                    .collect(Collectors.toList()));
         }
         return resource;
     }

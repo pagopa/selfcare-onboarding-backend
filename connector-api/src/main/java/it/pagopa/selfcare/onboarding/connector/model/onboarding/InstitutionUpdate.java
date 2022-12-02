@@ -2,9 +2,6 @@ package it.pagopa.selfcare.onboarding.connector.model.onboarding;
 
 import lombok.Data;
 
-import java.util.List;
-
-
 @Data
 public class InstitutionUpdate {
 
@@ -16,7 +13,5 @@ public class InstitutionUpdate {
     private String zipCode;
     private PaymentServiceProvider paymentServiceProvider;
     private DataProtectionOfficer dataProtectionOfficer;
-    private List<GeographicTaxonomy> geographicTaxonomies;
-
 
 }
