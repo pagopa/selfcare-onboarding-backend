@@ -8,14 +8,13 @@ import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionInfo;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.*;
 import it.pagopa.selfcare.onboarding.connector.rest.client.PartyProcessRestClient;
-import it.pagopa.selfcare.onboarding.connector.rest.model.*;
 import it.pagopa.selfcare.onboarding.connector.rest.model.InstitutionUpdate;
+import it.pagopa.selfcare.onboarding.connector.rest.model.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
-import javax.validation.ValidationException;
 import java.util.*;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;

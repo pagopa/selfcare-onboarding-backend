@@ -140,8 +140,6 @@ class InstitutionControllerTest {
 
     }
 
-    //TODO test the case in which the returned institution (of type Institution) from partyConnector.getInstitutionByExternalId(externalInstitutionId) has NULL geographicTaxonomies
-
     @Test
     void getInstitutionData() throws Exception {
         //given
