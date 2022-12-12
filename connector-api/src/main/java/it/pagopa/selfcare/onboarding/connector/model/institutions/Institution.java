@@ -1,6 +1,7 @@
 package it.pagopa.selfcare.onboarding.connector.model.institutions;
 
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.DataProtectionOfficer;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.GeographicTaxonomy;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.InstitutionType;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.PaymentServiceProvider;
 import lombok.Data;
@@ -23,5 +24,5 @@ public class Institution {
     private List<Attribute> attributes;
     private PaymentServiceProvider paymentServiceProvider;
     private DataProtectionOfficer dataProtectionOfficer;
-
+    private List<GeographicTaxonomy> geographicTaxonomies;
 }

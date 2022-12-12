@@ -32,14 +32,17 @@ class OnboardingMapperTest {
         OnboardingDto model = mockInstance(new OnboardingDto());
         BillingDataDto billingDataDto = mockInstance(new BillingDataDto());
         PspDataDto pspDataDto = mockInstance(new PspDataDto());
+        List<GeographicTaxonomyDto> geographicTaxonomyDtos = List.of(mockInstance(new GeographicTaxonomyDto()));
         model.setBillingData(billingDataDto);
         model.setUsers(userDtos);
         model.setPspData(pspDataDto);
+        model.setGeographicTaxonomies(geographicTaxonomyDtos);
         //when
         OnboardingData resource = OnboardingMapper.toOnboardingData(institutionId, productId, model);
         //then
         assertNotNull(resource);
-        assertEquals(1, model.getUsers().size());
+        assertEquals(model.getUsers().size(), resource.getUsers().size());
+        assertEquals(model.getGeographicTaxonomies().size(), resource.getInstitutionUpdate().getGeographicTaxonomies().size());
         assertEquals(institutionId, resource.getInstitutionExternalId());
         assertEquals(productId, resource.getProductId());
         reflectionEqualsByName(billingDataDto, resource.getBilling());
@@ -47,6 +50,7 @@ class OnboardingMapperTest {
         reflectionEqualsByName(model.getBillingData(), resource.getInstitutionUpdate());
         reflectionEqualsByName(model.getPspData(), resource.getInstitutionUpdate().getPaymentServiceProvider(), "dpoData");
         reflectionEqualsByName(model.getPspData().getDpoData(), resource.getInstitutionUpdate().getDataProtectionOfficer());
+        reflectionEqualsByName(geographicTaxonomyDtos.get(0), resource.getInstitutionUpdate().getGeographicTaxonomies().get(0));
         assertEquals(model.getOrigin(), resource.getOrigin());
         assertEquals(model.getInstitutionType(), resource.getInstitutionType());
         assertEquals(model.getPricingPlan(), resource.getPricingPlan());
