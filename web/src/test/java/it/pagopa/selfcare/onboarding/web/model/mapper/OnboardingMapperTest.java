@@ -4,6 +4,7 @@ import it.pagopa.selfcare.commons.utils.TestUtils;
 import it.pagopa.selfcare.onboarding.connector.model.InstitutionOnboardingData;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionInfo;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.Billing;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.GeographicTaxonomy;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.UserInfo;
 import it.pagopa.selfcare.onboarding.connector.model.user.CertifiedField;
@@ -110,6 +111,7 @@ class OnboardingMapperTest {
         InstitutionInfo institutionInfo = mockInstance(new InstitutionInfo());
         model.setManager(manager);
         model.setInstitution(institutionInfo);
+        model.setGeographicTaxonomies(List.of(mockInstance(new GeographicTaxonomy())));
         //when
         InstitutionOnboardingInfoResource resource = OnboardingMapper.toResource(model);
         //then
@@ -118,6 +120,8 @@ class OnboardingMapperTest {
         TestUtils.checkNotNullFields(resource.getInstitution().getBillingData());
         assertEquals(institutionInfo.getInstitutionType(), resource.getInstitution().getInstitutionType());
         assertEquals(institutionInfo.getZipCode(), resource.getInstitution().getBillingData().getZipCode());
+        assertEquals(model.getGeographicTaxonomies().get(0).getCode(), resource.getGeographicTaxonomies().get(0).getCode());
+        assertEquals(model.getGeographicTaxonomies().get(0).getDesc(), resource.getGeographicTaxonomies().get(0).getDesc());
     }
 
     @Test

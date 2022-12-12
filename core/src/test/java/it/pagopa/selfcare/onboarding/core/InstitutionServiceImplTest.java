@@ -1248,6 +1248,85 @@ class InstitutionServiceImplTest {
         verifyNoInteractions(productsConnectorMock);
     }
 
+    @Test
+    void getInstitutionOnboardingData_institutionByExternalIdNotFound() {
+        //given
+        String institutionId = "institutionId";
+        String productId = "productId";
+        String loggedUser = "loggedUser";
+        UserInfo userInfoMock = mockInstance(new UserInfo(), "setId", "setRole");
+        userInfoMock.setId(loggedUser);
+        UserInfo userInfoManager = mockInstance(new UserInfo());
+        userInfoManager.setRole(PartyRole.MANAGER);
+        when(partyConnectorMock.getInstitutionManager(any(), any()))
+                .thenReturn(userInfoManager);
+        final it.pagopa.selfcare.onboarding.connector.model.user.User userManagerMock =
+                new it.pagopa.selfcare.onboarding.connector.model.user.User();
+        when(userConnectorMock.getUserByInternalId(any(), any()))
+                .thenReturn(userManagerMock);
+        InstitutionInfo institutionInfoMock = mockInstance(new InstitutionInfo());
+        Billing billingMock = mockInstance(new Billing());
+        institutionInfoMock.setBilling(billingMock);
+        when(partyConnectorMock.getInstitutionBillingData(anyString(), anyString()))
+                .thenReturn(institutionInfoMock);
+        //when
+        Executable executable = () -> institutionService.getInstitutionOnboardingData(institutionId, productId);
+        //then
+        ResourceNotFoundException e = assertThrows(ResourceNotFoundException.class, executable);
+        assertEquals(String.format("Institution %s not found", institutionId), e.getMessage());
+        verify(partyConnectorMock, times(1))
+                .getInstitutionManager(institutionId, productId);
+        verify(partyConnectorMock, times(1))
+                .getInstitutionBillingData(institutionId, productId);
+        verify(userConnectorMock, times(1))
+                .getUserByInternalId(userInfoManager.getId(), EnumSet.of(name, familyName, workContacts, fiscalCode));
+        verify(partyConnectorMock, times(1))
+                .getInstitutionByExternalId(institutionId);
+        verifyNoMoreInteractions(partyConnectorMock, userConnectorMock);
+        verifyNoInteractions(productsConnectorMock);
+    }
+
+    @Test
+    void getInstitutionOnboardingData_nullGeographicTaxonomies() {
+        //given
+        String institutionId = "institutionId";
+        String productId = "productId";
+        String loggedUser = "loggedUser";
+        UserInfo userInfoMock = mockInstance(new UserInfo(), "setId", "setRole");
+        userInfoMock.setId(loggedUser);
+        UserInfo userInfoManager = mockInstance(new UserInfo());
+        userInfoManager.setRole(PartyRole.MANAGER);
+        when(partyConnectorMock.getInstitutionManager(any(), any()))
+                .thenReturn(userInfoManager);
+        final it.pagopa.selfcare.onboarding.connector.model.user.User userManagerMock =
+                new it.pagopa.selfcare.onboarding.connector.model.user.User();
+        when(userConnectorMock.getUserByInternalId(any(), any()))
+                .thenReturn(userManagerMock);
+        InstitutionInfo institutionInfoMock = mockInstance(new InstitutionInfo());
+        Billing billingMock = mockInstance(new Billing());
+        institutionInfoMock.setBilling(billingMock);
+        when(partyConnectorMock.getInstitutionBillingData(anyString(), anyString()))
+                .thenReturn(institutionInfoMock);
+        Institution institutionMock = mockInstance(new Institution());
+        when(partyConnectorMock.getInstitutionByExternalId(anyString()))
+                .thenReturn(institutionMock);
+        //when
+        Executable executable = () -> institutionService.getInstitutionOnboardingData(institutionId, productId);
+        //then
+        ValidationException e = assertThrows(ValidationException.class, executable);
+        assertEquals(String.format("The institution %s does not have geographic taxonomies.", institutionId), e.getMessage());
+        verify(partyConnectorMock, times(1))
+                .getInstitutionManager(institutionId, productId);
+        verify(partyConnectorMock, times(1))
+                .getInstitutionBillingData(institutionId, productId);
+        verify(userConnectorMock, times(1))
+                .getUserByInternalId(userInfoManager.getId(), EnumSet.of(name, familyName, workContacts, fiscalCode));
+        verify(partyConnectorMock, times(1))
+                .getInstitutionByExternalId(institutionId);
+        verifyNoMoreInteractions(partyConnectorMock, userConnectorMock);
+        verifyNoInteractions(productsConnectorMock);
+    }
+
 
     @Test
     void getInstitutionOnboardingData() {
@@ -1270,6 +1349,10 @@ class InstitutionServiceImplTest {
         institutionInfoMock.setBilling(billingMock);
         when(partyConnectorMock.getInstitutionBillingData(anyString(), anyString()))
                 .thenReturn(institutionInfoMock);
+        Institution institutionMock = mockInstance(new Institution());
+        institutionMock.setGeographicTaxonomies(List.of(new GeographicTaxonomy()));
+        when(partyConnectorMock.getInstitutionByExternalId(anyString()))
+                .thenReturn(institutionMock);
         //when
         InstitutionOnboardingData institutionOnboardingData = institutionService.getInstitutionOnboardingData(institutionId, productId);
         //then
@@ -1278,6 +1361,8 @@ class InstitutionServiceImplTest {
         assertEquals(userInfoManager, institutionOnboardingData.getManager());
         assertNotNull(institutionOnboardingData.getInstitution());
         assertEquals(institutionInfoMock, institutionOnboardingData.getInstitution());
+        assertEquals(institutionMock.getGeographicTaxonomies().get(0).getCode(), institutionOnboardingData.getGeographicTaxonomies().get(0).getCode());
+        assertEquals(institutionMock.getGeographicTaxonomies().get(0).getDesc(), institutionOnboardingData.getGeographicTaxonomies().get(0).getDesc());
 
         verify(partyConnectorMock, times(1))
                 .getInstitutionManager(institutionId, productId);
@@ -1285,6 +1370,8 @@ class InstitutionServiceImplTest {
                 .getInstitutionBillingData(institutionId, productId);
         verify(userConnectorMock, times(1))
                 .getUserByInternalId(userInfoManager.getId(), EnumSet.of(name, familyName, workContacts, fiscalCode));
+        verify(partyConnectorMock, times(1))
+                .getInstitutionByExternalId(institutionId);
         verifyNoMoreInteractions(partyConnectorMock, userConnectorMock);
         verifyNoInteractions(productsConnectorMock);
     }

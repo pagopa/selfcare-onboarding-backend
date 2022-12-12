@@ -10,6 +10,7 @@ import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import javax.validation.constraints.NotNull;
 import java.lang.annotation.Annotation;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
@@ -31,6 +32,7 @@ class InstitutionOnboardingInfoResourceTest {
     void validateNullFields() {
         HashMap<String, Class<? extends Annotation>> toCheckMap = new HashMap<>();
         toCheckMap.put("institution", NotNull.class);
+        toCheckMap.put("geographicTaxonomies", NotNull.class);
 
         InstitutionOnboardingInfoResource resource = new InstitutionOnboardingInfoResource();
         resource.setInstitution(null);
@@ -52,6 +54,7 @@ class InstitutionOnboardingInfoResourceTest {
         InstitutionOnboardingInfoResource resource = TestUtils.mockInstance(new InstitutionOnboardingInfoResource());
         InstitutionData institutionData = new InstitutionData();
         resource.setInstitution(institutionData);
+        resource.setGeographicTaxonomies(Collections.emptyList());
         // when
         Set<ConstraintViolation<Object>> violations = validator.validate(resource);
         // then
