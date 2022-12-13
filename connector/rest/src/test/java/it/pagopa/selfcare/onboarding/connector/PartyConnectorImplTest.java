@@ -29,7 +29,6 @@ import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.util.ResourceUtils;
 
-import javax.validation.ValidationException;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
@@ -39,7 +38,6 @@ import static it.pagopa.selfcare.commons.utils.TestUtils.*;
 import static it.pagopa.selfcare.onboarding.connector.PartyConnectorImpl.REQUIRED_INSTITUTION_ID_MESSAGE;
 import static it.pagopa.selfcare.onboarding.connector.PartyConnectorImpl.REQUIRED_PRODUCT_ID_MESSAGE;
 import static it.pagopa.selfcare.onboarding.connector.model.RelationshipState.ACTIVE;
-import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
@@ -196,14 +194,16 @@ class PartyConnectorImplTest {
         assertEquals(onboardingData2.getDescription(), institutionInfos.get(0).getDescription());
         assertEquals(onboardingData2.getExternalId(), institutionInfos.get(0).getExternalId());
         assertEquals(onboardingData2.getState().toString(), institutionInfos.get(0).getStatus());
-        assertEquals(onboardingData2.getRole(), institutionInfos.get(0).getUserRole());        institutionInfos = map.get(PartyRole.OPERATOR);
+        assertEquals(onboardingData2.getRole(), institutionInfos.get(0).getUserRole());
+        institutionInfos = map.get(PartyRole.OPERATOR);
         assertNotNull(institutionInfos);
         assertEquals(1, institutionInfos.size());
         assertEquals(onboardingData3.getId(), institutionInfos.get(0).getId());
         assertEquals(onboardingData3.getDescription(), institutionInfos.get(0).getDescription());
         assertEquals(onboardingData3.getExternalId(), institutionInfos.get(0).getExternalId());
         assertEquals(onboardingData3.getState().toString(), institutionInfos.get(0).getStatus());
-        assertEquals(onboardingData3.getRole(), institutionInfos.get(0).getUserRole());        verify(restClientMock, times(1))
+        assertEquals(onboardingData3.getRole(), institutionInfos.get(0).getUserRole());
+        verify(restClientMock, times(1))
                 .getOnBoardingInfo(isNull(), eq(EnumSet.of(ACTIVE)));
         verifyNoMoreInteractions(restClientMock);
     }
@@ -237,6 +237,7 @@ class PartyConnectorImplTest {
                 .getOnBoardingInfo(isNull(), Mockito.isNotNull());
         verifyNoMoreInteractions(restClientMock);
     }
+
 
     @Test
     void getUserInstitutionRelationships() {
@@ -530,7 +531,6 @@ class PartyConnectorImplTest {
         //given
         String institutionId = "institutionId";
         Institution institutionMock = mockInstance(new Institution());
-        institutionMock.setGeographicTaxonomies(List.of(mockInstance(new GeographicTaxonomy())));
         when(restClientMock.getInstitutionByExternalId(anyString()))
                 .thenReturn(institutionMock);
         //when
@@ -545,14 +545,10 @@ class PartyConnectorImplTest {
         assertEquals(institutionMock.getZipCode(), institution.getZipCode());
         assertEquals(institutionMock.getDigitalAddress(), institution.getDigitalAddress());
         assertEquals(institutionMock.getInstitutionType(), institution.getInstitutionType());
-        assertEquals(institutionMock.getGeographicTaxonomies().get(0).getCode(), institution.getGeographicTaxonomies().get(0).getCode());
-        assertEquals(institutionMock.getGeographicTaxonomies().get(0).getDesc(), institution.getGeographicTaxonomies().get(0).getDesc());
         verify(restClientMock, times(1))
                 .getInstitutionByExternalId(institutionId);
         verifyNoMoreInteractions(restClientMock);
     }
-
-
 
     @Test
     void getInstitution_nullInstitutionId() {
@@ -591,6 +587,7 @@ class PartyConnectorImplTest {
         assertEquals(onboardingData.getBilling().getRecipientCode(), institutionInfo.getBilling().getRecipientCode());
         assertEquals(onboardingData.getBilling().getPublicServices(), institutionInfo.getBilling().getPublicServices());
         assertEquals(onboardingData.getBilling().getVatNumber(), institutionInfo.getBilling().getVatNumber());
+
         verify(restClientMock, times(1))
                 .getOnBoardingInfo(institutionId, EnumSet.of(ACTIVE));
         verifyNoMoreInteractions(restClientMock);

@@ -98,9 +98,6 @@ public class OnboardingMapper {
             resource = new InstitutionOnboardingInfoResource();
             resource.setManager(UserMapper.toResource(model.getManager()));
             resource.setInstitution(toData(model.getInstitution()));
-            resource.setGeographicTaxonomies(model.getGeographicTaxonomies().stream()
-                    .map(GeographicTaxonomyMapper::toGeographicTaxonomyResource)
-                    .collect(Collectors.toList()));
         }
         return resource;
     }
