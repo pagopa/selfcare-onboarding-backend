@@ -4,10 +4,7 @@ import it.pagopa.selfcare.commons.utils.TestUtils;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.GeographicTaxonomy;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.User;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.UserInfo;
-import it.pagopa.selfcare.onboarding.web.model.GeographicTaxonomyDto;
-import it.pagopa.selfcare.onboarding.web.model.UserDataValidationDto;
-import it.pagopa.selfcare.onboarding.web.model.UserDto;
-import it.pagopa.selfcare.onboarding.web.model.UserResource;
+import it.pagopa.selfcare.onboarding.web.model.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -37,6 +34,28 @@ class GeographicTaxonomyMapperTest {
         GeographicTaxonomyDto model = null;
         //when
         GeographicTaxonomy resource = GeographicTaxonomyMapper.toGeographicTaxonomy(model);
+        //then
+        assertNull(resource);
+    }
+
+    @Test
+    void toGeographicTaxonomyResource(){
+        //given
+        GeographicTaxonomy model = mockInstance(new GeographicTaxonomy());
+        //when
+        GeographicTaxonomyResource resource = GeographicTaxonomyMapper.toGeographicTaxonomyResource(model);
+        //then
+        assertNotNull(resource);
+        assertEquals(model.getCode(), resource.getCode());
+        assertEquals(model.getDesc(), resource.getDesc());
+    }
+
+    @Test
+    void toGeographicTaxonomyResource_null(){
+        //given
+        GeographicTaxonomy model = null;
+        //when
+        GeographicTaxonomyResource resource = GeographicTaxonomyMapper.toGeographicTaxonomyResource(model);
         //then
         assertNull(resource);
     }

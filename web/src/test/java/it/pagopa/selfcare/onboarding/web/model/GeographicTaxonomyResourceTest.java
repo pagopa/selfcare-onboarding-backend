@@ -1,5 +1,6 @@
 package it.pagopa.selfcare.onboarding.web.model;
 
+import it.pagopa.selfcare.commons.utils.TestUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -7,7 +8,7 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
-import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.lang.annotation.Annotation;
 import java.util.HashMap;
@@ -15,13 +16,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static it.pagopa.selfcare.commons.utils.TestUtils.mockInstance;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class OnboardingDtoTest {
-
+class GeographicTaxonomyResourceTest {
     private Validator validator;
-
 
     @BeforeEach
     void setUp() {
@@ -29,18 +27,15 @@ class OnboardingDtoTest {
         validator = validatorFactory.getValidator();
     }
 
-
     @Test
     void validateNullFields() {
         // given
         HashMap<String, Class<? extends Annotation>> toCheckMap = new HashMap<>();
-        toCheckMap.put("users", NotEmpty.class);
-        toCheckMap.put("billingData", NotNull.class);
-        toCheckMap.put("institutionType", NotNull.class);
-        toCheckMap.put("geographicTaxonomies", NotNull.class);
-        OnboardingDto model = new OnboardingDto();
+        GeographicTaxonomyResource geographicTaxonomyResource = new GeographicTaxonomyResource();
+        toCheckMap.put("code", NotBlank.class);
+        toCheckMap.put("desc", NotBlank.class);
         // when
-        Set<ConstraintViolation<Object>> violations = validator.validate(model);
+        Set<ConstraintViolation<Object>> violations = validator.validate(geographicTaxonomyResource);
         // then
         List<ConstraintViolation<Object>> filteredViolations = violations.stream()
                 .filter(violation -> {
@@ -54,22 +49,11 @@ class OnboardingDtoTest {
     @Test
     void validateNotNullFields() {
         // given
-        OnboardingDto model = mockInstance(new OnboardingDto());
-        UserDto userDto = mockInstance(new UserDto());
-        userDto.setEmail("email@example.com");
-        GeographicTaxonomyDto geographicTaxonomyDto = mockInstance(new GeographicTaxonomyDto());
-        model.setUsers(List.of(userDto));
-        model.setGeographicTaxonomies(List.of(geographicTaxonomyDto));
-        model.setBillingData(mockInstance(new BillingDataDto()));
-        PspDataDto pspDataDto = mockInstance(new PspDataDto());
-        DpoDataDto dpoDataDto = mockInstance(new DpoDataDto());
-        dpoDataDto.setEmail("email@example.com");
-        dpoDataDto.setPec("email@example.com");
-        pspDataDto.setDpoData(dpoDataDto);
-        model.setPspData(pspDataDto);
+        GeographicTaxonomyResource geographicTaxonomyResource = TestUtils.mockInstance(new GeographicTaxonomyResource());
         // when
-        Set<ConstraintViolation<Object>> violations = validator.validate(model);
+        Set<ConstraintViolation<Object>> violations = validator.validate(geographicTaxonomyResource);
         // then
         assertTrue(violations.isEmpty());
     }
+
 }
