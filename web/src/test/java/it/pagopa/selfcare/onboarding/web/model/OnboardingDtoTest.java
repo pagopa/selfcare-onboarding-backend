@@ -1,6 +1,5 @@
 package it.pagopa.selfcare.onboarding.web.model;
 
-import it.pagopa.selfcare.commons.utils.TestUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -8,8 +7,6 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.lang.annotation.Annotation;
@@ -40,7 +37,7 @@ class OnboardingDtoTest {
         toCheckMap.put("users", NotEmpty.class);
         toCheckMap.put("billingData", NotNull.class);
         toCheckMap.put("institutionType", NotNull.class);
-        toCheckMap.put("geographicTaxonomies", NotEmpty.class);
+        toCheckMap.put("geographicTaxonomies", NotNull.class);
         OnboardingDto model = new OnboardingDto();
         // when
         Set<ConstraintViolation<Object>> violations = validator.validate(model);
