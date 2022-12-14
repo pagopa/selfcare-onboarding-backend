@@ -4,7 +4,6 @@ import it.pagopa.selfcare.commons.utils.TestUtils;
 import it.pagopa.selfcare.onboarding.connector.model.InstitutionOnboardingData;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionInfo;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.Billing;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.GeographicTaxonomy;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.UserInfo;
 import it.pagopa.selfcare.onboarding.connector.model.user.CertifiedField;
@@ -33,17 +32,14 @@ class OnboardingMapperTest {
         OnboardingDto model = mockInstance(new OnboardingDto());
         BillingDataDto billingDataDto = mockInstance(new BillingDataDto());
         PspDataDto pspDataDto = mockInstance(new PspDataDto());
-        List<GeographicTaxonomyDto> geographicTaxonomyDtos = List.of(mockInstance(new GeographicTaxonomyDto()));
         model.setBillingData(billingDataDto);
         model.setUsers(userDtos);
         model.setPspData(pspDataDto);
-        model.setGeographicTaxonomies(geographicTaxonomyDtos);
         //when
         OnboardingData resource = OnboardingMapper.toOnboardingData(institutionId, productId, model);
         //then
         assertNotNull(resource);
-        assertEquals(model.getUsers().size(), resource.getUsers().size());
-        assertEquals(model.getGeographicTaxonomies().size(), resource.getInstitutionUpdate().getGeographicTaxonomies().size());
+        assertEquals(1, model.getUsers().size());
         assertEquals(institutionId, resource.getInstitutionExternalId());
         assertEquals(productId, resource.getProductId());
         reflectionEqualsByName(billingDataDto, resource.getBilling());
@@ -51,7 +47,6 @@ class OnboardingMapperTest {
         reflectionEqualsByName(model.getBillingData(), resource.getInstitutionUpdate());
         reflectionEqualsByName(model.getPspData(), resource.getInstitutionUpdate().getPaymentServiceProvider(), "dpoData");
         reflectionEqualsByName(model.getPspData().getDpoData(), resource.getInstitutionUpdate().getDataProtectionOfficer());
-        reflectionEqualsByName(geographicTaxonomyDtos.get(0), resource.getInstitutionUpdate().getGeographicTaxonomies().get(0));
         assertEquals(model.getOrigin(), resource.getOrigin());
         assertEquals(model.getInstitutionType(), resource.getInstitutionType());
         assertEquals(model.getPricingPlan(), resource.getPricingPlan());
@@ -111,7 +106,6 @@ class OnboardingMapperTest {
         InstitutionInfo institutionInfo = mockInstance(new InstitutionInfo());
         model.setManager(manager);
         model.setInstitution(institutionInfo);
-        model.setGeographicTaxonomies(List.of(mockInstance(new GeographicTaxonomy())));
         //when
         InstitutionOnboardingInfoResource resource = OnboardingMapper.toResource(model);
         //then
@@ -120,8 +114,6 @@ class OnboardingMapperTest {
         TestUtils.checkNotNullFields(resource.getInstitution().getBillingData());
         assertEquals(institutionInfo.getInstitutionType(), resource.getInstitution().getInstitutionType());
         assertEquals(institutionInfo.getZipCode(), resource.getInstitution().getBillingData().getZipCode());
-        assertEquals(model.getGeographicTaxonomies().get(0).getCode(), resource.getGeographicTaxonomies().get(0).getCode());
-        assertEquals(model.getGeographicTaxonomies().get(0).getDesc(), resource.getGeographicTaxonomies().get(0).getDesc());
     }
 
     @Test
