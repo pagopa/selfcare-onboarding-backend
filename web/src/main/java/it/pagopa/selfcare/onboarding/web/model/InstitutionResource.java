@@ -61,4 +61,5 @@ public class InstitutionResource {
     @JsonProperty(required = true)
     @NotNull
     private SelfCareAuthority userRole;
+
 }
