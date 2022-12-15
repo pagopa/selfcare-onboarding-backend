@@ -221,11 +221,21 @@ class InstitutionServiceImpl implements InstitutionService {
         manager.setUser(userConnector.getUserByInternalId(manager.getId(), USER_FIELD_LIST_ENHANCED));
         result.setManager(manager);
 
-        InstitutionInfo institution = partyConnector.getInstitutionBillingData(externalInstitutionId, productId);
+        InstitutionInfo institutionInfo = partyConnector.getInstitutionBillingData(externalInstitutionId, productId);
+        if (institutionInfo == null) {
+            throw new ResourceNotFoundException(String.format("Institution %s not found", externalInstitutionId));
+        }
+        result.setInstitution(institutionInfo);
+
+        Institution institution = partyConnector.getInstitutionByExternalId(externalInstitutionId);
         if (institution == null) {
             throw new ResourceNotFoundException(String.format("Institution %s not found", externalInstitutionId));
         }
-        result.setInstitution(institution);
+        if (institution.getGeographicTaxonomies() == null){
+            throw new ValidationException(String.format("The institution %s does not have geographic taxonomies.", externalInstitutionId));
+        }
+        result.setGeographicTaxonomies(institution.getGeographicTaxonomies());
+
         log.debug(LogUtils.CONFIDENTIAL_MARKER, "getInstitutionOnboardingData result = {}", result);
         log.trace("getInstitutionOnboardingData end");
         return result;
