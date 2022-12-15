@@ -1,6 +1,5 @@
 package it.pagopa.selfcare.onboarding.web.model;
 
-import it.pagopa.selfcare.commons.utils.TestUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -8,19 +7,21 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.lang.annotation.Annotation;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static it.pagopa.selfcare.commons.utils.TestUtils.mockInstance;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class InstitutionOnboardingInfoResourceTest {
+class OnboardingDtoTest {
 
     private Validator validator;
+
 
     @BeforeEach
     void setUp() {
@@ -28,16 +29,18 @@ class InstitutionOnboardingInfoResourceTest {
         validator = validatorFactory.getValidator();
     }
 
+
     @Test
     void validateNullFields() {
+        // given
         HashMap<String, Class<? extends Annotation>> toCheckMap = new HashMap<>();
-        toCheckMap.put("institution", NotNull.class);
+        toCheckMap.put("users", NotEmpty.class);
+        toCheckMap.put("billingData", NotNull.class);
+        toCheckMap.put("institutionType", NotNull.class);
         toCheckMap.put("geographicTaxonomies", NotNull.class);
-
-        InstitutionOnboardingInfoResource resource = new InstitutionOnboardingInfoResource();
-        resource.setInstitution(null);
-        //when
-        Set<ConstraintViolation<Object>> violations = validator.validate(resource);
+        OnboardingDto model = new OnboardingDto();
+        // when
+        Set<ConstraintViolation<Object>> violations = validator.validate(model);
         // then
         List<ConstraintViolation<Object>> filteredViolations = violations.stream()
                 .filter(violation -> {
@@ -51,14 +54,22 @@ class InstitutionOnboardingInfoResourceTest {
     @Test
     void validateNotNullFields() {
         // given
-        InstitutionOnboardingInfoResource resource = TestUtils.mockInstance(new InstitutionOnboardingInfoResource());
-        InstitutionData institutionData = new InstitutionData();
-        resource.setInstitution(institutionData);
-        resource.setGeographicTaxonomies(Collections.emptyList());
+        OnboardingDto model = mockInstance(new OnboardingDto());
+        UserDto userDto = mockInstance(new UserDto());
+        userDto.setEmail("email@example.com");
+        GeographicTaxonomyDto geographicTaxonomyDto = mockInstance(new GeographicTaxonomyDto());
+        model.setUsers(List.of(userDto));
+        model.setGeographicTaxonomies(List.of(geographicTaxonomyDto));
+        model.setBillingData(mockInstance(new BillingDataDto()));
+        PspDataDto pspDataDto = mockInstance(new PspDataDto());
+        DpoDataDto dpoDataDto = mockInstance(new DpoDataDto());
+        dpoDataDto.setEmail("email@example.com");
+        dpoDataDto.setPec("email@example.com");
+        pspDataDto.setDpoData(dpoDataDto);
+        model.setPspData(pspDataDto);
         // when
-        Set<ConstraintViolation<Object>> violations = validator.validate(resource);
+        Set<ConstraintViolation<Object>> violations = validator.validate(model);
         // then
         assertTrue(violations.isEmpty());
     }
-
 }

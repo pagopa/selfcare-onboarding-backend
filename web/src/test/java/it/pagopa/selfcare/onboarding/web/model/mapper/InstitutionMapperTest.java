@@ -3,8 +3,11 @@ package it.pagopa.selfcare.onboarding.web.model.mapper;
 import it.pagopa.selfcare.commons.utils.TestUtils;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionInfo;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.Billing;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.GeographicTaxonomy;
 import it.pagopa.selfcare.onboarding.web.model.InstitutionResource;
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
 
 import static java.util.UUID.randomUUID;
 import static org.junit.jupiter.api.Assertions.*;
@@ -29,9 +32,7 @@ class InstitutionMapperTest {
         assertEquals(resource.getDigitalAddress(), model.getDigitalAddress());
         assertEquals(resource.getZipCode(), model.getZipCode());
         assertEquals(resource.getTaxCode(), model.getTaxCode());
-        assertEquals(resource.getOrigin(), model.getOrigin());
-
-    }
+        assertEquals(resource.getOrigin(), model.getOrigin());    }
 
     @Test
     void toResource_nullInstitutionInfo() {

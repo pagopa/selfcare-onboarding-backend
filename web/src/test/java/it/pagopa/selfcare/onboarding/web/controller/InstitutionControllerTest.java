@@ -7,6 +7,7 @@ import it.pagopa.selfcare.onboarding.connector.model.institutions.Attribute;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionInfo;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.Billing;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.GeographicTaxonomy;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.UserInfo;
 import it.pagopa.selfcare.onboarding.core.InstitutionService;
@@ -103,6 +104,7 @@ class InstitutionControllerTest {
         institutionInfoMock.setBilling(mockInstance(new Billing()));
         InstitutionOnboardingData onBoardingDataMock = mockInstance(new InstitutionOnboardingData());
         onBoardingDataMock.setInstitution(institutionInfoMock);
+        onBoardingDataMock.setGeographicTaxonomies(List.of(mockInstance(new GeographicTaxonomy())));
         final UserInfo manager = mockInstance(new UserInfo(), "setId", "setInstitutionId");
         manager.setId(UUID.randomUUID().toString());
         manager.setInstitutionId(UUID.randomUUID().toString());
@@ -131,8 +133,7 @@ class InstitutionControllerTest {
         assertEquals(onBoardingDataMock.getInstitution().getDigitalAddress(), responseBillings.getDigitalAddress());
         assertEquals(onBoardingDataMock.getInstitution().getTaxCode(), responseBillings.getTaxCode());
         assertEquals(onBoardingDataMock.getInstitution().getAddress(), responseBillings.getRegisteredOffice());
-        assertEquals(onBoardingDataMock.getInstitution().getInstitutionType(), response.getInstitution().getInstitutionType());
-        assertNotNull(response.getManager().getId());
+        assertEquals(onBoardingDataMock.getInstitution().getInstitutionType(), response.getInstitution().getInstitutionType());        assertNotNull(response.getManager().getId());
         verify(institutionServiceMock, times(1))
                 .getInstitutionOnboardingData(institutionId, productId);
         verifyNoMoreInteractions(institutionServiceMock);

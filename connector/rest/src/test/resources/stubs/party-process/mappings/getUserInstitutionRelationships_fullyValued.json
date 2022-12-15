@@ -36,7 +36,13 @@
             "address": "string",
             "email": "string",
             "pec": "string"
-          }
+          },
+          "geographicTaxonomies": [
+            {
+              "code": "string",
+              "desc": "string"
+            }
+          ]
         },
         "billing": {
           "vatNumber": "string",
