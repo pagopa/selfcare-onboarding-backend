@@ -214,12 +214,15 @@ class InstitutionServiceImpl implements InstitutionService {
         Assert.hasText(productId, A_PRODUCT_ID_IS_REQUIRED);
         InstitutionOnboardingData result = new InstitutionOnboardingData();
 
-        UserInfo manager = partyConnector.getInstitutionManager(externalInstitutionId, productId);
-        if (manager == null) {
-            throw new ResourceNotFoundException(String.format("No Manager found for given institution: %s", externalInstitutionId));
+        Product product = productsConnector.getProduct(productId);
+        if (product.getParentId() != null) {
+            UserInfo manager = partyConnector.getInstitutionManager(externalInstitutionId, productId);
+            if (manager == null) {
+                throw new ResourceNotFoundException(String.format("No Manager found for given institution: %s", externalInstitutionId));
+            }
+            manager.setUser(userConnector.getUserByInternalId(manager.getId(), USER_FIELD_LIST_ENHANCED));
+            result.setManager(manager);
         }
-        manager.setUser(userConnector.getUserByInternalId(manager.getId(), USER_FIELD_LIST_ENHANCED));
-        result.setManager(manager);
 
         InstitutionInfo institutionInfo = partyConnector.getInstitutionBillingData(externalInstitutionId, productId);
         if (institutionInfo == null) {
