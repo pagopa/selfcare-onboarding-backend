@@ -1257,13 +1257,47 @@ class InstitutionServiceImplTest {
     }
 
     @Test
+    void getInstitutionOnboardingData_baseProduct() {
+        //given
+        String institutionId = "institutionId";
+        String productId = "productId";
+        Product product = mockInstance(new Product(), "setParentId");
+        when(productsConnectorMock.getProduct(anyString()))
+                .thenReturn(product);
+        InstitutionInfo institutionInfoMock = mockInstance(new InstitutionInfo());
+        Billing billingMock = mockInstance(new Billing());
+        institutionInfoMock.setBilling(billingMock);
+        when(partyConnectorMock.getInstitutionBillingData(anyString(), anyString()))
+                .thenReturn(institutionInfoMock);
+        Institution institutionMock = mockInstance(new Institution());
+        institutionMock.setGeographicTaxonomies(List.of(new GeographicTaxonomy()));
+        when(partyConnectorMock.getInstitutionByExternalId(anyString()))
+                .thenReturn(institutionMock);
+        //when
+        InstitutionOnboardingData institutionOnboardingData = institutionService.getInstitutionOnboardingData(institutionId, productId);
+        //then
+        assertNull(institutionOnboardingData.getManager());
+        assertNotNull(institutionOnboardingData.getInstitution());
+        assertNotNull(institutionOnboardingData.getGeographicTaxonomies());
+        assertEquals(institutionInfoMock, institutionOnboardingData.getInstitution());
+        assertEquals(institutionMock.getGeographicTaxonomies().get(0).getCode(), institutionOnboardingData.getGeographicTaxonomies().get(0).getCode());
+        assertEquals(institutionMock.getGeographicTaxonomies().get(0).getDesc(), institutionOnboardingData.getGeographicTaxonomies().get(0).getDesc());
+        verify(partyConnectorMock, times(1))
+                .getInstitutionBillingData(institutionId, productId);
+        verify(productsConnectorMock, times(1))
+                .getProduct(productId);
+        verify(partyConnectorMock, times(1))
+                .getInstitutionByExternalId(institutionId);
+        verifyNoMoreInteractions(partyConnectorMock, productsConnectorMock);
+        verifyNoInteractions(userConnectorMock);
+
+    }
+
+    @Test
     void getInstitutionOnboardingData_institutionByExternalIdNotFound() {
         //given
         String institutionId = "institutionId";
         String productId = "productId";
-        String loggedUser = "loggedUser";
-        UserInfo userInfoMock = mockInstance(new UserInfo(), "setId", "setRole");
-        userInfoMock.setId(loggedUser);
         UserInfo userInfoManager = mockInstance(new UserInfo());
         userInfoManager.setRole(PartyRole.MANAGER);
         Product product = mockInstance(new Product());
