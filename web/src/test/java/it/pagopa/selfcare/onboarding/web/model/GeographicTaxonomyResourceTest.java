@@ -8,9 +8,9 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.lang.annotation.Annotation;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
@@ -18,8 +18,7 @@ import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class InstitutionOnboardingInfoResourceTest {
-
+class GeographicTaxonomyResourceTest {
     private Validator validator;
 
     @BeforeEach
@@ -30,14 +29,13 @@ class InstitutionOnboardingInfoResourceTest {
 
     @Test
     void validateNullFields() {
+        // given
         HashMap<String, Class<? extends Annotation>> toCheckMap = new HashMap<>();
-        toCheckMap.put("institution", NotNull.class);
-        toCheckMap.put("geographicTaxonomies", NotNull.class);
-
-        InstitutionOnboardingInfoResource resource = new InstitutionOnboardingInfoResource();
-        resource.setInstitution(null);
-        //when
-        Set<ConstraintViolation<Object>> violations = validator.validate(resource);
+        GeographicTaxonomyResource geographicTaxonomyResource = new GeographicTaxonomyResource();
+        toCheckMap.put("code", NotBlank.class);
+        toCheckMap.put("desc", NotBlank.class);
+        // when
+        Set<ConstraintViolation<Object>> violations = validator.validate(geographicTaxonomyResource);
         // then
         List<ConstraintViolation<Object>> filteredViolations = violations.stream()
                 .filter(violation -> {
@@ -51,12 +49,9 @@ class InstitutionOnboardingInfoResourceTest {
     @Test
     void validateNotNullFields() {
         // given
-        InstitutionOnboardingInfoResource resource = TestUtils.mockInstance(new InstitutionOnboardingInfoResource());
-        InstitutionData institutionData = new InstitutionData();
-        resource.setInstitution(institutionData);
-        resource.setGeographicTaxonomies(Collections.emptyList());
+        GeographicTaxonomyResource geographicTaxonomyResource = TestUtils.mockInstance(new GeographicTaxonomyResource());
         // when
-        Set<ConstraintViolation<Object>> violations = validator.validate(resource);
+        Set<ConstraintViolation<Object>> violations = validator.validate(geographicTaxonomyResource);
         // then
         assertTrue(violations.isEmpty());
     }
