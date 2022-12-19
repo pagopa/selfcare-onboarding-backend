@@ -222,13 +222,13 @@ class InstitutionServiceImpl implements InstitutionService {
             }
             manager.setUser(userConnector.getUserByInternalId(manager.getId(), USER_FIELD_LIST_ENHANCED));
             result.setManager(manager);
-            InstitutionInfo institutionInfo = partyConnector.getInstitutionBillingData(externalInstitutionId, productId);
-            if (institutionInfo == null) {
-                throw new ResourceNotFoundException(String.format("Institution %s not found", externalInstitutionId));
-            }
-            result.setInstitution(institutionInfo);
         }
 
+        InstitutionInfo institutionInfo = partyConnector.getInstitutionBillingData(externalInstitutionId, productId);
+        if (institutionInfo == null) {
+            throw new ResourceNotFoundException(String.format("Institution %s not found", externalInstitutionId));
+        }
+        result.setInstitution(institutionInfo);
 
         Institution institution = partyConnector.getInstitutionByExternalId(externalInstitutionId);
         if (institution == null) {
