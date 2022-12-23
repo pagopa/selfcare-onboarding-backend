@@ -3,10 +3,12 @@ package it.pagopa.selfcare.onboarding.connector.api;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipsResponse;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionInfo;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.GeographicTaxonomy;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.UserInfo;
 
 import java.util.Collection;
+import java.util.List;
 
 public interface PartyConnector {
 
@@ -31,5 +33,8 @@ public interface PartyConnector {
     InstitutionInfo getInstitutionBillingData(String externalId, String productId);
 
     void verifyOnboarding(String externalInstitutionId, String productId);
+
+    List<GeographicTaxonomy> getInstitutionGeoTaxonomiesByExternalId(String externalId);
+
 
 }
