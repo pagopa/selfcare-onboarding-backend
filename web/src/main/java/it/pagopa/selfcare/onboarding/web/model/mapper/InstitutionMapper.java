@@ -6,7 +6,9 @@ import it.pagopa.selfcare.onboarding.web.model.InstitutionResource;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
+import java.util.Collections;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class InstitutionMapper {
@@ -28,6 +30,7 @@ public class InstitutionMapper {
             if (model.getUserRole() != null) {
                 resource.setUserRole(model.getUserRole().getSelfCareAuthority());
             }
+            resource.setGeographicTaxonomies(Collections.emptyList());
         }
         return resource;
     }
@@ -49,6 +52,13 @@ public class InstitutionMapper {
             resource.setTaxCode(model.getTaxCode());
             resource.setZipCode(model.getZipCode());
             resource.setOrigin(model.getOrigin());
+            if (model.getGeographicTaxonomies() != null) {
+                resource.setGeographicTaxonomies(model.getGeographicTaxonomies().stream()
+                        .map(GeographicTaxonomyMapper::toGeographicTaxonomyResource)
+                        .collect(Collectors.toList()));
+            } else {
+                resource.setGeographicTaxonomies(Collections.emptyList());
+            }
         }
         return resource;
     }
