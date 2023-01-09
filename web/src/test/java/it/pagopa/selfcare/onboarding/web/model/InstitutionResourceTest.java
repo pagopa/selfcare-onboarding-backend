@@ -41,7 +41,6 @@ class InstitutionResourceTest {
         toCheckMap.put("origin", NotBlank.class);
         toCheckMap.put("originId", NotBlank.class);
         toCheckMap.put("userRole", NotNull.class);
-        toCheckMap.put("geographicTaxonomies", NotNull.class);
 
         InstitutionResource institutionResource = new InstitutionResource();
 
@@ -61,7 +60,6 @@ class InstitutionResourceTest {
     void validateNotNullFields() {
         // given
         InstitutionResource institutionResource = TestUtils.mockInstance(new InstitutionResource());
-        institutionResource.setGeographicTaxonomies(List.of(TestUtils.mockInstance(new GeographicTaxonomyResource())));
         // when
         Set<ConstraintViolation<Object>> violations = validator.validate(institutionResource);
         // then

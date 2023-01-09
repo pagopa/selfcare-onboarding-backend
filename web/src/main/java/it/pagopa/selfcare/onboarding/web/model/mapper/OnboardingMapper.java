@@ -38,7 +38,7 @@ public class OnboardingMapper {
             resource.setPaymentServiceProvider(mapPaymentServiceProvider(dto.getPspData()));
             resource.setDataProtectionOfficer(mapDataProtectionOfficer(dto.getPspData()));
             resource.setGeographicTaxonomies(dto.getGeographicTaxonomies().stream()
-                    .map(GeographicTaxonomyMapper::fromDto)
+                    .map(GeographicTaxonomyMapper::toGeographicTaxonomy)
                     .collect(Collectors.toList()));
         }
         return resource;

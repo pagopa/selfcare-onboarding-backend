@@ -96,79 +96,6 @@
         } ]
       }
     },
-    "/institutions/{externalInstitutionId}/data" : {
-      "get" : {
-        "tags" : [ "institutions" ],
-        "summary" : "getInstitutionData",
-        "description" : "The service retrieves the onboarded institution given its external id",
-        "operationId" : "getInstitutionDataUsingGET",
-        "parameters" : [ {
-          "name" : "externalInstitutionId",
-          "in" : "path",
-          "description" : "Institution's unique external identifier",
-          "required" : true,
-          "style" : "simple",
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/InstitutionResource"
-                }
-              }
-            }
-          },
-          "400" : {
-            "description" : "Bad Request",
-            "content" : {
-              "application/problem+json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Problem"
-                }
-              }
-            }
-          },
-          "401" : {
-            "description" : "Unauthorized",
-            "content" : {
-              "application/problem+json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Problem"
-                }
-              }
-            }
-          },
-          "404" : {
-            "description" : "Not Found",
-            "content" : {
-              "application/problem+json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Problem"
-                }
-              }
-            }
-          },
-          "500" : {
-            "description" : "Internal Server Error",
-            "content" : {
-              "application/problem+json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Problem"
-                }
-              }
-            }
-          }
-        },
-        "security" : [ {
-          "bearerAuth" : [ "global" ]
-        } ]
-      }
-    },
     "/institutions/{externalInstitutionId}/products/{productId}" : {
       "head" : {
         "tags" : [ "institutions" ],
@@ -696,7 +623,7 @@
       },
       "InstitutionResource" : {
         "title" : "InstitutionResource",
-        "required" : [ "address", "description", "digitalAddress", "externalId", "geographicTaxonomies", "id", "institutionType", "origin", "originId", "taxCode", "userRole", "zipCode" ],
+        "required" : [ "address", "description", "digitalAddress", "externalId", "id", "institutionType", "origin", "originId", "taxCode", "userRole", "zipCode" ],
         "type" : "object",
         "properties" : {
           "address" : {
@@ -714,13 +641,6 @@
           "externalId" : {
             "type" : "string",
             "description" : "Institution's unique external identifier"
-          },
-          "geographicTaxonomies" : {
-            "type" : "array",
-            "description" : "Institution's geographic taxonomy",
-            "items" : {
-              "$ref" : "#/components/schemas/GeographicTaxonomyResource"
-            }
           },
           "id" : {
             "type" : "string",

@@ -287,16 +287,4 @@ class PartyConnectorImpl implements PartyConnector {
         log.trace("verifyOnboarding end");
     }
 
-    @Override
-    public List<GeographicTaxonomy> getInstitutionGeoTaxonomiesByExternalId(String externalId) {
-        log.trace("getInstitutionGeoTaxonomiesByExternalId start");
-        log.debug("getInstitutionGeoTaxonomiesByExternalId externalInstitutionId = {}", externalId);
-        Assert.hasText(externalId, REQUIRED_INSTITUTION_ID_MESSAGE);
-        Institution institution = restClient.getInstitutionByExternalId(externalId);
-        List<GeographicTaxonomy> result = institution.getGeographicTaxonomies();
-        log.debug("getInstitutionGeoTaxonomiesByExternalId result = {}", result);
-        log.trace("getInstitutionGeoTaxonomiesByExternalId end");
-        return result;
-    }
-
 }

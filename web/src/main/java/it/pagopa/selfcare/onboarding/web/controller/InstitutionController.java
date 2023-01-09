@@ -8,7 +8,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import it.pagopa.selfcare.commons.web.model.Problem;
 import it.pagopa.selfcare.onboarding.connector.model.InstitutionOnboardingData;
-import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.InstitutionType;
 import it.pagopa.selfcare.onboarding.core.InstitutionService;
 import it.pagopa.selfcare.onboarding.web.model.InstitutionOnboardingInfoResource;
@@ -88,22 +87,6 @@ public class InstitutionController {
         InstitutionOnboardingInfoResource result = OnboardingMapper.toResource(institutionOnboardingData);
         log.debug("getInstitutionOnBoardingInfo result = {}", result);
         log.trace("getInstitutionOnBoardingInfo end");
-        return result;
-    }
-
-
-    @GetMapping(value = "/{externalInstitutionId}/data")
-    @ResponseStatus(HttpStatus.OK)
-    @ApiOperation(value = "", notes = "${swagger.onboarding.institutions.api.getInstitutionData}")
-    public InstitutionResource getInstitutionData(@ApiParam("${swagger.onboarding.institutions.model.externalId}")
-                                                  @PathVariable("externalInstitutionId")
-                                                          String externalInstitutionId) {
-        log.trace("getInstitutionData start");
-        log.debug("getInstitutionData institutionId = {}", externalInstitutionId);
-        Institution institution = institutionService.getInstitutionByExternalId(externalInstitutionId);
-        InstitutionResource result = InstitutionMapper.toResource(institution);
-        log.debug("getInstitutionData result = {}", result);
-        log.trace("getInstitutionData end");
         return result;
     }
 

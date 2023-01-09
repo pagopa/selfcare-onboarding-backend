@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 public class GeographicTaxonomyMapper {
 
 
-    public static GeographicTaxonomy fromDto(GeographicTaxonomyDto model) {
+    public static GeographicTaxonomy toGeographicTaxonomy (GeographicTaxonomyDto model) {
         GeographicTaxonomy resource = null;
         if (model != null) {
             resource = new GeographicTaxonomy();

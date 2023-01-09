@@ -29,6 +29,7 @@ import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.util.ResourceUtils;
 
+import javax.validation.ValidationException;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
@@ -38,6 +39,7 @@ import static it.pagopa.selfcare.commons.utils.TestUtils.*;
 import static it.pagopa.selfcare.onboarding.connector.PartyConnectorImpl.REQUIRED_INSTITUTION_ID_MESSAGE;
 import static it.pagopa.selfcare.onboarding.connector.PartyConnectorImpl.REQUIRED_PRODUCT_ID_MESSAGE;
 import static it.pagopa.selfcare.onboarding.connector.model.RelationshipState.ACTIVE;
+import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
@@ -856,35 +858,6 @@ class PartyConnectorImplTest {
         assertDoesNotThrow(executable);
         verify(restClientMock, times(1))
                 .verifyOnboarding(externalInstitutionId, productId);
-        verifyNoMoreInteractions(restClientMock);
-    }
-
-    @Test
-    void getInstitutionGeoTaxByExternalId_nullExternalId() {
-        //given
-        String externalId = null;
-        //when
-        final Executable executable = () -> partyConnector.getInstitutionGeoTaxonomiesByExternalId(externalId);
-        //then
-        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, executable);
-        assertEquals(REQUIRED_INSTITUTION_ID_MESSAGE, e.getMessage());
-    }
-
-    @Test
-    void getInstitutionGeoTaxByExternalId() {
-        //given
-        String externalId = "externalId";
-        Institution institution = mockInstance(new Institution());
-        institution.setGeographicTaxonomies(List.of(mockInstance(new GeographicTaxonomy())));
-        when(restClientMock.getInstitutionByExternalId(any())).thenReturn(institution);
-        //when
-        List<GeographicTaxonomy> result = partyConnector.getInstitutionGeoTaxonomiesByExternalId(externalId);
-        //then
-        assertNotNull(result);
-        assertFalse(result.isEmpty());
-        result.forEach(TestUtils::checkNotNullFields);
-        verify(restClientMock, times(1))
-                .getInstitutionByExternalId(externalId);
         verifyNoMoreInteractions(restClientMock);
     }
 
