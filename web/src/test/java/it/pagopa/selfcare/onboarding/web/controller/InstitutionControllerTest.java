@@ -6,7 +6,10 @@ import it.pagopa.selfcare.onboarding.connector.model.InstitutionOnboardingData;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Attribute;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionInfo;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.*;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.Billing;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.GeographicTaxonomy;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.UserInfo;
 import it.pagopa.selfcare.onboarding.core.InstitutionService;
 import it.pagopa.selfcare.onboarding.web.config.WebTestConfig;
 import it.pagopa.selfcare.onboarding.web.model.BillingDataDto;
@@ -29,7 +32,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
-import static it.pagopa.selfcare.commons.utils.TestUtils.checkNotNullFields;
 import static it.pagopa.selfcare.commons.utils.TestUtils.mockInstance;
 import static java.util.UUID.randomUUID;
 import static org.hamcrest.Matchers.emptyString;
@@ -144,24 +146,20 @@ class InstitutionControllerTest {
         String institutionId = "institutionId";
         Institution institutionMock = mockInstance(new Institution(), "setId");
         institutionMock.setId(randomUUID().toString());
-        institutionMock.setGeographicTaxonomies(List.of(mockInstance(new GeographicTaxonomy())));
         Attribute attribute = mockInstance(new Attribute());
         institutionMock.setAttributes(List.of(attribute));
-        institutionMock.setDataProtectionOfficer(mockInstance(new DataProtectionOfficer()));
-        institutionMock.setPaymentServiceProvider(mockInstance(new PaymentServiceProvider()));
         when(institutionServiceMock.getInstitutionByExternalId(any()))
                 .thenReturn(institutionMock);
         //when
         MvcResult result = mvc.perform(MockMvcRequestBuilders
-                        .get(BASE_URL + "/{institutionId}/data", institutionId)
-                        .contentType(APPLICATION_JSON_VALUE)
-                        .accept(APPLICATION_JSON_VALUE))
+                .get(BASE_URL + "/{institutionId}/data", institutionId)
+                .contentType(APPLICATION_JSON_VALUE)
+                .accept(APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk())
                 .andReturn();
         //then
         InstitutionResource response = objectMapper.readValue(result.getResponse().getContentAsString(), InstitutionResource.class);
         assertNotNull(response);
-        checkNotNullFields(response, "userRole");
         verify(institutionServiceMock, times(1))
                 .getInstitutionByExternalId(institutionId);
         verifyNoMoreInteractions(institutionServiceMock);

@@ -92,6 +92,14 @@ public class InstitutionController {
     }
 
 
+    /**
+     * The service retrieves the onboarded institution given its external id
+     *
+     * @param externalInstitutionId the institution external id
+     * @return an {@link InstitutionResource}
+     * @deprecated (no more useful, will be removed in future version)
+     */
+    @Deprecated(forRemoval = true)
     @GetMapping(value = "/{externalInstitutionId}/data")
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "", notes = "${swagger.onboarding.institutions.api.getInstitutionData}")

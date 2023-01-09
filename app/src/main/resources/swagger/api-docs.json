@@ -164,6 +164,7 @@
             }
           }
         },
+        "deprecated" : true,
         "security" : [ {
           "bearerAuth" : [ "global" ]
         } ]
@@ -696,7 +697,7 @@
       },
       "InstitutionResource" : {
         "title" : "InstitutionResource",
-        "required" : [ "address", "description", "digitalAddress", "externalId", "geographicTaxonomies", "id", "institutionType", "origin", "originId", "taxCode", "userRole", "zipCode" ],
+        "required" : [ "address", "description", "digitalAddress", "externalId", "id", "institutionType", "origin", "originId", "taxCode", "userRole", "zipCode" ],
         "type" : "object",
         "properties" : {
           "address" : {
@@ -714,13 +715,6 @@
           "externalId" : {
             "type" : "string",
             "description" : "Institution's unique external identifier"
-          },
-          "geographicTaxonomies" : {
-            "type" : "array",
-            "description" : "Institution's geographic taxonomy",
-            "items" : {
-              "$ref" : "#/components/schemas/GeographicTaxonomyResource"
-            }
           },
           "id" : {
             "type" : "string",
