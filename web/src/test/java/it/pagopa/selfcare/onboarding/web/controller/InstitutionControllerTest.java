@@ -3,8 +3,6 @@ package it.pagopa.selfcare.onboarding.web.controller;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.pagopa.selfcare.onboarding.connector.model.InstitutionOnboardingData;
-import it.pagopa.selfcare.onboarding.connector.model.institutions.Attribute;
-import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionInfo;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.Billing;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.GeographicTaxonomy;
@@ -138,31 +136,6 @@ class InstitutionControllerTest {
                 .getInstitutionOnboardingData(institutionId, productId);
         verifyNoMoreInteractions(institutionServiceMock);
 
-    }
-
-    @Test
-    void getInstitutionData() throws Exception {
-        //given
-        String institutionId = "institutionId";
-        Institution institutionMock = mockInstance(new Institution(), "setId");
-        institutionMock.setId(randomUUID().toString());
-        Attribute attribute = mockInstance(new Attribute());
-        institutionMock.setAttributes(List.of(attribute));
-        when(institutionServiceMock.getInstitutionByExternalId(any()))
-                .thenReturn(institutionMock);
-        //when
-        MvcResult result = mvc.perform(MockMvcRequestBuilders
-                .get(BASE_URL + "/{institutionId}/data", institutionId)
-                .contentType(APPLICATION_JSON_VALUE)
-                .accept(APPLICATION_JSON_VALUE))
-                .andExpect(status().isOk())
-                .andReturn();
-        //then
-        InstitutionResource response = objectMapper.readValue(result.getResponse().getContentAsString(), InstitutionResource.class);
-        assertNotNull(response);
-        verify(institutionServiceMock, times(1))
-                .getInstitutionByExternalId(institutionId);
-        verifyNoMoreInteractions(institutionServiceMock);
     }
 
 
