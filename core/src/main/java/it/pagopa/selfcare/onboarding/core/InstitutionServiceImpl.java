@@ -9,10 +9,7 @@ import it.pagopa.selfcare.onboarding.connector.exceptions.ResourceNotFoundExcept
 import it.pagopa.selfcare.onboarding.connector.model.InstitutionOnboardingData;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionInfo;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.InstitutionType;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.User;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.UserInfo;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.*;
 import it.pagopa.selfcare.onboarding.connector.model.product.Product;
 import it.pagopa.selfcare.onboarding.connector.model.product.ProductRoleInfo;
 import it.pagopa.selfcare.onboarding.connector.model.product.ProductStatus;
@@ -55,6 +52,7 @@ class InstitutionServiceImpl implements InstitutionService {
     private final ProductsConnector productsConnector;
     private final UserRegistryConnector userConnector;
     private final OnboardingValidationStrategy onboardingValidationStrategy;
+
 
 
     @Autowired
@@ -251,6 +249,17 @@ class InstitutionServiceImpl implements InstitutionService {
         log.debug("getInstitutionData result = {}", institution);
         log.trace("getInstitutionData end");
         return institution;
+    }
+
+    @Override
+    public List<GeographicTaxonomy> getGeographicTaxonomyList(String externalInstitutionId) {
+        log.trace("geographicTaxonomyList start");
+        log.debug("geographicTaxonomyList externalInstitutionId = {}", externalInstitutionId);
+        Assert.hasText(externalInstitutionId, REQUIRED_INSTITUTION_ID_MESSAGE);
+        List<GeographicTaxonomy> result = partyConnector.getInstitutionByExternalId(externalInstitutionId).getGeographicTaxonomies();
+        log.debug("geographicTaxonomyList result = {}", result);
+        log.trace("geographicTaxonomyList end");
+        return result;
     }
 
 
