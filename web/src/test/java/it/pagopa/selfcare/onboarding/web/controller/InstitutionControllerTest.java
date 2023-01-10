@@ -4,13 +4,11 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.pagopa.selfcare.onboarding.connector.model.InstitutionOnboardingData;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionInfo;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.Billing;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.GeographicTaxonomy;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.UserInfo;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.*;
 import it.pagopa.selfcare.onboarding.core.InstitutionService;
 import it.pagopa.selfcare.onboarding.web.config.WebTestConfig;
 import it.pagopa.selfcare.onboarding.web.model.BillingDataDto;
+import it.pagopa.selfcare.onboarding.web.model.GeographicTaxonomyListResource;
 import it.pagopa.selfcare.onboarding.web.model.InstitutionOnboardingInfoResource;
 import it.pagopa.selfcare.onboarding.web.model.InstitutionResource;
 import org.junit.jupiter.api.Test;
@@ -131,13 +129,42 @@ class InstitutionControllerTest {
         assertEquals(onBoardingDataMock.getInstitution().getDigitalAddress(), responseBillings.getDigitalAddress());
         assertEquals(onBoardingDataMock.getInstitution().getTaxCode(), responseBillings.getTaxCode());
         assertEquals(onBoardingDataMock.getInstitution().getAddress(), responseBillings.getRegisteredOffice());
-        assertEquals(onBoardingDataMock.getInstitution().getInstitutionType(), response.getInstitution().getInstitutionType());        assertNotNull(response.getManager().getId());
+        assertEquals(onBoardingDataMock.getInstitution().getInstitutionType(), response.getInstitution().getInstitutionType());
+        assertNotNull(response.getManager().getId());
         verify(institutionServiceMock, times(1))
                 .getInstitutionOnboardingData(institutionId, productId);
         verifyNoMoreInteractions(institutionServiceMock);
 
     }
 
+    @Test
+    void getInstitutionGeographicTaxonomy() throws Exception {
+        //given
+        String institutionId = "institutionId";
+        GeographicTaxonomyList geographicTaxonomyListMock = mockInstance(new GeographicTaxonomyList());
+        geographicTaxonomyListMock.setGeographicTaxonomies(List.of(mockInstance(new GeographicTaxonomy())));
+        when(institutionServiceMock.getGeographicTaxonomyList(Mockito.anyString()))
+                .thenReturn(geographicTaxonomyListMock);
+        //when
+        MvcResult result = mvc.perform(MockMvcRequestBuilders
+                        .get(BASE_URL + "/{institutionId}/geographicTaxonomy", institutionId)
+                        .contentType(APPLICATION_JSON_VALUE)
+                        .accept(APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk())
+                .andReturn();
+        //then
+        GeographicTaxonomyListResource response = objectMapper.readValue(
+                result.getResponse().getContentAsString(),
+                new TypeReference<>() {
+                });
+        assertNotNull(response);
+        assertEquals(geographicTaxonomyListMock.getGeographicTaxonomies().get(0).getCode(), response.getGeographicTaxonomies().get(0).getCode());
+        assertEquals(geographicTaxonomyListMock.getGeographicTaxonomies().get(0).getDesc(), response.getGeographicTaxonomies().get(0).getDesc());
+        verify(institutionServiceMock, times(1))
+                .getGeographicTaxonomyList(institutionId);
+        verifyNoMoreInteractions(institutionServiceMock);
+
+    }
 
     @Test
     void getInstitutions() throws Exception {

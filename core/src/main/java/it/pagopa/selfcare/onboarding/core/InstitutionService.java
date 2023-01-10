@@ -3,6 +3,7 @@ package it.pagopa.selfcare.onboarding.core;
 import it.pagopa.selfcare.onboarding.connector.model.InstitutionOnboardingData;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionInfo;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.GeographicTaxonomyList;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
 
 import java.util.Collection;
@@ -14,6 +15,8 @@ public interface InstitutionService {
     Collection<InstitutionInfo> getInstitutions();
 
     InstitutionOnboardingData getInstitutionOnboardingData(String externalInstitutionId, String productId);
+
+    GeographicTaxonomyList getGeographicTaxonomyList(String externalInstitutionId);
 
     Institution getInstitutionByExternalId(String externalInstitutionId);
 

@@ -81,26 +81,113 @@
             }
           },
           "500" : {
-            "description" : "Internal Server Error",
-            "content" : {
-              "application/problem+json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Problem"
+            "description": "Internal Server Error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
                 }
               }
             }
           }
         },
-        "security" : [ {
-          "bearerAuth" : [ "global" ]
-        } ]
+        "security": [
+          {
+            "bearerAuth": [
+              "global"
+            ]
+          }
+        ]
       }
     },
-    "/institutions/{externalInstitutionId}/products/{productId}" : {
-      "head" : {
-        "tags" : [ "institutions" ],
-        "summary" : "verifyOnboarding",
-        "description" : "Checks if the specified institution has been onboarded on the specified product.",
+    "/institutions/{externalInstitutionId}/geographicTaxonomy": {
+      "get": {
+        "tags": [
+          "institutions"
+        ],
+        "summary": "getInstitutionGeographicTaxonomy",
+        "description": "The service retrieve the institution's geographic taxonomy",
+        "operationId": "getInstitutionGeographicTaxonomyUsingGET",
+        "parameters": [
+          {
+            "name": "externalInstitutionId",
+            "in": "path",
+            "description": "Institution's unique external identifier",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GeographicTaxonomyListResource"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [
+              "global"
+            ]
+          }
+        ]
+      }
+    },
+    "/institutions/{externalInstitutionId}/products/{productId}": {
+      "head": {
+        "tags": [
+          "institutions"
+        ],
+        "summary": "verifyOnboarding",
+        "description": "Checks if the specified institution has been onboarded on the specified product.",
         "operationId" : "verifyOnboardingUsingHEAD",
         "parameters" : [ {
           "name" : "externalInstitutionId",
@@ -556,26 +643,45 @@
         "required" : [ "code", "desc" ],
         "type" : "object",
         "properties" : {
-          "code" : {
-            "type" : "string",
-            "description" : "Institution's geographic taxonomy ISTAT code"
+          "code": {
+            "type": "string",
+            "description": "Institution's geographic taxonomy ISTAT code"
           },
-          "desc" : {
-            "type" : "string",
-            "description" : "Institution's geographic taxonomy extended name"
+          "desc": {
+            "type": "string",
+            "description": "Institution's geographic taxonomy extended name"
           }
         }
       },
-      "GeographicTaxonomyResource" : {
-        "title" : "GeographicTaxonomyResource",
-        "required" : [ "code", "desc" ],
-        "type" : "object",
-        "properties" : {
-          "code" : {
-            "type" : "string",
-            "description" : "Institution's geographic taxonomy ISTAT code"
+      "GeographicTaxonomyListResource": {
+        "title": "GeographicTaxonomyListResource",
+        "required": [
+          "geographicTaxonomies"
+        ],
+        "type": "object",
+        "properties": {
+          "geographicTaxonomies": {
+            "type": "array",
+            "description": "Institution's geographic taxonomy",
+            "items": {
+              "$ref": "#/components/schemas/GeographicTaxonomyResource"
+            }
+          }
+        }
+      },
+      "GeographicTaxonomyResource": {
+        "title": "GeographicTaxonomyResource",
+        "required": [
+          "code",
+          "desc"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "Institution's geographic taxonomy ISTAT code"
           },
-          "desc" : {
+          "desc": {
             "type" : "string",
             "description" : "Institution's geographic taxonomy extended name"
           }

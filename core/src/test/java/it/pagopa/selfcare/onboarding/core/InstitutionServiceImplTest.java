@@ -1416,6 +1416,25 @@ class InstitutionServiceImplTest {
         verifyNoInteractions(productsConnectorMock, userConnectorMock);
     }
 
+    @Test
+    void getGeographicTaxonomyList() {
+        // given
+        String institutionId = "institutionId";
+        Institution institutionMock = mockInstance(new Institution());
+        institutionMock.setGeographicTaxonomies(List.of(mockInstance(new GeographicTaxonomy())));
+        when(partyConnectorMock.getInstitutionByExternalId(anyString()))
+                .thenReturn(institutionMock);
+        // when
+        GeographicTaxonomyList result = institutionService.getGeographicTaxonomyList(institutionId);
+        // then
+        assertNotNull(result);
+        assertEquals(institutionMock.getGeographicTaxonomies().get(0).getCode(), result.getGeographicTaxonomies().get(0).getCode());
+        assertEquals(institutionMock.getGeographicTaxonomies().get(0).getDesc(), result.getGeographicTaxonomies().get(0).getDesc());
+        verify(partyConnectorMock, times(1))
+                .getInstitutionByExternalId(institutionId);
+        verifyNoMoreInteractions(partyConnectorMock);
+        verifyNoInteractions(productsConnectorMock, userConnectorMock);
+    }
 
     @Test
     void verifyOnboarding_notAllowed() {

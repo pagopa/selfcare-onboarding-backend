@@ -8,8 +8,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import it.pagopa.selfcare.commons.web.model.Problem;
 import it.pagopa.selfcare.onboarding.connector.model.InstitutionOnboardingData;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.GeographicTaxonomyList;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.InstitutionType;
 import it.pagopa.selfcare.onboarding.core.InstitutionService;
+import it.pagopa.selfcare.onboarding.web.model.GeographicTaxonomyListResource;
 import it.pagopa.selfcare.onboarding.web.model.InstitutionOnboardingInfoResource;
 import it.pagopa.selfcare.onboarding.web.model.InstitutionResource;
 import it.pagopa.selfcare.onboarding.web.model.OnboardingDto;
@@ -80,7 +82,7 @@ public class InstitutionController {
                                                                                   String externalInstitutionId,
                                                                           @ApiParam("${swagger.onboarding.product.model.id}")
                                                                           @PathVariable("productId")
-                                                                                  String productId) {
+                                                                          String productId) {
         log.trace("getInstitutionOnBoardingInfo start");
         log.debug("getInstitutionOnBoardingInfo institutionId = {}, productId = {}", externalInstitutionId, productId);
         InstitutionOnboardingData institutionOnboardingData = institutionService.getInstitutionOnboardingData(externalInstitutionId, productId);
@@ -90,6 +92,20 @@ public class InstitutionController {
         return result;
     }
 
+    @GetMapping(value = "/{externalInstitutionId}/geographicTaxonomy")
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "", notes = "${swagger.onboarding.institutions.api.getInstitutionGeographicTaxonomy}")
+    public GeographicTaxonomyListResource getInstitutionGeographicTaxonomy(@ApiParam("${swagger.onboarding.institutions.model.externalId}")
+                                                                           @PathVariable("externalInstitutionId")
+                                                                           String externalInstitutionId) {
+        log.trace("getInstitutionGeographicTaxonomy start");
+        log.debug("getInstitutionGeographicTaxonomy institutionId = {}", externalInstitutionId);
+        GeographicTaxonomyList geographicTaxonomyList = institutionService.getGeographicTaxonomyList(externalInstitutionId);
+        GeographicTaxonomyListResource result = OnboardingMapper.toResource(geographicTaxonomyList);
+        log.debug("getInstitutionGeographicTaxonomy result = {}", result);
+        log.trace("getInstitutionGeographicTaxonomy end");
+        return result;
+    }
 
     @GetMapping("")
     @ResponseStatus(HttpStatus.OK)

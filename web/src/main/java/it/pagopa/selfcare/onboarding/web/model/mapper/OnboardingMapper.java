@@ -105,6 +105,17 @@ public class OnboardingMapper {
         return resource;
     }
 
+    public static GeographicTaxonomyListResource toResource(GeographicTaxonomyList model) {
+        GeographicTaxonomyListResource resource = null;
+        if (model != null) {
+            resource = new GeographicTaxonomyListResource();
+            resource.setGeographicTaxonomies(model.getGeographicTaxonomies().stream()
+                    .map(GeographicTaxonomyMapper::toGeographicTaxonomyResource)
+                    .collect(Collectors.toList()));
+        }
+        return resource;
+    }
+
     public static InstitutionData toData(InstitutionInfo model) {
         InstitutionData resource = null;
         if (model != null) {
