@@ -1,15 +1,9 @@
 package it.pagopa.selfcare.onboarding.web.model.mapper;
 
-import it.pagopa.selfcare.commons.utils.TestUtils;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.GeographicTaxonomy;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.User;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.UserInfo;
-import it.pagopa.selfcare.onboarding.web.model.*;
+import it.pagopa.selfcare.onboarding.web.model.GeographicTaxonomyDto;
+import it.pagopa.selfcare.onboarding.web.model.GeographicTaxonomyResource;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
-
-import java.util.UUID;
 
 import static it.pagopa.selfcare.commons.utils.TestUtils.mockInstance;
 import static org.junit.jupiter.api.Assertions.*;
@@ -21,7 +15,7 @@ class GeographicTaxonomyMapperTest {
         //given
         GeographicTaxonomyDto model = mockInstance(new GeographicTaxonomyDto());
         //when
-        GeographicTaxonomy resource = GeographicTaxonomyMapper.toGeographicTaxonomy(model);
+        GeographicTaxonomy resource = GeographicTaxonomyMapper.fromDto(model);
         //then
         assertNotNull(resource);
         assertEquals(model.getCode(), resource.getCode());
@@ -33,7 +27,7 @@ class GeographicTaxonomyMapperTest {
         //given
         GeographicTaxonomyDto model = null;
         //when
-        GeographicTaxonomy resource = GeographicTaxonomyMapper.toGeographicTaxonomy(model);
+        GeographicTaxonomy resource = GeographicTaxonomyMapper.fromDto(model);
         //then
         assertNull(resource);
     }
@@ -43,7 +37,7 @@ class GeographicTaxonomyMapperTest {
         //given
         GeographicTaxonomy model = mockInstance(new GeographicTaxonomy());
         //when
-        GeographicTaxonomyResource resource = GeographicTaxonomyMapper.toGeographicTaxonomyResource(model);
+        GeographicTaxonomyResource resource = GeographicTaxonomyMapper.toResource(model);
         //then
         assertNotNull(resource);
         assertEquals(model.getCode(), resource.getCode());
@@ -55,7 +49,7 @@ class GeographicTaxonomyMapperTest {
         //given
         GeographicTaxonomy model = null;
         //when
-        GeographicTaxonomyResource resource = GeographicTaxonomyMapper.toGeographicTaxonomyResource(model);
+        GeographicTaxonomyResource resource = GeographicTaxonomyMapper.toResource(model);
         //then
         assertNull(resource);
     }

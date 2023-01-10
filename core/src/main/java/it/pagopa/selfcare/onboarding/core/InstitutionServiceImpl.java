@@ -252,15 +252,14 @@ class InstitutionServiceImpl implements InstitutionService {
     }
 
     @Override
-    public GeographicTaxonomyList getGeographicTaxonomyList(String externalInstitutionId) {
+    public List<GeographicTaxonomy> getGeographicTaxonomyList(String externalInstitutionId) {
         log.trace("geographicTaxonomyList start");
         log.debug("geographicTaxonomyList externalInstitutionId = {}", externalInstitutionId);
         Assert.hasText(externalInstitutionId, REQUIRED_INSTITUTION_ID_MESSAGE);
-        GeographicTaxonomyList geographicTaxonomyList = new GeographicTaxonomyList();
-        geographicTaxonomyList.setGeographicTaxonomies(partyConnector.getInstitutionByExternalId(externalInstitutionId).getGeographicTaxonomies());
-        log.debug("geographicTaxonomyList result = {}", geographicTaxonomyList);
+        List<GeographicTaxonomy> result = partyConnector.getInstitutionByExternalId(externalInstitutionId).getGeographicTaxonomies();
+        log.debug("geographicTaxonomyList result = {}", result);
         log.trace("geographicTaxonomyList end");
-        return geographicTaxonomyList;
+        return result;
     }
 
 

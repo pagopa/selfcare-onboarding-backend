@@ -1425,11 +1425,11 @@ class InstitutionServiceImplTest {
         when(partyConnectorMock.getInstitutionByExternalId(anyString()))
                 .thenReturn(institutionMock);
         // when
-        GeographicTaxonomyList result = institutionService.getGeographicTaxonomyList(institutionId);
+        List<GeographicTaxonomy> result = institutionService.getGeographicTaxonomyList(institutionId);
         // then
         assertNotNull(result);
-        assertEquals(institutionMock.getGeographicTaxonomies().get(0).getCode(), result.getGeographicTaxonomies().get(0).getCode());
-        assertEquals(institutionMock.getGeographicTaxonomies().get(0).getDesc(), result.getGeographicTaxonomies().get(0).getDesc());
+        assertEquals(institutionMock.getGeographicTaxonomies().get(0).getCode(), result.get(0).getCode());
+        assertEquals(institutionMock.getGeographicTaxonomies().get(0).getDesc(), result.get(0).getDesc());
         verify(partyConnectorMock, times(1))
                 .getInstitutionByExternalId(institutionId);
         verifyNoMoreInteractions(partyConnectorMock);

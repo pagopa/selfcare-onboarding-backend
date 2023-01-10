@@ -8,13 +8,13 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import it.pagopa.selfcare.commons.web.model.Problem;
 import it.pagopa.selfcare.onboarding.connector.model.InstitutionOnboardingData;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.GeographicTaxonomyList;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.InstitutionType;
 import it.pagopa.selfcare.onboarding.core.InstitutionService;
-import it.pagopa.selfcare.onboarding.web.model.GeographicTaxonomyListResource;
+import it.pagopa.selfcare.onboarding.web.model.GeographicTaxonomyResource;
 import it.pagopa.selfcare.onboarding.web.model.InstitutionOnboardingInfoResource;
 import it.pagopa.selfcare.onboarding.web.model.InstitutionResource;
 import it.pagopa.selfcare.onboarding.web.model.OnboardingDto;
+import it.pagopa.selfcare.onboarding.web.model.mapper.GeographicTaxonomyMapper;
 import it.pagopa.selfcare.onboarding.web.model.mapper.InstitutionMapper;
 import it.pagopa.selfcare.onboarding.web.model.mapper.OnboardingMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -95,16 +95,18 @@ public class InstitutionController {
     @GetMapping(value = "/{externalInstitutionId}/geographicTaxonomy")
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "", notes = "${swagger.onboarding.institutions.api.getInstitutionGeographicTaxonomy}")
-    public GeographicTaxonomyListResource getInstitutionGeographicTaxonomy(@ApiParam("${swagger.onboarding.institutions.model.externalId}")
-                                                                           @PathVariable("externalInstitutionId")
-                                                                           String externalInstitutionId) {
+    public List<GeographicTaxonomyResource> getInstitutionGeographicTaxonomy(@ApiParam("${swagger.onboarding.institutions.model.externalId}")
+                                                                             @PathVariable("externalInstitutionId")
+                                                                             String externalInstitutionId) {
         log.trace("getInstitutionGeographicTaxonomy start");
         log.debug("getInstitutionGeographicTaxonomy institutionId = {}", externalInstitutionId);
-        GeographicTaxonomyList geographicTaxonomyList = institutionService.getGeographicTaxonomyList(externalInstitutionId);
-        GeographicTaxonomyListResource result = OnboardingMapper.toResource(geographicTaxonomyList);
-        log.debug("getInstitutionGeographicTaxonomy result = {}", result);
+        List<GeographicTaxonomyResource> geographicTaxonomies = institutionService.getGeographicTaxonomyList(externalInstitutionId)
+                .stream()
+                .map(GeographicTaxonomyMapper::toResource)
+                .collect(Collectors.toList());
+        log.debug("getInstitutionGeographicTaxonomy result = {}", geographicTaxonomies);
         log.trace("getInstitutionGeographicTaxonomy end");
-        return result;
+        return geographicTaxonomies;
     }
 
     @GetMapping("")

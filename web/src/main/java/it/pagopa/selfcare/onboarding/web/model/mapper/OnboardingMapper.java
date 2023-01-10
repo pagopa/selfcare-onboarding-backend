@@ -38,7 +38,7 @@ public class OnboardingMapper {
             resource.setPaymentServiceProvider(mapPaymentServiceProvider(dto.getPspData()));
             resource.setDataProtectionOfficer(mapDataProtectionOfficer(dto.getPspData()));
             resource.setGeographicTaxonomies(dto.getGeographicTaxonomies().stream()
-                    .map(GeographicTaxonomyMapper::toGeographicTaxonomy)
+                    .map(GeographicTaxonomyMapper::fromDto)
                     .collect(Collectors.toList()));
         }
         return resource;
@@ -99,18 +99,7 @@ public class OnboardingMapper {
             resource.setManager(UserMapper.toResource(model.getManager()));
             resource.setInstitution(toData(model.getInstitution()));
             resource.setGeographicTaxonomies(model.getGeographicTaxonomies().stream()
-                    .map(GeographicTaxonomyMapper::toGeographicTaxonomyResource)
-                    .collect(Collectors.toList()));
-        }
-        return resource;
-    }
-
-    public static GeographicTaxonomyListResource toResource(GeographicTaxonomyList model) {
-        GeographicTaxonomyListResource resource = null;
-        if (model != null) {
-            resource = new GeographicTaxonomyListResource();
-            resource.setGeographicTaxonomies(model.getGeographicTaxonomies().stream()
-                    .map(GeographicTaxonomyMapper::toGeographicTaxonomyResource)
+                    .map(GeographicTaxonomyMapper::toResource)
                     .collect(Collectors.toList()));
         }
         return resource;

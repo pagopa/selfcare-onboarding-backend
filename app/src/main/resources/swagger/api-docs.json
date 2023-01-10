@@ -126,7 +126,10 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GeographicTaxonomyListResource"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/GeographicTaxonomyResource"
+                  }
                 }
               }
             }
@@ -188,16 +191,17 @@
         ],
         "summary": "verifyOnboarding",
         "description": "Checks if the specified institution has been onboarded on the specified product.",
-        "operationId" : "verifyOnboardingUsingHEAD",
-        "parameters" : [ {
-          "name" : "externalInstitutionId",
-          "in" : "path",
-          "description" : "Institution's unique external identifier",
-          "required" : true,
-          "style" : "simple",
-          "schema" : {
-            "type" : "string"
-          }
+        "operationId": "verifyOnboardingUsingHEAD",
+        "parameters": [
+          {
+            "name": "externalInstitutionId",
+            "in": "path",
+            "description": "Institution's unique external identifier",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
         }, {
           "name" : "productId",
           "in" : "path",
@@ -653,22 +657,6 @@
           }
         }
       },
-      "GeographicTaxonomyListResource": {
-        "title": "GeographicTaxonomyListResource",
-        "required": [
-          "geographicTaxonomies"
-        ],
-        "type": "object",
-        "properties": {
-          "geographicTaxonomies": {
-            "type": "array",
-            "description": "Institution's geographic taxonomy",
-            "items": {
-              "$ref": "#/components/schemas/GeographicTaxonomyResource"
-            }
-          }
-        }
-      },
       "GeographicTaxonomyResource": {
         "title": "GeographicTaxonomyResource",
         "required": [
@@ -682,14 +670,14 @@
             "description": "Institution's geographic taxonomy ISTAT code"
           },
           "desc": {
-            "type" : "string",
-            "description" : "Institution's geographic taxonomy extended name"
+            "type": "string",
+            "description": "Institution's geographic taxonomy extended name"
           }
         }
       },
-      "InstitutionData" : {
-        "title" : "InstitutionData",
-        "type" : "object",
+      "InstitutionData": {
+        "title": "InstitutionData",
+        "type": "object",
         "properties" : {
           "billingData" : {
             "description" : "Institution's billing information",
