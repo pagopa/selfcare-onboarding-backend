@@ -20,6 +20,8 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import static org.mockito.ArgumentMatchers.any;
+
 @WebMvcTest(value = {ProductController.class}, excludeAutoConfiguration = SecurityAutoConfiguration.class)
 @ContextConfiguration(classes = {
         ProductController.class,
@@ -41,12 +43,13 @@ class ProductControllerTest {
     void getProduct() throws Exception {
         //given
         String productId = "productId";
-        Mockito.when(productServiceMock.getProduct(productId)).thenReturn(TestUtils.mockInstance(new Product()));
+        Mockito.when(productServiceMock.getProduct(Mockito.anyString(), any()))
+                .thenReturn(TestUtils.mockInstance(new Product()));
         //when
         MvcResult result = mvc.perform(MockMvcRequestBuilders
-                .get(BASE_URL + "/{id}", productId)
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .accept(MediaType.APPLICATION_JSON_VALUE))
+                        .get(BASE_URL + "/{id}", productId)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .accept(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andReturn();
         //then
@@ -55,7 +58,7 @@ class ProductControllerTest {
                 ProductResource.class);
         Assertions.assertNotNull(response);
         Mockito.verify(productServiceMock, Mockito.times(1))
-                .getProduct(productId);
+                .getProduct(Mockito.anyString(), any());
         Mockito.verifyNoMoreInteractions(productServiceMock);
     }
 }

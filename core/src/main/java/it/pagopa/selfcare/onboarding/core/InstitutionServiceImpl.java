@@ -75,7 +75,7 @@ class InstitutionServiceImpl implements InstitutionService {
         Assert.notNull(onboardingData.getBilling(), REQUIRED_INSTITUTION_BILLING_DATA_MESSAGE);
         Assert.notNull(onboardingData.getInstitutionType(), REQUIRED_INSTITUTION_TYPE_MESSAGE);
 
-        Product product = productsConnector.getProduct(onboardingData.getProductId());
+        Product product = productsConnector.getProduct(onboardingData.getProductId(), onboardingData.getInstitutionType());
         Assert.notNull(product, "Product is required");
 
         if(product.getStatus() == ProductStatus.PHASE_OUT){
@@ -89,7 +89,7 @@ class InstitutionServiceImpl implements InstitutionService {
 
         final EnumMap<PartyRole, ProductRoleInfo> roleMappings;
         if (product.getParentId() != null) {
-            final Product baseProduct = productsConnector.getProduct(product.getParentId());
+            final Product baseProduct = productsConnector.getProduct(product.getParentId(), null);
             if(baseProduct.getStatus() == ProductStatus.PHASE_OUT){
                 throw new ValidationException(String.format("Unable to complete the onboarding for institution with external id '%s' to product '%s', the base product is dismissed.",
                         onboardingData.getInstitutionExternalId(),

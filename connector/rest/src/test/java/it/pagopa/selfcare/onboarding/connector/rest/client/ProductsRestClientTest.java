@@ -3,6 +3,7 @@ package it.pagopa.selfcare.onboarding.connector.rest.client;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import it.pagopa.selfcare.commons.connector.rest.BaseFeignRestClientTest;
 import it.pagopa.selfcare.commons.connector.rest.RestTestUtils;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.InstitutionType;
 import it.pagopa.selfcare.onboarding.connector.model.product.Product;
 import it.pagopa.selfcare.onboarding.connector.rest.config.ProductsRestClientTestConfig;
 import lombok.SneakyThrows;
@@ -52,11 +53,28 @@ class ProductsRestClientTest extends BaseFeignRestClientTest {
     }
 
     @Test
-    void getProduct() {
+    void getProduct_institutionTypeNull() {
         // given
         String id = "id";
         // when
-        Product product = restClient.getProduct(id);
+        Product product = restClient.getProduct(id, null);
+        // then
+        Assertions.assertNotNull(product);
+        Assertions.assertNotNull(product.getId());
+        Assertions.assertNotNull(product.getContractTemplatePath());
+        Assertions.assertNotNull(product.getContractTemplateVersion());
+        Assertions.assertNotNull(product.getRoleMappings());
+        Assertions.assertNotNull(product.getTitle());
+        Assertions.assertFalse(product.getRoleMappings().isEmpty());
+    }
+
+    @Test
+    void getProduct_institutionTypeNotNull() {
+        // given
+        String id = "id";
+        InstitutionType institutionType = InstitutionType.PA;
+        // when
+        Product product = restClient.getProduct(id, institutionType);
         // then
         Assertions.assertNotNull(product);
         Assertions.assertNotNull(product.getId());

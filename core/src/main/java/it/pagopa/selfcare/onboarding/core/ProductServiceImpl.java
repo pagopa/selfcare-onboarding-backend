@@ -1,6 +1,7 @@
 package it.pagopa.selfcare.onboarding.core;
 
 import it.pagopa.selfcare.onboarding.connector.api.ProductsConnector;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.InstitutionType;
 import it.pagopa.selfcare.onboarding.connector.model.product.Product;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,11 +20,11 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Product getProduct(String id) {
+    public Product getProduct(String id, InstitutionType institutionType) {
         log.trace("getProduct start");
-        log.debug("getProduct id = {}", id);
+        log.debug("getProduct id = {}, institutionType = {}", id, institutionType);
         Assert.notNull(id, "ProductId is required");
-        Product product = productsConnector.getProduct(id);
+        Product product = productsConnector.getProduct(id, institutionType);
         log.debug("getProduct result = {}", product);
         log.trace("getProduct end");
         return product;
