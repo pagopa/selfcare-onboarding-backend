@@ -202,16 +202,18 @@
             "schema": {
               "type": "string"
             }
-        }, {
-          "name" : "productId",
-          "in" : "path",
-          "description" : "Product's unique identifier",
-          "required" : true,
-          "style" : "simple",
-          "schema" : {
-            "type" : "string"
+          },
+          {
+            "name": "productId",
+            "in": "path",
+            "description": "Product's unique identifier",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
           }
-        } ],
+        ],
         "responses" : {
           "204" : {
             "description" : "No Content"
@@ -444,16 +446,35 @@
         "summary" : "getProduct",
         "description" : "The service retrieves the product given its internal id",
         "operationId" : "getProductUsingGET",
-        "parameters" : [ {
-          "name" : "id",
-          "in" : "path",
-          "description" : "Product's unique identifier",
-          "required" : true,
-          "style" : "simple",
-          "schema" : {
-            "type" : "string"
+        "parameters" : [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Product's unique identifier",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "institutionType",
+            "in": "query",
+            "description": "Institution's type",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "GSP",
+                "PA",
+                "PSP",
+                "PT",
+                "SCP"
+              ]
+            }
           }
-        } ],
+        ],
         "responses" : {
           "200" : {
             "description" : "OK",
@@ -678,15 +699,21 @@
       "InstitutionData": {
         "title": "InstitutionData",
         "type": "object",
-        "properties" : {
-          "billingData" : {
-            "description" : "Institution's billing information",
-            "$ref" : "#/components/schemas/BillingDataDto"
+        "properties": {
+          "billingData": {
+            "description": "Institution's billing information",
+            "$ref": "#/components/schemas/BillingDataDto"
           },
-          "institutionType" : {
-            "type" : "string",
-            "description" : "Institution's type",
-            "enum" : [ "GSP", "PA", "PSP", "PT", "SCP" ]
+          "institutionType": {
+            "type": "string",
+            "description": "Institution's type",
+            "enum": [
+              "GSP",
+              "PA",
+              "PSP",
+              "PT",
+              "SCP"
+            ]
           },
           "origin" : {
             "type" : "string"
