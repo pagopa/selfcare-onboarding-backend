@@ -81,120 +81,139 @@
             }
           },
           "500" : {
-            "description" : "Internal Server Error",
-            "content" : {
-              "application/problem+json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Problem"
+            "description": "Internal Server Error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
                 }
               }
             }
           }
         },
-        "security" : [ {
-          "bearerAuth" : [ "global" ]
-        } ]
+        "security": [
+          {
+            "bearerAuth": [
+              "global"
+            ]
+          }
+        ]
       }
     },
-    "/institutions/{externalInstitutionId}/data" : {
-      "get" : {
-        "tags" : [ "institutions" ],
-        "summary" : "getInstitutionData",
-        "description" : "The service retrieves the onboarded institution given its external id",
-        "operationId" : "getInstitutionDataUsingGET",
-        "parameters" : [ {
-          "name" : "externalInstitutionId",
-          "in" : "path",
-          "description" : "Institution's unique external identifier",
-          "required" : true,
-          "style" : "simple",
-          "schema" : {
-            "type" : "string"
+    "/institutions/{externalInstitutionId}/geographicTaxonomy": {
+      "get": {
+        "tags": [
+          "institutions"
+        ],
+        "summary": "getInstitutionGeographicTaxonomy",
+        "description": "The service retrieve the institution's geographic taxonomy",
+        "operationId": "getInstitutionGeographicTaxonomyUsingGET",
+        "parameters": [
+          {
+            "name": "externalInstitutionId",
+            "in": "path",
+            "description": "Institution's unique external identifier",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
           }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/InstitutionResource"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/GeographicTaxonomyResource"
+                  }
                 }
               }
             }
           },
-          "400" : {
-            "description" : "Bad Request",
-            "content" : {
-              "application/problem+json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Problem"
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
                 }
               }
             }
           },
-          "401" : {
-            "description" : "Unauthorized",
-            "content" : {
-              "application/problem+json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Problem"
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
                 }
               }
             }
           },
-          "404" : {
-            "description" : "Not Found",
-            "content" : {
-              "application/problem+json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Problem"
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
                 }
               }
             }
           },
-          "500" : {
-            "description" : "Internal Server Error",
-            "content" : {
-              "application/problem+json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Problem"
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
                 }
               }
             }
           }
         },
-        "deprecated" : true,
-        "security" : [ {
-          "bearerAuth" : [ "global" ]
-        } ]
+        "security": [
+          {
+            "bearerAuth": [
+              "global"
+            ]
+          }
+        ]
       }
     },
-    "/institutions/{externalInstitutionId}/products/{productId}" : {
-      "head" : {
-        "tags" : [ "institutions" ],
-        "summary" : "verifyOnboarding",
-        "description" : "Checks if the specified institution has been onboarded on the specified product.",
-        "operationId" : "verifyOnboardingUsingHEAD",
-        "parameters" : [ {
-          "name" : "externalInstitutionId",
-          "in" : "path",
-          "description" : "Institution's unique external identifier",
-          "required" : true,
-          "style" : "simple",
-          "schema" : {
-            "type" : "string"
+    "/institutions/{externalInstitutionId}/products/{productId}": {
+      "head": {
+        "tags": [
+          "institutions"
+        ],
+        "summary": "verifyOnboarding",
+        "description": "Checks if the specified institution has been onboarded on the specified product.",
+        "operationId": "verifyOnboardingUsingHEAD",
+        "parameters": [
+          {
+            "name": "externalInstitutionId",
+            "in": "path",
+            "description": "Institution's unique external identifier",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "productId",
+            "in": "path",
+            "description": "Product's unique identifier",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
           }
-        }, {
-          "name" : "productId",
-          "in" : "path",
-          "description" : "Product's unique identifier",
-          "required" : true,
-          "style" : "simple",
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
+        ],
         "responses" : {
           "204" : {
             "description" : "No Content"
@@ -427,16 +446,35 @@
         "summary" : "getProduct",
         "description" : "The service retrieves the product given its internal id",
         "operationId" : "getProductUsingGET",
-        "parameters" : [ {
-          "name" : "id",
-          "in" : "path",
-          "description" : "Product's unique identifier",
-          "required" : true,
-          "style" : "simple",
-          "schema" : {
-            "type" : "string"
+        "parameters" : [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Product's unique identifier",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "institutionType",
+            "in": "query",
+            "description": "Institution's type",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "GSP",
+                "PA",
+                "PSP",
+                "PT",
+                "SCP"
+              ]
+            }
           }
-        } ],
+        ],
         "responses" : {
           "200" : {
             "description" : "OK",
@@ -630,43 +668,52 @@
         "required" : [ "code", "desc" ],
         "type" : "object",
         "properties" : {
-          "code" : {
-            "type" : "string",
-            "description" : "Institution's geographic taxonomy ISTAT code"
+          "code": {
+            "type": "string",
+            "description": "Institution's geographic taxonomy ISTAT code"
           },
-          "desc" : {
-            "type" : "string",
-            "description" : "Institution's geographic taxonomy extended name"
+          "desc": {
+            "type": "string",
+            "description": "Institution's geographic taxonomy extended name"
           }
         }
       },
-      "GeographicTaxonomyResource" : {
-        "title" : "GeographicTaxonomyResource",
-        "required" : [ "code", "desc" ],
-        "type" : "object",
-        "properties" : {
-          "code" : {
-            "type" : "string",
-            "description" : "Institution's geographic taxonomy ISTAT code"
+      "GeographicTaxonomyResource": {
+        "title": "GeographicTaxonomyResource",
+        "required": [
+          "code",
+          "desc"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "Institution's geographic taxonomy ISTAT code"
           },
-          "desc" : {
-            "type" : "string",
-            "description" : "Institution's geographic taxonomy extended name"
+          "desc": {
+            "type": "string",
+            "description": "Institution's geographic taxonomy extended name"
           }
         }
       },
-      "InstitutionData" : {
-        "title" : "InstitutionData",
-        "type" : "object",
-        "properties" : {
-          "billingData" : {
-            "description" : "Institution's billing information",
-            "$ref" : "#/components/schemas/BillingDataDto"
+      "InstitutionData": {
+        "title": "InstitutionData",
+        "type": "object",
+        "properties": {
+          "billingData": {
+            "description": "Institution's billing information",
+            "$ref": "#/components/schemas/BillingDataDto"
           },
-          "institutionType" : {
-            "type" : "string",
-            "description" : "Institution's type",
-            "enum" : [ "GSP", "PA", "PSP", "PT", "SCP" ]
+          "institutionType": {
+            "type": "string",
+            "description": "Institution's type",
+            "enum": [
+              "GSP",
+              "PA",
+              "PSP",
+              "PT",
+              "SCP"
+            ]
           },
           "origin" : {
             "type" : "string"
