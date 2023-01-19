@@ -1,0 +1,17 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPath": "/external/ur/v1/info-camere/institutions3"
+  },
+  "response": {
+    "status": "200",
+    "jsonBody": {
+      "businesses": [],
+      "legalTaxId": "CF1",
+      "requestDateTime": "timestamp1"
+    },
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}

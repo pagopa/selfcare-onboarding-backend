@@ -1,0 +1,26 @@
+{
+  "request": {
+    "method": "POST",
+    "urlPath": "/external/ur/v1/info-camere/institutions"
+  },
+  "response": {
+    "status": "200",
+    "jsonBody": {
+      "businesses": [
+        {
+          "businessName": "PG1",
+          "businessTaxId": "PG1TaxId"
+        },
+        {
+          "businessName": "PG2",
+          "businessTaxId": "PG2TaxId"
+        }
+      ],
+      "legalTaxId": "CF1",
+      "requestDateTime": "timestamp1"
+    },
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}
