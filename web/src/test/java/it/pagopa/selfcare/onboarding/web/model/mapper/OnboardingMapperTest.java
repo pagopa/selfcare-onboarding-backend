@@ -124,6 +124,7 @@ class OnboardingMapperTest {
         assertEquals(model.getGeographicTaxonomies().get(0).getDesc(), resource.getGeographicTaxonomies().get(0).getDesc());
     }
 
+
     @Test
     void toResource_null() {
         //given
