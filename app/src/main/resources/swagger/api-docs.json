@@ -9,17 +9,18 @@
     "url" : "{url}:{port}{basePath}",
     "variables" : {
       "url" : {
-        "default" : "http://localhost"
+        "default": "http://localhost"
       },
-      "port" : {
-        "default" : "80"
+      "port": {
+        "default": "80"
       },
-      "basePath" : {
-        "default" : ""
+      "basePath": {
+        "default": ""
       }
     }
-  } ],
-  "tags" : [
+  }
+  ],
+  "tags": [
     {
       "name": "institutions",
       "description": "Institution operations"
@@ -37,16 +38,18 @@
       "description": "User Controller"
     }
   ],
-  "paths" : {
-    "/institutions" : {
-      "get" : {
-        "tags" : [ "institutions" ],
-        "summary" : "getInstitutions",
-        "description" : "The service retrieves all the onboarded institutions related to the logged user",
-        "operationId" : "getInstitutionsUsingGET",
-        "responses" : {
-          "200" : {
-            "description" : "OK",
+  "paths": {
+    "/institutions": {
+      "get": {
+        "tags": [
+          "institutions"
+        ],
+        "summary": "getInstitutions",
+        "description": "The service retrieves all the onboarded institutions related to the logged user",
+        "operationId": "getInstitutionsUsingGET",
+        "responses": {
+          "200": {
+            "description": "OK",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -236,12 +239,12 @@
               }
             }
           },
-          "401" : {
-            "description" : "Unauthorized",
-            "content" : {
-              "application/problem+json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Problem"
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
                 }
               }
             }
@@ -412,12 +415,105 @@
               }
             }
           },
-          "401" : {
-            "description" : "Unauthorized",
-            "content" : {
-              "application/problem+json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Problem"
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [
+              "global"
+            ]
+          }
+        ]
+      }
+    },
+    "/pnPGInstitutions/{externalInstitutionId}/products/{productId}/onboarding": {
+      "post": {
+        "tags": [
+          "pnPGInstitutions"
+        ],
+        "summary": "onboarding",
+        "description": "The service allows the onboarding of Users to a PN PG Institution",
+        "operationId": "onboardingUsingPOST_1",
+        "parameters": [
+          {
+            "name": "externalInstitutionId",
+            "in": "path",
+            "description": "PG Institution's unique external identifier",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "productId",
+            "in": "path",
+            "description": "Product's unique identifier",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OnboardingDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
                 }
               }
             }
@@ -577,12 +673,12 @@
               }
             }
           },
-          "400" : {
-            "description" : "Bad Request",
-            "content" : {
-              "application/problem+json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Problem"
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
                 }
               }
             }
@@ -711,15 +807,15 @@
           },
           "recipientCode" : {
             "type" : "string",
-            "description" : "Billing recipient code"
+            "description": "Billing recipient code"
           },
-          "registeredOffice" : {
-            "type" : "string",
-            "description" : "Institution's physical address"
+          "registeredOffice": {
+            "type": "string",
+            "description": "Institution's physical address"
           },
-          "taxCode" : {
-            "type" : "string",
-            "description" : "Institution's taxCode"
+          "taxCode": {
+            "type": "string",
+            "description": "Institution's taxCode"
           },
           "vatNumber": {
             "type": "string",
@@ -763,14 +859,14 @@
             "description": "DPO's address"
           },
           "email": {
-            "type" : "string",
-            "description" : "DPO's email",
-            "format" : "email",
-            "example" : "email@example.com"
+            "type": "string",
+            "description": "DPO's email",
+            "format": "email",
+            "example": "email@example.com"
           },
-          "pec" : {
-            "type" : "string",
-            "description" : "DPO's PEC",
+          "pec": {
+            "type": "string",
+            "description": "DPO's PEC",
             "format" : "email",
             "example" : "email@example.com"
           }
@@ -838,11 +934,11 @@
         "required" : [ "geographicTaxonomies" ],
         "type" : "object",
         "properties" : {
-          "geographicTaxonomies" : {
-            "type" : "array",
-            "description" : "Institution's geographic taxonomy",
-            "items" : {
-              "$ref" : "#/components/schemas/GeographicTaxonomyResource"
+          "geographicTaxonomies": {
+            "type": "array",
+            "description": "Institution's geographic taxonomy",
+            "items": {
+              "$ref": "#/components/schemas/GeographicTaxonomyResource"
             }
           },
           "institution": {
@@ -903,14 +999,14 @@
             "description": "Institution's physical address"
           },
           "description": {
-            "type" : "string",
-            "description" : "Institution's legal name"
+            "type": "string",
+            "description": "Institution's legal name"
           },
-          "digitalAddress" : {
-            "type" : "string",
-            "description" : "Institution's digitalAddress"
+          "digitalAddress": {
+            "type": "string",
+            "description": "Institution's digitalAddress"
           },
-          "externalId" : {
+          "externalId": {
             "type" : "string",
             "description" : "Institution's unique external identifier"
           },
