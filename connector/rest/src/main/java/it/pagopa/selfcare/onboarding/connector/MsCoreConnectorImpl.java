@@ -3,7 +3,7 @@ package it.pagopa.selfcare.onboarding.connector;
 import it.pagopa.selfcare.onboarding.connector.api.MsCoreConnector;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.GeographicTaxonomy;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.PnPGOnboardingData;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.User;
 import it.pagopa.selfcare.onboarding.connector.rest.client.MsCoreRestClient;
 import it.pagopa.selfcare.onboarding.connector.rest.model.InstitutionUpdate;
@@ -31,13 +31,13 @@ class MsCoreConnectorImpl implements MsCoreConnector {
     }
 
 
+    // fixme: PNPGONBOARDINGDATA should be equal to ONBOARDINGDATA (and then the method shoul be renamed) if billingRequest will be refactored to billing
     @Override
-    public void onboardingOrganization(OnboardingData onboardingData) {
+    public void onboardingPGOrganization(PnPGOnboardingData onboardingData) {
         Assert.notNull(onboardingData, "Onboarding data is required");
         OnboardingInstitutionRequest onboardingInstitutionRequest = new OnboardingInstitutionRequest();
         onboardingInstitutionRequest.setInstitutionExternalId(onboardingData.getInstitutionExternalId());
-        onboardingInstitutionRequest.setPricingPlan(onboardingData.getPricingPlan());
-        onboardingInstitutionRequest.setBilling(onboardingData.getBilling());
+        onboardingInstitutionRequest.setBilling(onboardingData.getBillingRequest());
         onboardingInstitutionRequest.setProductId(onboardingData.getProductId());
         onboardingInstitutionRequest.setProductName(onboardingData.getProductName());
         InstitutionUpdate institutionUpdate = new InstitutionUpdate();

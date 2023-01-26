@@ -1,11 +1,11 @@
 package it.pagopa.selfcare.onboarding.connector.api;
 
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.PnPGOnboardingData;
 
 public interface MsCoreConnector {
 
-    void onboardingOrganization(OnboardingData onboardingData);
+    void onboardingPGOrganization(PnPGOnboardingData onboardingData);
 
     Institution getInstitutionByExternalId(String externalInstitutionId);
 

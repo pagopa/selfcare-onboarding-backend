@@ -8,7 +8,9 @@ import it.pagopa.selfcare.onboarding.connector.api.UserRegistryConnector;
 import it.pagopa.selfcare.onboarding.connector.exceptions.ResourceNotFoundException;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionPnPGInfo;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.InstitutionType;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.InstitutionUpdate;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.PnPGOnboardingData;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.User;
 import it.pagopa.selfcare.onboarding.connector.model.product.ProductRoleInfo;
 import it.pagopa.selfcare.onboarding.connector.model.user.Certification;
@@ -68,16 +70,17 @@ class PnPGInstitutionServiceImpl implements PnPGInstitutionService {
     }
 
     @Override
-    public void onboarding(OnboardingData onboardingData) {
+    public void onboarding(PnPGOnboardingData onboardingData) {
         log.trace("onboarding PNPG start");
         log.debug("onboarding PNPG onboardingData = {}", onboardingData);
 //        Assert.notNull(onboardingData, REQUIRED_ONBOARDING_DATA_MESSAGE);
 //        Assert.notNull(onboardingData.getBilling(), REQUIRED_INSTITUTION_BILLING_DATA_MESSAGE);
 //        Assert.notNull(onboardingData.getInstitutionType(), REQUIRED_INSTITUTION_TYPE_MESSAGE);
 
-        onboardingData.setContractPath("contractPath");
-        onboardingData.setContractVersion("contractVersion");
-        onboardingData.setProductName("prod-pn-pg");
+
+        onboardingData.setProductName("prod-pn-pg"); // fixme: retrieve from db?
+        onboardingData.setContractPath("mock"); // fixme: retrieve from db?
+        onboardingData.setContractVersion("mock");  // fixme: retrieve from db?
 
 //        try {
 //            msCoreConnector.verifyOnboarding(onboardingData.getInstitutionExternalId(), onboardingData.getProductId());
@@ -105,6 +108,8 @@ class PnPGInstitutionServiceImpl implements PnPGInstitutionService {
             institution = msCoreConnector.createPGInstitutionUsingExternalId(onboardingData.getInstitutionExternalId());
         }
 
+        onboardingData.setInstitutionUpdate(mockMapInstitutionToInstitutionUpdate(institution));
+
         String finalInstitutionInternalId = institution.getId();
         onboardingData.getUsers().forEach(user -> {
 
@@ -119,8 +124,29 @@ class PnPGInstitutionServiceImpl implements PnPGInstitutionService {
                     .getId().toString()));
         });
 
-        msCoreConnector.onboardingOrganization(onboardingData);
+        msCoreConnector.onboardingPGOrganization(onboardingData);
         log.trace("onboarding PNPG end");
+    }
+
+    private InstitutionUpdate mapInstitutionToInstitutionUpdate(Institution institution) {
+        InstitutionUpdate institutionUpdate = new InstitutionUpdate();
+        institutionUpdate.setAddress(institution.getAddress());
+        institutionUpdate.setDescription(institution.getDescription());
+        institutionUpdate.setDigitalAddress(institution.getDigitalAddress());
+        institutionUpdate.setTaxCode(institution.getTaxCode());
+        institutionUpdate.setZipCode(institution.getZipCode());
+        institutionUpdate.setPaymentServiceProvider(institution.getPaymentServiceProvider());
+        institutionUpdate.setDataProtectionOfficer(institution.getDataProtectionOfficer());
+        institutionUpdate.setGeographicTaxonomies(institution.getGeographicTaxonomies());
+        return institutionUpdate;
+    }
+
+    private InstitutionUpdate mockMapInstitutionToInstitutionUpdate(Institution institution) {
+        InstitutionUpdate institutionUpdate = new InstitutionUpdate();
+        institutionUpdate.setTaxCode(institution.getTaxCode());
+        institutionUpdate.setInstitutionType(InstitutionType.PG);
+        institutionUpdate.setGeographicTaxonomies(new ArrayList<>());
+        return institutionUpdate;
     }
 
     private EnumMap<PartyRole, ProductRoleInfo> mockRoleMapPnPGProduct() {

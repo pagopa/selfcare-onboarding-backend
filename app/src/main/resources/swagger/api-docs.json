@@ -8,7 +8,7 @@
   "servers" : [ {
     "url" : "{url}:{port}{basePath}",
     "variables" : {
-      "url" : {
+      "url": {
         "default": "http://localhost"
       },
       "port": {
@@ -50,12 +50,12 @@
         "responses": {
           "200": {
             "description": "OK",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/components/schemas/InstitutionResource"
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/InstitutionResource"
                   }
                 }
               }
@@ -249,12 +249,12 @@
               }
             }
           },
-          "403" : {
-            "description" : "Forbidden",
-            "content" : {
-              "application/problem+json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Problem"
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
                 }
               }
             }
@@ -405,12 +405,12 @@
           "201" : {
             "description" : "Created"
           },
-          "400" : {
-            "description" : "Bad Request",
-            "content" : {
-              "application/problem+json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Problem"
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
                 }
               }
             }
@@ -460,9 +460,9 @@
         "tags": [
           "pnPGInstitutions"
         ],
-        "summary": "onboarding",
+        "summary": "onboardingPG",
         "description": "The service allows the onboarding of Users to a PN PG Institution",
-        "operationId": "onboardingUsingPOST_1",
+        "operationId": "onboardingPGUsingPOST",
         "parameters": [
           {
             "name": "externalInstitutionId",
@@ -489,7 +489,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/OnboardingDto"
+                "$ref": "#/components/schemas/PnPGOnboardingDto"
               }
             }
           }
@@ -655,6 +655,7 @@
               "enum": [
                 "GSP",
                 "PA",
+                "PG",
                 "PSP",
                 "PT",
                 "SCP"
@@ -683,12 +684,12 @@
               }
             }
           },
-          "401" : {
-            "description" : "Unauthorized",
-            "content" : {
-              "application/problem+json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Problem"
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
                 }
               }
             }
@@ -800,13 +801,13 @@
             "type" : "string",
             "description" : "Institution's digitalAddress"
           },
-          "publicServices" : {
-            "type" : "boolean",
-            "description" : "Institution's service type",
-            "example" : false
+          "publicServices": {
+            "type": "boolean",
+            "description": "Institution's service type",
+            "example": false
           },
-          "recipientCode" : {
-            "type" : "string",
+          "recipientCode": {
+            "type": "string",
             "description": "Billing recipient code"
           },
           "registeredOffice": {
@@ -867,8 +868,8 @@
           "pec": {
             "type": "string",
             "description": "DPO's PEC",
-            "format" : "email",
-            "example" : "email@example.com"
+            "format": "email",
+            "example": "email@example.com"
           }
         }
       },
@@ -919,6 +920,7 @@
             "enum": [
               "GSP",
               "PA",
+              "PG",
               "PSP",
               "PT",
               "SCP"
@@ -1007,18 +1009,25 @@
             "description": "Institution's digitalAddress"
           },
           "externalId": {
-            "type" : "string",
-            "description" : "Institution's unique external identifier"
+            "type": "string",
+            "description": "Institution's unique external identifier"
           },
-          "id" : {
-            "type" : "string",
-            "description" : "Institution's unique internal Id",
-            "format" : "uuid"
+          "id": {
+            "type": "string",
+            "description": "Institution's unique internal Id",
+            "format": "uuid"
           },
           "institutionType" : {
             "type" : "string",
             "description" : "Institution's type",
-            "enum" : [ "GSP", "PA", "PSP", "PT", "SCP" ]
+            "enum": [
+              "GSP",
+              "PA",
+              "PG",
+              "PSP",
+              "PT",
+              "SCP"
+            ]
           },
           "origin" : {
             "type" : "string",
@@ -1077,7 +1086,14 @@
           "institutionType" : {
             "type" : "string",
             "description" : "Institution's type",
-            "enum" : [ "GSP", "PA", "PSP", "PT", "SCP" ]
+            "enum": [
+              "GSP",
+              "PA",
+              "PG",
+              "PSP",
+              "PT",
+              "SCP"
+            ]
           },
           "origin" : {
             "type" : "string",
@@ -1085,26 +1101,68 @@
           },
           "pricingPlan" : {
             "type" : "string",
-            "description" : "Product's pricing plan"
+            "description": "Product's pricing plan"
           },
-          "pspData" : {
-            "description" : "Payment Service Provider (PSP) specific data",
-            "$ref" : "#/components/schemas/PspDataDto"
+          "pspData": {
+            "description": "Payment Service Provider (PSP) specific data",
+            "$ref": "#/components/schemas/PspDataDto"
           },
-          "users" : {
-            "type" : "array",
-            "description" : "List of onboarding users",
-            "items" : {
-              "$ref" : "#/components/schemas/UserDto"
+          "users": {
+            "type": "array",
+            "description": "List of onboarding users",
+            "items": {
+              "$ref": "#/components/schemas/UserDto"
             }
           }
         }
       },
-      "Problem" : {
-        "title" : "Problem",
-        "required" : [ "status", "title" ],
-        "type" : "object",
-        "properties" : {
+      "PnPGBillingDataDto": {
+        "title": "PnPGBillingDataDto",
+        "required": [
+          "businessName",
+          "taxCode"
+        ],
+        "type": "object",
+        "properties": {
+          "businessName": {
+            "type": "string",
+            "description": "Institution's legal name"
+          },
+          "taxCode": {
+            "type": "string",
+            "description": "Institution's taxCode"
+          }
+        }
+      },
+      "PnPGOnboardingDto": {
+        "title": "PnPGOnboardingDto",
+        "required": [
+          "billingData",
+          "users"
+        ],
+        "type": "object",
+        "properties": {
+          "billingData": {
+            "description": "Institution's billing information",
+            "$ref": "#/components/schemas/PnPGBillingDataDto"
+          },
+          "users": {
+            "type": "array",
+            "description": "List of onboarding users",
+            "items": {
+              "$ref": "#/components/schemas/UserDto"
+            }
+          }
+        }
+      },
+      "Problem": {
+        "title": "Problem",
+        "required": [
+          "status",
+          "title"
+        ],
+        "type": "object",
+        "properties": {
           "detail" : {
             "type" : "string",
             "description" : "Human-readable description of this specific problem."

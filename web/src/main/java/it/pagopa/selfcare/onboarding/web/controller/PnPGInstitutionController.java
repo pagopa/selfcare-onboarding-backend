@@ -11,9 +11,9 @@ import it.pagopa.selfcare.commons.web.model.Problem;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionPnPGInfo;
 import it.pagopa.selfcare.onboarding.core.PnPGInstitutionService;
 import it.pagopa.selfcare.onboarding.web.model.InstitutionPnPGResource;
-import it.pagopa.selfcare.onboarding.web.model.OnboardingDto;
+import it.pagopa.selfcare.onboarding.web.model.PnPGOnboardingDto;
 import it.pagopa.selfcare.onboarding.web.model.mapper.InstitutionPnPGMapper;
-import it.pagopa.selfcare.onboarding.web.model.mapper.OnboardingMapper;
+import it.pagopa.selfcare.onboarding.web.model.mapper.PnPGOnboardingMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -62,18 +62,18 @@ public class PnPGInstitutionController {
     @PostMapping(value = "/{externalInstitutionId}/products/{productId}/onboarding")
     @ResponseStatus(HttpStatus.CREATED)
     @ApiOperation(value = "", notes = "${swagger.onboarding.pnPGInstitutions.api.onboarding}")
-    public void onboarding(@ApiParam("${swagger.onboarding.pnPGInstitutions.model.externalId}")
-                           @PathVariable("externalInstitutionId")
-                           String externalInstitutionId,
-                           @ApiParam("${swagger.onboarding.product.model.id}")
-                           @PathVariable("productId")
-                           String productId,
-                           @RequestBody
-                           @Valid
-                           OnboardingDto request) {
+    public void onboardingPG(@ApiParam("${swagger.onboarding.pnPGInstitutions.model.externalId}")
+                             @PathVariable("externalInstitutionId")
+                             String externalInstitutionId,
+                             @ApiParam("${swagger.onboarding.product.model.id}")
+                             @PathVariable("productId")
+                             String productId,
+                             @RequestBody
+                             @Valid
+                             PnPGOnboardingDto request) {
         log.trace("onboarding PNPG start");
         log.debug("onboarding PNPG institutionId = {}, productId = {}, request = {}", externalInstitutionId, productId, request);
-        pnPGInstitutionService.onboarding(OnboardingMapper.toOnboardingData(externalInstitutionId, productId, request));
+        pnPGInstitutionService.onboarding(PnPGOnboardingMapper.toOnboardingData(externalInstitutionId, productId, request));
         log.trace("onboarding PNPG end");
     }
 
