@@ -25,7 +25,6 @@ public class OnboardingMapper {
         return resource;
     }
 
-
     private static InstitutionUpdate mapInstitutionUpdate(OnboardingDto dto) {
         InstitutionUpdate resource = null;
         if (dto != null && dto.getBillingData() != null) {
@@ -40,6 +39,16 @@ public class OnboardingMapper {
             resource.setGeographicTaxonomies(dto.getGeographicTaxonomies().stream()
                     .map(GeographicTaxonomyMapper::fromDto)
                     .collect(Collectors.toList()));
+            if (dto.getCompanyInformations() != null) {
+                resource.setRea(dto.getCompanyInformations().getRea());
+                resource.setShareCapital(dto.getCompanyInformations().getShareCapital());
+                resource.setBusinessRegisterPlace(dto.getCompanyInformations().getBusinessRegisterPlace());
+            }
+            if (dto.getAssistanceContacts() != null) {
+                resource.setSupportEmail(dto.getAssistanceContacts().getSupportEmail());
+                resource.setSupportPhone(dto.getAssistanceContacts().getSupportPhone());
+            }
+            resource.setImported(false);
         }
         return resource;
     }
