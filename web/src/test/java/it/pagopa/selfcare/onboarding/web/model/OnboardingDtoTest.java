@@ -67,6 +67,7 @@ class OnboardingDtoTest {
         dpoDataDto.setPec("email@example.com");
         pspDataDto.setDpoData(dpoDataDto);
         model.setPspData(pspDataDto);
+        model.getAssistanceContacts().setSupportEmail("email@example.com");
         // when
         Set<ConstraintViolation<Object>> violations = validator.validate(model);
         // then
