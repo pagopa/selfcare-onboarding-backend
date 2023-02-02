@@ -12,8 +12,10 @@ import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionPnP
 import it.pagopa.selfcare.onboarding.core.PnPGInstitutionService;
 import it.pagopa.selfcare.onboarding.web.model.InstitutionPnPGResource;
 import it.pagopa.selfcare.onboarding.web.model.PnPGOnboardingDto;
+import it.pagopa.selfcare.onboarding.web.model.UserDto;
 import it.pagopa.selfcare.onboarding.web.model.mapper.InstitutionPnPGMapper;
 import it.pagopa.selfcare.onboarding.web.model.mapper.PnPGOnboardingMapper;
+import it.pagopa.selfcare.onboarding.web.model.mapper.UserMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -38,15 +40,15 @@ public class PnPGInstitutionController {
         this.pnPGInstitutionService = pnPGInstitutionService;
     }
 
-    @GetMapping(value = "/{userId}")
+    @PostMapping(value = "")
     @ResponseStatus(HttpStatus.OK)
-    @ApiOperation(value = "", notes = "${swagger.onboarding.pnPGInstitutions.api.getInstitutionsByUserId}")
-    public InstitutionPnPGResource getInstitutionsByUserId(@ApiParam("${swagger.onboarding.pnPGInstitutions.model.userId}")
-                                                           @PathVariable("userId")
-                                                           String userId) {
+    @ApiOperation(value = "", notes = "${swagger.onboarding.pnPGInstitutions.api.getInstitutionsByUser}")
+    public InstitutionPnPGResource getInstitutionsByUser(@RequestBody
+                                                         @Valid
+                                                         UserDto userDto) {
         log.trace("getInstitutionsByUserId start");
-        log.debug("getInstitutionsByUserId userId = {}", userId);
-        InstitutionPnPGInfo institutionPnPGInfo = pnPGInstitutionService.getInstitutionsByUserId(userId);
+        log.debug("getInstitutionsByUserId userDto = {}", userDto);
+        InstitutionPnPGInfo institutionPnPGInfo = pnPGInstitutionService.getInstitutionsByUser(UserMapper.toUser(userDto));
         InstitutionPnPGResource institutionPnPGResources = InstitutionPnPGMapper.toResource(institutionPnPGInfo);
         log.debug(LogUtils.CONFIDENTIAL_MARKER, "getInstitutionsByUserId result = {}", institutionPnPGResources);
         log.trace("getInstitutionsByUserId end");

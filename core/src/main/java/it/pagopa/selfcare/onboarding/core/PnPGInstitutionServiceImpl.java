@@ -25,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
+import javax.validation.ValidationException;
 import java.util.*;
 
 import static it.pagopa.selfcare.onboarding.connector.model.user.User.Fields.*;
@@ -36,6 +37,7 @@ import static it.pagopa.selfcare.onboarding.core.InstitutionServiceImpl.MORE_THA
 class PnPGInstitutionServiceImpl implements PnPGInstitutionService {
 
     private static final EnumSet<it.pagopa.selfcare.onboarding.connector.model.user.User.Fields> USER_FIELD_LIST = EnumSet.of(name, familyName, workContacts);
+    private static final EnumSet<it.pagopa.selfcare.onboarding.connector.model.user.User.Fields> USER_FIELD_ONLY_FISCAL_CODE = EnumSet.of(fiscalCode);
 
     private final PartyRegistryProxyConnector partyRegistryProxyConnector;
     private final MsCoreConnector msCoreConnector;
@@ -52,18 +54,11 @@ class PnPGInstitutionServiceImpl implements PnPGInstitutionService {
     }
 
     @Override
-    public InstitutionPnPGInfo getInstitutionsByUserId(String userId) {
+    public InstitutionPnPGInfo getInstitutionsByUser(User user) {
         log.trace("getInstitutionsByUserId start");
-        log.debug("getInstitutionsByUserId userId = {}", userId);
-//        User user = userConnector.getUserByInternalId(userId, USER_FIELD_ONLY_FISCAL_CODE);
-        it.pagopa.selfcare.onboarding.connector.model.user.User user = new it.pagopa.selfcare.onboarding.connector.model.user.User();
-        if (userId.equals("123456")) // fixme: remove after InfoCamere has been integrated
-            user.setFiscalCode("CF1");
-        else if (userId.equals("654321"))
-            user.setFiscalCode("CF2");
-        else
-            user.setFiscalCode("NoCF");
-        InstitutionPnPGInfo result = partyRegistryProxyConnector.getInstitutionsByUserFiscalCode(user.getFiscalCode());
+        log.debug("getInstitutionsByUserId user = {}", user);
+        user.setId(userConnector.saveUser(UserMapper.toSaveUserDto(user, "")).getId().toString());
+        InstitutionPnPGInfo result = partyRegistryProxyConnector.getInstitutionsByUserFiscalCode(user.getTaxCode());
         log.debug(LogUtils.CONFIDENTIAL_MARKER, "getInstitutionsByUserId result = {}", result);
         log.trace("getInstitutionsByUserId end");
         return result;
@@ -82,13 +77,18 @@ class PnPGInstitutionServiceImpl implements PnPGInstitutionService {
         onboardingData.setContractPath("mock"); // fixme: retrieve from db?
         onboardingData.setContractVersion("mock");  // fixme: retrieve from db?
 
-//        try {
-//            msCoreConnector.verifyOnboarding(onboardingData.getInstitutionExternalId(), onboardingData.getProductId());
-//        } catch (RuntimeException e) {
-//            throw new ValidationException(String.format("Unable to onboard a PG Institution (external id: '%s') already onboarded",
-//                    onboardingData.getInstitutionExternalId()));
-//        }
+        try {
+            msCoreConnector.verifyOnboarding(onboardingData.getInstitutionExternalId(), onboardingData.getProductId());
+        } catch (ResourceNotFoundException nte) {
+            submitOnboarding(onboardingData);
+        } catch (RuntimeException e) {
+            throw new ValidationException(String.format("Unable to onboard a PG Institution (external id: '%s') already onboarded",
+                    onboardingData.getInstitutionExternalId()));
+        }
+        log.trace("onboarding PNPG end");
+    }
 
+    private void submitOnboarding(PnPGOnboardingData onboardingData) {
         final EnumMap<PartyRole, ProductRoleInfo> roleMappings = mockRoleMapPnPGProduct();
         Assert.notNull(roleMappings, "Role mappings is required");
         onboardingData.getUsers().forEach(userInfo -> {
@@ -125,7 +125,6 @@ class PnPGInstitutionServiceImpl implements PnPGInstitutionService {
         });
 
         msCoreConnector.onboardingPGOrganization(onboardingData);
-        log.trace("onboarding PNPG end");
     }
 
     private InstitutionUpdate mapInstitutionToInstitutionUpdate(Institution institution) {
