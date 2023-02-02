@@ -72,7 +72,6 @@ class PnPGInstitutionServiceImpl implements PnPGInstitutionService {
 //        Assert.notNull(onboardingData.getBilling(), REQUIRED_INSTITUTION_BILLING_DATA_MESSAGE);
 //        Assert.notNull(onboardingData.getInstitutionType(), REQUIRED_INSTITUTION_TYPE_MESSAGE);
 
-
         onboardingData.setProductName("prod-pn-pg"); // fixme: retrieve from db?
         onboardingData.setContractPath("mock"); // fixme: retrieve from db?
         onboardingData.setContractVersion("mock");  // fixme: retrieve from db?
