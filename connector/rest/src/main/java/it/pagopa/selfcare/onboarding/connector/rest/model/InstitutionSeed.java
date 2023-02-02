@@ -22,6 +22,11 @@ public class InstitutionSeed {
         paymentServiceProvider = onboardingData.getInstitutionUpdate().getPaymentServiceProvider();
         dataProtectionOfficer = onboardingData.getInstitutionUpdate().getDataProtectionOfficer();
         geographicTaxonomies = onboardingData.getInstitutionUpdate().getGeographicTaxonomies();
+        rea = onboardingData.getInstitutionUpdate().getRea();
+        shareCapital = onboardingData.getInstitutionUpdate().getShareCapital();
+        businessRegisterPlace = onboardingData.getInstitutionUpdate().getBusinessRegisterPlace();
+        supportEmail = onboardingData.getInstitutionUpdate().getSupportEmail();
+        supportPhone = onboardingData.getInstitutionUpdate().getSupportPhone();
     }
 
 
@@ -35,5 +40,10 @@ public class InstitutionSeed {
     private PaymentServiceProvider paymentServiceProvider;
     private DataProtectionOfficer dataProtectionOfficer;
     private List<GeographicTaxonomy> geographicTaxonomies;
+    private String rea;
+    private String shareCapital;
+    private String businessRegisterPlace;
+    private String supportEmail;
+    private String supportPhone;
 
 }

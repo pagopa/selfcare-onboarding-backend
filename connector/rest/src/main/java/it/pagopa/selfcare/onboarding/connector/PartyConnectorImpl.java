@@ -101,6 +101,12 @@ class PartyConnectorImpl implements PartyConnector {
         institutionUpdate.setDataProtectionOfficer(onboardingData.getInstitutionUpdate().getDataProtectionOfficer());
         institutionUpdate.setGeographicTaxonomyCodes(onboardingData.getInstitutionUpdate().getGeographicTaxonomies().stream()
                 .map(GeographicTaxonomy::getCode).collect(Collectors.toList()));
+        institutionUpdate.setRea(onboardingData.getInstitutionUpdate().getRea());
+        institutionUpdate.setShareCapital(onboardingData.getInstitutionUpdate().getShareCapital());
+        institutionUpdate.setBusinessRegisterPlace(onboardingData.getInstitutionUpdate().getBusinessRegisterPlace());
+        institutionUpdate.setSupportEmail(onboardingData.getInstitutionUpdate().getSupportEmail());
+        institutionUpdate.setSupportPhone(onboardingData.getInstitutionUpdate().getSupportPhone());
+        institutionUpdate.setImported(onboardingData.getInstitutionUpdate().getImported());
         onboardingInstitutionRequest.setInstitutionUpdate(institutionUpdate);
 
         onboardingInstitutionRequest.setUsers(onboardingData.getUsers().stream()
