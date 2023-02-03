@@ -41,5 +41,12 @@ public class OnboardingDto {
     @Valid
     private List<GeographicTaxonomyDto> geographicTaxonomies;
 
+    @ApiModelProperty(value = "${swagger.onboarding.institutions.model.companyInformations}")
+    @Valid
+    private CompanyInformationsDto companyInformations;
+
+    @ApiModelProperty(value = "${swagger.onboarding.institutions.model.assistance}")
+    @Valid
+    private AssistanceContactsDto assistanceContacts;
 
 }
