@@ -4,7 +4,6 @@ import it.pagopa.selfcare.commons.base.security.PartyRole;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipInfo;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipState;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipsResponse;
-import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
 import it.pagopa.selfcare.onboarding.connector.rest.model.BillingDataResponse;
 import it.pagopa.selfcare.onboarding.connector.rest.model.InstitutionSeed;
 import it.pagopa.selfcare.onboarding.connector.rest.model.OnBoardingInfo;
@@ -49,16 +48,16 @@ public interface PartyProcessRestClient {
 
     @GetMapping(value = "${rest-client.party-process.getInstitutionByExternalId.path}", produces = APPLICATION_JSON_VALUE)
     @ResponseBody
-    Institution getInstitutionByExternalId(@PathVariable("externalId") String externalId);
+    it.pagopa.selfcare.onboarding.connector.rest.model.Institution getInstitutionByExternalId(@PathVariable("externalId") String externalId);
 
     @PostMapping(value = "${rest-client.party-process.createInstitutionUsingExternalId.path}", produces = APPLICATION_JSON_VALUE)
     @ResponseBody
-    Institution createInstitutionUsingExternalId(@PathVariable("externalId") String externalId);
+    it.pagopa.selfcare.onboarding.connector.rest.model.Institution createInstitutionUsingExternalId(@PathVariable("externalId") String externalId);
 
     @PostMapping(value = "${rest-client.party-process.createInstitutionRaw.path}", produces = APPLICATION_JSON_VALUE)
     @ResponseBody
-    Institution createInstitutionRaw(@PathVariable("externalId") String externalId,
-                                     @RequestBody InstitutionSeed institutionSeed);
+    it.pagopa.selfcare.onboarding.connector.rest.model.Institution createInstitutionRaw(@PathVariable("externalId") String externalId,
+                                                                                        @RequestBody InstitutionSeed institutionSeed);
 
     @GetMapping(value = "${rest-client.party-process.getInstitutionManager.path}", produces = APPLICATION_JSON_VALUE)
     @ResponseBody

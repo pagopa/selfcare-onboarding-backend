@@ -527,7 +527,7 @@ class PartyConnectorImplTest {
     void getInstitution() {
         //given
         String institutionId = "institutionId";
-        Institution institutionMock = mockInstance(new Institution());
+        it.pagopa.selfcare.onboarding.connector.rest.model.Institution institutionMock = mockInstance(new it.pagopa.selfcare.onboarding.connector.rest.model.Institution());
         institutionMock.setGeographicTaxonomies(List.of(mockInstance(new GeographicTaxonomy())));
         when(restClientMock.getInstitutionByExternalId(anyString()))
                 .thenReturn(institutionMock);
@@ -668,14 +668,19 @@ class PartyConnectorImplTest {
     void createInstitutionUsingExternalId() {
         //given
         String externalId = "externalId";
-        Institution institution = mockInstance(new Institution());
+        it.pagopa.selfcare.onboarding.connector.rest.model.Institution institution = mockInstance(new it.pagopa.selfcare.onboarding.connector.rest.model.Institution());
         when(restClientMock.createInstitutionUsingExternalId(anyString()))
                 .thenReturn(institution);
         //when
         Institution result = partyConnector.createInstitutionUsingExternalId(externalId);
         //then
         assertNotNull(result);
-        assertSame(institution, result);
+        reflectionEqualsByName(institution, result);
+        assertEquals(institution.getRea(), result.getCompanyInformations().getRea());
+        assertEquals(institution.getShareCapital(), result.getCompanyInformations().getShareCapital());
+        assertEquals(institution.getBusinessRegisterPlace(), result.getCompanyInformations().getBusinessRegisterPlace());
+        assertEquals(institution.getSupportEmail(), result.getAssistanceContacts().getSupportEmail());
+        assertEquals(institution.getSupportPhone(), result.getAssistanceContacts().getSupportPhone());
         verify(restClientMock, times(1))
                 .createInstitutionUsingExternalId(externalId);
     }
@@ -696,7 +701,7 @@ class PartyConnectorImplTest {
     void createInstitutionRaw() {
         //given
         final OnboardingData onboardingData = mockInstance(new OnboardingData());
-        Institution institution = mockInstance(new Institution());
+        it.pagopa.selfcare.onboarding.connector.rest.model.Institution institution = mockInstance(new it.pagopa.selfcare.onboarding.connector.rest.model.Institution());
         List<GeographicTaxonomy> geographicTaxonomyList = List.of(mockInstance(new GeographicTaxonomy()));
         InstitutionUpdate institutionUpdate = mockInstance(new InstitutionUpdate());
         institutionUpdate.setGeographicTaxonomies(geographicTaxonomyList);
@@ -707,7 +712,12 @@ class PartyConnectorImplTest {
         Institution result = partyConnector.createInstitutionRaw(onboardingData);
         //then
         assertNotNull(result);
-        assertSame(institution, result);
+        reflectionEqualsByName(institution, result);
+        assertEquals(institution.getRea(), result.getCompanyInformations().getRea());
+        assertEquals(institution.getShareCapital(), result.getCompanyInformations().getShareCapital());
+        assertEquals(institution.getBusinessRegisterPlace(), result.getCompanyInformations().getBusinessRegisterPlace());
+        assertEquals(institution.getSupportEmail(), result.getAssistanceContacts().getSupportEmail());
+        assertEquals(institution.getSupportPhone(), result.getAssistanceContacts().getSupportPhone());
         final ArgumentCaptor<InstitutionSeed> argumentCaptor = ArgumentCaptor.forClass(InstitutionSeed.class);
         verify(restClientMock, times(1))
                 .createInstitutionRaw(eq(onboardingData.getInstitutionExternalId()),

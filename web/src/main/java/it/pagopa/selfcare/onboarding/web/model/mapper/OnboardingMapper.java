@@ -1,6 +1,8 @@
 package it.pagopa.selfcare.onboarding.web.model.mapper;
 
 import it.pagopa.selfcare.onboarding.connector.model.InstitutionOnboardingData;
+import it.pagopa.selfcare.onboarding.connector.model.institutions.AssistanceContacts;
+import it.pagopa.selfcare.onboarding.connector.model.institutions.CompanyInformations;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionInfo;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.*;
 import it.pagopa.selfcare.onboarding.web.model.*;
@@ -110,6 +112,29 @@ public class OnboardingMapper {
             resource.setGeographicTaxonomies(model.getGeographicTaxonomies().stream()
                     .map(GeographicTaxonomyMapper::toResource)
                     .collect(Collectors.toList()));
+            resource.getInstitution().setCompanyInformations(toResource(model.getCompanyInformations()));
+            resource.getInstitution().setAssistanceContacts(toResource(model.getAssistanceContacts()));
+        }
+        return resource;
+    }
+
+    public static AssistanceContactsResource toResource(AssistanceContacts model) {
+        AssistanceContactsResource resource = null;
+        if (model != null) {
+            resource = new AssistanceContactsResource();
+            resource.setSupportEmail(model.getSupportEmail());
+            resource.setSupportPhone(model.getSupportPhone());
+        }
+        return resource;
+    }
+
+    public static CompanyInformationsResource toResource(CompanyInformations model) {
+        CompanyInformationsResource resource = null;
+        if (model != null) {
+            resource = new CompanyInformationsResource();
+            resource.setRea(model.getRea());
+            resource.setShareCapital(model.getShareCapital());
+            resource.setBusinessRegisterPlace(model.getBusinessRegisterPlace());
         }
         return resource;
     }
