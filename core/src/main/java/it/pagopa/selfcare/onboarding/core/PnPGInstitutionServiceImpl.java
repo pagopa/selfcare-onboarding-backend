@@ -84,10 +84,12 @@ class PnPGInstitutionServiceImpl implements PnPGInstitutionService {
             throw new ValidationException(String.format("Unable to onboard a PG Institution (external id: '%s') already onboarded",
                     onboardingData.getInstitutionExternalId()));
         }
+
         log.trace("onboarding PNPG end");
     }
 
     private void submitOnboarding(PnPGOnboardingData onboardingData) {
+        log.trace("submitOnboarding PNPG start");
         final EnumMap<PartyRole, ProductRoleInfo> roleMappings = mockRoleMapPnPGProduct();
         Assert.notNull(roleMappings, "Role mappings is required");
         onboardingData.getUsers().forEach(userInfo -> {
@@ -124,6 +126,7 @@ class PnPGInstitutionServiceImpl implements PnPGInstitutionService {
         });
 
         msCoreConnector.onboardingPGOrganization(onboardingData);
+        log.trace("submitOnboarding PNPG start");
     }
 
     private InstitutionUpdate mapInstitutionToInstitutionUpdate(Institution institution) {
