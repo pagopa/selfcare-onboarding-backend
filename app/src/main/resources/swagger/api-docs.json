@@ -619,16 +619,16 @@
         ],
         "type": "object",
         "properties": {
-          "businessName" : {
-            "type" : "string",
-            "description" : "Institution's legal name"
+          "businessName": {
+            "type": "string",
+            "description": "Institution's legal name"
           },
-          "digitalAddress" : {
-            "type" : "string",
-            "description" : "Institution's digitalAddress"
+          "digitalAddress": {
+            "type": "string",
+            "description": "Institution's digitalAddress"
           },
-          "publicServices" : {
-            "type" : "boolean",
+          "publicServices": {
+            "type": "boolean",
             "description" : "Institution's service type",
             "example" : false
           },
@@ -658,9 +658,9 @@
         "title" : "CompanyInformationsDto",
         "type" : "object",
         "properties" : {
-          "businessRegisterPlace" : {
-            "type" : "string",
-            "description" : "Institution's business register place"
+          "businessRegisterPlace": {
+            "type": "string",
+            "description": "Institution's business register place"
           },
           "rea": {
             "type": "string",
@@ -704,14 +704,14 @@
             "description": "DPO's address"
           },
           "email": {
-            "type" : "string",
-            "description" : "DPO's email",
-            "format" : "email",
-            "example" : "email@example.com"
+            "type": "string",
+            "description": "DPO's email",
+            "format": "email",
+            "example": "email@example.com"
           },
-          "pec" : {
-            "type" : "string",
-            "description" : "DPO's PEC",
+          "pec": {
+            "type": "string",
+            "description": "DPO's PEC",
             "format" : "email",
             "example" : "email@example.com"
           }

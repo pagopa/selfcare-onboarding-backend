@@ -10,7 +10,7 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class Institution {
+public class InstitutionResponse {
 
     private String id;
     private String externalId;

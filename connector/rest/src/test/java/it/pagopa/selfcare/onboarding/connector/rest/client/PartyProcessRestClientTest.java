@@ -11,10 +11,7 @@ import it.pagopa.selfcare.onboarding.connector.model.RelationshipsResponse;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.GeographicTaxonomy;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.User;
 import it.pagopa.selfcare.onboarding.connector.rest.config.PartyProcessRestClientTestConfig;
-import it.pagopa.selfcare.onboarding.connector.rest.model.BillingDataResponse;
-import it.pagopa.selfcare.onboarding.connector.rest.model.InstitutionSeed;
-import it.pagopa.selfcare.onboarding.connector.rest.model.OnBoardingInfo;
-import it.pagopa.selfcare.onboarding.connector.rest.model.OnboardingInstitutionRequest;
+import it.pagopa.selfcare.onboarding.connector.rest.model.*;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -211,7 +208,7 @@ class PartyProcessRestClientTest extends BaseFeignRestClientTest {
         //given
         String externalId = testCase2instIdMap.get(TestCase.FULLY_VALUED);
         //when
-        it.pagopa.selfcare.onboarding.connector.rest.model.Institution response = restClient.getInstitutionByExternalId(externalId);
+        InstitutionResponse response = restClient.getInstitutionByExternalId(externalId);
         //then
         assertNotNull(response);
         assertNotNull(response.getId());
@@ -223,7 +220,7 @@ class PartyProcessRestClientTest extends BaseFeignRestClientTest {
         // given
         String externalId = testCase2instIdMap.get(TestCase.FULLY_NULL);
         // when
-        it.pagopa.selfcare.onboarding.connector.rest.model.Institution response = restClient.getInstitutionByExternalId(externalId);
+        InstitutionResponse response = restClient.getInstitutionByExternalId(externalId);
         //then
         assertNotNull(response);
         assertNull(response.getAddress());
@@ -252,7 +249,7 @@ class PartyProcessRestClientTest extends BaseFeignRestClientTest {
         //given
         String externalId = "externalId";
         //when
-        it.pagopa.selfcare.onboarding.connector.rest.model.Institution response = restClient.createInstitutionUsingExternalId(externalId);
+        InstitutionResponse response = restClient.createInstitutionUsingExternalId(externalId);
         //then
         assertNotNull(response);
         checkNotNullFields(response);
@@ -265,7 +262,7 @@ class PartyProcessRestClientTest extends BaseFeignRestClientTest {
         InstitutionSeed institutionSeed = mockInstance(new InstitutionSeed());
         institutionSeed.setGeographicTaxonomies(List.of(mockInstance(new GeographicTaxonomy())));
         //when
-        it.pagopa.selfcare.onboarding.connector.rest.model.Institution response = restClient.createInstitutionRaw(externalId, institutionSeed);
+        InstitutionResponse response = restClient.createInstitutionRaw(externalId, institutionSeed);
         //then
         assertNotNull(response);
         checkNotNullFields(response);

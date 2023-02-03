@@ -76,31 +76,31 @@ class PartyConnectorImpl implements PartyConnector {
         return userInfo;
     };
 
-    private static final Function<it.pagopa.selfcare.onboarding.connector.rest.model.Institution, Institution> CONNECTOR_INSTITUTION_TO_CORE_INSTITUTION = partyInstitution -> {
+    private static final Function<InstitutionResponse, Institution> INSTITUTION_RESPONSE_TO_INSTITUTION = partyInstitutionResponse -> {
         Institution coreInstitution = new Institution();
-        coreInstitution.setId(partyInstitution.getId());
-        coreInstitution.setExternalId(partyInstitution.getExternalId());
-        coreInstitution.setOriginId(partyInstitution.getOriginId());
-        coreInstitution.setOrigin(partyInstitution.getOrigin());
-        coreInstitution.setDescription(partyInstitution.getDescription());
-        coreInstitution.setDigitalAddress(partyInstitution.getDigitalAddress());
-        coreInstitution.setAddress(partyInstitution.getAddress());
-        coreInstitution.setZipCode(partyInstitution.getZipCode());
-        coreInstitution.setTaxCode(partyInstitution.getTaxCode());
-        coreInstitution.setOrigin(partyInstitution.getOrigin());
-        coreInstitution.setInstitutionType(partyInstitution.getInstitutionType());
-        coreInstitution.setAttributes(partyInstitution.getAttributes());
-        coreInstitution.setPaymentServiceProvider(partyInstitution.getPaymentServiceProvider());
-        coreInstitution.setDataProtectionOfficer(partyInstitution.getDataProtectionOfficer());
-        coreInstitution.setGeographicTaxonomies(partyInstitution.getGeographicTaxonomies());
+        coreInstitution.setId(partyInstitutionResponse.getId());
+        coreInstitution.setExternalId(partyInstitutionResponse.getExternalId());
+        coreInstitution.setOriginId(partyInstitutionResponse.getOriginId());
+        coreInstitution.setOrigin(partyInstitutionResponse.getOrigin());
+        coreInstitution.setDescription(partyInstitutionResponse.getDescription());
+        coreInstitution.setDigitalAddress(partyInstitutionResponse.getDigitalAddress());
+        coreInstitution.setAddress(partyInstitutionResponse.getAddress());
+        coreInstitution.setZipCode(partyInstitutionResponse.getZipCode());
+        coreInstitution.setTaxCode(partyInstitutionResponse.getTaxCode());
+        coreInstitution.setOrigin(partyInstitutionResponse.getOrigin());
+        coreInstitution.setInstitutionType(partyInstitutionResponse.getInstitutionType());
+        coreInstitution.setAttributes(partyInstitutionResponse.getAttributes());
+        coreInstitution.setPaymentServiceProvider(partyInstitutionResponse.getPaymentServiceProvider());
+        coreInstitution.setDataProtectionOfficer(partyInstitutionResponse.getDataProtectionOfficer());
+        coreInstitution.setGeographicTaxonomies(partyInstitutionResponse.getGeographicTaxonomies());
         CompanyInformations companyInformations = new CompanyInformations();
-        companyInformations.setRea(partyInstitution.getRea());
-        companyInformations.setShareCapital(partyInstitution.getShareCapital());
-        companyInformations.setBusinessRegisterPlace(partyInstitution.getBusinessRegisterPlace());
+        companyInformations.setRea(partyInstitutionResponse.getRea());
+        companyInformations.setShareCapital(partyInstitutionResponse.getShareCapital());
+        companyInformations.setBusinessRegisterPlace(partyInstitutionResponse.getBusinessRegisterPlace());
         coreInstitution.setCompanyInformations(companyInformations);
         AssistanceContacts assistanceContacts = new AssistanceContacts();
-        assistanceContacts.setSupportEmail(partyInstitution.getSupportEmail());
-        assistanceContacts.setSupportPhone(partyInstitution.getSupportPhone());
+        assistanceContacts.setSupportEmail(partyInstitutionResponse.getSupportEmail());
+        assistanceContacts.setSupportPhone(partyInstitutionResponse.getSupportPhone());
         coreInstitution.setAssistanceContacts(assistanceContacts);
         return coreInstitution;
     };
@@ -247,8 +247,8 @@ class PartyConnectorImpl implements PartyConnector {
         log.trace("getInstitution start");
         log.debug("getInstitution externalInstitutionId = {}", externalInstitutionId);
         Assert.hasText(externalInstitutionId, REQUIRED_INSTITUTION_ID_MESSAGE);
-        it.pagopa.selfcare.onboarding.connector.rest.model.Institution partyInstitution = restClient.getInstitutionByExternalId(externalInstitutionId);
-        Institution result = CONNECTOR_INSTITUTION_TO_CORE_INSTITUTION.apply(partyInstitution);
+        InstitutionResponse partyInstitutionResponse = restClient.getInstitutionByExternalId(externalInstitutionId);
+        Institution result = INSTITUTION_RESPONSE_TO_INSTITUTION.apply(partyInstitutionResponse);
         log.debug("getInstitution result = {}", result);
         log.trace("getInstitution end");
         return result;
@@ -272,8 +272,8 @@ class PartyConnectorImpl implements PartyConnector {
         log.trace("createInstitutionUsingExternalId start");
         log.debug("createInstitutionUsingExternalId externalId = {}", institutionExternalId);
         Assert.hasText(institutionExternalId, REQUIRED_INSTITUTION_ID_MESSAGE);
-        it.pagopa.selfcare.onboarding.connector.rest.model.Institution partyInstitution = restClient.createInstitutionUsingExternalId(institutionExternalId);
-        Institution result = CONNECTOR_INSTITUTION_TO_CORE_INSTITUTION.apply(partyInstitution);
+        InstitutionResponse partyInstitutionResponse = restClient.createInstitutionUsingExternalId(institutionExternalId);
+        Institution result = INSTITUTION_RESPONSE_TO_INSTITUTION.apply(partyInstitutionResponse);
         log.debug("createInstitutionUsingExternalId result = {}", result);
         log.trace("createInstitutionUsingExternalId end");
         return result;
@@ -283,8 +283,8 @@ class PartyConnectorImpl implements PartyConnector {
     public Institution createInstitutionRaw(OnboardingData onboardingData) {
         log.trace("createInstitutionUsingExternalId start");
         Assert.notNull(onboardingData, "An OnboardingData is required");
-        it.pagopa.selfcare.onboarding.connector.rest.model.Institution partyInstitution = restClient.createInstitutionRaw(onboardingData.getInstitutionExternalId(), new InstitutionSeed(onboardingData));
-        Institution result = CONNECTOR_INSTITUTION_TO_CORE_INSTITUTION.apply(partyInstitution);
+        InstitutionResponse partyInstitutionResponse = restClient.createInstitutionRaw(onboardingData.getInstitutionExternalId(), new InstitutionSeed(onboardingData));
+        Institution result = INSTITUTION_RESPONSE_TO_INSTITUTION.apply(partyInstitutionResponse);
         log.debug("createInstitutionUsingExternalId result = {}", result);
         log.trace("createInstitutionUsingExternalId end");
         return result;
