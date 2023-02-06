@@ -77,8 +77,6 @@ class PnPGInstitutionServiceImpl implements PnPGInstitutionService {
         onboardingData.setContractVersion("mock");  // fixme: retrieve from db?
 
         try {
-            msCoreConnector.verifyOnboarding(onboardingData.getInstitutionExternalId(), onboardingData.getProductId());
-        } catch (ResourceNotFoundException nte) {
             submitOnboarding(onboardingData);
         } catch (RuntimeException e) {
             throw new ValidationException(String.format("Unable to onboard a PG Institution (external id: '%s') already onboarded",
