@@ -4,11 +4,7 @@ import it.pagopa.selfcare.commons.base.security.PartyRole;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipInfo;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipState;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipsResponse;
-import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
-import it.pagopa.selfcare.onboarding.connector.rest.model.BillingDataResponse;
-import it.pagopa.selfcare.onboarding.connector.rest.model.InstitutionSeed;
-import it.pagopa.selfcare.onboarding.connector.rest.model.OnBoardingInfo;
-import it.pagopa.selfcare.onboarding.connector.rest.model.OnboardingInstitutionRequest;
+import it.pagopa.selfcare.onboarding.connector.rest.model.*;
 import org.springframework.cloud.openfeign.CollectionFormat;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
@@ -49,16 +45,16 @@ public interface PartyProcessRestClient {
 
     @GetMapping(value = "${rest-client.party-process.getInstitutionByExternalId.path}", produces = APPLICATION_JSON_VALUE)
     @ResponseBody
-    Institution getInstitutionByExternalId(@PathVariable("externalId") String externalId);
+    InstitutionResponse getInstitutionByExternalId(@PathVariable("externalId") String externalId);
 
     @PostMapping(value = "${rest-client.party-process.createInstitutionUsingExternalId.path}", produces = APPLICATION_JSON_VALUE)
     @ResponseBody
-    Institution createInstitutionUsingExternalId(@PathVariable("externalId") String externalId);
+    InstitutionResponse createInstitutionUsingExternalId(@PathVariable("externalId") String externalId);
 
     @PostMapping(value = "${rest-client.party-process.createInstitutionRaw.path}", produces = APPLICATION_JSON_VALUE)
     @ResponseBody
-    Institution createInstitutionRaw(@PathVariable("externalId") String externalId,
-                                     @RequestBody InstitutionSeed institutionSeed);
+    InstitutionResponse createInstitutionRaw(@PathVariable("externalId") String externalId,
+                                             @RequestBody InstitutionSeed institutionSeed);
 
     @GetMapping(value = "${rest-client.party-process.getInstitutionManager.path}", produces = APPLICATION_JSON_VALUE)
     @ResponseBody

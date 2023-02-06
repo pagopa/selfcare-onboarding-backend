@@ -4,6 +4,8 @@ import io.swagger.annotations.ApiModelProperty;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.InstitutionType;
 import lombok.Data;
 
+import javax.validation.Valid;
+
 @Data
 public class InstitutionData {
 
@@ -15,4 +17,12 @@ public class InstitutionData {
 
     @ApiModelProperty
     private String origin;
+
+    @ApiModelProperty(value = "${swagger.onboarding.institutions.model.companyInformations}")
+    @Valid
+    private CompanyInformationsResource companyInformations;
+
+    @ApiModelProperty(value = "${swagger.onboarding.institutions.model.assistance}")
+    @Valid
+    private AssistanceContactsResource assistanceContacts;
 }

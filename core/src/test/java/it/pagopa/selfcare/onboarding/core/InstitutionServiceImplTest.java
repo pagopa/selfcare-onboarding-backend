@@ -1363,7 +1363,6 @@ class InstitutionServiceImplTest {
         assertEquals(institutionInfoMock, institutionOnboardingData.getInstitution());
         assertEquals(institutionMock.getGeographicTaxonomies().get(0).getCode(), institutionOnboardingData.getGeographicTaxonomies().get(0).getCode());
         assertEquals(institutionMock.getGeographicTaxonomies().get(0).getDesc(), institutionOnboardingData.getGeographicTaxonomies().get(0).getDesc());
-
         verify(partyConnectorMock, times(1))
                 .getInstitutionManager(institutionId, productId);
         verify(partyConnectorMock, times(1))
