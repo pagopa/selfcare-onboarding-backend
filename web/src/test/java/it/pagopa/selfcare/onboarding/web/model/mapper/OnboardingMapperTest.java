@@ -2,6 +2,8 @@ package it.pagopa.selfcare.onboarding.web.model.mapper;
 
 import it.pagopa.selfcare.commons.utils.TestUtils;
 import it.pagopa.selfcare.onboarding.connector.model.InstitutionOnboardingData;
+import it.pagopa.selfcare.onboarding.connector.model.institutions.AssistanceContacts;
+import it.pagopa.selfcare.onboarding.connector.model.institutions.CompanyInformations;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionInfo;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.Billing;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.GeographicTaxonomy;
@@ -116,6 +118,8 @@ class OnboardingMapperTest {
         InstitutionOnboardingInfoResource resource = OnboardingMapper.toResource(model);
         //then
         reflectionEqualsByName(institutionInfo, resource.getInstitution().getBillingData());
+        reflectionEqualsByName(model.getAssistanceContacts(), resource.getInstitution().getAssistanceContacts());
+        reflectionEqualsByName(model.getCompanyInformations(), resource.getInstitution().getCompanyInformations());
         TestUtils.checkNotNullFields(resource.getManager());
         TestUtils.checkNotNullFields(resource.getInstitution().getBillingData());
         assertEquals(institutionInfo.getInstitutionType(), resource.getInstitution().getInstitutionType());
@@ -135,4 +139,46 @@ class OnboardingMapperTest {
         assertNull(resource);
     }
 
+    @Test
+    void toResourceAssistanceContacts() {
+        // given
+        AssistanceContacts model = mockInstance(new AssistanceContacts());
+        model.setSupportEmail("example@example.com");
+        // when
+        AssistanceContactsResource resource = OnboardingMapper.toResource(model);
+        // then
+        assertNotNull(resource);
+        reflectionEqualsByName(model, resource);
+    }
+
+    @Test
+    void toResourceAssistanceContacts_null() {
+        // given
+        AssistanceContacts model = null;
+        // when
+        AssistanceContactsResource resource = OnboardingMapper.toResource(model);
+        // then
+        assertNull(resource);
+    }
+
+    @Test
+    void toResourceCompanyInformations() {
+        // given
+        CompanyInformations model = mockInstance(new CompanyInformations());
+        // when
+        CompanyInformationsResource resource = OnboardingMapper.toResource(model);
+        // then
+        assertNotNull(resource);
+        reflectionEqualsByName(model, resource);
+    }
+
+    @Test
+    void toResourceCompanyInformations_null() {
+        // given
+        CompanyInformations model = null;
+        // when
+        CompanyInformationsResource resource = OnboardingMapper.toResource(model);
+        // then
+        assertNull(resource);
+    }
 }
