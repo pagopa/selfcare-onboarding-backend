@@ -1,5 +1,6 @@
-package it.pagopa.selfcare.onboarding.connector.model.institutions;
+package it.pagopa.selfcare.onboarding.connector.rest.model;
 
+import it.pagopa.selfcare.onboarding.connector.model.institutions.Attribute;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.DataProtectionOfficer;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.GeographicTaxonomy;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.InstitutionType;
@@ -9,7 +10,7 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class Institution {
+public class InstitutionResponse {
 
     private String id;
     private String externalId;
@@ -25,6 +26,11 @@ public class Institution {
     private PaymentServiceProvider paymentServiceProvider;
     private DataProtectionOfficer dataProtectionOfficer;
     private List<GeographicTaxonomy> geographicTaxonomies;
-    private CompanyInformations companyInformations;
-    private AssistanceContacts assistanceContacts;
+    private String rea;
+    private String shareCapital;
+    private String businessRegisterPlace;
+    private String supportEmail;
+    private String supportPhone;
+    private Boolean imported;
+
 }
