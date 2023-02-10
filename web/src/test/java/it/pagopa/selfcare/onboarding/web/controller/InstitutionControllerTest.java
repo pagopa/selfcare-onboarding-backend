@@ -84,14 +84,33 @@ class InstitutionControllerTest {
         String productId = "productId";
         // when
         mvc.perform(MockMvcRequestBuilders
-                .post(BASE_URL + "/{institutionId}/products/{productId}/onboarding", institutionId, productId)
-                .content(onboardingDto.getInputStream().readAllBytes())
-                .contentType(APPLICATION_JSON_VALUE)
-                .accept(APPLICATION_JSON_VALUE))
+                        .post(BASE_URL + "/{institutionId}/products/{productId}/onboarding", institutionId, productId)
+                        .content(onboardingDto.getInputStream().readAllBytes())
+                        .contentType(APPLICATION_JSON_VALUE)
+                        .accept(APPLICATION_JSON_VALUE))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.detail", is("Field 'pspData' is required for PSP institution onboarding")));
         // then
         verifyNoInteractions(institutionServiceMock);
+    }
+
+    @Test
+    void onboardingPspValidRequest(@Value("classpath:stubs/validPspOnboardingDto.json") Resource onboardingDto) throws Exception {
+        // given
+        String institutionId = "institutionId";
+        String productId = "productId";
+        // when
+        mvc.perform(MockMvcRequestBuilders
+                        .post(BASE_URL + "/{institutionId}/products/{productId}/onboarding", institutionId, productId)
+                        .content(onboardingDto.getInputStream().readAllBytes())
+                        .contentType(APPLICATION_JSON_VALUE)
+                        .accept(APPLICATION_JSON_VALUE))
+                .andExpect(status().isCreated())
+                .andExpect(content().string(emptyString()));
+        // then
+        verify(institutionServiceMock, times(1))
+                .onboarding(any(OnboardingData.class));
+        verifyNoMoreInteractions(institutionServiceMock);
     }
 
     @Test
