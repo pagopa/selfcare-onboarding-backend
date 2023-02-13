@@ -73,8 +73,8 @@ class PnPGInstitutionServiceImpl implements PnPGInstitutionService {
 //        Assert.notNull(onboardingData.getInstitutionType(), REQUIRED_INSTITUTION_TYPE_MESSAGE);
 
         onboardingData.setProductName("prod-pn-pg"); // fixme: retrieve from db?
-        onboardingData.setContractPath("mock"); // fixme: retrieve from db?
-        onboardingData.setContractVersion("mock");  // fixme: retrieve from db?
+        onboardingData.setContractPath("mock"); // fixme: needed?
+        onboardingData.setContractVersion("mock");  // fixme: needed?
 
         try {
             submitOnboarding(onboardingData);
@@ -88,7 +88,7 @@ class PnPGInstitutionServiceImpl implements PnPGInstitutionService {
 
     private void submitOnboarding(PnPGOnboardingData onboardingData) {
         log.trace("submitOnboarding PNPG start");
-        final EnumMap<PartyRole, ProductRoleInfo> roleMappings = mockRoleMapPnPGProduct();
+        final EnumMap<PartyRole, ProductRoleInfo> roleMappings = mockRoleMapPnPGProduct(); // fixme
         Assert.notNull(roleMappings, "Role mappings is required");
         onboardingData.getUsers().forEach(userInfo -> {
             Assert.notNull(roleMappings.get(userInfo.getRole()),
@@ -107,7 +107,7 @@ class PnPGInstitutionServiceImpl implements PnPGInstitutionService {
             institution = msCoreConnector.createPGInstitutionUsingExternalId(onboardingData.getInstitutionExternalId());
         }
 
-        onboardingData.setInstitutionUpdate(mockMapInstitutionToInstitutionUpdate(institution));
+        onboardingData.setInstitutionUpdate(mockMapInstitutionToInstitutionUpdate(institution)); // fixme
 
         String finalInstitutionInternalId = institution.getId();
         onboardingData.getUsers().forEach(user -> {

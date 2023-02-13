@@ -11,7 +11,6 @@ public class PnPGBillingDataDto {
 
     @ApiModelProperty(value = "${swagger.onboarding.institutions.model.name}", required = true)
     @JsonProperty(required = true)
-    @NotBlank
     private String businessName;
 
     @ApiModelProperty(value = "${swagger.onboarding.institutions.model.taxCode}", required = true)

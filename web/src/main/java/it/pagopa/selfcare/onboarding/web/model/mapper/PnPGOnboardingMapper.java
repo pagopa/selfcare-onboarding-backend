@@ -22,9 +22,9 @@ public class PnPGOnboardingMapper {
                     .collect(Collectors.toList()));
             resource.setInstitutionExternalId(externalId);
             resource.setProductId(productId);
-            resource.setInstitutionUpdate(mockInstitutionUpdate(externalId));
+            resource.setInstitutionUpdate(mockInstitutionUpdate(externalId)); // fixme
             if (model.getBillingData() != null) {
-                resource.setBillingRequest(mockBillingData(externalId));
+                resource.setBillingRequest(mockBillingData(externalId)); // fixme
             }
             resource.setInstitutionType(InstitutionType.PG);
         }
