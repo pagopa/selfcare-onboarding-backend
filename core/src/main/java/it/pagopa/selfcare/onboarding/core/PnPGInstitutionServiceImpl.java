@@ -8,6 +8,7 @@ import it.pagopa.selfcare.onboarding.connector.api.UserRegistryConnector;
 import it.pagopa.selfcare.onboarding.connector.exceptions.ResourceNotFoundException;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionPnPGInfo;
+import it.pagopa.selfcare.onboarding.connector.model.institutions.PnPGMatchInfo;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.InstitutionType;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.InstitutionUpdate;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.PnPGOnboardingData;
@@ -56,7 +57,7 @@ class PnPGInstitutionServiceImpl implements PnPGInstitutionService {
     @Override
     public InstitutionPnPGInfo getInstitutionsByUser(User user) {
         log.trace("getInstitutionsByUserId start");
-        log.debug("getInstitutionsByUserId user = {}", user);
+        log.debug(LogUtils.CONFIDENTIAL_MARKER, "getInstitutionsByUserId user = {}", user);
         user.setId(userConnector.saveUser(UserMapper.toSaveUserDto(user, "")).getId().toString());
         InstitutionPnPGInfo result = partyRegistryProxyConnector.getInstitutionsByUserFiscalCode(user.getTaxCode());
         log.debug(LogUtils.CONFIDENTIAL_MARKER, "getInstitutionsByUserId result = {}", result);
@@ -203,6 +204,17 @@ class PnPGInstitutionServiceImpl implements PnPGInstitutionService {
             }
         }
         return isToUpdate;
+    }
+
+
+    @Override
+    public PnPGMatchInfo matchInstitutionAndUser(String externalInstitutionId, User user) {
+        log.trace("matchInstitutionAndUser start");
+        log.debug(LogUtils.CONFIDENTIAL_MARKER, "matchInstitutionAndUser user = {}", user);
+        PnPGMatchInfo result = partyRegistryProxyConnector.matchInstitutionAndUser(externalInstitutionId, user.getTaxCode());
+        log.debug(LogUtils.CONFIDENTIAL_MARKER, "matchInstitutionAndUser result = {}", result);
+        log.trace("matchInstitutionAndUser end");
+        return result;
     }
 
 

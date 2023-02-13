@@ -9,8 +9,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import it.pagopa.selfcare.commons.base.logging.LogUtils;
 import it.pagopa.selfcare.commons.web.model.Problem;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionPnPGInfo;
+import it.pagopa.selfcare.onboarding.connector.model.institutions.PnPGMatchInfo;
 import it.pagopa.selfcare.onboarding.core.PnPGInstitutionService;
 import it.pagopa.selfcare.onboarding.web.model.InstitutionPnPGResource;
+import it.pagopa.selfcare.onboarding.web.model.PnPGMatchResource;
 import it.pagopa.selfcare.onboarding.web.model.PnPGOnboardingDto;
 import it.pagopa.selfcare.onboarding.web.model.UserDto;
 import it.pagopa.selfcare.onboarding.web.model.mapper.InstitutionPnPGMapper;
@@ -47,7 +49,7 @@ public class PnPGInstitutionController {
                                                          @Valid
                                                          UserDto userDto) {
         log.trace("getInstitutionsByUserId start");
-        log.debug("getInstitutionsByUserId userDto = {}", userDto);
+        log.debug(LogUtils.CONFIDENTIAL_MARKER, "getInstitutionsByUserId userDto = {}", userDto);
         InstitutionPnPGInfo institutionPnPGInfo = pnPGInstitutionService.getInstitutionsByUser(UserMapper.toUser(userDto));
         InstitutionPnPGResource institutionPnPGResources = InstitutionPnPGMapper.toResource(institutionPnPGInfo);
         log.debug(LogUtils.CONFIDENTIAL_MARKER, "getInstitutionsByUserId result = {}", institutionPnPGResources);
@@ -79,5 +81,22 @@ public class PnPGInstitutionController {
         log.trace("onboarding PNPG end");
     }
 
+    @PostMapping(value = "/{externalInstitutionId}/match")
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "", notes = "${swagger.onboarding.pnPGInstitutions.api.matchInstitutionAndUser}")
+    public PnPGMatchResource matchInstitutionAndUser(@ApiParam("${swagger.onboarding.pnPGInstitutions.model.externalId}")
+                                                     @PathVariable("externalInstitutionId")
+                                                     String externalInstitutionId,
+                                                     @RequestBody
+                                                     @Valid
+                                                     UserDto userDto) {
+        log.trace("matchInstitutionAndUser start");
+        log.debug(LogUtils.CONFIDENTIAL_MARKER, "matchInstitutionAndUser userDto = {}", userDto);
+        PnPGMatchInfo pnPGMatchInfo = pnPGInstitutionService.matchInstitutionAndUser(externalInstitutionId, UserMapper.toUser(userDto));
+        PnPGMatchResource pnPGMatchResource = InstitutionPnPGMapper.toResource(pnPGMatchInfo);
+        log.debug(LogUtils.CONFIDENTIAL_MARKER, "matchInstitutionAndUser result = {}", pnPGMatchResource);
+        log.trace("matchInstitutionAndUser end");
+        return pnPGMatchResource;
+    }
 
 }
