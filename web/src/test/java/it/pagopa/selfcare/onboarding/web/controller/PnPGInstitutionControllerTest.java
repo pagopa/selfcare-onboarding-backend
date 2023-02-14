@@ -49,6 +49,7 @@ class PnPGInstitutionControllerTest {
     @MockBean
     private PnPGInstitutionService pnPGInstitutionServiceMock;
 
+
     @Test
     void getInstitutionsByUserId(@Value("classpath:stubs/userDto.json") Resource userDto) throws Exception {
         //given

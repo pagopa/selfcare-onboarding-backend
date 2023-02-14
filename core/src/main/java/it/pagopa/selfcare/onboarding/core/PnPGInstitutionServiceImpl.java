@@ -6,6 +6,7 @@ import it.pagopa.selfcare.onboarding.connector.api.MsCoreConnector;
 import it.pagopa.selfcare.onboarding.connector.api.PartyRegistryProxyConnector;
 import it.pagopa.selfcare.onboarding.connector.api.UserRegistryConnector;
 import it.pagopa.selfcare.onboarding.connector.exceptions.ResourceNotFoundException;
+import it.pagopa.selfcare.onboarding.connector.model.PnPGInstitutionLegalAddressData;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionPnPGInfo;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.PnPGMatchInfo;
@@ -217,5 +218,14 @@ class PnPGInstitutionServiceImpl implements PnPGInstitutionService {
         return result;
     }
 
+    @Override
+    public PnPGInstitutionLegalAddressData getInstitutionLegalAddress(String externalInstitutionId) {
+        log.trace("getInstitutionLegalAddress start");
+        log.debug("getInstitutionLegalAddress externalInstitutionId = {}", externalInstitutionId);
+        PnPGInstitutionLegalAddressData result = partyRegistryProxyConnector.getInstitutionLegalAddress(externalInstitutionId);
+        log.debug("getInstitutionLegalAddress result = {}", result);
+        log.trace("getInstitutionLegalAddress end");
+        return result;
+    }
 
 }

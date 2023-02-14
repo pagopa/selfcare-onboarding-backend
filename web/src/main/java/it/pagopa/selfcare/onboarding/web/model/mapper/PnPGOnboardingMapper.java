@@ -1,9 +1,11 @@
 package it.pagopa.selfcare.onboarding.web.model.mapper;
 
+import it.pagopa.selfcare.onboarding.connector.model.PnPGInstitutionLegalAddressData;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.Billing;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.InstitutionType;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.InstitutionUpdate;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.PnPGOnboardingData;
+import it.pagopa.selfcare.onboarding.web.model.PnPGInstitutionLegalAddressResource;
 import it.pagopa.selfcare.onboarding.web.model.PnPGOnboardingDto;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -44,6 +46,17 @@ public class PnPGOnboardingMapper {
         billingData.setRecipientCode("");
         billingData.setPublicServices(false);
         return billingData;
+    }
+
+    public static PnPGInstitutionLegalAddressResource toResource(PnPGInstitutionLegalAddressData model) {
+        PnPGInstitutionLegalAddressResource resource = null;
+        if (model != null) {
+            resource = new PnPGInstitutionLegalAddressResource();
+
+            resource.setAddress(model.getAddress());
+            resource.setZipCode(model.getZipCode());
+        }
+        return resource;
     }
 
 }

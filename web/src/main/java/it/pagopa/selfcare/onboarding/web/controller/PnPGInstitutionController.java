@@ -8,13 +8,11 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import it.pagopa.selfcare.commons.base.logging.LogUtils;
 import it.pagopa.selfcare.commons.web.model.Problem;
+import it.pagopa.selfcare.onboarding.connector.model.PnPGInstitutionLegalAddressData;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionPnPGInfo;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.PnPGMatchInfo;
 import it.pagopa.selfcare.onboarding.core.PnPGInstitutionService;
-import it.pagopa.selfcare.onboarding.web.model.InstitutionPnPGResource;
-import it.pagopa.selfcare.onboarding.web.model.PnPGMatchResource;
-import it.pagopa.selfcare.onboarding.web.model.PnPGOnboardingDto;
-import it.pagopa.selfcare.onboarding.web.model.UserDto;
+import it.pagopa.selfcare.onboarding.web.model.*;
 import it.pagopa.selfcare.onboarding.web.model.mapper.InstitutionPnPGMapper;
 import it.pagopa.selfcare.onboarding.web.model.mapper.PnPGOnboardingMapper;
 import it.pagopa.selfcare.onboarding.web.model.mapper.UserMapper;
@@ -97,6 +95,21 @@ public class PnPGInstitutionController {
         log.debug(LogUtils.CONFIDENTIAL_MARKER, "matchInstitutionAndUser result = {}", pnPGMatchResource);
         log.trace("matchInstitutionAndUser end");
         return pnPGMatchResource;
+    }
+
+    @GetMapping(value = "/{externalInstitutionId}/legal-address")
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "", notes = "${swagger.onboarding.pnPGInstitutions.api.getInstitutionLegalAddress}")
+    public PnPGInstitutionLegalAddressResource getInstitutionLegalAddress(@ApiParam("${swagger.onboarding.pnPGInstitutions.model.externalId}")
+                                                                          @PathVariable("externalInstitutionId")
+                                                                          String externalInstitutionId) {
+        log.trace("getInstitutionLegalAddress start");
+        log.debug("getInstitutionLegalAddress institutionId = {}", externalInstitutionId);
+        PnPGInstitutionLegalAddressData institutionLegalAddressData = pnPGInstitutionService.getInstitutionLegalAddress(externalInstitutionId);
+        PnPGInstitutionLegalAddressResource result = PnPGOnboardingMapper.toResource(institutionLegalAddressData);
+        log.debug("getInstitutionLegalAddress result = {}", result);
+        log.trace("getInstitutionLegalAddress end");
+        return result;
     }
 
 }
