@@ -39,7 +39,6 @@ import static it.pagopa.selfcare.onboarding.core.InstitutionServiceImpl.MORE_THA
 class PnPGInstitutionServiceImpl implements PnPGInstitutionService {
 
     private static final EnumSet<it.pagopa.selfcare.onboarding.connector.model.user.User.Fields> USER_FIELD_LIST = EnumSet.of(name, familyName, workContacts);
-    private static final EnumSet<it.pagopa.selfcare.onboarding.connector.model.user.User.Fields> USER_FIELD_ONLY_FISCAL_CODE = EnumSet.of(fiscalCode);
 
     private final PartyRegistryProxyConnector partyRegistryProxyConnector;
     private final MsCoreConnector msCoreConnector;

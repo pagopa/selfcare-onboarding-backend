@@ -61,6 +61,7 @@ class PartyRegistryProxyConnectorImpl implements PartyRegistryProxyConnector {
     public PnPGInstitutionLegalAddressData getInstitutionLegalAddress(String externalInstitutionId) {
         log.trace("getInstitutionLegalAddress start");
         log.debug("getInstitutionLegalAddress externalInstitutionId = {}", externalInstitutionId);
+        Assert.hasText(externalInstitutionId, REQUIRED_EXTERNAL_ID_MESSAGE);
         PnPGInstitutionLegalAddressData result = restClient.getInstitutionLegalAddress(externalInstitutionId);
         log.debug("getInstitutionLegalAddress result = {}", result);
         log.trace("getInstitutionLegalAddress end");
