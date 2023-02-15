@@ -46,7 +46,7 @@ public class InstitutionPnPGMapper {
         if (model != null) {
             resource = new PnPGMatchResource();
 
-            resource.setMatchResult(model.isMatchResult());
+            resource.setVerificationResult(model.isVerificationResult());
         }
         return resource;
     }

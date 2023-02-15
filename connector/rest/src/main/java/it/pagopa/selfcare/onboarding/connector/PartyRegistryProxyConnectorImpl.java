@@ -2,7 +2,6 @@ package it.pagopa.selfcare.onboarding.connector;
 
 import it.pagopa.selfcare.commons.base.logging.LogUtils;
 import it.pagopa.selfcare.onboarding.connector.api.PartyRegistryProxyConnector;
-import it.pagopa.selfcare.onboarding.connector.model.PnPGInstitutionLegalAddressData;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionPnPGInfo;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.PnPGMatchInfo;
 import it.pagopa.selfcare.onboarding.connector.rest.client.PartyRegistryProxyRestClient;
@@ -51,22 +50,9 @@ class PartyRegistryProxyConnectorImpl implements PartyRegistryProxyConnector {
         log.debug(LogUtils.CONFIDENTIAL_MARKER, "matchInstitutionAndUser taxCode = {}", taxCode);
         Assert.hasText(externalInstitutionId, REQUIRED_EXTERNAL_ID_MESSAGE);
         Assert.hasText(taxCode, REQUIRED_FISCAL_CODE_MESSAGE);
-        // TODO: create payload
-//        InstitutionPnPGInfo result = restClient.matchInstitutionAndUser();
-        // TODO: mapper
-//        log.debug(LogUtils.CONFIDENTIAL_MARKER, "matchInstitutionAndUser result = {}", result);
+        PnPGMatchInfo result = restClient.matchInstitutionAndUser(taxCode, externalInstitutionId);
+        log.debug(LogUtils.CONFIDENTIAL_MARKER, "matchInstitutionAndUser result = {}", result);
         log.trace("matchInstitutionAndUser end");
-//        return result;
-        return null;
-    }
-
-    @Override
-    public PnPGInstitutionLegalAddressData getInstitutionLegalAddress(String externalInstitutionId) {
-        log.trace("getInstitutionLegalAddress start");
-        log.debug("getInstitutionLegalAddress externalInstitutionId = {}", externalInstitutionId);
-        PnPGInstitutionLegalAddressData result = restClient.getInstitutionLegalAddress(externalInstitutionId);
-        log.debug("getInstitutionLegalAddress result = {}", result);
-        log.trace("getInstitutionLegalAddress end");
         return result;
     }
 
