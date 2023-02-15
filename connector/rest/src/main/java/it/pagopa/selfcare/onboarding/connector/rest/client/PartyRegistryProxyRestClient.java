@@ -1,5 +1,6 @@
 package it.pagopa.selfcare.onboarding.connector.rest.client;
 
+import it.pagopa.selfcare.onboarding.connector.model.PnPGInstitutionLegalAddressData;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionPnPGInfo;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.PnPGMatchInfo;
 import it.pagopa.selfcare.onboarding.connector.rest.model.institution_pnpg.InstitutionByLegalTaxIdRequest;
@@ -21,7 +22,11 @@ public interface PartyRegistryProxyRestClient {
 
     @GetMapping(value = "${rest-client.party-registry-proxy.matchInstitutionAndUser.path}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    PnPGMatchInfo matchInstitutionAndUser(@RequestParam(value = "taxId", required = true) String taxCode,
-                                          @RequestParam(value = "vatNumber", required = true) String institutionExternalId);
+    PnPGMatchInfo matchInstitutionAndUser(@RequestParam(value = "taxId") String taxCode,
+                                          @RequestParam(value = "vatNumber") String institutionExternalId);
+
+    @GetMapping(value = "${rest-client.party-registry-proxy.getInstitutionLegalAddress.path}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    PnPGInstitutionLegalAddressData getInstitutionLegalAddress(@RequestParam(value = "taxId") String externalInstitutionId);
 
 }

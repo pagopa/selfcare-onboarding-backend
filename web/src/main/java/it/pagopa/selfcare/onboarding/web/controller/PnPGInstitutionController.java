@@ -13,7 +13,7 @@ import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionPnP
 import it.pagopa.selfcare.onboarding.connector.model.institutions.PnPGMatchInfo;
 import it.pagopa.selfcare.onboarding.core.PnPGInstitutionService;
 import it.pagopa.selfcare.onboarding.web.model.*;
-import it.pagopa.selfcare.onboarding.web.model.mapper.InstitutionPnPGMapper;
+import it.pagopa.selfcare.onboarding.web.model.mapper.PnPGInstitutionMapper;
 import it.pagopa.selfcare.onboarding.web.model.mapper.PnPGOnboardingMapper;
 import it.pagopa.selfcare.onboarding.web.model.mapper.UserMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -49,7 +49,7 @@ public class PnPGInstitutionController {
         log.trace("getInstitutionsByUserId start");
         log.debug(LogUtils.CONFIDENTIAL_MARKER, "getInstitutionsByUserId userDto = {}", userDto);
         InstitutionPnPGInfo institutionPnPGInfo = pnPGInstitutionService.getInstitutionsByUser(UserMapper.toUser(userDto));
-        InstitutionPnPGResource institutionPnPGResources = InstitutionPnPGMapper.toResource(institutionPnPGInfo);
+        InstitutionPnPGResource institutionPnPGResources = PnPGInstitutionMapper.toResource(institutionPnPGInfo);
         log.debug(LogUtils.CONFIDENTIAL_MARKER, "getInstitutionsByUserId result = {}", institutionPnPGResources);
         log.trace("getInstitutionsByUserId end");
         return institutionPnPGResources;
@@ -91,7 +91,7 @@ public class PnPGInstitutionController {
         log.trace("matchInstitutionAndUser start");
         log.debug(LogUtils.CONFIDENTIAL_MARKER, "matchInstitutionAndUser userDto = {}", userDto);
         PnPGMatchInfo pnPGMatchInfo = pnPGInstitutionService.matchInstitutionAndUser(externalInstitutionId, UserMapper.toUser(userDto));
-        PnPGMatchResource pnPGMatchResource = InstitutionPnPGMapper.toResource(pnPGMatchInfo);
+        PnPGMatchResource pnPGMatchResource = PnPGInstitutionMapper.toResource(pnPGMatchInfo);
         log.debug(LogUtils.CONFIDENTIAL_MARKER, "matchInstitutionAndUser result = {}", pnPGMatchResource);
         log.trace("matchInstitutionAndUser end");
         return pnPGMatchResource;

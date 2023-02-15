@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 import java.util.stream.Collectors;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class InstitutionPnPGMapper {
+public class PnPGInstitutionMapper {
 
     public static InstitutionPnPGResource toResource(InstitutionPnPGInfo model) {
         InstitutionPnPGResource resource = null;
@@ -23,7 +23,7 @@ public class InstitutionPnPGMapper {
             resource.setRequestDateTime(model.getRequestDateTime());
             resource.setBusinesses(model.getBusinesses()
                     .stream()
-                    .map(InstitutionPnPGMapper::toResource)
+                    .map(PnPGInstitutionMapper::toResource)
                     .collect(Collectors.toList()));
         }
         return resource;
