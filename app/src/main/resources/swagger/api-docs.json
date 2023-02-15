@@ -8,7 +8,7 @@
   "servers" : [ {
     "url" : "{url}:{port}{basePath}",
     "variables" : {
-      "url" : {
+      "url": {
         "default": "http://localhost"
       },
       "port": {
@@ -50,12 +50,12 @@
         "responses": {
           "200": {
             "description": "OK",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/components/schemas/InstitutionResource"
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/InstitutionResource"
                   }
                 }
               }
@@ -355,17 +355,18 @@
         "tags" : [ "institutions" ],
         "summary" : "onboarding",
         "description" : "The service allows the onboarding of Users to an Institution",
-        "operationId" : "onboardingUsingPOST",
-        "parameters" : [ {
-          "name" : "externalInstitutionId",
-          "in" : "path",
-          "description" : "Institution's unique external identifier",
-          "required" : true,
-          "style" : "simple",
-          "schema" : {
-            "type" : "string"
-          }
-        },
+        "operationId": "onboardingUsingPOST",
+        "parameters": [
+          {
+            "name": "externalInstitutionId",
+            "in": "path",
+            "description": "Institution's unique external identifier",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          },
           {
             "name": "productId",
             "in": "path",
@@ -732,12 +733,12 @@
               }
             }
           },
-          "403" : {
-            "description" : "Forbidden",
-            "content" : {
-              "application/problem+json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Problem"
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
                 }
               }
             }
@@ -1218,13 +1219,13 @@
             "description": "Institution's digitalAddress"
           },
           "externalId": {
-            "type" : "string",
-            "description" : "Institution's unique external identifier"
+            "type": "string",
+            "description": "Institution's unique external identifier"
           },
-          "id" : {
-            "type" : "string",
-            "description" : "Institution's unique internal Id",
-            "format" : "uuid"
+          "id": {
+            "type": "string",
+            "description": "Institution's unique internal Id",
+            "format": "uuid"
           },
           "institutionType" : {
             "type" : "string",
@@ -1295,14 +1296,14 @@
           },
           "geographicTaxonomies" : {
             "type" : "array",
-            "description" : "List of geographic Taxonomies",
-            "items" : {
-              "$ref" : "#/components/schemas/GeographicTaxonomyDto"
+            "description": "List of geographic Taxonomies",
+            "items": {
+              "$ref": "#/components/schemas/GeographicTaxonomyDto"
             }
           },
-          "institutionType" : {
-            "type" : "string",
-            "description" : "Institution's type",
+          "institutionType": {
+            "type": "string",
+            "description": "Institution's type",
             "enum": [
               "GSP",
               "PA",
@@ -1372,11 +1373,11 @@
       "PnPGMatchResource": {
         "title": "PnPGMatchResource",
         "required": [
-          "matchResult"
+          "verificationResult"
         ],
         "type": "object",
         "properties": {
-          "matchResult": {
+          "verificationResult": {
             "type": "boolean",
             "description": "Legal Representative and Institution match result on Agenzia delle Entrate",
             "example": false
@@ -1422,16 +1423,16 @@
           },
           "invalidParams": {
             "type": "array",
-            "description" : "A list of invalid parameters details.",
-            "items" : {
-              "$ref" : "#/components/schemas/InvalidParam"
+            "description": "A list of invalid parameters details.",
+            "items": {
+              "$ref": "#/components/schemas/InvalidParam"
             }
           },
-          "status" : {
-            "type" : "integer",
-            "description" : "The HTTP status code.",
-            "format" : "int32",
-            "example" : 500
+          "status": {
+            "type": "integer",
+            "description": "The HTTP status code.",
+            "format": "int32",
+            "example": 500
           },
           "title" : {
             "type" : "string",
