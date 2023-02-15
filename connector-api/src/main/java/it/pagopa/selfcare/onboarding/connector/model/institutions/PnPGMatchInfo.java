@@ -5,6 +5,6 @@ import lombok.Data;
 @Data
 public class PnPGMatchInfo {
 
-    private boolean matchResult;
+    private boolean verificationResult;
 
 }

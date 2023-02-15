@@ -13,6 +13,6 @@ public class PnPGMatchResource {
     @ApiModelProperty(value = "${swagger.onboarding.pnPGInstitutions.model.matchResult}", required = true)
     @JsonProperty(required = true)
     @NotBlank
-    private boolean matchResult;
+    private boolean verificationResult;
 
 }
