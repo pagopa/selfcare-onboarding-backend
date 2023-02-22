@@ -18,7 +18,7 @@ import org.springframework.util.Assert;
 class PartyRegistryProxyConnectorImpl implements PartyRegistryProxyConnector {
 
     protected static final String REQUIRED_FISCAL_CODE_MESSAGE = "An user's fiscal code is required";
-    private static final String REQUIRED_EXTERNAL_ID_MESSAGE = "An institution's external id is required ";
+    private static final String REQUIRED_EXTERNAL_ID_MESSAGE = "An institution's external id is required";
 
     private final PartyRegistryProxyRestClient restClient;
 
@@ -51,7 +51,7 @@ class PartyRegistryProxyConnectorImpl implements PartyRegistryProxyConnector {
         log.debug(LogUtils.CONFIDENTIAL_MARKER, "matchInstitutionAndUser taxCode = {}", taxCode);
         Assert.hasText(externalInstitutionId, REQUIRED_EXTERNAL_ID_MESSAGE);
         Assert.hasText(taxCode, REQUIRED_FISCAL_CODE_MESSAGE);
-        PnPGMatchInfo result = restClient.matchInstitutionAndUser(taxCode, externalInstitutionId);
+        PnPGMatchInfo result = restClient.matchInstitutionAndUser(externalInstitutionId, taxCode);
         log.debug(LogUtils.CONFIDENTIAL_MARKER, "matchInstitutionAndUser result = {}", result);
         log.trace("matchInstitutionAndUser end");
         return result;

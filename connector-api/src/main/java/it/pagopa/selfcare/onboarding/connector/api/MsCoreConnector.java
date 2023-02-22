@@ -9,7 +9,7 @@ public interface MsCoreConnector {
 
     Institution getInstitutionByExternalId(String externalInstitutionId);
 
-    Institution createPGInstitutionUsingExternalId(String institutionExternalId);
+    Institution createPGInstitutionUsingExternalId(String institutionExternalId, boolean existsInRegistry);
 
     void verifyOnboarding(String externalInstitutionId, String productId);
 

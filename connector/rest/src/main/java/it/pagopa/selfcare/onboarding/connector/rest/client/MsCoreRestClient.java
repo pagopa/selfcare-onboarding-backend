@@ -24,7 +24,8 @@ public interface MsCoreRestClient {
 
     @PostMapping(value = "${rest-client.ms-core.createPGInstitutionUsingExternalId.path}", produces = APPLICATION_JSON_VALUE)
     @ResponseBody
-    Institution createPGInstitutionUsingExternalId(@PathVariable("externalId") String externalId);
+    Institution createPGInstitutionUsingExternalId(@PathVariable("externalId") String externalId,
+                                                   @RequestParam("existsInRegistry") boolean existsInRegistry);
 
     @RequestMapping(method = HEAD, value = "${rest-client.ms-core.verifyOnboarding.path}")
     @ResponseBody

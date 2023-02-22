@@ -29,6 +29,9 @@ public class PnPGOnboardingMapper {
                 resource.setBillingRequest(mockBillingData(externalId)); // fixme
             }
             resource.setInstitutionType(InstitutionType.PG);
+            if (model.getBillingData().getBusinessName().equals("")) {
+                resource.setExistsInRegistry(false);
+            }
         }
         return resource;
     }

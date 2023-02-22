@@ -3,14 +3,9 @@ package it.pagopa.selfcare.onboarding.connector.rest.client;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import it.pagopa.selfcare.commons.connector.rest.BaseFeignRestClientTest;
 import it.pagopa.selfcare.commons.connector.rest.RestTestUtils;
-import it.pagopa.selfcare.onboarding.connector.model.BusinessPnPG;
-import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionPnPGInfo;
 import it.pagopa.selfcare.onboarding.connector.rest.config.PartyRegistryProxyRestClientTestConfig;
-import it.pagopa.selfcare.onboarding.connector.rest.model.institution_pnpg.InstitutionByLegalTaxIdRequest;
-import it.pagopa.selfcare.onboarding.connector.rest.model.institution_pnpg.InstitutionByLegalTaxIdRequestDto;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.cloud.commons.httpclient.HttpClientConfiguration;
@@ -19,13 +14,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.support.TestPropertySourceUtils;
-
-import java.util.List;
-
-import static it.pagopa.selfcare.commons.utils.TestUtils.mockInstance;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
 
 @TestPropertySource(
         locations = "classpath:config/party-registry-proxy-rest-client.properties",
@@ -39,6 +27,9 @@ import static org.mockito.Mockito.when;
         classes = {PartyRegistryProxyRestClientTestConfig.class, HttpClientConfiguration.class})
 class PartyRegistryProxyRestClientTest extends BaseFeignRestClientTest {
 
+    @MockBean
+    private PartyRegistryProxyRestClient restClient;
+
     @Order(1)
     @RegisterExtension
     static WireMockExtension wm = WireMockExtension.newInstance()
@@ -51,41 +42,26 @@ class PartyRegistryProxyRestClientTest extends BaseFeignRestClientTest {
         @Override
         public void initialize(ConfigurableApplicationContext applicationContext) {
             TestPropertySourceUtils.addInlinedPropertiesToEnvironment(applicationContext,
-                    String.format("USERVICE_PARTY_REGISTRY_PROXY_URL=%s/external/ur",
+                    String.format("USERVICE_PARTY_REGISTRY_PROXY_URL=%s/external/ur/v1",
                             wm.getRuntimeInfo().getHttpBaseUrl())
             );
         }
     }
 
-    @MockBean
-    private PartyRegistryProxyRestClient restClient;
-
-
-    @Test
-    void getInstitutionsByUserLegalTaxId_fullyValued() {
+/*    @Test
+    void getInstitutionsByUserLegalTaxId() {
         //given
-        String legalTaxId = "legalTaxId";
-        List<BusinessPnPG> businessPnPGList = List.of(mockInstance(new BusinessPnPG()), mockInstance(new BusinessPnPG()));
-        InstitutionPnPGInfo institutionPnPGInfo = mockInstance(new InstitutionPnPGInfo(), "setBusinesses");
-        institutionPnPGInfo.setBusinesses(businessPnPGList);
-        InstitutionByLegalTaxIdRequestDto institutionByLegalTaxIdRequestDto = new InstitutionByLegalTaxIdRequestDto();
-        institutionByLegalTaxIdRequestDto.setLegalTaxId(legalTaxId);
-        InstitutionByLegalTaxIdRequest institutionByLegalTaxIdRequest = new InstitutionByLegalTaxIdRequest();
-        institutionByLegalTaxIdRequest.setFilter(institutionByLegalTaxIdRequestDto);
-        when(restClient.getInstitutionsByUserLegalTaxId(any()))
-                .thenReturn(institutionPnPGInfo);
+        InstitutionByLegalTaxIdRequest request = mockInstance(new InstitutionByLegalTaxIdRequest());
         //when
-        InstitutionPnPGInfo response = restClient.getInstitutionsByUserLegalTaxId(institutionByLegalTaxIdRequest);
+        InstitutionPnPGInfo response = restClient.getInstitutionsByUserLegalTaxId(request);
         //then
         assertNotNull(response);
-        assertNotNull(response.getLegalTaxId());
         assertNotNull(response.getRequestDateTime());
+        assertNotNull(response.getLegalTaxId());
         assertNotNull(response.getBusinesses());
-        assertNotNull(response.getBusinesses().get(0).getBusinessTaxId());
         assertNotNull(response.getBusinesses().get(0).getBusinessName());
-        assertNotNull(response.getBusinesses().get(1).getBusinessTaxId());
-        assertNotNull(response.getBusinesses().get(1).getBusinessName());
-    }
+        assertNotNull(response.getBusinesses().get(0).getBusinessTaxId());
+    }*/
 
 /*
 

@@ -85,11 +85,11 @@ class MsCoreConnectorImpl implements MsCoreConnector {
     }
 
     @Override
-    public Institution createPGInstitutionUsingExternalId(String institutionExternalId) {
+    public Institution createPGInstitutionUsingExternalId(String institutionExternalId, boolean existsInRegistry) {
         log.trace("createPGInstitutionUsingExternalId start");
         log.debug("createPGInstitutionUsingExternalId externalId = {}", institutionExternalId);
         Assert.hasText(institutionExternalId, REQUIRED_INSTITUTION_ID_MESSAGE);
-        Institution result = restClient.createPGInstitutionUsingExternalId(institutionExternalId);
+        Institution result = restClient.createPGInstitutionUsingExternalId(institutionExternalId, existsInRegistry);
         log.debug("createPGInstitutionUsingExternalId result = {}", result);
         log.trace("createPGInstitutionUsingExternalId end");
         return result;

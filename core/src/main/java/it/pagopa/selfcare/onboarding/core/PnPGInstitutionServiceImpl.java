@@ -105,7 +105,8 @@ class PnPGInstitutionServiceImpl implements PnPGInstitutionService {
         try {
             institution = msCoreConnector.getInstitutionByExternalId(onboardingData.getInstitutionExternalId());
         } catch (ResourceNotFoundException e) {
-            institution = msCoreConnector.createPGInstitutionUsingExternalId(onboardingData.getInstitutionExternalId());
+            institution = msCoreConnector.createPGInstitutionUsingExternalId(onboardingData.getInstitutionExternalId(),
+                    onboardingData.isExistsInRegistry());
         }
 
         onboardingData.setInstitutionUpdate(mockMapInstitutionToInstitutionUpdate(institution)); // fixme
