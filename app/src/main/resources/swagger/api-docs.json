@@ -61,11 +61,11 @@
               }
             }
           },
-          "400" : {
-            "description" : "Bad Request",
-            "content" : {
-              "application/problem+json" : {
-                "schema" : {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
                   "$ref" : "#/components/schemas/Problem"
                 }
               }
@@ -352,9 +352,11 @@
     },
     "/institutions/{externalInstitutionId}/products/{productId}/onboarding" : {
       "post" : {
-        "tags" : [ "institutions" ],
-        "summary" : "onboarding",
-        "description" : "The service allows the onboarding of Users to an Institution",
+        "tags": [
+          "institutions"
+        ],
+        "summary": "onboarding",
+        "description": "The service allows the onboarding of Users to an Institution",
         "operationId": "onboardingUsingPOST",
         "parameters": [
           {
@@ -743,12 +745,12 @@
               }
             }
           },
-          "500" : {
-            "description" : "Internal Server Error",
-            "content" : {
-              "application/problem+json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Problem"
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
                 }
               }
             }
@@ -1227,9 +1229,9 @@
             "description": "Institution's unique internal Id",
             "format": "uuid"
           },
-          "institutionType" : {
-            "type" : "string",
-            "description" : "Institution's type",
+          "institutionType": {
+            "type": "string",
+            "description": "Institution's type",
             "enum": [
               "GSP",
               "PA",
@@ -1239,9 +1241,9 @@
               "SCP"
             ]
           },
-          "origin" : {
-            "type" : "string",
-            "description" : "Institution data origin"
+          "origin": {
+            "type": "string",
+            "description": "Institution data origin"
           },
           "originId" : {
             "type" : "string",
@@ -1291,11 +1293,11 @@
             "$ref" : "#/components/schemas/BillingDataDto"
           },
           "companyInformations" : {
-            "description" : "GPS, SCP, PT optional data",
-            "$ref" : "#/components/schemas/CompanyInformationsDto"
+            "description": "GPS, SCP, PT optional data",
+            "$ref": "#/components/schemas/CompanyInformationsDto"
           },
-          "geographicTaxonomies" : {
-            "type" : "array",
+          "geographicTaxonomies": {
+            "type": "array",
             "description": "List of geographic Taxonomies",
             "items": {
               "$ref": "#/components/schemas/GeographicTaxonomyDto"
@@ -1434,13 +1436,13 @@
             "format": "int32",
             "example": 500
           },
-          "title" : {
-            "type" : "string",
-            "description" : "Short human-readable summary of the problem."
+          "title": {
+            "type": "string",
+            "description": "Short human-readable summary of the problem."
           },
-          "type" : {
-            "type" : "string",
-            "description" : "A URL to a page with more details regarding the problem."
+          "type": {
+            "type": "string",
+            "description": "A URL to a page with more details regarding the problem."
           }
         },
         "description" : "A \"problem detail\" as a way to carry machine-readable details of errors (https://datatracker.ietf.org/doc/html/rfc7807)"
