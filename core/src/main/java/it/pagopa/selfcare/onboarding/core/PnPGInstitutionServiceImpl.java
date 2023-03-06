@@ -112,7 +112,7 @@ class PnPGInstitutionServiceImpl implements PnPGInstitutionService {
         onboardingData.setInstitutionUpdate(mockMapInstitutionToInstitutionUpdate(institution)); // fixme
 
         String finalInstitutionInternalId = institution.getId();
-        onboardingData.getUsers().forEach(user -> {
+        /*onboardingData.getUsers().forEach(user -> {
 
             final Optional<it.pagopa.selfcare.onboarding.connector.model.user.User> searchResult =
                     userConnector.search(user.getTaxCode(), USER_FIELD_LIST);
@@ -123,7 +123,7 @@ class PnPGInstitutionServiceImpl implements PnPGInstitutionService {
                 user.setId(foundUser.getId());
             }, () -> user.setId(userConnector.saveUser(UserMapper.toSaveUserDto(user, finalInstitutionInternalId))
                     .getId().toString()));
-        });
+        });*/
 
         msCoreConnector.onboardingPGOrganization(onboardingData);
         log.trace("submitOnboarding PNPG start");
