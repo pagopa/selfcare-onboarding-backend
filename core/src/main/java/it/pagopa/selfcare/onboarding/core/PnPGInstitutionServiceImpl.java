@@ -77,12 +77,8 @@ class PnPGInstitutionServiceImpl implements PnPGInstitutionService {
         onboardingData.setContractPath("mock"); // fixme: needed?
         onboardingData.setContractVersion("mock");  // fixme: needed?
 
-        try {
-            submitOnboarding(onboardingData);
-        } catch (RuntimeException e) {
-            throw new ValidationException(String.format("Unable to onboard a PG Institution (external id: '%s') already onboarded",
-                    onboardingData.getInstitutionExternalId()));
-        }
+
+        submitOnboarding(onboardingData);
 
         log.trace("onboarding PNPG end");
     }
