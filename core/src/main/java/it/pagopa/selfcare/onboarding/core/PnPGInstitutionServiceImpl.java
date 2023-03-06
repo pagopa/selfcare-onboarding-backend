@@ -125,6 +125,9 @@ class PnPGInstitutionServiceImpl implements PnPGInstitutionService {
                     .getId().toString()));
         });*/
 
+        onboardingData.getUsers().forEach(user -> user.setId(userConnector.saveUser(UserMapper.toSaveUserDto(user, finalInstitutionInternalId))
+                .getId().toString())); // fixme: ripristina vecchia gestione
+
         msCoreConnector.onboardingPGOrganization(onboardingData);
         log.trace("submitOnboarding PNPG start");
     }
