@@ -23,6 +23,7 @@ public class PnPGOnboardingMapper {
                     .map(PnPGUserMapper::toUser)
                     .collect(Collectors.toList()));
             resource.setInstitutionExternalId(externalId);
+            resource.setBusinessName(model.getBillingData().getBusinessName());
             resource.setProductId(productId);
             resource.setInstitutionUpdate(mockInstitutionUpdate(externalId)); // fixme
             if (model.getBillingData() != null) {

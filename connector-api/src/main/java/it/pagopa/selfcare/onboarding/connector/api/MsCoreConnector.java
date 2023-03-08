@@ -1,6 +1,7 @@
 package it.pagopa.selfcare.onboarding.connector.api;
 
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.CreatePnPGInstitutionData;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.PnPGOnboardingData;
 
 public interface MsCoreConnector {
@@ -9,7 +10,7 @@ public interface MsCoreConnector {
 
     Institution getInstitutionByExternalId(String externalInstitutionId);
 
-    Institution createPGInstitutionUsingExternalId(String institutionExternalId, boolean existsInRegistry);
+    Institution createPGInstitutionUsingExternalId(CreatePnPGInstitutionData createPnPGData);
 
     void verifyOnboarding(String externalInstitutionId, String productId);
 

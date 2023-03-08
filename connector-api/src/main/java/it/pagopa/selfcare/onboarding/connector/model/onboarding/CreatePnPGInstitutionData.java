@@ -21,24 +21,10 @@ import java.util.Optional;
 
 @Data
 @NoArgsConstructor
-public class PnPGOnboardingData {
+public class CreatePnPGInstitutionData {
 
-    private String institutionExternalId;
-    private String businessName;
-    private String productId;
-    private String productName;
-    private List<User> users;
-    private String contractPath;
-    private String contractVersion;
-    private Billing billingRequest;
-    private InstitutionUpdate institutionUpdate;
-    private InstitutionType institutionType;
-    private String origin;
-    private String pricingPlan;
+    private String taxId;
+    private String description;
     private boolean existsInRegistry = true;
-
-    public List<User> getUsers() {
-        return Optional.ofNullable(users).orElse(Collections.emptyList());
-    }
 
 }

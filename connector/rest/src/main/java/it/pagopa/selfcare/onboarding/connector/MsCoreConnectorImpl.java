@@ -2,6 +2,7 @@ package it.pagopa.selfcare.onboarding.connector;
 
 import it.pagopa.selfcare.onboarding.connector.api.MsCoreConnector;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.CreatePnPGInstitutionData;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.GeographicTaxonomy;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.PnPGOnboardingData;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.User;
@@ -21,6 +22,7 @@ import java.util.stream.Collectors;
 class MsCoreConnectorImpl implements MsCoreConnector {
 
     protected static final String REQUIRED_INSTITUTION_ID_MESSAGE = "An Institution external id is required";
+    protected static final String REQUIRED_DESCRIPTION_MESSAGE = "An Institution decription is required";
     protected static final String REQUIRED_PRODUCT_ID_MESSAGE = "A product Id is required";
 
     private final MsCoreRestClient restClient;
@@ -85,11 +87,12 @@ class MsCoreConnectorImpl implements MsCoreConnector {
     }
 
     @Override
-    public Institution createPGInstitutionUsingExternalId(String institutionExternalId, boolean existsInRegistry) {
+    public Institution createPGInstitutionUsingExternalId(CreatePnPGInstitutionData createPnPGData) {
         log.trace("createPGInstitutionUsingExternalId start");
-        log.debug("createPGInstitutionUsingExternalId externalId = {}", institutionExternalId);
-        Assert.hasText(institutionExternalId, REQUIRED_INSTITUTION_ID_MESSAGE);
-        Institution result = restClient.createPGInstitutionUsingExternalId(institutionExternalId, existsInRegistry);
+        log.debug("createPGInstitutionUsingExternalId externalId = {}, description = {}", createPnPGData.getTaxId(), createPnPGData.getDescription());
+        Assert.hasText(createPnPGData.getTaxId(), REQUIRED_INSTITUTION_ID_MESSAGE);
+        Assert.hasText(createPnPGData.getDescription(), REQUIRED_DESCRIPTION_MESSAGE);
+        Institution result = restClient.createPGInstitutionUsingExternalId(createPnPGData);
         log.debug("createPGInstitutionUsingExternalId result = {}", result);
         log.trace("createPGInstitutionUsingExternalId end");
         return result;

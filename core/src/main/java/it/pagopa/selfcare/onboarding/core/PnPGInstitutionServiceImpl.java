@@ -10,10 +10,7 @@ import it.pagopa.selfcare.onboarding.connector.model.PnPGInstitutionLegalAddress
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionPnPGInfo;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.PnPGMatchInfo;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.InstitutionType;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.InstitutionUpdate;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.PnPGOnboardingData;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.User;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.*;
 import it.pagopa.selfcare.onboarding.connector.model.product.ProductRoleInfo;
 import it.pagopa.selfcare.onboarding.connector.model.user.Certification;
 import it.pagopa.selfcare.onboarding.connector.model.user.CertifiedField;
@@ -97,18 +94,13 @@ class PnPGInstitutionServiceImpl implements PnPGInstitutionService {
             userInfo.setProductRole(roleMappings.get(userInfo.getRole()).getRoles().get(0).getCode());
         });
 
-        Institution institution;
-        try {
-            institution = msCoreConnector.getInstitutionByExternalId(onboardingData.getInstitutionExternalId());
-        } catch (ResourceNotFoundException e) {
-            institution = msCoreConnector.createPGInstitutionUsingExternalId(onboardingData.getInstitutionExternalId(),
-                    onboardingData.isExistsInRegistry());
-        }
+        CreatePnPGInstitutionData createPGData = mapCreatePnPGInstitutionData(onboardingData);
+        Institution institution = msCoreConnector.createPGInstitutionUsingExternalId(createPGData);
 
         onboardingData.setInstitutionUpdate(mockMapInstitutionToInstitutionUpdate(institution)); // fixme
 
         String finalInstitutionInternalId = institution.getId();
-        /*onboardingData.getUsers().forEach(user -> {
+        onboardingData.getUsers().forEach(user -> {
 
             final Optional<it.pagopa.selfcare.onboarding.connector.model.user.User> searchResult =
                     userConnector.search(user.getTaxCode(), USER_FIELD_LIST);
@@ -119,13 +111,18 @@ class PnPGInstitutionServiceImpl implements PnPGInstitutionService {
                 user.setId(foundUser.getId());
             }, () -> user.setId(userConnector.saveUser(UserMapper.toSaveUserDto(user, finalInstitutionInternalId))
                     .getId().toString()));
-        });*/
-
-        onboardingData.getUsers().forEach(user -> user.setId(userConnector.saveUser(UserMapper.toSaveUserDto(user, finalInstitutionInternalId))
-                .getId().toString())); // fixme: ripristina vecchia gestione
+        });
 
         msCoreConnector.onboardingPGOrganization(onboardingData);
         log.trace("submitOnboarding PNPG start");
+    }
+
+    private CreatePnPGInstitutionData mapCreatePnPGInstitutionData(PnPGOnboardingData onboardingData) {
+        CreatePnPGInstitutionData createPGData = new CreatePnPGInstitutionData();
+        createPGData.setDescription(onboardingData.getBusinessName());
+        createPGData.setTaxId(onboardingData.getInstitutionExternalId());
+        createPGData.setExistsInRegistry(onboardingData.isExistsInRegistry());
+        return createPGData;
     }
 
     private InstitutionUpdate mapInstitutionToInstitutionUpdate(Institution institution) {
@@ -205,7 +202,6 @@ class PnPGInstitutionServiceImpl implements PnPGInstitutionService {
         }
         return isToUpdate;
     }
-
 
     @Override
     public PnPGMatchInfo matchInstitutionAndUser(String externalInstitutionId, User user) {
