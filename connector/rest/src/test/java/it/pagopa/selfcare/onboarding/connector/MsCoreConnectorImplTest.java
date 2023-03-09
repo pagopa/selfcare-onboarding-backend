@@ -9,10 +9,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.GeographicTaxonomy;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.InstitutionUpdate;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.PnPGOnboardingData;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.User;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.*;
 import it.pagopa.selfcare.onboarding.connector.rest.client.MsCoreRestClient;
 import it.pagopa.selfcare.onboarding.connector.rest.model.OnboardingInstitutionRequest;
 import org.junit.jupiter.api.Assertions;
@@ -185,9 +182,10 @@ class MsCoreConnectorImplTest {
     void createPGInstitutionUsingExternalId_nullId() {
         //given
         String externalId = null;
-        boolean existsInRegistry = true;
+        CreatePnPGInstitutionData createPnPGInstitutionData = mockInstance(new CreatePnPGInstitutionData(), "setTaxId");
+        createPnPGInstitutionData.setTaxId(externalId);
         //when
-        Executable executable = () -> msCoreConnector.createPGInstitutionUsingExternalId(externalId, existsInRegistry);
+        Executable executable = () -> msCoreConnector.createPGInstitutionUsingExternalId(createPnPGInstitutionData);
         //then
         IllegalArgumentException e = assertThrows(IllegalArgumentException.class, executable);
         assertEquals(REQUIRED_INSTITUTION_ID_MESSAGE, e.getMessage());
@@ -197,13 +195,12 @@ class MsCoreConnectorImplTest {
     @Test
     void creatPGInstitutionUsingExternalId() {
         //given
-        String externalId = "externalId";
-        boolean existsInRegistry = true;
+        CreatePnPGInstitutionData createPnPGInstitutionData = mockInstance(new CreatePnPGInstitutionData());
         Institution institutionMock = mockInstance(new Institution());
-        when(restClientMock.createPGInstitutionUsingExternalId(anyString(), anyBoolean()))
+        when(restClientMock.createPGInstitutionUsingExternalId(any()))
                 .thenReturn(institutionMock);
         //when
-        Institution institution = msCoreConnector.createPGInstitutionUsingExternalId(externalId, existsInRegistry);
+        Institution institution = msCoreConnector.createPGInstitutionUsingExternalId(createPnPGInstitutionData);
         //then
         assertNotNull(institution);
         reflectionEqualsByName(institutionMock, institution);
@@ -216,7 +213,7 @@ class MsCoreConnectorImplTest {
         assertEquals(institutionMock.getDigitalAddress(), institution.getDigitalAddress());
         assertEquals(institutionMock.getInstitutionType(), institution.getInstitutionType());
         verify(restClientMock, times(1))
-                .createPGInstitutionUsingExternalId(externalId, existsInRegistry);
+                .createPGInstitutionUsingExternalId(createPnPGInstitutionData);
     }
 
 
