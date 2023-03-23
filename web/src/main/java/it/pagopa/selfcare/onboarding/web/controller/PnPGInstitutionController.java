@@ -48,7 +48,7 @@ public class PnPGInstitutionController {
                                                          UserDto userDto) {
         log.trace("getInstitutionsByUserId start");
         log.debug(LogUtils.CONFIDENTIAL_MARKER, "getInstitutionsByUserId userDto = {}", userDto);
-        InstitutionPnPGInfo institutionPnPGInfo = pnPGInstitutionService.getInstitutionsByUser(UserMapper.toUser(userDto));
+        InstitutionPnPGInfo institutionPnPGInfo = pnPGInstitutionService.getInstitutionsByUser(PnPGUserMapper.toUser(userDto));
         InstitutionPnPGResource institutionPnPGResources = PnPGInstitutionMapper.toResource(institutionPnPGInfo);
         log.debug(LogUtils.CONFIDENTIAL_MARKER, "getInstitutionsByUserId result = {}", institutionPnPGResources);
         log.trace("getInstitutionsByUserId end");
