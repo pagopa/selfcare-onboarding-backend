@@ -58,7 +58,6 @@ class UserDtoTest {
     void validateNotNullFields() {
         // given
         UserDto model = TestUtils.mockInstance(new UserDto());
-        model.setEmail("email@example.com");
         // when
         Set<ConstraintViolation<Object>> violations = validator.validate(model);
         // then

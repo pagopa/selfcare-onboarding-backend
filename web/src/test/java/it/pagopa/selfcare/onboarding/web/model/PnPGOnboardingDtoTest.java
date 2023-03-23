@@ -54,7 +54,6 @@ class PnPGOnboardingDtoTest {
         // given
         PnPGOnboardingDto model = mockInstance(new PnPGOnboardingDto());
         UserDto userDto = mockInstance(new UserDto());
-        userDto.setEmail("email@example.com");
         model.setUsers(List.of(userDto));
         model.setBillingData(mockInstance(new PnPGBillingDataDto()));
         // when
