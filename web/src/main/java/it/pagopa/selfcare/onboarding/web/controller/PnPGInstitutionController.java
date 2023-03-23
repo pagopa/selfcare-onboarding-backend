@@ -15,6 +15,7 @@ import it.pagopa.selfcare.onboarding.core.PnPGInstitutionService;
 import it.pagopa.selfcare.onboarding.web.model.*;
 import it.pagopa.selfcare.onboarding.web.model.mapper.PnPGInstitutionMapper;
 import it.pagopa.selfcare.onboarding.web.model.mapper.PnPGOnboardingMapper;
+import it.pagopa.selfcare.onboarding.web.model.mapper.PnPGUserMapper;
 import it.pagopa.selfcare.onboarding.web.model.mapper.UserMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
