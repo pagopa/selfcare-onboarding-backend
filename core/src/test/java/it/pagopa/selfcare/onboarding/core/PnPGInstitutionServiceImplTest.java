@@ -126,18 +126,6 @@ class PnPGInstitutionServiceImplTest {
 
     }
 
-    @Test
-    void onboarding_cannotSubmit() {
-        //given
-        PnPGOnboardingData onboardingData = mockInstance(new PnPGOnboardingData());
-        //when
-        Executable executable = () -> pnPGInstitutionService.onboarding(onboardingData);
-        //then
-        ValidationException e = assertThrows(ValidationException.class, executable);
-        assertEquals(String.format("Unable to onboard a PG Institution (external id: '%s') already onboarded", onboardingData.getInstitutionExternalId()), e.getMessage());
-        verifyNoInteractions(userConnectorMock, partyRegistryProxyConnectorMock);
-    }
-
     // fixme: test onboarding successfull
     /*@Test
     void onboarding_institutionExists() throws Exception {

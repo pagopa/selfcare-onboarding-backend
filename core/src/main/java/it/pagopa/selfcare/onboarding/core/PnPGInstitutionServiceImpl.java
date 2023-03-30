@@ -4,6 +4,7 @@ import it.pagopa.selfcare.commons.base.logging.LogUtils;
 import it.pagopa.selfcare.commons.base.security.PartyRole;
 import it.pagopa.selfcare.onboarding.connector.api.MsCoreConnector;
 import it.pagopa.selfcare.onboarding.connector.api.PartyRegistryProxyConnector;
+import it.pagopa.selfcare.onboarding.connector.api.ProductsConnector;
 import it.pagopa.selfcare.onboarding.connector.api.UserRegistryConnector;
 import it.pagopa.selfcare.onboarding.connector.exceptions.ResourceNotFoundException;
 import it.pagopa.selfcare.onboarding.connector.model.PnPGInstitutionLegalAddressData;
@@ -11,6 +12,7 @@ import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionPnPGInfo;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.PnPGMatchInfo;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.*;
+import it.pagopa.selfcare.onboarding.connector.model.product.Product;
 import it.pagopa.selfcare.onboarding.connector.model.product.ProductRoleInfo;
 import it.pagopa.selfcare.onboarding.connector.model.user.Certification;
 import it.pagopa.selfcare.onboarding.connector.model.user.CertifiedField;
@@ -35,18 +37,23 @@ import static it.pagopa.selfcare.onboarding.core.InstitutionServiceImpl.MORE_THA
 @Service
 class PnPGInstitutionServiceImpl implements PnPGInstitutionService {
 
+    protected static final String REQUIRED_ONBOARDING_DATA_MESSAGE = "Onboarding data is required";
+
     private static final EnumSet<it.pagopa.selfcare.onboarding.connector.model.user.User.Fields> USER_FIELD_LIST = EnumSet.of(name, familyName, workContacts);
 
     private final PartyRegistryProxyConnector partyRegistryProxyConnector;
+    private final ProductsConnector productsConnector;
     private final MsCoreConnector msCoreConnector;
     private final UserRegistryConnector userConnector;
 
 
     @Autowired
     PnPGInstitutionServiceImpl(PartyRegistryProxyConnector partyRegistryProxyConnector,
+                               ProductsConnector productsConnector,
                                MsCoreConnector msCoreConnector,
                                UserRegistryConnector userConnector) {
         this.partyRegistryProxyConnector = partyRegistryProxyConnector;
+        this.productsConnector = productsConnector;
         this.msCoreConnector = msCoreConnector;
         this.userConnector = userConnector;
     }
@@ -66,9 +73,7 @@ class PnPGInstitutionServiceImpl implements PnPGInstitutionService {
     public void onboarding(PnPGOnboardingData onboardingData) {
         log.trace("onboarding PNPG start");
         log.debug("onboarding PNPG onboardingData = {}", onboardingData);
-//        Assert.notNull(onboardingData, REQUIRED_ONBOARDING_DATA_MESSAGE);
-//        Assert.notNull(onboardingData.getBilling(), REQUIRED_INSTITUTION_BILLING_DATA_MESSAGE);
-//        Assert.notNull(onboardingData.getInstitutionType(), REQUIRED_INSTITUTION_TYPE_MESSAGE);
+        Assert.notNull(onboardingData, REQUIRED_ONBOARDING_DATA_MESSAGE);
 
         submitOnboarding(onboardingData);
 
@@ -77,7 +82,13 @@ class PnPGInstitutionServiceImpl implements PnPGInstitutionService {
 
     private void submitOnboarding(PnPGOnboardingData onboardingData) {
         log.trace("submitOnboarding PNPG start");
-        final EnumMap<PartyRole, ProductRoleInfo> roleMappings = mockRoleMapPnPGProduct(); // fixme
+//        final EnumMap<PartyRole, ProductRoleInfo> roleMappings = mockRoleMapPnPGProduct(); // fixme
+
+        Product product = productsConnector.getProduct(onboardingData.getProductId(), InstitutionType.PG);
+        Assert.notNull(product, "Product is required");
+
+        final EnumMap<PartyRole, ProductRoleInfo> roleMappings = product.getRoleMappings();
+
         Assert.notNull(roleMappings, "Role mappings is required");
         onboardingData.getUsers().forEach(userInfo -> {
             Assert.notNull(roleMappings.get(userInfo.getRole()),
@@ -92,7 +103,7 @@ class PnPGInstitutionServiceImpl implements PnPGInstitutionService {
         CreatePnPGInstitutionData createPGData = mapCreatePnPGInstitutionData(onboardingData);
         Institution institution = msCoreConnector.createPGInstitutionUsingExternalId(createPGData);
 
-        onboardingData.setInstitutionUpdate(mockMapInstitutionToInstitutionUpdate(institution)); // fixme
+//        onboardingData.setInstitutionUpdate(mockMapInstitutionToInstitutionUpdate(institution)); // fixme
 
         String finalInstitutionInternalId = institution.getId();
         onboardingData.getUsers().forEach(user -> {

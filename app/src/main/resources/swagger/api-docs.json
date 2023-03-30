@@ -1407,15 +1407,9 @@
       },
       "UserDto" : {
         "title" : "UserDto",
-        "required" : [ "email", "name", "role", "surname", "taxCode" ],
+        "required" : [ "name", "role", "surname", "taxCode" ],
         "type" : "object",
         "properties" : {
-          "email" : {
-            "type" : "string",
-            "description" : "User's email",
-            "format" : "email",
-            "example" : "email@example.com"
-          },
           "name" : {
             "type" : "string",
             "description" : "User's name"
