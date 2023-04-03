@@ -6,7 +6,6 @@ import it.pagopa.selfcare.onboarding.connector.api.MsCoreConnector;
 import it.pagopa.selfcare.onboarding.connector.api.PartyRegistryProxyConnector;
 import it.pagopa.selfcare.onboarding.connector.api.ProductsConnector;
 import it.pagopa.selfcare.onboarding.connector.api.UserRegistryConnector;
-import it.pagopa.selfcare.onboarding.connector.exceptions.ResourceNotFoundException;
 import it.pagopa.selfcare.onboarding.connector.model.PnPGInstitutionLegalAddressData;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionPnPGInfo;
@@ -26,7 +25,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
-import javax.validation.ValidationException;
 import java.util.*;
 
 import static it.pagopa.selfcare.onboarding.connector.model.user.User.Fields.*;
@@ -62,7 +60,6 @@ class PnPGInstitutionServiceImpl implements PnPGInstitutionService {
     public InstitutionPnPGInfo getInstitutionsByUser(User user) {
         log.trace("getInstitutionsByUserId start");
         log.debug(LogUtils.CONFIDENTIAL_MARKER, "getInstitutionsByUserId user = {}", user);
-        user.setId(userConnector.saveUser(UserMapper.toSaveUserDto(user, "")).getId().toString());
         InstitutionPnPGInfo result = partyRegistryProxyConnector.getInstitutionsByUserFiscalCode(user.getTaxCode());
         log.debug(LogUtils.CONFIDENTIAL_MARKER, "getInstitutionsByUserId result = {}", result);
         log.trace("getInstitutionsByUserId end");
@@ -88,7 +85,6 @@ class PnPGInstitutionServiceImpl implements PnPGInstitutionService {
         Assert.notNull(product, "Product is required");
 
         final EnumMap<PartyRole, ProductRoleInfo> roleMappings = product.getRoleMappings();
-
         Assert.notNull(roleMappings, "Role mappings is required");
         onboardingData.getUsers().forEach(userInfo -> {
             Assert.notNull(roleMappings.get(userInfo.getRole()),
