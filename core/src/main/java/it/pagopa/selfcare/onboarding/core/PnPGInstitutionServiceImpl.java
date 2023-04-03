@@ -18,7 +18,7 @@ import it.pagopa.selfcare.onboarding.connector.model.user.CertifiedField;
 import it.pagopa.selfcare.onboarding.connector.model.user.MutableUserFieldsDto;
 import it.pagopa.selfcare.onboarding.connector.model.user.WorkContact;
 import it.pagopa.selfcare.onboarding.connector.model.user.mapper.CertifiedFieldMapper;
-import it.pagopa.selfcare.onboarding.connector.model.user.mapper.UserMapper;
+import it.pagopa.selfcare.onboarding.connector.model.user.mapper.PnPGUserMapper;
 import it.pagopa.selfcare.onboarding.core.exception.UpdateNotAllowedException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,7 +79,6 @@ class PnPGInstitutionServiceImpl implements PnPGInstitutionService {
 
     private void submitOnboarding(PnPGOnboardingData onboardingData) {
         log.trace("submitOnboarding PNPG start");
-//        final EnumMap<PartyRole, ProductRoleInfo> roleMappings = mockRoleMapPnPGProduct(); // fixme
 
         Product product = productsConnector.getProduct(onboardingData.getProductId(), InstitutionType.PG);
         Assert.notNull(product, "Product is required");
@@ -99,7 +98,7 @@ class PnPGInstitutionServiceImpl implements PnPGInstitutionService {
         CreatePnPGInstitutionData createPGData = mapCreatePnPGInstitutionData(onboardingData);
         Institution institution = msCoreConnector.createPGInstitutionUsingExternalId(createPGData);
 
-//        onboardingData.setInstitutionUpdate(mockMapInstitutionToInstitutionUpdate(institution)); // fixme
+        onboardingData.setInstitutionUpdate(mockMapInstitutionToInstitutionUpdate(institution)); // fixme
 
         String finalInstitutionInternalId = institution.getId();
         onboardingData.getUsers().forEach(user -> {
@@ -111,7 +110,7 @@ class PnPGInstitutionServiceImpl implements PnPGInstitutionService {
                 updateRequest.ifPresent(mutableUserFieldsDto ->
                         userConnector.updateUser(UUID.fromString(foundUser.getId()), mutableUserFieldsDto));
                 user.setId(foundUser.getId());
-            }, () -> user.setId(userConnector.saveUser(UserMapper.toSaveUserDto(user, finalInstitutionInternalId))
+            }, () -> user.setId(userConnector.saveUser(PnPGUserMapper.toSaveUserDto(user, finalInstitutionInternalId))
                     .getId().toString()));
         });
 
@@ -127,40 +126,12 @@ class PnPGInstitutionServiceImpl implements PnPGInstitutionService {
         return createPGData;
     }
 
-    private InstitutionUpdate mapInstitutionToInstitutionUpdate(Institution institution) {
-        InstitutionUpdate institutionUpdate = new InstitutionUpdate();
-        institutionUpdate.setAddress(institution.getAddress());
-        institutionUpdate.setDescription(institution.getDescription());
-        institutionUpdate.setDigitalAddress(institution.getDigitalAddress());
-        institutionUpdate.setTaxCode(institution.getTaxCode());
-        institutionUpdate.setZipCode(institution.getZipCode());
-        institutionUpdate.setPaymentServiceProvider(institution.getPaymentServiceProvider());
-        institutionUpdate.setDataProtectionOfficer(institution.getDataProtectionOfficer());
-        institutionUpdate.setGeographicTaxonomies(institution.getGeographicTaxonomies());
-        return institutionUpdate;
-    }
-
     private InstitutionUpdate mockMapInstitutionToInstitutionUpdate(Institution institution) {
         InstitutionUpdate institutionUpdate = new InstitutionUpdate();
         institutionUpdate.setTaxCode(institution.getTaxCode());
         institutionUpdate.setInstitutionType(InstitutionType.PG);
         institutionUpdate.setGeographicTaxonomies(new ArrayList<>());
         return institutionUpdate;
-    }
-
-    private EnumMap<PartyRole, ProductRoleInfo> mockRoleMapPnPGProduct() {
-        ProductRoleInfo.ProductRole role = new ProductRoleInfo.ProductRole();
-        role.setCode("referente amministrativo");
-        role.setLabel("Amministratore");
-        role.setDescription("Amministratore");
-        List<ProductRoleInfo.ProductRole> roleList = new ArrayList<>();
-        roleList.add(role);
-        ProductRoleInfo productRoleInfo = new ProductRoleInfo();
-        productRoleInfo.setRoles(roleList);
-        final EnumMap<PartyRole, ProductRoleInfo> roleMappings = new EnumMap<>(PartyRole.class);
-        roleMappings.put(PartyRole.MANAGER, productRoleInfo);
-
-        return roleMappings;
     }
 
     private Optional<MutableUserFieldsDto> createUpdateRequest(User user, it.pagopa.selfcare.onboarding.connector.model.user.User foundUser, String institutionInternalId) {

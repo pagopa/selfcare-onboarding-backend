@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 import java.util.Map;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class UserMapper {
+public class PnPGUserMapper {
 
     public static SaveUserDto toSaveUserDto(User model, String institutionId) {
         SaveUserDto resource = null;
@@ -34,11 +34,11 @@ public class UserMapper {
 
 
     private static void fillMutableUserFieldsDto(User model, String institutionId, MutableUserFieldsDto resource) {
-        resource.setName(CertifiedFieldMapper.map(model.getName()));
-        resource.setFamilyName(CertifiedFieldMapper.map(model.getSurname()));
+        resource.setName(CertifiedFieldPnPGMapper.map(model.getName()));
+        resource.setFamilyName(CertifiedFieldPnPGMapper.map(model.getSurname()));
         if (institutionId != null) {
             WorkContact contact = new WorkContact();
-            contact.setEmail(CertifiedFieldMapper.map(model.getEmail()));
+            contact.setEmail(CertifiedFieldPnPGMapper.map(model.getEmail()));
             resource.setWorkContacts(Map.of(institutionId, contact));
         }
     }
