@@ -18,7 +18,7 @@ import it.pagopa.selfcare.onboarding.connector.model.user.CertifiedField;
 import it.pagopa.selfcare.onboarding.connector.model.user.MutableUserFieldsDto;
 import it.pagopa.selfcare.onboarding.connector.model.user.WorkContact;
 import it.pagopa.selfcare.onboarding.connector.model.user.mapper.CertifiedFieldMapper;
-import it.pagopa.selfcare.onboarding.connector.model.user.mapper.PnPGUserMapper;
+import it.pagopa.selfcare.onboarding.connector.model.user.mapper.UserMapper;
 import it.pagopa.selfcare.onboarding.core.exception.UpdateNotAllowedException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -110,7 +110,7 @@ class PnPGInstitutionServiceImpl implements PnPGInstitutionService {
                 updateRequest.ifPresent(mutableUserFieldsDto ->
                         userConnector.updateUser(UUID.fromString(foundUser.getId()), mutableUserFieldsDto));
                 user.setId(foundUser.getId());
-            }, () -> user.setId(userConnector.saveUser(PnPGUserMapper.toSaveUserDto(user, finalInstitutionInternalId))
+            }, () -> user.setId(userConnector.saveUser(UserMapper.toSaveUserDto(user, finalInstitutionInternalId))
                     .getId().toString()));
         });
 
