@@ -6,6 +6,7 @@ import it.pagopa.selfcare.onboarding.connector.api.MsCoreConnector;
 import it.pagopa.selfcare.onboarding.connector.api.PartyRegistryProxyConnector;
 import it.pagopa.selfcare.onboarding.connector.api.ProductsConnector;
 import it.pagopa.selfcare.onboarding.connector.api.UserRegistryConnector;
+import it.pagopa.selfcare.onboarding.connector.exceptions.ResourceNotFoundException;
 import it.pagopa.selfcare.onboarding.connector.model.PnPGInstitutionLegalAddressData;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionPnPGInfo;
@@ -96,7 +97,12 @@ class PnPGInstitutionServiceImpl implements PnPGInstitutionService {
         });
 
         CreatePnPGInstitutionData createPGData = mapCreatePnPGInstitutionData(onboardingData);
-        Institution institution = msCoreConnector.createPGInstitutionUsingExternalId(createPGData);
+        Institution institution;
+        try {
+            institution = msCoreConnector.getInstitutionByExternalId(onboardingData.getInstitutionExternalId());
+        } catch (ResourceNotFoundException e) {
+            institution = msCoreConnector.createPGInstitutionUsingExternalId(createPGData);
+        }
 
         onboardingData.setInstitutionUpdate(mockMapInstitutionToInstitutionUpdate(institution)); // fixme
 
