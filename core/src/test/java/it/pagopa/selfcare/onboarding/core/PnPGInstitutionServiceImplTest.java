@@ -14,7 +14,6 @@ import it.pagopa.selfcare.onboarding.connector.model.user.UserId;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.api.function.Executable;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.InjectMocks;
@@ -22,11 +21,11 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import javax.validation.ValidationException;
 import java.util.List;
 
 import static it.pagopa.selfcare.commons.utils.TestUtils.mockInstance;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
@@ -65,8 +64,6 @@ class PnPGInstitutionServiceImplTest {
         List<BusinessPnPG> businessPnPGList = List.of(mockInstance(new BusinessPnPG()));
         InstitutionPnPGInfo institutionPnPGInfo = mockInstance(new InstitutionPnPGInfo(), "setBusinesses");
         institutionPnPGInfo.setBusinesses(businessPnPGList);
-        when(userConnectorMock.saveUser(any()))
-                .thenReturn(userId);
         when(partyRegistryProxyConnectorMock.getInstitutionsByUserFiscalCode(anyString()))
                 .thenReturn(institutionPnPGInfo);
         //when
@@ -77,8 +74,6 @@ class PnPGInstitutionServiceImplTest {
         assertEquals(institutionPnPGInfo.getBusinesses().get(0).getBusinessTaxId(), result.getBusinesses().get(0).getBusinessTaxId());
         assertEquals(institutionPnPGInfo.getLegalTaxId(), result.getLegalTaxId());
         assertEquals(institutionPnPGInfo.getRequestDateTime(), result.getRequestDateTime());
-        verify(userConnectorMock, times(1))
-                .saveUser(saveUserDto);
         verify(partyRegistryProxyConnectorMock, times(1))
                 .getInstitutionsByUserFiscalCode(taxCode);
         verifyNoMoreInteractions(partyRegistryProxyConnectorMock);

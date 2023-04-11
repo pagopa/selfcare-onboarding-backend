@@ -46,7 +46,7 @@ public class PnPGInstitutionController {
     @ApiOperation(value = "", notes = "${swagger.onboarding.pnPGInstitutions.api.getInstitutionsByUser}")
     public InstitutionPnPGResource getInstitutionsByUser(@RequestBody
                                                          @Valid
-                                                         UserDto userDto) {
+                                                         PnPGUserDto userDto) {
         log.trace("getInstitutionsByUserId start");
         log.debug(LogUtils.CONFIDENTIAL_MARKER, "getInstitutionsByUserId userDto = {}", userDto);
         InstitutionPnPGInfo institutionPnPGInfo = pnPGInstitutionService.getInstitutionsByUser(PnPGUserMapper.toUser(userDto));

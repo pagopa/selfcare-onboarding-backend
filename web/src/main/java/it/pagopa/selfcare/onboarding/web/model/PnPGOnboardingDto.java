@@ -14,7 +14,7 @@ public class PnPGOnboardingDto {
     @ApiModelProperty(value = "${swagger.onboarding.institutions.model.users}", required = true)
     @NotEmpty
     @Valid
-    private List<UserDto> users;
+    private List<PnPGUserDto> users;
 
     @ApiModelProperty(value = "${swagger.onboarding.institutions.model.billingData}", required = true)
     @NotNull

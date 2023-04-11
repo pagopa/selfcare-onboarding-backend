@@ -53,7 +53,7 @@ class PnPGOnboardingDtoTest {
     void validateNotNullFields() {
         // given
         PnPGOnboardingDto model = mockInstance(new PnPGOnboardingDto());
-        UserDto userDto = mockInstance(new UserDto());
+        PnPGUserDto userDto = mockInstance(new PnPGUserDto());
         model.setUsers(List.of(userDto));
         model.setBillingData(mockInstance(new PnPGBillingDataDto()));
         // when
