@@ -9,31 +9,6 @@ import org.junit.jupiter.params.provider.ValueSource;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 class PnPGUserMapperTest {
-
-    /*@ParameterizedTest
-    @ValueSource(classes = {
-            UserDto.class,
-            UserDataValidationDto.class
-    })
-    void toUser(Class<?> clazz) throws Exception {
-        //given
-        final Object model = TestUtils.mockInstance(clazz.getDeclaredConstructor().newInstance());
-        //when
-        User resource;
-        if (PnPGUserDto.class.isAssignableFrom(clazz)) {
-            resource = PnPGUserMapper.toUser((PnPGUserDto) model);
-        } else if (UserDataValidationDto.class.isAssignableFrom(clazz)) {
-            resource = UserMapper.toUser((UserDataValidationDto) model);
-        } else {
-            throw new IllegalArgumentException();
-        }
-        //then
-        assertNotNull(resource);
-        resource.setProductRole("setProductRole"); // fixme: what?
-        TestUtils.reflectionEqualsByName(resource, model);
-    }*/
-
-
     @ParameterizedTest
     @ValueSource(classes = {
             UserDto.class,

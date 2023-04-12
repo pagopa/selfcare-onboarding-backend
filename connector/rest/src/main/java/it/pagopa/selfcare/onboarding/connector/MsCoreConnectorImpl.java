@@ -33,7 +33,6 @@ class MsCoreConnectorImpl implements MsCoreConnector {
     }
 
 
-    // fixme: PNPGONBOARDINGDATA should be equal to ONBOARDINGDATA (and then the method shoul be renamed) if billingRequest will be refactored to billing
     @Override
     public void onboardingPGOrganization(PnPGOnboardingData onboardingData) {
         Assert.notNull(onboardingData, "Onboarding data is required");

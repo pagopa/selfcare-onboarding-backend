@@ -104,8 +104,6 @@ class PnPGInstitutionServiceImpl implements PnPGInstitutionService {
             institution = msCoreConnector.createPGInstitutionUsingExternalId(createPGData);
         }
 
-        onboardingData.setInstitutionUpdate(mockMapInstitutionToInstitutionUpdate(institution)); // fixme
-
         String finalInstitutionInternalId = institution.getId();
         onboardingData.getUsers().forEach(user -> {
 

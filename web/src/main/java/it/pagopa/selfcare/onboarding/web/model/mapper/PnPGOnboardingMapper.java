@@ -25,9 +25,9 @@ public class PnPGOnboardingMapper {
             resource.setInstitutionExternalId(externalId);
             resource.setBusinessName(model.getBillingData().getBusinessName());
             resource.setProductId(productId);
-            resource.setInstitutionUpdate(mockInstitutionUpdate(externalId)); // fixme
+            // resource.setInstitutionUpdate(mockInstitutionUpdate(externalId)); // fixme
             if (model.getBillingData() != null) {
-                resource.setBillingRequest(mockBillingData(externalId)); // fixme
+                resource.setBillingRequest(fillBillingData(externalId));
             }
             resource.setInstitutionType(InstitutionType.PG);
             if (model.getBillingData().getBusinessName().equals("")) {
@@ -44,10 +44,9 @@ public class PnPGOnboardingMapper {
         return institutionUpdate;
     }
 
-    private static Billing mockBillingData(String externalId) {
+    private static Billing fillBillingData(String externalId) {
         Billing billingData = new Billing();
         billingData.setVatNumber(externalId);
-        billingData.setRecipientCode("");
         billingData.setPublicServices(false);
         return billingData;
     }
