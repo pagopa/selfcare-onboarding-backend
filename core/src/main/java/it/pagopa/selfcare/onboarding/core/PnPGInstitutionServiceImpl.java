@@ -104,9 +104,10 @@ class PnPGInstitutionServiceImpl implements PnPGInstitutionService {
             institution = msCoreConnector.createPGInstitutionUsingExternalId(createPGData);
         }
 
+        onboardingData.setInstitutionUpdate(mapInstitutionToInstitutionUpdate(institution));
+
         String finalInstitutionInternalId = institution.getId();
         onboardingData.getUsers().forEach(user -> {
-
             final Optional<it.pagopa.selfcare.onboarding.connector.model.user.User> searchResult =
                     userConnector.search(user.getTaxCode(), USER_FIELD_LIST);
             searchResult.ifPresentOrElse(foundUser -> {
@@ -130,7 +131,7 @@ class PnPGInstitutionServiceImpl implements PnPGInstitutionService {
         return createPGData;
     }
 
-    private InstitutionUpdate mockMapInstitutionToInstitutionUpdate(Institution institution) {
+    private InstitutionUpdate mapInstitutionToInstitutionUpdate(Institution institution) {
         InstitutionUpdate institutionUpdate = new InstitutionUpdate();
         institutionUpdate.setTaxCode(institution.getTaxCode());
         institutionUpdate.setInstitutionType(InstitutionType.PG);

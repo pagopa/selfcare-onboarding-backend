@@ -436,7 +436,7 @@
           "content" : {
             "application/json" : {
               "schema" : {
-                "$ref": "#/components/schemas/PnPGUserDto"
+                "$ref" : "#/components/schemas/PnPGUserDto"
               }
             }
           }
@@ -1278,69 +1278,56 @@
       "PnPGOnboardingDto" : {
         "title" : "PnPGOnboardingDto",
         "required" : [ "billingData", "users" ],
-        "type": "object",
-        "properties": {
-          "billingData": {
-            "description": "Institution's billing information",
-            "$ref": "#/components/schemas/PnPGBillingDataDto"
+        "type" : "object",
+        "properties" : {
+          "billingData" : {
+            "description" : "Institution's billing information",
+            "$ref" : "#/components/schemas/PnPGBillingDataDto"
           },
-          "users": {
-            "type": "array",
-            "description": "List of onboarding users",
-            "items": {
-              "$ref": "#/components/schemas/PnPGUserDto"
+          "users" : {
+            "type" : "array",
+            "description" : "List of onboarding users",
+            "items" : {
+              "$ref" : "#/components/schemas/PnPGUserDto"
             }
           }
         }
       },
-      "PnPGUserDto": {
-        "title": "PnPGUserDto",
-        "required": [
-          "name",
-          "role",
-          "surname",
-          "taxCode"
-        ],
-        "type": "object",
-        "properties": {
-          "email": {
-            "type": "string",
-            "description": "User's email"
+      "PnPGUserDto" : {
+        "title" : "PnPGUserDto",
+        "required" : [ "name", "role", "surname", "taxCode" ],
+        "type" : "object",
+        "properties" : {
+          "email" : {
+            "type" : "string",
+            "description" : "User's email"
           },
-          "name": {
-            "type": "string",
-            "description": "User's name"
+          "name" : {
+            "type" : "string",
+            "description" : "User's name"
           },
-          "role": {
-            "type": "string",
-            "description": "User's role",
-            "enum": [
-              "DELEGATE",
-              "MANAGER",
-              "OPERATOR",
-              "SUB_DELEGATE"
-            ]
+          "role" : {
+            "type" : "string",
+            "description" : "User's role",
+            "enum" : [ "DELEGATE", "MANAGER", "OPERATOR", "SUB_DELEGATE" ]
           },
-          "surname": {
-            "type": "string",
-            "description": "User's surname"
+          "surname" : {
+            "type" : "string",
+            "description" : "User's surname"
           },
-          "taxCode": {
-            "type": "string",
-            "description": "User's fiscal code"
+          "taxCode" : {
+            "type" : "string",
+            "description" : "User's fiscal code"
           }
         }
       },
-      "Problem": {
-        "title": "Problem",
-        "required": [
-          "status",
-          "title"
-        ],
-        "type": "object",
-        "properties": {
-          "detail": {
-            "type": "string",
+      "Problem" : {
+        "title" : "Problem",
+        "required" : [ "status", "title" ],
+        "type" : "object",
+        "properties" : {
+          "detail" : {
+            "type" : "string",
             "description" : "Human-readable description of this specific problem."
           },
           "instance" : {
