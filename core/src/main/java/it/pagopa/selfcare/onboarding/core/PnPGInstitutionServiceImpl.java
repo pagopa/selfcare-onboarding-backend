@@ -14,13 +14,8 @@ import it.pagopa.selfcare.onboarding.connector.model.institutions.PnPGMatchInfo;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.*;
 import it.pagopa.selfcare.onboarding.connector.model.product.Product;
 import it.pagopa.selfcare.onboarding.connector.model.product.ProductRoleInfo;
-import it.pagopa.selfcare.onboarding.connector.model.user.Certification;
-import it.pagopa.selfcare.onboarding.connector.model.user.CertifiedField;
 import it.pagopa.selfcare.onboarding.connector.model.user.MutableUserFieldsDto;
-import it.pagopa.selfcare.onboarding.connector.model.user.WorkContact;
-import it.pagopa.selfcare.onboarding.connector.model.user.mapper.CertifiedFieldMapper;
 import it.pagopa.selfcare.onboarding.connector.model.user.mapper.UserMapper;
-import it.pagopa.selfcare.onboarding.core.exception.UpdateNotAllowedException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,8 +24,7 @@ import org.springframework.util.Assert;
 import java.util.*;
 
 import static it.pagopa.selfcare.onboarding.connector.model.user.User.Fields.*;
-import static it.pagopa.selfcare.onboarding.core.InstitutionServiceImpl.ATLEAST_ONE_PRODUCT_ROLE_REQUIRED;
-import static it.pagopa.selfcare.onboarding.core.InstitutionServiceImpl.MORE_THAN_ONE_PRODUCT_ROLE_AVAILABLE;
+import static it.pagopa.selfcare.onboarding.core.InstitutionServiceImpl.*;
 
 @Slf4j
 @Service
@@ -137,48 +131,6 @@ class PnPGInstitutionServiceImpl implements PnPGInstitutionService {
         institutionUpdate.setInstitutionType(InstitutionType.PG);
         institutionUpdate.setGeographicTaxonomies(new ArrayList<>());
         return institutionUpdate;
-    }
-
-    private Optional<MutableUserFieldsDto> createUpdateRequest(User user, it.pagopa.selfcare.onboarding.connector.model.user.User foundUser, String institutionInternalId) {
-        Optional<MutableUserFieldsDto> mutableUserFieldsDto = Optional.empty();
-        if (isFieldToUpdate(foundUser.getName(), user.getName())) {
-            MutableUserFieldsDto dto = new MutableUserFieldsDto();
-            dto.setName(CertifiedFieldMapper.map(user.getName()));
-            mutableUserFieldsDto = Optional.of(dto);
-        }
-        if (isFieldToUpdate(foundUser.getFamilyName(), user.getSurname())) {
-            MutableUserFieldsDto dto = mutableUserFieldsDto.orElseGet(MutableUserFieldsDto::new);
-            dto.setFamilyName(CertifiedFieldMapper.map(user.getSurname()));
-            mutableUserFieldsDto = Optional.of(dto);
-        }
-        if (foundUser.getWorkContacts() == null
-                || !foundUser.getWorkContacts().containsKey(institutionInternalId)
-                || isFieldToUpdate(foundUser.getWorkContacts().get(institutionInternalId).getEmail(), user.getEmail())) {
-            MutableUserFieldsDto dto = mutableUserFieldsDto.orElseGet(MutableUserFieldsDto::new);
-            final WorkContact workContact = new WorkContact();
-            workContact.setEmail(CertifiedFieldMapper.map(user.getEmail()));
-            dto.setWorkContacts(Map.of(institutionInternalId, workContact));
-            mutableUserFieldsDto = Optional.of(dto);
-        }
-        return mutableUserFieldsDto;
-    }
-
-    private boolean isFieldToUpdate(CertifiedField<String> certifiedField, String value) {
-        boolean isToUpdate = true;
-        if (certifiedField != null) {
-            if (Certification.NONE.equals(certifiedField.getCertification())) {
-                if (certifiedField.getValue().equals(value)) {
-                    isToUpdate = false;
-                }
-            } else {
-                if (certifiedField.getValue().equalsIgnoreCase(value)) {
-                    isToUpdate = false;
-                } else {
-                    throw new UpdateNotAllowedException(String.format("Update user request not allowed because of value %s", value));
-                }
-            }
-        }
-        return isToUpdate;
     }
 
     @Override

@@ -152,7 +152,7 @@ class InstitutionServiceImpl implements InstitutionService {
     }
 
 
-    private Optional<MutableUserFieldsDto> createUpdateRequest(User user, it.pagopa.selfcare.onboarding.connector.model.user.User foundUser, String institutionInternalId) {
+    protected static Optional<MutableUserFieldsDto> createUpdateRequest(User user, it.pagopa.selfcare.onboarding.connector.model.user.User foundUser, String institutionInternalId) {
         Optional<MutableUserFieldsDto> mutableUserFieldsDto = Optional.empty();
         if (isFieldToUpdate(foundUser.getName(), user.getName())) {
             MutableUserFieldsDto dto = new MutableUserFieldsDto();
@@ -177,7 +177,7 @@ class InstitutionServiceImpl implements InstitutionService {
     }
 
 
-    private boolean isFieldToUpdate(CertifiedField<String> certifiedField, String value) {
+    private static boolean isFieldToUpdate(CertifiedField<String> certifiedField, String value) {
         boolean isToUpdate = true;
         if (certifiedField != null) {
             if (Certification.NONE.equals(certifiedField.getCertification())) {
