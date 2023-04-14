@@ -30,7 +30,6 @@ import java.util.TimeZone;
 import static it.pagopa.selfcare.commons.utils.TestUtils.mockInstance;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -89,7 +88,7 @@ class PartyRegistryProxyImplTest {
         assertEquals(institutions.getBusinesses().get(1).getBusinessName(), institutionPnPGInfo.getBusinesses().get(1).getBusinessName());
         assertEquals(institutions.getBusinesses().get(1).getBusinessTaxId(), institutionPnPGInfo.getBusinesses().get(1).getBusinessTaxId());
         verify(restClientMock, times(1))
-                .getInstitutionsByUserLegalTaxId(eq(institutionByLegalTaxIdRequest));
+                .getInstitutionsByUserLegalTaxId(institutionByLegalTaxIdRequest);
         verifyNoMoreInteractions(restClientMock);
     }
 
