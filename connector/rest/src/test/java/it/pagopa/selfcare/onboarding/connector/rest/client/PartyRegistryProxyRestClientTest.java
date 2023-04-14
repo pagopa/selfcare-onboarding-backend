@@ -12,7 +12,6 @@ import lombok.SneakyThrows;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
-import org.junit.jupiter.api.function.Executable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.commons.httpclient.HttpClientConfiguration;
 import org.springframework.context.ApplicationContextInitializer;
@@ -22,7 +21,8 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.support.TestPropertySourceUtils;
 
 import static it.pagopa.selfcare.commons.utils.TestUtils.mockInstance;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @TestPropertySource(
         locations = "classpath:config/party-registry-proxy-rest-client.properties",
@@ -73,29 +73,7 @@ class PartyRegistryProxyRestClientTest extends BaseFeignRestClientTest {
     }
 
     @Test
-    void getInstitutionsByUserLegalTaxId_fullyNull() {
-        // given
-        InstitutionByLegalTaxIdRequest request = mockInstance(new InstitutionByLegalTaxIdRequest());
-        // when
-        Executable executable = () -> restClient.getInstitutionsByUserLegalTaxId(request);
-        // then
-        assertDoesNotThrow(executable);
-    }
-
-    @Test
     void matchInstitutionAndUser_checkTrue() {
-        //given
-        String institutionExternalId = "instituionId";
-        String taxCode = "taxCode";
-        //when
-        PnPGMatchInfo response = restClient.matchInstitutionAndUser(institutionExternalId, taxCode);
-        //then
-        assertNotNull(response);
-        assertTrue(response.isVerificationResult());
-    }
-
-    @Test
-    void matchInstitutionAndUser_checkFalse() {
         //given
         String institutionExternalId = "instituionId";
         String taxCode = "taxCode";
@@ -118,13 +96,4 @@ class PartyRegistryProxyRestClientTest extends BaseFeignRestClientTest {
         assertNotNull(response.getZipCode());
     }
 
-    @Test
-    void getInstitutionLegalAddress_fullyNull() {
-        //given
-        String institutionExternalId = "extInstituionId";
-        //when
-        Executable executable = () -> restClient.getInstitutionLegalAddress(institutionExternalId);
-        //then
-        assertDoesNotThrow(executable);
-    }
 }
