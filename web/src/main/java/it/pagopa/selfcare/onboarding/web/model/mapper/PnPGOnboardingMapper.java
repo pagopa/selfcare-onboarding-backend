@@ -25,7 +25,7 @@ public class PnPGOnboardingMapper {
             resource.setInstitutionExternalId(externalId);
             resource.setBusinessName(model.getBillingData().getBusinessName());
             resource.setProductId(productId);
-            // resource.setInstitutionUpdate(mockInstitutionUpdate(externalId)); // fixme
+            resource.setInstitutionUpdate(fillInstitutionUpdate(externalId));
             if (model.getBillingData() != null) {
                 resource.setBillingRequest(fillBillingData(externalId));
             }
@@ -37,7 +37,7 @@ public class PnPGOnboardingMapper {
         return resource;
     }
 
-    private static InstitutionUpdate mockInstitutionUpdate(String externalId) {
+    private static InstitutionUpdate fillInstitutionUpdate(String externalId) {
         InstitutionUpdate institutionUpdate = new InstitutionUpdate();
         institutionUpdate.setInstitutionType(InstitutionType.PG);
         institutionUpdate.setTaxCode(externalId);
