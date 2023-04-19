@@ -4,7 +4,7 @@ image:
 
 ingress:
   annotations:
-    nginx.ingress.kubernetes.io/cors-allow-origin: "https://uat.selfcare.pagopa.it,http://localhost:3000"
+    nginx.ingress.kubernetes.io/cors-allow-origin: "https://pnpg.uat.selfcare.pagopa.it,http://localhost:3000"
   tls:
     - hosts:
         - uat01.pnpg.internal.uat.selfcare.pagopa.it
