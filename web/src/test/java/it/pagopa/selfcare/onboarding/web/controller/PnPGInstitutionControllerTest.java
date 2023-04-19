@@ -54,39 +54,39 @@ class PnPGInstitutionControllerTest {
     private PnPGInstitutionService pnPGInstitutionServiceMock;
 
 
-//    @Test
-//    void getInstitutionsByUserId(@Value("classpath:stubs/userDto.json") Resource userDto) throws Exception {
-//        //given
-//        String userId = randomUUID().toString();
-//        List<BusinessPnPG> businessPnPGList = List.of(mockInstance(new BusinessPnPG()));
-//        InstitutionPnPGInfo institutionPnPGInfo = mockInstance(new InstitutionPnPGInfo(), "setBusinesses");
-//        institutionPnPGInfo.setBusinesses(businessPnPGList);
-//        User user = mockInstance(new User(), "setEmail", "setId");
-//        user.setEmail("n.surname@email.com");
-//        when(pnPGInstitutionServiceMock.getInstitutionsByUser(Mockito.any()))
-//                .thenReturn(institutionPnPGInfo);
-//        //when
-//        MvcResult result = mvc.perform(MockMvcRequestBuilders
-//                        .post(BASE_URL + "")
-//                        .content(userDto.getInputStream().readAllBytes())
-//                        .contentType(APPLICATION_JSON_VALUE)
-//                        .accept(APPLICATION_JSON_VALUE))
-//                .andExpect(status().isOk())
-//                .andReturn();
-//        // then
-//        InstitutionPnPGResource response = objectMapper.readValue(
-//                result.getResponse().getContentAsString(),
-//                new TypeReference<>() {
-//                });
-//        assertNotNull(response);
-//        assertEquals(institutionPnPGInfo.getBusinesses().get(0).getBusinessName(), response.getBusinesses().get(0).getBusinessName());
-//        assertEquals(institutionPnPGInfo.getBusinesses().get(0).getBusinessTaxId(), response.getBusinesses().get(0).getBusinessTaxId());
-//        assertEquals(institutionPnPGInfo.getLegalTaxId(), response.getLegalTaxId());
-//        assertEquals(institutionPnPGInfo.getRequestDateTime(), response.getRequestDateTime());
-//        verify(pnPGInstitutionServiceMock, times(1))
-//                .getInstitutionsByUser(user);
-//        verifyNoMoreInteractions(pnPGInstitutionServiceMock);
-//    }
+    @Test
+    void getInstitutionsByUserId(@Value("classpath:stubs/userDto.json") Resource userDto) throws Exception {
+        //given
+        String userId = randomUUID().toString();
+        List<BusinessPnPG> businessPnPGList = List.of(mockInstance(new BusinessPnPG()));
+        InstitutionPnPGInfo institutionPnPGInfo = mockInstance(new InstitutionPnPGInfo(), "setBusinesses");
+        institutionPnPGInfo.setBusinesses(businessPnPGList);
+        User user = mockInstance(new User(), "setEmail", "setId", "setProductRole");
+        user.setEmail("n.surname@email.com");
+        when(pnPGInstitutionServiceMock.getInstitutionsByUser(Mockito.any()))
+                .thenReturn(institutionPnPGInfo);
+        //when
+        MvcResult result = mvc.perform(MockMvcRequestBuilders
+                        .post(BASE_URL + "")
+                        .content(userDto.getInputStream().readAllBytes())
+                        .contentType(APPLICATION_JSON_VALUE)
+                        .accept(APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk())
+                .andReturn();
+        // then
+        InstitutionPnPGResource response = objectMapper.readValue(
+                result.getResponse().getContentAsString(),
+                new TypeReference<>() {
+                });
+        assertNotNull(response);
+        assertEquals(institutionPnPGInfo.getBusinesses().get(0).getBusinessName(), response.getBusinesses().get(0).getBusinessName());
+        assertEquals(institutionPnPGInfo.getBusinesses().get(0).getBusinessTaxId(), response.getBusinesses().get(0).getBusinessTaxId());
+        assertEquals(institutionPnPGInfo.getLegalTaxId(), response.getLegalTaxId());
+        assertEquals(institutionPnPGInfo.getRequestDateTime(), response.getRequestDateTime());
+        verify(pnPGInstitutionServiceMock, times(1))
+                .getInstitutionsByUser(user);
+        verifyNoMoreInteractions(pnPGInstitutionServiceMock);
+    }
 
     @Test
     void onboarding(@Value("classpath:stubs/onboardingDto.json") Resource onboardingDto) throws Exception {
@@ -107,35 +107,35 @@ class PnPGInstitutionControllerTest {
         verifyNoMoreInteractions(pnPGInstitutionServiceMock);
     }
 
-//    @Test
-//    void matchInstitutionAndUser_ok(@Value("classpath:stubs/userDto.json") Resource userDto) throws Exception {
-//        //given
-//        String externalInstitutionId = "externalId";
-//        PnPGMatchInfo pnPGMatchInfo = mockInstance(new PnPGMatchInfo(), "setVerificationResult");
-//        pnPGMatchInfo.setVerificationResult(true);
-//        User user = mockInstance(new User(), "setEmail", "setId");
-//        user.setEmail("n.surname@email.com");
-//        when(pnPGInstitutionServiceMock.matchInstitutionAndUser(Mockito.anyString(), Mockito.any()))
-//                .thenReturn(pnPGMatchInfo);
-//        //when
-//        MvcResult result = mvc.perform(MockMvcRequestBuilders
-//                        .post(BASE_URL + "/{externalInstitutionId}/match", externalInstitutionId)
-//                        .content(userDto.getInputStream().readAllBytes())
-//                        .contentType(APPLICATION_JSON_VALUE)
-//                        .accept(APPLICATION_JSON_VALUE))
-//                .andExpect(status().isOk())
-//                .andReturn();
-//        // then
-//        PnPGMatchResource response = objectMapper.readValue(
-//                result.getResponse().getContentAsString(),
-//                new TypeReference<>() {
-//                });
-//        assertNotNull(response);
-//        assertEquals(response.isVerificationResult(), pnPGMatchInfo.isVerificationResult());
-//        verify(pnPGInstitutionServiceMock, times(1))
-//                .matchInstitutionAndUser(externalInstitutionId, user);
-//        verifyNoMoreInteractions(pnPGInstitutionServiceMock);
-//    }
+    @Test
+    void matchInstitutionAndUser_ok(@Value("classpath:stubs/userDto.json") Resource userDto) throws Exception {
+        //given
+        String externalInstitutionId = "externalId";
+        PnPGMatchInfo pnPGMatchInfo = mockInstance(new PnPGMatchInfo(), "setVerificationResult");
+        pnPGMatchInfo.setVerificationResult(true);
+        User user = mockInstance(new User(), "setEmail", "setId", "setProductRole");
+        user.setProductRole("setProductRole");
+        when(pnPGInstitutionServiceMock.matchInstitutionAndUser(Mockito.anyString(), Mockito.any()))
+                .thenReturn(pnPGMatchInfo);
+        //when
+        MvcResult result = mvc.perform(MockMvcRequestBuilders
+                        .post(BASE_URL + "/{externalInstitutionId}/match", externalInstitutionId)
+                        .content(userDto.getInputStream().readAllBytes())
+                        .contentType(APPLICATION_JSON_VALUE)
+                        .accept(APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk())
+                .andReturn();
+        // then
+        PnPGMatchResource response = objectMapper.readValue(
+                result.getResponse().getContentAsString(),
+                new TypeReference<>() {
+                });
+        assertNotNull(response);
+        assertEquals(response.isVerificationResult(), pnPGMatchInfo.isVerificationResult());
+        verify(pnPGInstitutionServiceMock, times(1))
+                .matchInstitutionAndUser(externalInstitutionId, user);
+        verifyNoMoreInteractions(pnPGInstitutionServiceMock);
+    }
 
     @Test
     void getInstitutionLegalAddress() throws Exception {

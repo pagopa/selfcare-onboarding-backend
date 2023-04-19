@@ -34,6 +34,7 @@ import java.util.*;
 
 import static it.pagopa.selfcare.commons.utils.TestUtils.mockInstance;
 import static it.pagopa.selfcare.onboarding.connector.model.user.User.Fields.*;
+import static it.pagopa.selfcare.onboarding.core.InstitutionServiceImpl.MORE_THAN_ONE_PRODUCT_ROLE_AVAILABLE;
 import static it.pagopa.selfcare.onboarding.core.InstitutionServiceImpl.REQUIRED_ONBOARDING_DATA_MESSAGE;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -225,6 +226,39 @@ class PnPGInstitutionServiceImplTest {
         // then
         IllegalArgumentException e = assertThrows(IllegalArgumentException.class, executable);
         assertEquals("Role mappings is required", e.getMessage());
+        verify(productsConnectorMock, times(1))
+                .getProduct(onboardingData.getProductId(), onboardingData.getInstitutionType());
+        verifyNoMoreInteractions(productsConnectorMock);
+        verifyNoInteractions(msCoreConnectorMock, userConnectorMock);
+    }
+
+    @Test
+    void onboarding_MoreThanOneProductRoles() {
+        // given
+        User userInfo = mockInstance(new User(), "setRole");
+        userInfo.setRole(PartyRole.DELEGATE);
+        PnPGOnboardingData onboardingData = mockInstance(new PnPGOnboardingData(), "setInstitutionType");
+        onboardingData.setInstitutionType(InstitutionType.PG);
+        onboardingData.setUsers(List.of(userInfo));
+        Product productMock = mockInstance(new Product(), "setRoleMappings", "setParentId", "setId");
+        productMock.setId(onboardingData.getProductId());
+        ProductRoleInfo productRoleInfo1 = mockInstance(new ProductRoleInfo(), 1, "setRoles");
+        productRoleInfo1.setRoles(List.of(mockInstance(new ProductRoleInfo.ProductRole(), 1)));
+        ProductRoleInfo productRoleInfo2 = mockInstance(new ProductRoleInfo(), 2, "setRoles");
+        productRoleInfo2.setRoles(List.of(mockInstance(new ProductRoleInfo.ProductRole(), 1),
+                mockInstance(new ProductRoleInfo.ProductRole(), 2)));
+        EnumMap<PartyRole, ProductRoleInfo> roleMappings = new EnumMap<>(PartyRole.class) {{
+            put(PartyRole.MANAGER, productRoleInfo1);
+            put(PartyRole.DELEGATE, productRoleInfo2);
+        }};
+        productMock.setRoleMappings(roleMappings);
+        when(productsConnectorMock.getProduct(onboardingData.getProductId(), onboardingData.getInstitutionType()))
+                .thenReturn(productMock);
+        // when
+        Executable executable = () -> pnPGInstitutionService.onboarding(onboardingData);
+        // then
+        IllegalStateException e = assertThrows(IllegalStateException.class, executable);
+        assertEquals(String.format(MORE_THAN_ONE_PRODUCT_ROLE_AVAILABLE, userInfo.getRole()), e.getMessage());
         verify(productsConnectorMock, times(1))
                 .getProduct(onboardingData.getProductId(), onboardingData.getInstitutionType());
         verifyNoMoreInteractions(productsConnectorMock);
