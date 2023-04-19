@@ -56,7 +56,6 @@ class OnboardingDtoTest {
         // given
         OnboardingDto model = mockInstance(new OnboardingDto());
         UserDto userDto = mockInstance(new UserDto());
-        userDto.setEmail("email@example.com");
         GeographicTaxonomyDto geographicTaxonomyDto = mockInstance(new GeographicTaxonomyDto());
         model.setUsers(List.of(userDto));
         model.setGeographicTaxonomies(List.of(geographicTaxonomyDto));
