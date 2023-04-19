@@ -1234,17 +1234,26 @@
         }
       },
       "PnPGBillingDataDto" : {
-        "title" : "PnPGBillingDataDto",
-        "required" : [ "businessName", "taxCode" ],
-        "type" : "object",
-        "properties" : {
-          "businessName" : {
-            "type" : "string",
-            "description" : "Institution's legal name"
+        "title": "PnPGBillingDataDto",
+        "required": [
+          "businessName",
+          "certified",
+          "taxCode"
+        ],
+        "type": "object",
+        "properties": {
+          "businessName": {
+            "type": "string",
+            "description": "Institution's legal name"
           },
-          "taxCode" : {
-            "type" : "string",
-            "description" : "Institution's taxCode"
+          "certified": {
+            "type": "boolean",
+            "description": "Indicates whether the institution values come from INFOCAMERE (true) or MANUAL (false)",
+            "example": false
+          },
+          "taxCode": {
+            "type": "string",
+            "description": "Institution's taxCode"
           }
         }
       },
