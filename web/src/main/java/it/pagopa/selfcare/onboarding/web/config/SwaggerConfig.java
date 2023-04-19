@@ -107,6 +107,7 @@ class SwaggerConfig {
                         .build())
                 .select().apis(RequestHandlerSelectors.basePackage("it.pagopa.selfcare.onboarding.web.controller")).build()
                 .tags(new Tag("institutions", environment.getProperty("swagger.onboarding.institutions.api.description")),
+                        new Tag("pnPGInstitutions", environment.getProperty("swagger.onboarding.pnPGInstitutions.api.description")),
                         new Tag("product", environment.getProperty("swagger.onboarding.product.api.description")),
                         new Tag("user", environment.getProperty("swagger.onboarding.user.api.description")))
                 .directModelSubstitute(LocalTime.class, String.class)

@@ -2,6 +2,7 @@ package it.pagopa.selfcare.onboarding.web.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.pagopa.selfcare.onboarding.core.InstitutionService;
+import it.pagopa.selfcare.onboarding.core.PnPGInstitutionService;
 import it.pagopa.selfcare.onboarding.core.ProductService;
 import it.pagopa.selfcare.onboarding.core.UserService;
 import org.junit.jupiter.api.Test;
@@ -43,6 +44,9 @@ class SwaggerConfigTest {
 
     @MockBean
     private UserService userService;
+
+    @MockBean
+    private PnPGInstitutionService pnpgInstitutionService;
 
     @Autowired
     WebApplicationContext context;
