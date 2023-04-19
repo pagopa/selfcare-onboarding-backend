@@ -8,7 +8,7 @@ import lombok.Data;
 import javax.validation.constraints.NotBlank;
 
 @Data
-public class UserDto {
+public class PnPGUserDto {
 
 
     @ApiModelProperty(value = "${swagger.onboarding.user.model.name}", required = true)
@@ -20,6 +20,9 @@ public class UserDto {
     @JsonProperty(required = true)
     @NotBlank
     private String surname;
+
+    @ApiModelProperty(value = "${swagger.onboarding.user.model.email}")
+    private String email;
 
     @ApiModelProperty(value = "${swagger.onboarding.user.model.fiscalCode}", required = true)
     @JsonProperty(required = true)
