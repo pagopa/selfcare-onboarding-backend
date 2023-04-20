@@ -161,22 +161,23 @@ class PartyConnectorImpl implements PartyConnector {
     }
 
     @Override
-    public Collection<InstitutionInfo> getOnBoardedInstitutions() {
+    public Collection<InstitutionInfo> getOnBoardedInstitutions(Set<String> productFilter) {
         log.trace("getOnBoardedInstitutions start");
         OnBoardingInfo onBoardingInfo = restClient.getOnBoardingInfo(null, EnumSet.of(ACTIVE));
-        Collection<InstitutionInfo> result = parseOnBoardingInfo(onBoardingInfo);
+        Collection<InstitutionInfo> result = parseOnBoardingInfo(onBoardingInfo, productFilter);
         log.debug("getOnBoardedInstitutions result = {}", result);
         log.trace("getOnBoardedInstitutions end");
         return result;
     }
 
 
-    private Collection<InstitutionInfo> parseOnBoardingInfo(OnBoardingInfo onBoardingInfo) {
+    private Collection<InstitutionInfo> parseOnBoardingInfo(OnBoardingInfo onBoardingInfo, Set<String> productFilter) {
         log.trace("parseOnBoardingInfo start");
         log.debug("parseOnBoardingInfo onBoardingInfo = {}", onBoardingInfo);
         Collection<InstitutionInfo> institutions = Collections.emptyList();
         if (onBoardingInfo != null && onBoardingInfo.getInstitutions() != null) {
             institutions = onBoardingInfo.getInstitutions().stream()
+                    .filter(institution -> productFilter == null || productFilter.isEmpty() || productFilter.contains(institution.getProductInfo().getId()))
                     .map(ONBOARDING_DATA_TO_INSTITUTION_INFO_FUNCTION)
                     .collect(Collectors.collectingAndThen(
                             Collectors.toMap(InstitutionInfo::getId, Function.identity(), MERGE_FUNCTION),
@@ -260,7 +261,7 @@ class PartyConnectorImpl implements PartyConnector {
         log.debug("getOnBoardedInstitution externalInstitutionId = {}", externalInstitutionId);
         Assert.hasText(externalInstitutionId, REQUIRED_INSTITUTION_ID_MESSAGE);
         OnBoardingInfo onBoardingInfo = restClient.getOnBoardingInfo(externalInstitutionId, EnumSet.of(ACTIVE));
-        InstitutionInfo result = parseOnBoardingInfo(onBoardingInfo).stream()
+        InstitutionInfo result = parseOnBoardingInfo(onBoardingInfo, null).stream()
                 .findAny().orElse(null);
         log.debug(LogUtils.CONFIDENTIAL_MARKER, "getOnBoardedInstitution result = {}", result);
         log.trace("getOnBoardedInstitution end");

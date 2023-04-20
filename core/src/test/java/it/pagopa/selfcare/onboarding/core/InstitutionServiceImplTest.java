@@ -1308,16 +1308,16 @@ class InstitutionServiceImplTest {
     void getInstitutions() {
         //given
         InstitutionInfo expectedInstitutionInfo = new InstitutionInfo();
-        when(partyConnectorMock.getOnBoardedInstitutions())
+        when(partyConnectorMock.getOnBoardedInstitutions(any()))
                 .thenReturn(List.of(expectedInstitutionInfo));
         // when
-        Collection<InstitutionInfo> institutions = institutionService.getInstitutions();
+        Collection<InstitutionInfo> institutions = institutionService.getInstitutions(null);
         // then
         assertNotNull(institutions);
         assertEquals(1, institutions.size());
         assertSame(expectedInstitutionInfo, institutions.iterator().next());
         verify(partyConnectorMock, times(1))
-                .getOnBoardedInstitutions();
+                .getOnBoardedInstitutions(null);
         verifyNoMoreInteractions(partyConnectorMock);
         verifyNoInteractions(productsConnectorMock, userConnectorMock);
     }
@@ -1326,12 +1326,12 @@ class InstitutionServiceImplTest {
     void getInstitutions_emptyResult() {
         //given
         //when
-        Collection<InstitutionInfo> institutions = institutionService.getInstitutions();
+        Collection<InstitutionInfo> institutions = institutionService.getInstitutions(null);
         // then
         assertNotNull(institutions);
         assertTrue(institutions.isEmpty());
         verify(partyConnectorMock, times(1))
-                .getOnBoardedInstitutions();
+                .getOnBoardedInstitutions(null);
         verifyNoMoreInteractions(partyConnectorMock);
         verifyNoInteractions(productsConnectorMock, userConnectorMock);
     }

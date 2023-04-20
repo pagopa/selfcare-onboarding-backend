@@ -179,7 +179,7 @@ class PartyConnectorImplTest {
         when(restClientMock.getOnBoardingInfo(any(), any()))
                 .thenReturn(onBoardingInfo);
         // when
-        Collection<InstitutionInfo> institutions = partyConnector.getOnBoardedInstitutions();
+        Collection<InstitutionInfo> institutions = partyConnector.getOnBoardedInstitutions(null);
         // then
         assertNotNull(institutions);
         assertEquals(2, institutions.size());
@@ -192,14 +192,159 @@ class PartyConnectorImplTest {
         assertEquals(onboardingData2.getDescription(), institutionInfos.get(0).getDescription());
         assertEquals(onboardingData2.getExternalId(), institutionInfos.get(0).getExternalId());
         assertEquals(onboardingData2.getState().toString(), institutionInfos.get(0).getStatus());
-        assertEquals(onboardingData2.getRole(), institutionInfos.get(0).getUserRole());        institutionInfos = map.get(PartyRole.OPERATOR);
+        assertEquals(onboardingData2.getRole(), institutionInfos.get(0).getUserRole());
+        institutionInfos = map.get(PartyRole.OPERATOR);
         assertNotNull(institutionInfos);
         assertEquals(1, institutionInfos.size());
         assertEquals(onboardingData3.getId(), institutionInfos.get(0).getId());
         assertEquals(onboardingData3.getDescription(), institutionInfos.get(0).getDescription());
         assertEquals(onboardingData3.getExternalId(), institutionInfos.get(0).getExternalId());
         assertEquals(onboardingData3.getState().toString(), institutionInfos.get(0).getStatus());
-        assertEquals(onboardingData3.getRole(), institutionInfos.get(0).getUserRole());        verify(restClientMock, times(1))
+        assertEquals(onboardingData3.getRole(), institutionInfos.get(0).getUserRole());
+        verify(restClientMock, times(1))
+                .getOnBoardingInfo(isNull(), eq(EnumSet.of(ACTIVE)));
+        verifyNoMoreInteractions(restClientMock);
+    }
+
+    @Test
+    void getOnboardedInstitutions_productFilterEmpty() {
+        // given
+        OnBoardingInfo onBoardingInfo = new OnBoardingInfo();
+        OnboardingResponseData onboardingData1 = mockInstance(new OnboardingResponseData(), 1, "setState", "setRole");
+        onboardingData1.setState(ACTIVE);
+        onboardingData1.setRole(PartyRole.OPERATOR);
+        OnboardingResponseData onboardingData2 = mockInstance(new OnboardingResponseData(), 2, "setState", "setId", "setRole");
+        onboardingData2.setState(ACTIVE);
+        onboardingData2.setId(onboardingData1.getId());
+        onboardingData2.setRole(PartyRole.MANAGER);
+        OnboardingResponseData onboardingData4 = mockInstance(new OnboardingResponseData(), 4, "setState", "setId", "setRole");
+        onboardingData4.setState(ACTIVE);
+        onboardingData4.setId(onboardingData1.getId());
+        onboardingData4.setRole(PartyRole.SUB_DELEGATE);
+        OnboardingResponseData onboardingData3 = mockInstance(new OnboardingResponseData(), 3, "setState", "setRole");
+        onboardingData3.setState(ACTIVE);
+        onboardingData3.setRole(PartyRole.OPERATOR);
+        onBoardingInfo.setInstitutions(List.of(onboardingData1, onboardingData2, onboardingData3, onboardingData3, onboardingData4));
+        when(restClientMock.getOnBoardingInfo(any(), any()))
+                .thenReturn(onBoardingInfo);
+        Set<String> productFilter = Collections.emptySet();
+        // when
+        Collection<InstitutionInfo> institutions = partyConnector.getOnBoardedInstitutions(productFilter);
+        // then
+        assertNotNull(institutions);
+        assertEquals(2, institutions.size());
+        Map<PartyRole, List<InstitutionInfo>> map = institutions.stream()
+                .collect(Collectors.groupingBy(InstitutionInfo::getUserRole));
+        List<InstitutionInfo> institutionInfos = map.get(PartyRole.MANAGER);
+        assertNotNull(institutionInfos);
+        assertEquals(1, institutionInfos.size());
+        assertEquals(onboardingData2.getId(), institutionInfos.get(0).getId());
+        assertEquals(onboardingData2.getDescription(), institutionInfos.get(0).getDescription());
+        assertEquals(onboardingData2.getExternalId(), institutionInfos.get(0).getExternalId());
+        assertEquals(onboardingData2.getState().toString(), institutionInfos.get(0).getStatus());
+        assertEquals(onboardingData2.getRole(), institutionInfos.get(0).getUserRole());
+        institutionInfos = map.get(PartyRole.OPERATOR);
+        assertNotNull(institutionInfos);
+        assertEquals(1, institutionInfos.size());
+        assertEquals(onboardingData3.getId(), institutionInfos.get(0).getId());
+        assertEquals(onboardingData3.getDescription(), institutionInfos.get(0).getDescription());
+        assertEquals(onboardingData3.getExternalId(), institutionInfos.get(0).getExternalId());
+        assertEquals(onboardingData3.getState().toString(), institutionInfos.get(0).getStatus());
+        assertEquals(onboardingData3.getRole(), institutionInfos.get(0).getUserRole());
+        verify(restClientMock, times(1))
+                .getOnBoardingInfo(isNull(), eq(EnumSet.of(ACTIVE)));
+        verifyNoMoreInteractions(restClientMock);
+    }
+
+    @Test
+    void getOnboardedInstitutions_productFilterFound() {
+        // given
+        OnBoardingInfo onBoardingInfo = new OnBoardingInfo();
+        OnboardingResponseData onboardingData1 = mockInstance(new OnboardingResponseData(), 1, "setState", "setRole");
+        onboardingData1.setState(ACTIVE);
+        onboardingData1.setRole(PartyRole.OPERATOR);
+        onboardingData1.getProductInfo().setId("prod-io");
+        OnboardingResponseData onboardingData2 = mockInstance(new OnboardingResponseData(), 2, "setState", "setId", "setRole");
+        onboardingData2.setState(ACTIVE);
+        onboardingData2.setRole(PartyRole.MANAGER);
+        onboardingData2.getProductInfo().setId("prod-ciban");
+        OnboardingResponseData onboardingData3 = mockInstance(new OnboardingResponseData(), 3, "setState", "setRole");
+        onboardingData3.setState(ACTIVE);
+        onboardingData3.setRole(PartyRole.SUB_DELEGATE);
+        onboardingData3.getProductInfo().setId("prod-pagopa");
+        OnboardingResponseData onboardingData4 = mockInstance(new OnboardingResponseData(), 4, "setState", "setId", "setRole");
+        onboardingData4.setState(ACTIVE);
+        onboardingData4.setId(onboardingData1.getId());
+        onboardingData4.setRole(PartyRole.OPERATOR);
+        onboardingData4.getProductInfo().setId("prod-pn");
+        onBoardingInfo.setInstitutions(List.of(onboardingData1, onboardingData2, onboardingData3, onboardingData3, onboardingData4));
+        when(restClientMock.getOnBoardingInfo(any(), any()))
+                .thenReturn(onBoardingInfo);
+        Set<String> productFilter = new HashSet<>();
+        productFilter.add("prod-io");
+        productFilter.add("prod-pagopa");
+        // when
+        Collection<InstitutionInfo> institutions = partyConnector.getOnBoardedInstitutions(productFilter);
+        // then
+        assertNotNull(institutions);
+        assertEquals(2, institutions.size());
+        Map<PartyRole, List<InstitutionInfo>> map = institutions.stream()
+                .collect(Collectors.groupingBy(InstitutionInfo::getUserRole));
+        List<InstitutionInfo> institutionInfos = map.get(PartyRole.OPERATOR);
+        assertNotNull(institutionInfos);
+        assertEquals(1, institutionInfos.size());
+        assertEquals(onboardingData1.getId(), institutionInfos.get(0).getId());
+        assertEquals(onboardingData1.getDescription(), institutionInfos.get(0).getDescription());
+        assertEquals(onboardingData1.getExternalId(), institutionInfos.get(0).getExternalId());
+        assertEquals(onboardingData1.getState().toString(), institutionInfos.get(0).getStatus());
+        assertEquals(onboardingData1.getRole(), institutionInfos.get(0).getUserRole());
+        institutionInfos = map.get(PartyRole.SUB_DELEGATE);
+        assertNotNull(institutionInfos);
+        assertEquals(1, institutionInfos.size());
+        assertEquals(onboardingData3.getId(), institutionInfos.get(0).getId());
+        assertEquals(onboardingData3.getDescription(), institutionInfos.get(0).getDescription());
+        assertEquals(onboardingData3.getExternalId(), institutionInfos.get(0).getExternalId());
+        assertEquals(onboardingData3.getState().toString(), institutionInfos.get(0).getStatus());
+        assertEquals(onboardingData3.getRole(), institutionInfos.get(0).getUserRole());
+        institutionInfos = map.get(PartyRole.MANAGER);
+        assertNull(institutionInfos);
+        verify(restClientMock, times(1))
+                .getOnBoardingInfo(isNull(), eq(EnumSet.of(ACTIVE)));
+        verifyNoMoreInteractions(restClientMock);
+    }
+
+    @Test
+    void getOnboardedInstitutions_productFilterNotFound() {
+        // given
+        OnBoardingInfo onBoardingInfo = new OnBoardingInfo();
+        OnboardingResponseData onboardingData1 = mockInstance(new OnboardingResponseData(), 1, "setState", "setRole");
+        onboardingData1.setState(ACTIVE);
+        onboardingData1.setRole(PartyRole.OPERATOR);
+        onboardingData1.getProductInfo().setId("product-1");
+        OnboardingResponseData onboardingData2 = mockInstance(new OnboardingResponseData(), 2, "setState", "setId", "setRole");
+        onboardingData2.setState(ACTIVE);
+        onboardingData2.setId(onboardingData1.getId());
+        onboardingData2.setRole(PartyRole.MANAGER);
+        onboardingData2.getProductInfo().setId("product-2");
+        OnboardingResponseData onboardingData3 = mockInstance(new OnboardingResponseData(), 3, "setState", "setRole");
+        onboardingData3.setState(ACTIVE);
+        onboardingData3.setRole(PartyRole.OPERATOR);
+        onboardingData3.getProductInfo().setId("product-3");
+        OnboardingResponseData onboardingData4 = mockInstance(new OnboardingResponseData(), 4, "setState", "setId", "setRole");
+        onboardingData4.setState(ACTIVE);
+        onboardingData4.setId(onboardingData1.getId());
+        onboardingData4.setRole(PartyRole.SUB_DELEGATE);
+        onboardingData4.getProductInfo().setId("product-4");
+        onBoardingInfo.setInstitutions(List.of(onboardingData1, onboardingData2, onboardingData3, onboardingData3, onboardingData4));
+        when(restClientMock.getOnBoardingInfo(any(), any()))
+                .thenReturn(onBoardingInfo);
+        Set<String> productFilter = new HashSet<>();
+        productFilter.add("produdct-to-find");
+        // when
+        Collection<InstitutionInfo> institutions = partyConnector.getOnBoardedInstitutions(productFilter);
+        // then
+        assertTrue(institutions.isEmpty());
+        verify(restClientMock, times(1))
                 .getOnBoardingInfo(isNull(), eq(EnumSet.of(ACTIVE)));
         verifyNoMoreInteractions(restClientMock);
     }
@@ -208,7 +353,7 @@ class PartyConnectorImplTest {
     void getOnboardedInstitutions_nullOnboardingInfo() {
         //given
         //when
-        Collection<InstitutionInfo> institutionInfos = partyConnector.getOnBoardedInstitutions();
+        Collection<InstitutionInfo> institutionInfos = partyConnector.getOnBoardedInstitutions(null);
         //then
         assertNotNull(institutionInfos);
         assertTrue(institutionInfos.isEmpty());
@@ -225,7 +370,7 @@ class PartyConnectorImplTest {
         when(restClientMock.getOnBoardingInfo(any(), any()))
                 .thenReturn(onboardingInfo);
         //when
-        Collection<InstitutionInfo> institutionInfos = partyConnector.getOnBoardedInstitutions();
+        Collection<InstitutionInfo> institutionInfos = partyConnector.getOnBoardedInstitutions(null);
         //then
         assertNotNull(institutionInfos);
         assertTrue(institutionInfos.isEmpty());

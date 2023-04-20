@@ -27,9 +27,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 import static it.pagopa.selfcare.commons.utils.TestUtils.mockInstance;
 import static java.util.UUID.randomUUID;
@@ -65,10 +63,10 @@ class InstitutionControllerTest {
         String productId = "productId";
         // when
         mvc.perform(MockMvcRequestBuilders
-                .post(BASE_URL + "/{institutionId}/products/{productId}/onboarding", institutionId, productId)
-                .content(onboardingDto.getInputStream().readAllBytes())
-                .contentType(APPLICATION_JSON_VALUE)
-                .accept(APPLICATION_JSON_VALUE))
+                        .post(BASE_URL + "/{institutionId}/products/{productId}/onboarding", institutionId, productId)
+                        .content(onboardingDto.getInputStream().readAllBytes())
+                        .contentType(APPLICATION_JSON_VALUE)
+                        .accept(APPLICATION_JSON_VALUE))
                 .andExpect(status().isCreated())
                 .andExpect(content().string(emptyString()));
         // then
@@ -131,9 +129,9 @@ class InstitutionControllerTest {
                 .thenReturn(onBoardingDataMock);
         //when
         MvcResult result = mvc.perform(MockMvcRequestBuilders
-                .get(BASE_URL + "/{institutionId}/products/{productId}/onboarded-institution-info", institutionId, productId)
-                .contentType(APPLICATION_JSON_VALUE)
-                .accept(APPLICATION_JSON_VALUE))
+                        .get(BASE_URL + "/{institutionId}/products/{productId}/onboarded-institution-info", institutionId, productId)
+                        .contentType(APPLICATION_JSON_VALUE)
+                        .accept(APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk())
                 .andReturn();
         //then
@@ -192,13 +190,16 @@ class InstitutionControllerTest {
         //given
         InstitutionInfo institutionInfo = mockInstance(new InstitutionInfo(), "setId");
         institutionInfo.setId(randomUUID().toString());
-        when(institutionServiceMock.getInstitutions())
+        Set<String> productFilter = new HashSet<>();
+        productFilter.add("prod-io");
+        when(institutionServiceMock.getInstitutions(any()))
                 .thenReturn(Collections.singletonList(institutionInfo));
         //when
         MvcResult result = mvc.perform(MockMvcRequestBuilders
-                .get(BASE_URL + "")
-                .contentType(APPLICATION_JSON_VALUE)
-                .accept(APPLICATION_JSON_VALUE))
+                        .get(BASE_URL + "")
+                        .queryParam("productFilter", "prod-io")
+                        .contentType(APPLICATION_JSON_VALUE)
+                        .accept(APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk())
                 .andReturn();
         //then
@@ -212,7 +213,7 @@ class InstitutionControllerTest {
         assertEquals(institutionInfo.getExternalId(), response.get(0).getExternalId());
         assertEquals(institutionInfo.getDescription(), response.get(0).getDescription());
         verify(institutionServiceMock, times(1))
-                .getInstitutions();
+                .getInstitutions(productFilter);
         verifyNoMoreInteractions(institutionServiceMock);
     }
 
@@ -223,9 +224,9 @@ class InstitutionControllerTest {
         final String productId = "productId";
         //when
         mvc.perform(MockMvcRequestBuilders
-                .head(BASE_URL + "/{externalInstitutionId}/products/{productId}", externalInstitutionId, productId)
-                .contentType(APPLICATION_JSON_VALUE)
-                .accept(APPLICATION_JSON_VALUE))
+                        .head(BASE_URL + "/{externalInstitutionId}/products/{productId}", externalInstitutionId, productId)
+                        .contentType(APPLICATION_JSON_VALUE)
+                        .accept(APPLICATION_JSON_VALUE))
                 .andExpect(status().isNoContent());
     }
 
