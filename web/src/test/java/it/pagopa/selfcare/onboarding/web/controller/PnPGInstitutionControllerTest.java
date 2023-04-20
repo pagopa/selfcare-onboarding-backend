@@ -114,7 +114,7 @@ class PnPGInstitutionControllerTest {
         PnPGMatchInfo pnPGMatchInfo = mockInstance(new PnPGMatchInfo(), "setVerificationResult");
         pnPGMatchInfo.setVerificationResult(true);
         User user = mockInstance(new User(), "setEmail", "setId", "setProductRole");
-        user.setProductRole("setProductRole");
+        user.setEmail("n.surname@email.com");
         when(pnPGInstitutionServiceMock.matchInstitutionAndUser(Mockito.anyString(), Mockito.any()))
                 .thenReturn(pnPGMatchInfo);
         //when

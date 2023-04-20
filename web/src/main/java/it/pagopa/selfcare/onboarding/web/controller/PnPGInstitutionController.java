@@ -16,7 +16,6 @@ import it.pagopa.selfcare.onboarding.web.model.*;
 import it.pagopa.selfcare.onboarding.web.model.mapper.PnPGInstitutionMapper;
 import it.pagopa.selfcare.onboarding.web.model.mapper.PnPGOnboardingMapper;
 import it.pagopa.selfcare.onboarding.web.model.mapper.PnPGUserMapper;
-import it.pagopa.selfcare.onboarding.web.model.mapper.UserMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -88,10 +87,10 @@ public class PnPGInstitutionController {
                                                      String externalInstitutionId,
                                                      @RequestBody
                                                      @Valid
-                                                     UserDto userDto) {
+                                                     PnPGUserDto userDto) {
         log.trace("matchInstitutionAndUser start");
         log.debug(LogUtils.CONFIDENTIAL_MARKER, "matchInstitutionAndUser userDto = {}", userDto);
-        PnPGMatchInfo pnPGMatchInfo = pnPGInstitutionService.matchInstitutionAndUser(externalInstitutionId, UserMapper.toUser(userDto));
+        PnPGMatchInfo pnPGMatchInfo = pnPGInstitutionService.matchInstitutionAndUser(externalInstitutionId, PnPGUserMapper.toUser(userDto));
         PnPGMatchResource pnPGMatchResource = PnPGInstitutionMapper.toResource(pnPGMatchInfo);
         log.debug(LogUtils.CONFIDENTIAL_MARKER, "matchInstitutionAndUser result = {}", pnPGMatchResource);
         log.trace("matchInstitutionAndUser end");
