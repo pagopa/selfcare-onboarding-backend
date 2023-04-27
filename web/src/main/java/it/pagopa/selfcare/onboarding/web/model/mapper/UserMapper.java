@@ -22,7 +22,6 @@ public class UserMapper {
         if (model != null) {
             resource = new User();
             resource.setRole(model.getRole());
-            resource.setEmail(model.getEmail());
             resource.setName(model.getName());
             resource.setSurname(model.getSurname());
             resource.setProductRole(model.getProductRole());
