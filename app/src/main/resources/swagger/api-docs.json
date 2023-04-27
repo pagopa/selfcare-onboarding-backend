@@ -696,32 +696,42 @@
               }
             }
           },
-          "401" : {
-            "description" : "Unauthorized",
-            "content" : {
-              "application/problem+json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Problem"
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
                 }
               }
             }
           },
-          "403" : {
-            "description" : "Forbidden",
-            "content" : {
-              "application/problem+json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Problem"
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
                 }
               }
             }
           },
-          "500" : {
-            "description" : "Internal Server Error",
-            "content" : {
-              "application/problem+json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Problem"
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
                 }
               }
             }
@@ -1249,17 +1259,26 @@
         }
       },
       "PnPGBillingDataDto" : {
-        "title" : "PnPGBillingDataDto",
-        "required" : [ "businessName", "taxCode" ],
-        "type" : "object",
-        "properties" : {
-          "businessName" : {
-            "type" : "string",
-            "description" : "Institution's legal name"
+        "title": "PnPGBillingDataDto",
+        "required": [
+          "businessName",
+          "certified",
+          "taxCode"
+        ],
+        "type": "object",
+        "properties": {
+          "businessName": {
+            "type": "string",
+            "description": "Institution's legal name"
           },
-          "taxCode" : {
-            "type" : "string",
-            "description" : "Institution's taxCode"
+          "certified": {
+            "type": "boolean",
+            "description": "Indicates whether the institution values come from INFOCAMERE (true) or MANUAL (false)",
+            "example": false
+          },
+          "taxCode": {
+            "type": "string",
+            "description": "Institution's taxCode"
           }
         }
       },
@@ -1480,12 +1499,12 @@
             ]
           },
           "surname": {
-            "type" : "string",
-            "description" : "User's surname"
+            "type": "string",
+            "description": "User's surname"
           },
-          "taxCode" : {
-            "type" : "string",
-            "description" : "User's fiscal code"
+          "taxCode": {
+            "type": "string",
+            "description": "User's fiscal code"
           }
         }
       },

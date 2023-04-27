@@ -121,7 +121,7 @@ class PnPGInstitutionServiceImpl implements PnPGInstitutionService {
         CreatePnPGInstitutionData createPGData = new CreatePnPGInstitutionData();
         createPGData.setDescription(onboardingData.getBusinessName());
         createPGData.setTaxId(onboardingData.getInstitutionExternalId());
-        createPGData.setExistsInRegistry(onboardingData.isExistsInRegistry());
+        createPGData.setCertified(onboardingData.isCertified());
         return createPGData;
     }
 
