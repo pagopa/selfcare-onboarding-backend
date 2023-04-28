@@ -35,39 +35,54 @@
   "paths" : {
     "/institutions" : {
       "get" : {
-        "tags" : [ "institutions" ],
-        "summary" : "getInstitutions",
-        "description" : "The service retrieves all the onboarded institutions related to the logged user",
-        "operationId" : "getInstitutionsUsingGET",
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/components/schemas/InstitutionResource"
+        "tags": [
+          "institutions"
+        ],
+        "summary": "getInstitutions",
+        "description": "The service retrieves all the onboarded institutions related to the logged user",
+        "operationId": "getInstitutionsUsingGET",
+        "parameters": [
+          {
+            "name": "productFilter",
+            "in": "query",
+            "description": "A list of products to filter the institutions based on whether the institution has an ACTIVE onboarding on the specified products. For multiple values insert a single string with comma separated values.",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/InstitutionResource"
                   }
                 }
               }
             }
           },
-          "400" : {
-            "description" : "Bad Request",
-            "content" : {
-              "application/problem+json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Problem"
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
                 }
               }
             }
           },
-          "401" : {
-            "description" : "Unauthorized",
-            "content" : {
-              "application/problem+json" : {
-                "schema" : {
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
                   "$ref" : "#/components/schemas/Problem"
                 }
               }
@@ -668,15 +683,15 @@
           }
         },
         "responses" : {
-          "201" : {
-            "description" : "Created"
+          "201": {
+            "description": "Created"
           },
-          "400" : {
-            "description" : "Bad Request",
-            "content" : {
-              "application/problem+json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Problem"
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
                 }
               }
             }
