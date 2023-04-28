@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import javax.validation.ValidationException;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.springframework.http.MediaType.APPLICATION_PROBLEM_JSON_VALUE;
@@ -112,9 +113,11 @@ public class InstitutionController {
     @GetMapping("")
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "", notes = "${swagger.onboarding.institutions.api.getInstitutions}")
-    public List<InstitutionResource> getInstitutions() {
+    public List<InstitutionResource> getInstitutions(@ApiParam("${swagger.onboarding.institutions.model.productFilter}")
+                                                     @RequestParam(value = "productFilter", required = false)
+                                                     Set<String> productFilter) {
         log.trace("getInstitutions start");
-        List<InstitutionResource> institutionResources = institutionService.getInstitutions()
+        List<InstitutionResource> institutionResources = institutionService.getInstitutions(productFilter)
                 .stream()
                 .map(InstitutionMapper::toResource)
                 .collect(Collectors.toList());
