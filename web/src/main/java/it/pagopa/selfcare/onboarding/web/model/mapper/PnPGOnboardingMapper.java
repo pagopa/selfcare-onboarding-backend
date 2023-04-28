@@ -30,7 +30,7 @@ public class PnPGOnboardingMapper {
                 resource.setBillingRequest(fillBillingData(externalId));
             }
             resource.setInstitutionType(InstitutionType.PG);
-            resource.setCertified(model.getBillingData().isCertified());
+            resource.setExistsInRegistry(model.getBillingData().isExistsInRegistry());
         }
         return resource;
     }

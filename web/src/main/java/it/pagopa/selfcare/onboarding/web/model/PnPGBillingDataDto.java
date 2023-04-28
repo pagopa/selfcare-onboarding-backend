@@ -22,6 +22,6 @@ public class PnPGBillingDataDto {
     @ApiModelProperty(value = "${swagger.onboarding.pnPGInstitutions.model.certified}", required = true)
     @JsonProperty(required = true)
     @NotNull
-    private boolean certified;
+    private boolean existsInRegistry;
 
 }

@@ -61,23 +61,7 @@ class PnPGInstitutionServiceImpl implements PnPGInstitutionService {
         return result;
     }
 
-    @Override
-    public void onboarding(PnPGOnboardingData onboardingData) {
-        log.trace("onboarding PNPG start");
-        log.debug("onboarding PNPG onboardingData = {}", onboardingData);
-        Assert.notNull(onboardingData, REQUIRED_ONBOARDING_DATA_MESSAGE);
-
-        submitOnboarding(onboardingData);
-
-        log.trace("onboarding PNPG end");
-    }
-
-    private void submitOnboarding(PnPGOnboardingData onboardingData) {
-        log.trace("submitOnboarding PNPG start");
-
-        Product product = productsConnector.getProduct(onboardingData.getProductId(), InstitutionType.PG);
-        Assert.notNull(product, "Product is required");
-
+    private static void mapProductRoles(PnPGOnboardingData onboardingData, Product product) {
         final EnumMap<PartyRole, ProductRoleInfo> roleMappings = product.getRoleMappings();
         Assert.notNull(roleMappings, "Role mappings is required");
         onboardingData.getUsers().forEach(userInfo -> {
@@ -89,7 +73,32 @@ class PnPGInstitutionServiceImpl implements PnPGInstitutionService {
                     String.format(MORE_THAN_ONE_PRODUCT_ROLE_AVAILABLE, userInfo.getRole()));
             userInfo.setProductRole(roleMappings.get(userInfo.getRole()).getRoles().get(0).getCode());
         });
+    }
 
+    @Override
+    public void onboarding(PnPGOnboardingData onboardingData) {
+        log.trace("onboarding PNPG start");
+        log.debug("onboarding PNPG onboardingData = {}", onboardingData);
+        Assert.notNull(onboardingData, REQUIRED_ONBOARDING_DATA_MESSAGE);
+
+        Product product = productsConnector.getProduct(onboardingData.getProductId(), InstitutionType.PG);
+        Assert.notNull(product, "Product is required");
+
+        mapProductRoles(onboardingData, product);
+
+        Institution institution = createInstitution(onboardingData);
+
+        onboardingData.setInstitutionUpdate(mapInstitutionToInstitutionUpdate(institution));
+
+        String finalInstitutionInternalId = institution.getId();
+        mapUsers(onboardingData, finalInstitutionInternalId);
+
+        msCoreConnector.onboardingPGOrganization(onboardingData);
+
+        log.trace("onboarding PNPG end");
+    }
+
+    private Institution createInstitution(PnPGOnboardingData onboardingData) {
         CreatePnPGInstitutionData createPGData = mapCreatePnPGInstitutionData(onboardingData);
         Institution institution;
         try {
@@ -97,10 +106,10 @@ class PnPGInstitutionServiceImpl implements PnPGInstitutionService {
         } catch (ResourceNotFoundException e) {
             institution = msCoreConnector.createPGInstitutionUsingExternalId(createPGData);
         }
+        return institution;
+    }
 
-        onboardingData.setInstitutionUpdate(mapInstitutionToInstitutionUpdate(institution));
-
-        String finalInstitutionInternalId = institution.getId();
+    private void mapUsers(PnPGOnboardingData onboardingData, String finalInstitutionInternalId) {
         onboardingData.getUsers().forEach(user -> {
             final Optional<it.pagopa.selfcare.onboarding.connector.model.user.User> searchResult =
                     userConnector.search(user.getTaxCode(), USER_FIELD_LIST);
@@ -112,16 +121,13 @@ class PnPGInstitutionServiceImpl implements PnPGInstitutionService {
             }, () -> user.setId(userConnector.saveUser(UserMapper.toSaveUserDto(user, finalInstitutionInternalId))
                     .getId().toString()));
         });
-
-        msCoreConnector.onboardingPGOrganization(onboardingData);
-        log.trace("submitOnboarding PNPG start");
     }
 
     private CreatePnPGInstitutionData mapCreatePnPGInstitutionData(PnPGOnboardingData onboardingData) {
         CreatePnPGInstitutionData createPGData = new CreatePnPGInstitutionData();
         createPGData.setDescription(onboardingData.getBusinessName());
         createPGData.setTaxId(onboardingData.getInstitutionExternalId());
-        createPGData.setCertified(onboardingData.isCertified());
+        createPGData.setCertified(onboardingData.isExistsInRegistry());
         return createPGData;
     }
 
@@ -130,6 +136,7 @@ class PnPGInstitutionServiceImpl implements PnPGInstitutionService {
         institutionUpdate.setTaxCode(institution.getTaxCode());
         institutionUpdate.setInstitutionType(InstitutionType.PG);
         institutionUpdate.setGeographicTaxonomies(new ArrayList<>());
+        institutionUpdate.setDigitalAddress(institution.getDigitalAddress());
         return institutionUpdate;
     }
 
