@@ -15,16 +15,12 @@ package it.pagopa.selfcare.onboarding.connector.model.onboarding;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-
 @Data
 @NoArgsConstructor
 public class CreatePnPGInstitutionData {
 
     private String taxId;
     private String description;
-    private boolean existsInRegistry = true;
+    private boolean certified;
 
 }

@@ -26,6 +26,7 @@ public class UserMapper {
             resource.setSurname(model.getSurname());
             resource.setProductRole(model.getProductRole());
             resource.setTaxCode(model.getTaxCode());
+            resource.setEmail(model.getEmail());
         }
         return resource;
     }

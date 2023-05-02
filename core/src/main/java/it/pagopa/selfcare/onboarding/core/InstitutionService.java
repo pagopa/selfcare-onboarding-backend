@@ -8,12 +8,13 @@ import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 public interface InstitutionService {
 
     void onboarding(OnboardingData onboardingData);
 
-    Collection<InstitutionInfo> getInstitutions();
+    Collection<InstitutionInfo> getInstitutions(Set<String> productFilter);
 
     InstitutionOnboardingData getInstitutionOnboardingData(String externalInstitutionId, String productId);
 
