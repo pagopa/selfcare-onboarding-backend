@@ -10,6 +10,7 @@ import it.pagopa.selfcare.onboarding.web.model.PnPGOnboardingDto;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.stream.Collectors;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -42,6 +43,7 @@ public class PnPGOnboardingMapper {
         institutionUpdate.setTaxCode(model.getBillingData().getTaxCode());
         institutionUpdate.setDescription(model.getBillingData().getBusinessName());
         institutionUpdate.setDigitalAddress(model.getBillingData().getDigitalAddress());
+        institutionUpdate.setGeographicTaxonomies(new ArrayList<>());
         return institutionUpdate;
     }
 
