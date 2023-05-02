@@ -62,6 +62,7 @@ class PnPGInstitutionControllerTest {
         InstitutionPnPGInfo institutionPnPGInfo = mockInstance(new InstitutionPnPGInfo(), "setBusinesses");
         institutionPnPGInfo.setBusinesses(businessPnPGList);
         User user = mockInstance(new User(), "setEmail", "setId", "setProductRole");
+        user.setEmail("n.surname@email.com");
         when(pnPGInstitutionServiceMock.getInstitutionsByUser(Mockito.any()))
                 .thenReturn(institutionPnPGInfo);
         //when
@@ -113,6 +114,7 @@ class PnPGInstitutionControllerTest {
         PnPGMatchInfo pnPGMatchInfo = mockInstance(new PnPGMatchInfo(), "setVerificationResult");
         pnPGMatchInfo.setVerificationResult(true);
         User user = mockInstance(new User(), "setEmail", "setId", "setProductRole");
+        user.setEmail("n.surname@email.com");
         when(pnPGInstitutionServiceMock.matchInstitutionAndUser(Mockito.anyString(), Mockito.any()))
                 .thenReturn(pnPGMatchInfo);
         //when

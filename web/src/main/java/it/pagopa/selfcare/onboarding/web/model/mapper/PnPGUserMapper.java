@@ -16,7 +16,7 @@ public class PnPGUserMapper {
             resource = new User();
             resource.setRole(PartyRole.MANAGER);
             resource.setName(model.getName());
-            resource.setEmail(null);
+            resource.setEmail(model.getEmail());
             resource.setSurname(model.getSurname());
             resource.setTaxCode(model.getTaxCode());
         }
