@@ -21,9 +21,6 @@ public class PnPGUserDto {
     @NotBlank
     private String surname;
 
-    @ApiModelProperty(value = "${swagger.onboarding.user.model.email}")
-    private String email;
-
     @ApiModelProperty(value = "${swagger.onboarding.user.model.fiscalCode}", required = true)
     @JsonProperty(required = true)
     @NotBlank

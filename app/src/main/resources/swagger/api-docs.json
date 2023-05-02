@@ -83,16 +83,16 @@
             "content": {
               "application/problem+json": {
                 "schema": {
-                  "$ref" : "#/components/schemas/Problem"
+                  "$ref": "#/components/schemas/Problem"
                 }
               }
             }
           },
-          "404" : {
-            "description" : "Not Found",
-            "content" : {
-              "application/problem+json" : {
-                "schema" : {
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
                   "$ref" : "#/components/schemas/Problem"
                 }
               }
@@ -696,12 +696,12 @@
               }
             }
           },
-          "401" : {
-            "description" : "Unauthorized",
-            "content" : {
-              "application/problem+json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Problem"
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
                 }
               }
             }
@@ -1259,22 +1259,31 @@
         }
       },
       "PnPGBillingDataDto" : {
-        "title" : "PnPGBillingDataDto",
-        "required" : [ "businessName", "existsInRegistry", "taxCode" ],
-        "type" : "object",
-        "properties" : {
-          "businessName" : {
-            "type" : "string",
-            "description" : "Institution's legal name"
+        "title": "PnPGBillingDataDto",
+        "required": [
+          "businessName",
+          "certified",
+          "digitalAddress",
+          "taxCode"
+        ],
+        "type": "object",
+        "properties": {
+          "businessName": {
+            "type": "string",
+            "description": "Institution's legal name"
           },
-          "existsInRegistry" : {
-            "type" : "boolean",
-            "description" : "Indicates whether the institution values come from INFOCAMERE (true) or MANUAL (false)",
-            "example" : false
+          "certified": {
+            "type": "boolean",
+            "description": "Indicates whether the institution values come from INFOCAMERE (true) or MANUAL (false)",
+            "example": false
           },
-          "taxCode" : {
-            "type" : "string",
-            "description" : "Institution's taxCode"
+          "digitalAddress": {
+            "type": "string",
+            "description": "Institution's email address"
+          },
+          "taxCode": {
+            "type": "string",
+            "description": "Institution's taxCode"
           }
         }
       },
@@ -1328,10 +1337,6 @@
         "required" : [ "name", "role", "surname", "taxCode" ],
         "type" : "object",
         "properties" : {
-          "email" : {
-            "type" : "string",
-            "description" : "User's email"
-          },
           "name" : {
             "type" : "string",
             "description" : "User's name"

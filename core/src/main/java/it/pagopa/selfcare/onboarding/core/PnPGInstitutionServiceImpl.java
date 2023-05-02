@@ -11,7 +11,10 @@ import it.pagopa.selfcare.onboarding.connector.model.PnPGInstitutionLegalAddress
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionPnPGInfo;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.PnPGMatchInfo;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.*;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.CreatePnPGInstitutionData;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.InstitutionType;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.PnPGOnboardingData;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.User;
 import it.pagopa.selfcare.onboarding.connector.model.product.Product;
 import it.pagopa.selfcare.onboarding.connector.model.product.ProductRoleInfo;
 import it.pagopa.selfcare.onboarding.connector.model.user.MutableUserFieldsDto;
@@ -21,7 +24,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
-import java.util.*;
+import java.util.EnumMap;
+import java.util.EnumSet;
+import java.util.Optional;
+import java.util.UUID;
 
 import static it.pagopa.selfcare.onboarding.connector.model.user.User.Fields.*;
 import static it.pagopa.selfcare.onboarding.core.InstitutionServiceImpl.*;
@@ -88,8 +94,6 @@ class PnPGInstitutionServiceImpl implements PnPGInstitutionService {
 
         Institution institution = createInstitution(onboardingData);
 
-        onboardingData.setInstitutionUpdate(mapInstitutionToInstitutionUpdate(institution));
-
         String finalInstitutionInternalId = institution.getId();
         mapUsers(onboardingData, finalInstitutionInternalId);
 
@@ -127,17 +131,8 @@ class PnPGInstitutionServiceImpl implements PnPGInstitutionService {
         CreatePnPGInstitutionData createPGData = new CreatePnPGInstitutionData();
         createPGData.setDescription(onboardingData.getBusinessName());
         createPGData.setTaxId(onboardingData.getInstitutionExternalId());
-        createPGData.setCertified(onboardingData.isExistsInRegistry());
+        createPGData.setExistsInRegistry(onboardingData.isExistsInRegistry());
         return createPGData;
-    }
-
-    private InstitutionUpdate mapInstitutionToInstitutionUpdate(Institution institution) {
-        InstitutionUpdate institutionUpdate = new InstitutionUpdate();
-        institutionUpdate.setTaxCode(institution.getTaxCode());
-        institutionUpdate.setInstitutionType(InstitutionType.PG);
-        institutionUpdate.setGeographicTaxonomies(new ArrayList<>());
-        institutionUpdate.setDigitalAddress(institution.getDigitalAddress());
-        return institutionUpdate;
     }
 
     @Override
