@@ -21,6 +21,6 @@ public class CreatePnPGInstitutionData {
 
     private String taxId;
     private String description;
-    private boolean certified;
+    private boolean existsInRegistry;
 
 }

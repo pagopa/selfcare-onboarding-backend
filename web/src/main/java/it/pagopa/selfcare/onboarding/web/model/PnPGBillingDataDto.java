@@ -24,4 +24,9 @@ public class PnPGBillingDataDto {
     @NotNull
     private boolean certified;
 
+    @ApiModelProperty(value = "${swagger.onboarding.pnPGInstitutions.model.digitalAddress}", required = true)
+    @JsonProperty(required = true)
+    @NotBlank
+    private String digitalAddress;
+
 }
