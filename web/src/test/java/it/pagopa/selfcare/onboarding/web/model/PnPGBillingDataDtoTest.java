@@ -9,6 +9,7 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.lang.annotation.Annotation;
 import java.util.HashMap;
 import java.util.List;
@@ -32,6 +33,8 @@ class PnPGBillingDataDtoTest {
         HashMap<String, Class<? extends Annotation>> toCheckMap = new HashMap<>();
         toCheckMap.put("taxCode", NotBlank.class);
         toCheckMap.put("businessName", NotBlank.class);
+        toCheckMap.put("certified", NotNull.class);
+        toCheckMap.put("digitalAddress", NotBlank.class);
 
         PnPGBillingDataDto billingDataDto = new PnPGBillingDataDto();
         //when

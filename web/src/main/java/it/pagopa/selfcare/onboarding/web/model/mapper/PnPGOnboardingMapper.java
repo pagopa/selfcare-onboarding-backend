@@ -10,6 +10,7 @@ import it.pagopa.selfcare.onboarding.web.model.PnPGOnboardingDto;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.stream.Collectors;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -25,20 +26,24 @@ public class PnPGOnboardingMapper {
             resource.setInstitutionExternalId(externalId);
             resource.setBusinessName(model.getBillingData().getBusinessName());
             resource.setProductId(productId);
-            resource.setInstitutionUpdate(fillInstitutionUpdate(externalId));
+            resource.setInstitutionUpdate(fillInstitutionUpdate(model));
             if (model.getBillingData() != null) {
                 resource.setBillingRequest(fillBillingData(externalId));
             }
             resource.setInstitutionType(InstitutionType.PG);
-            resource.setCertified(model.getBillingData().isCertified());
+            resource.setExistsInRegistry(model.getBillingData().isCertified());
+            resource.setDigitalAddress(model.getBillingData().getDigitalAddress());
         }
         return resource;
     }
 
-    private static InstitutionUpdate fillInstitutionUpdate(String externalId) {
+    private static InstitutionUpdate fillInstitutionUpdate(PnPGOnboardingDto model) {
         InstitutionUpdate institutionUpdate = new InstitutionUpdate();
         institutionUpdate.setInstitutionType(InstitutionType.PG);
-        institutionUpdate.setTaxCode(externalId);
+        institutionUpdate.setTaxCode(model.getBillingData().getTaxCode());
+        institutionUpdate.setDescription(model.getBillingData().getBusinessName());
+        institutionUpdate.setDigitalAddress(model.getBillingData().getDigitalAddress());
+        institutionUpdate.setGeographicTaxonomies(new ArrayList<>());
         return institutionUpdate;
     }
 

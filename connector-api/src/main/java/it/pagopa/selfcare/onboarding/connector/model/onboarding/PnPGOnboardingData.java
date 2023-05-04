@@ -35,7 +35,8 @@ public class PnPGOnboardingData {
     private InstitutionType institutionType;
     private String origin;
     private String pricingPlan;
-    private boolean certified;
+    private boolean existsInRegistry;
+    private String digitalAddress;
 
     public List<User> getUsers() {
         return Optional.ofNullable(users).orElse(Collections.emptyList());
