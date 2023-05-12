@@ -27,7 +27,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.UUID;
 
 import static it.pagopa.selfcare.commons.utils.TestUtils.mockInstance;
 import static java.util.UUID.randomUUID;
@@ -190,14 +192,13 @@ class InstitutionControllerTest {
         //given
         InstitutionInfo institutionInfo = mockInstance(new InstitutionInfo(), "setId");
         institutionInfo.setId(randomUUID().toString());
-        Set<String> productFilter = new HashSet<>();
-        productFilter.add("prod-io");
+        String productFilter = "prod-io";
         when(institutionServiceMock.getInstitutions(any()))
                 .thenReturn(Collections.singletonList(institutionInfo));
         //when
         MvcResult result = mvc.perform(MockMvcRequestBuilders
                         .get(BASE_URL + "")
-                        .queryParam("productFilter", "prod-io")
+                        .queryParam("productFilter", productFilter)
                         .contentType(APPLICATION_JSON_VALUE)
                         .accept(APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk())

@@ -45,10 +45,9 @@
           {
             "name": "productFilter",
             "in": "query",
-            "description": "A list of products to filter the institutions based on whether the institution has an ACTIVE onboarding on the specified products. For multiple values insert a single string with comma separated values.",
+            "description": "A product to filter the institutions based on whether the institution has an ACTIVE onboarding on the specified product. ",
             "required": false,
             "style": "form",
-            "explode": true,
             "schema": {
               "type": "string"
             }
@@ -726,12 +725,12 @@
               }
             }
           },
-          "500" : {
-            "description" : "Internal Server Error",
-            "content" : {
-              "application/problem+json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Problem"
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
                 }
               }
             }

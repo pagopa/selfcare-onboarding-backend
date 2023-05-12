@@ -161,7 +161,7 @@ class PartyConnectorImpl implements PartyConnector {
     }
 
     @Override
-    public Collection<InstitutionInfo> getOnBoardedInstitutions(Set<String> productFilter) {
+    public Collection<InstitutionInfo> getOnBoardedInstitutions(String productFilter) {
         log.trace("getOnBoardedInstitutions start");
         OnBoardingInfo onBoardingInfo = restClient.getOnBoardingInfo(null, EnumSet.of(ACTIVE));
         Collection<InstitutionInfo> result = parseOnBoardingInfo(onBoardingInfo, productFilter);
@@ -170,14 +170,13 @@ class PartyConnectorImpl implements PartyConnector {
         return result;
     }
 
-
-    private Collection<InstitutionInfo> parseOnBoardingInfo(OnBoardingInfo onBoardingInfo, Set<String> productFilter) {
+    private Collection<InstitutionInfo> parseOnBoardingInfo(OnBoardingInfo onBoardingInfo, String productFilter) {
         log.trace("parseOnBoardingInfo start");
         log.debug("parseOnBoardingInfo onBoardingInfo = {}", onBoardingInfo);
         Collection<InstitutionInfo> institutions = Collections.emptyList();
         if (onBoardingInfo != null && onBoardingInfo.getInstitutions() != null) {
             institutions = onBoardingInfo.getInstitutions().stream()
-                    .filter(institution -> productFilter == null || productFilter.isEmpty() || productFilter.contains(institution.getProductInfo().getId()))
+                    .filter(institution -> productFilter == null || productFilter.isEmpty() || verifyFilter(institution, productFilter))
                     .map(ONBOARDING_DATA_TO_INSTITUTION_INFO_FUNCTION)
                     .collect(Collectors.collectingAndThen(
                             Collectors.toMap(InstitutionInfo::getId, Function.identity(), MERGE_FUNCTION),
@@ -187,6 +186,22 @@ class PartyConnectorImpl implements PartyConnector {
         log.debug("parseOnBoardingInfo result = {}", institutions);
         log.trace("parseOnBoardingInfo end");
         return institutions;
+    }
+
+    private Boolean verifyFilter(OnboardingResponseData onboardingResponseData, String productFilter) {
+
+        if (productFilter.contains("premium")) {
+            if (onboardingResponseData.getProductInfo().getId().equals(productFilter.split("-premium")[0])) {
+                try {
+                    restClient.verifyOnboarding(onboardingResponseData.getExternalId(), productFilter);
+                    return true;
+                } catch (RuntimeException e) {
+                    return false;
+                }
+            }
+        }
+
+        return onboardingResponseData.getProductInfo().getId().equals(productFilter);
     }
 
     @Override

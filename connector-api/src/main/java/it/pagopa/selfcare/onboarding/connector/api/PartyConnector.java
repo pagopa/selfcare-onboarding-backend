@@ -7,13 +7,12 @@ import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.UserInfo;
 
 import java.util.Collection;
-import java.util.Set;
 
 public interface PartyConnector {
 
     void onboardingOrganization(OnboardingData onboardingData);
 
-    Collection<InstitutionInfo> getOnBoardedInstitutions(Set<String> productFilter);
+    Collection<InstitutionInfo> getOnBoardedInstitutions(String productFilter);
 
     RelationshipsResponse getUserInstitutionRelationships(String externalInstitutionId, UserInfo.UserInfoFilter userInfoFilter);
 
