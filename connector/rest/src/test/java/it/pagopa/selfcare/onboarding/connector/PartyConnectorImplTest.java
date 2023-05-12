@@ -8,8 +8,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import feign.FeignException;
 import it.pagopa.selfcare.commons.base.security.PartyRole;
 import it.pagopa.selfcare.commons.utils.TestUtils;
+import it.pagopa.selfcare.onboarding.connector.exceptions.ResourceNotFoundException;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipInfo;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipState;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipsResponse;
@@ -227,7 +229,7 @@ class PartyConnectorImplTest {
         onBoardingInfo.setInstitutions(List.of(onboardingData1, onboardingData2, onboardingData3, onboardingData3, onboardingData4));
         when(restClientMock.getOnBoardingInfo(any(), any()))
                 .thenReturn(onBoardingInfo);
-        Set<String> productFilter = Collections.emptySet();
+        String productFilter = "";
         // when
         Collection<InstitutionInfo> institutions = partyConnector.getOnBoardedInstitutions(productFilter);
         // then
@@ -280,14 +282,12 @@ class PartyConnectorImplTest {
         onBoardingInfo.setInstitutions(List.of(onboardingData1, onboardingData2, onboardingData3, onboardingData3, onboardingData4));
         when(restClientMock.getOnBoardingInfo(any(), any()))
                 .thenReturn(onBoardingInfo);
-        Set<String> productFilter = new HashSet<>();
-        productFilter.add("prod-io");
-        productFilter.add("prod-pagopa");
+        String productFilter = "prod-io";
         // when
         Collection<InstitutionInfo> institutions = partyConnector.getOnBoardedInstitutions(productFilter);
         // then
         assertNotNull(institutions);
-        assertEquals(2, institutions.size());
+        assertEquals(1, institutions.size());
         Map<PartyRole, List<InstitutionInfo>> map = institutions.stream()
                 .collect(Collectors.groupingBy(InstitutionInfo::getUserRole));
         List<InstitutionInfo> institutionInfos = map.get(PartyRole.OPERATOR);
@@ -299,13 +299,7 @@ class PartyConnectorImplTest {
         assertEquals(onboardingData1.getState().toString(), institutionInfos.get(0).getStatus());
         assertEquals(onboardingData1.getRole(), institutionInfos.get(0).getUserRole());
         institutionInfos = map.get(PartyRole.SUB_DELEGATE);
-        assertNotNull(institutionInfos);
-        assertEquals(1, institutionInfos.size());
-        assertEquals(onboardingData3.getId(), institutionInfos.get(0).getId());
-        assertEquals(onboardingData3.getDescription(), institutionInfos.get(0).getDescription());
-        assertEquals(onboardingData3.getExternalId(), institutionInfos.get(0).getExternalId());
-        assertEquals(onboardingData3.getState().toString(), institutionInfos.get(0).getStatus());
-        assertEquals(onboardingData3.getRole(), institutionInfos.get(0).getUserRole());
+        assertNull(institutionInfos);
         institutionInfos = map.get(PartyRole.MANAGER);
         assertNull(institutionInfos);
         verify(restClientMock, times(1))
@@ -338,14 +332,76 @@ class PartyConnectorImplTest {
         onBoardingInfo.setInstitutions(List.of(onboardingData1, onboardingData2, onboardingData3, onboardingData3, onboardingData4));
         when(restClientMock.getOnBoardingInfo(any(), any()))
                 .thenReturn(onBoardingInfo);
-        Set<String> productFilter = new HashSet<>();
-        productFilter.add("produdct-to-find");
+        String productFilter = "produdct-to-find";
         // when
         Collection<InstitutionInfo> institutions = partyConnector.getOnBoardedInstitutions(productFilter);
         // then
         assertTrue(institutions.isEmpty());
         verify(restClientMock, times(1))
                 .getOnBoardingInfo(isNull(), eq(EnumSet.of(ACTIVE)));
+        verifyNoMoreInteractions(restClientMock);
+    }
+
+    @Test
+    void getOnboardedInstitutions_productFilterPremium() {
+        // Given
+        String productFilter = "prod-dummy-premium";
+        OnBoardingInfo onBoardingInfo = new OnBoardingInfo();
+        OnboardingResponseData onboardingData1 = mockInstance(new OnboardingResponseData(), 1, "setState", "setRole");
+        onboardingData1.setState(ACTIVE);
+        onboardingData1.setRole(PartyRole.OPERATOR);
+        onboardingData1.getProductInfo().setId("prod-dummy");
+        OnboardingResponseData onboardingData2 = mockInstance(new OnboardingResponseData(), 2, "setState", "setId", "setRole");
+        onboardingData2.setState(ACTIVE);
+        onboardingData2.setId(onboardingData1.getId());
+        onboardingData2.setRole(PartyRole.MANAGER);
+        onboardingData2.getProductInfo().setId("prod-dummy2");
+        OnboardingResponseData onboardingData3 = mockInstance(new OnboardingResponseData(), 3, "setState", "setRole");
+        onboardingData3.setState(ACTIVE);
+        onboardingData3.setRole(PartyRole.OPERATOR);
+        onboardingData3.getProductInfo().setId("prod-dummy");
+        OnboardingResponseData onboardingData4 = mockInstance(new OnboardingResponseData(), 4, "setState", "setId", "setRole");
+        onboardingData4.setState(ACTIVE);
+        onboardingData4.setId(onboardingData1.getId());
+        onboardingData4.setRole(PartyRole.SUB_DELEGATE);
+        onboardingData4.getProductInfo().setId("prod-dummy");
+        onBoardingInfo.setInstitutions(List.of(onboardingData1, onboardingData2, onboardingData3, onboardingData3, onboardingData4));
+        when(restClientMock.getOnBoardingInfo(any(), any()))
+                .thenReturn(onBoardingInfo);
+        doNothing()
+                .when(restClientMock)
+                .verifyOnboarding(onboardingData1.getExternalId(), productFilter);
+        doThrow(ResourceNotFoundException.class)
+                .when(restClientMock)
+                .verifyOnboarding(onboardingData3.getExternalId(), productFilter);
+        doThrow(FeignException.FeignClientException.BadRequest.class)
+                .when(restClientMock)
+                .verifyOnboarding(onboardingData4.getExternalId(), productFilter);
+        // When
+        Collection<InstitutionInfo> institutions = partyConnector.getOnBoardedInstitutions(productFilter);
+        // Then
+        assertNotNull(institutions);
+        assertEquals(1, institutions.size());
+        Map<PartyRole, List<InstitutionInfo>> map = institutions.stream()
+                .collect(Collectors.groupingBy(InstitutionInfo::getUserRole));
+        List<InstitutionInfo> institutionInfos = map.get(PartyRole.OPERATOR);
+        assertNotNull(institutionInfos);
+        assertEquals(onboardingData1.getId(), institutionInfos.get(0).getId());
+        assertEquals(onboardingData1.getExternalId(), institutionInfos.get(0).getExternalId());
+        assertEquals(onboardingData1.getState().toString(), institutionInfos.get(0).getStatus());
+        assertEquals(onboardingData1.getRole(), institutionInfos.get(0).getUserRole());
+        institutionInfos = map.get(PartyRole.MANAGER);
+        assertNull(institutionInfos);
+        institutionInfos = map.get(PartyRole.SUB_DELEGATE);
+        assertNull(institutionInfos);
+        verify(restClientMock, times(1))
+                .getOnBoardingInfo(isNull(), eq(EnumSet.of(ACTIVE)));
+        verify(restClientMock, times(1))
+                .verifyOnboarding(onboardingData1.getExternalId(), productFilter);
+        verify(restClientMock, times(2))
+                .verifyOnboarding(onboardingData3.getExternalId(), productFilter);
+        verify(restClientMock, times(1))
+                .verifyOnboarding(onboardingData4.getExternalId(), productFilter);
         verifyNoMoreInteractions(restClientMock);
     }
 

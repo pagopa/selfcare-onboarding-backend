@@ -197,7 +197,7 @@ class InstitutionServiceImpl implements InstitutionService {
 
 
     @Override
-    public Collection<InstitutionInfo> getInstitutions(Set<String> productFilter) {
+    public Collection<InstitutionInfo> getInstitutions(String productFilter) {
         log.trace("getInstitutions start");
         Collection<InstitutionInfo> result = partyConnector.getOnBoardedInstitutions(productFilter);
         log.debug("getInstitutions result = {}", result);
