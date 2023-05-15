@@ -3,9 +3,9 @@ package it.pagopa.selfcare.onboarding.connector.rest.client;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import it.pagopa.selfcare.commons.connector.rest.BaseFeignRestClientTest;
 import it.pagopa.selfcare.commons.connector.rest.RestTestUtils;
-import it.pagopa.selfcare.onboarding.connector.model.PnPGInstitutionLegalAddressData;
+import it.pagopa.selfcare.onboarding.connector.model.InstitutionLegalAddressData;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionPnPGInfo;
-import it.pagopa.selfcare.onboarding.connector.model.institutions.PnPGMatchInfo;
+import it.pagopa.selfcare.onboarding.connector.model.institutions.MatchInfoResult;
 import it.pagopa.selfcare.onboarding.connector.rest.config.PartyRegistryProxyRestClientTestConfig;
 import it.pagopa.selfcare.onboarding.connector.rest.model.institution_pnpg.InstitutionByLegalTaxIdRequest;
 import lombok.SneakyThrows;
@@ -78,7 +78,7 @@ class PartyRegistryProxyRestClientTest extends BaseFeignRestClientTest {
         String institutionExternalId = "instituionId";
         String taxCode = "taxCode";
         //when
-        PnPGMatchInfo response = restClient.matchInstitutionAndUser(institutionExternalId, taxCode);
+        MatchInfoResult response = restClient.matchInstitutionAndUser(institutionExternalId, taxCode);
         //then
         assertNotNull(response);
         assertTrue(response.isVerificationResult());
@@ -89,7 +89,7 @@ class PartyRegistryProxyRestClientTest extends BaseFeignRestClientTest {
         //given
         String institutionExternalId = "extInstituionId";
         //when
-        PnPGInstitutionLegalAddressData response = restClient.getInstitutionLegalAddress(institutionExternalId);
+        InstitutionLegalAddressData response = restClient.getInstitutionLegalAddress(institutionExternalId);
         //then
         assertNotNull(response);
         assertNotNull(response.getAddress());

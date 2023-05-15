@@ -35,74 +35,70 @@
   "paths" : {
     "/institutions" : {
       "get" : {
-        "tags": [
-          "institutions"
-        ],
-        "summary": "getInstitutions",
-        "description": "The service retrieves all the onboarded institutions related to the logged user",
-        "operationId": "getInstitutionsUsingGET",
-        "parameters": [
-          {
-            "name": "productFilter",
-            "in": "query",
-            "description": "A product to filter the institutions based on whether the institution has an ACTIVE onboarding on the specified product. ",
-            "required": false,
-            "style": "form",
-            "schema": {
-              "type": "string"
-            }
+        "tags" : [ "institutions" ],
+        "summary" : "getInstitutions",
+        "description" : "The service retrieves all the onboarded institutions related to the logged user",
+        "operationId" : "getInstitutionsUsingGET",
+        "parameters" : [ {
+          "name" : "productFilter",
+          "in" : "query",
+          "description" : "A product to filter the institutions based on whether the institution has an ACTIVE onboarding on the specified product. ",
+          "required" : false,
+          "style" : "form",
+          "schema" : {
+            "type" : "string"
           }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/InstitutionResource"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/InstitutionResource"
                   }
                 }
               }
             }
           },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Problem"
+          "400" : {
+            "description" : "Bad Request",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
                 }
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Problem"
+          "401" : {
+            "description" : "Unauthorized",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
                 }
               }
             }
           },
-          "404": {
-            "description": "Not Found",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Problem"
+          "404" : {
+            "description" : "Not Found",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
                 }
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Problem"
+          "500" : {
+            "description" : "Internal Server Error",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
                 }
               }
             }
@@ -165,6 +161,151 @@
           },
           "404" : {
             "description" : "Not Found",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "Internal Server Error",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ "global" ]
+        } ]
+      }
+    },
+    "/institutions/{externalInstitutionId}/legal-address" : {
+      "get" : {
+        "tags" : [ "institutions" ],
+        "summary" : "getInstitutionLegalAddress",
+        "description" : "Get legal address by business tax id",
+        "operationId" : "getInstitutionLegalAddressUsingGET",
+        "parameters" : [ {
+          "name" : "externalInstitutionId",
+          "in" : "path",
+          "description" : "Institution's unique external identifier",
+          "required" : true,
+          "style" : "simple",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/InstitutionLegalAddressResource"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad Request",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Unauthorized",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "Not Found",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "Internal Server Error",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ "global" ]
+        } ]
+      }
+    },
+    "/institutions/{externalInstitutionId}/match" : {
+      "post" : {
+        "tags" : [ "institutions" ],
+        "summary" : "matchInstitutionAndUser",
+        "description" : "MatchLegal Representative and inserted Institution by querying on Agenzia delle Entrate",
+        "operationId" : "matchInstitutionAndUserUsingPOST",
+        "parameters" : [ {
+          "name" : "externalInstitutionId",
+          "in" : "path",
+          "description" : "Institution's unique external identifier",
+          "required" : true,
+          "style" : "simple",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/UserDto"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/MatchInfoResultResource"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad Request",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Unauthorized",
             "content" : {
               "application/problem+json" : {
                 "schema" : {
@@ -507,7 +648,7 @@
         "tags" : [ "pnPGInstitutions" ],
         "summary" : "getInstitutionLegalAddress",
         "description" : "Get legal address by business tax id",
-        "operationId" : "getInstitutionLegalAddressUsingGET",
+        "operationId" : "getInstitutionLegalAddressUsingGET_1",
         "parameters" : [ {
           "name" : "externalInstitutionId",
           "in" : "path",
@@ -524,7 +665,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/PnPGInstitutionLegalAddressResource"
+                  "$ref" : "#/components/schemas/InstitutionLegalAddressResource"
                 }
               }
             }
@@ -580,7 +721,7 @@
         "tags" : [ "pnPGInstitutions" ],
         "summary" : "matchInstitutionAndUser",
         "description" : "MatchLegal Representative and inserted Institution by querying on Agenzia delle Entrate",
-        "operationId" : "matchInstitutionAndUserUsingPOST",
+        "operationId" : "matchInstitutionAndUserUsingPOST_1",
         "parameters" : [ {
           "name" : "externalInstitutionId",
           "in" : "path",
@@ -606,7 +747,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/PnPGMatchResource"
+                  "$ref" : "#/components/schemas/MatchInfoResultResource"
                 }
               }
             }
@@ -682,55 +823,55 @@
           }
         },
         "responses" : {
-          "201": {
-            "description": "Created"
+          "201" : {
+            "description" : "Created"
           },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Problem"
+          "400" : {
+            "description" : "Bad Request",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
                 }
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Problem"
+          "401" : {
+            "description" : "Unauthorized",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
                 }
               }
             }
           },
-          "403": {
-            "description": "Forbidden",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Problem"
+          "403" : {
+            "description" : "Forbidden",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
                 }
               }
             }
           },
-          "409": {
-            "description": "Conflict",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Problem"
+          "409" : {
+            "description" : "Conflict",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
                 }
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Problem"
+          "500" : {
+            "description" : "Internal Server Error",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
                 }
               }
             }
@@ -1094,6 +1235,21 @@
           }
         }
       },
+      "InstitutionLegalAddressResource" : {
+        "title" : "InstitutionLegalAddressResource",
+        "required" : [ "address", "zipCode" ],
+        "type" : "object",
+        "properties" : {
+          "address" : {
+            "type" : "string",
+            "description" : "Institution's physical address"
+          },
+          "zipCode" : {
+            "type" : "string",
+            "description" : "Institution's zipCode"
+          }
+        }
+      },
       "InstitutionOnboardingInfoResource" : {
         "title" : "InstitutionOnboardingInfoResource",
         "required" : [ "geographicTaxonomies" ],
@@ -1207,6 +1363,18 @@
           }
         }
       },
+      "MatchInfoResultResource" : {
+        "title" : "MatchInfoResultResource",
+        "required" : [ "verificationResult" ],
+        "type" : "object",
+        "properties" : {
+          "verificationResult" : {
+            "type" : "boolean",
+            "description" : "Legal Representative and Institution match result on Agenzia delle Entrate",
+            "example" : false
+          }
+        }
+      },
       "OnboardingDto" : {
         "title" : "OnboardingDto",
         "required" : [ "billingData", "geographicTaxonomies", "institutionType", "users" ],
@@ -1258,58 +1426,26 @@
         }
       },
       "PnPGBillingDataDto" : {
-        "title": "PnPGBillingDataDto",
-        "required": [
-          "businessName",
-          "certified",
-          "digitalAddress",
-          "taxCode"
-        ],
-        "type": "object",
-        "properties": {
-          "businessName": {
-            "type": "string",
-            "description": "Institution's legal name"
-          },
-          "certified": {
-            "type": "boolean",
-            "description": "Indicates whether the institution values come from INFOCAMERE (true) or MANUAL (false)",
-            "example": false
-          },
-          "digitalAddress": {
-            "type": "string",
-            "description": "Institution's email address"
-          },
-          "taxCode": {
-            "type": "string",
-            "description": "Institution's taxCode"
-          }
-        }
-      },
-      "PnPGInstitutionLegalAddressResource" : {
-        "title" : "PnPGInstitutionLegalAddressResource",
-        "required" : [ "address", "zipCode" ],
+        "title" : "PnPGBillingDataDto",
+        "required" : [ "businessName", "certified", "digitalAddress", "taxCode" ],
         "type" : "object",
         "properties" : {
-          "address" : {
+          "businessName" : {
             "type" : "string",
-            "description" : "Legal Representative's institution legal address"
+            "description" : "Institution's legal name"
           },
-          "zipCode" : {
-            "type" : "string",
-            "description" : "Legal Representative's institution legal address zip code"
-          }
-        }
-      },
-      "PnPGMatchResource" : {
-        "title" : "PnPGMatchResource",
-        "required" : [ "verificationResult" ],
-        "type" : "object",
-        "properties" : {
-          "verificationResult" : {
+          "certified" : {
             "type" : "boolean",
-            "description" : "Legal Representative and Institution match result on Agenzia delle Entrate",
+            "description" : "Indicates whether the institution values come from INFOCAMERE (true) or MANUAL (false)",
             "example" : false
+          },
+          "digitalAddress" : {
+            "type" : "string",
+            "description" : "Institution's email address"
+          },
+          "taxCode" : {
+            "type" : "string",
+            "description" : "Institution's taxCode"
           }
         }
       },
@@ -1336,31 +1472,26 @@
         "required" : [ "name", "role", "surname", "taxCode" ],
         "type" : "object",
         "properties" : {
-          "email": {
-            "type": "string",
-            "description": "User's email"
+          "email" : {
+            "type" : "string",
+            "description" : "User's email"
           },
-          "name": {
-            "type": "string",
-            "description": "User's name"
+          "name" : {
+            "type" : "string",
+            "description" : "User's name"
           },
-          "role": {
-            "type": "string",
-            "description": "User's role",
-            "enum": [
-              "DELEGATE",
-              "MANAGER",
-              "OPERATOR",
-              "SUB_DELEGATE"
-            ]
+          "role" : {
+            "type" : "string",
+            "description" : "User's role",
+            "enum" : [ "DELEGATE", "MANAGER", "OPERATOR", "SUB_DELEGATE" ]
           },
-          "surname": {
-            "type": "string",
-            "description": "User's surname"
+          "surname" : {
+            "type" : "string",
+            "description" : "User's surname"
           },
-          "taxCode": {
-            "type": "string",
-            "description": "User's fiscal code"
+          "taxCode" : {
+            "type" : "string",
+            "description" : "User's fiscal code"
           }
         }
       },
@@ -1478,14 +1609,12 @@
       },
       "UserDto" : {
         "title" : "UserDto",
-        "required" : [ "email", "name", "role", "surname", "taxCode" ],
+        "required" : [ "name", "role", "surname", "taxCode" ],
         "type" : "object",
         "properties" : {
           "email" : {
             "type" : "string",
-            "description" : "User's email",
-            "format" : "email",
-            "example" : "email@example.com"
+            "description" : "User's email"
           },
           "name" : {
             "type" : "string",

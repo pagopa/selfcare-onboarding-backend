@@ -2,10 +2,10 @@ package it.pagopa.selfcare.onboarding.web.model.mapper;
 
 import it.pagopa.selfcare.onboarding.connector.model.BusinessPnPG;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionPnPGInfo;
-import it.pagopa.selfcare.onboarding.connector.model.institutions.PnPGMatchInfo;
+import it.pagopa.selfcare.onboarding.connector.model.institutions.MatchInfoResult;
 import it.pagopa.selfcare.onboarding.web.model.BusinessPnPGResource;
 import it.pagopa.selfcare.onboarding.web.model.InstitutionPnPGResource;
-import it.pagopa.selfcare.onboarding.web.model.PnPGMatchResource;
+import it.pagopa.selfcare.onboarding.web.model.MatchInfoResultResource;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -41,15 +41,14 @@ public class PnPGInstitutionMapper {
         return resource;
     }
 
-    public static PnPGMatchResource toResource(PnPGMatchInfo model) {
-        PnPGMatchResource resource = null;
+    public static MatchInfoResultResource toResource(MatchInfoResult model) {
+        MatchInfoResultResource resource = null;
         if (model != null) {
-            resource = new PnPGMatchResource();
+            resource = new MatchInfoResultResource();
 
             resource.setVerificationResult(model.isVerificationResult());
         }
         return resource;
     }
-
 
 }

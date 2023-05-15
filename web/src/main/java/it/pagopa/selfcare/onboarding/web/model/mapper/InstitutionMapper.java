@@ -2,7 +2,9 @@ package it.pagopa.selfcare.onboarding.web.model.mapper;
 
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionInfo;
+import it.pagopa.selfcare.onboarding.connector.model.institutions.MatchInfoResult;
 import it.pagopa.selfcare.onboarding.web.model.InstitutionResource;
+import it.pagopa.selfcare.onboarding.web.model.MatchInfoResultResource;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -49,6 +51,16 @@ public class InstitutionMapper {
             resource.setTaxCode(model.getTaxCode());
             resource.setZipCode(model.getZipCode());
             resource.setOrigin(model.getOrigin());
+        }
+        return resource;
+    }
+
+    public static MatchInfoResultResource toResource(MatchInfoResult model) {
+        MatchInfoResultResource resource = null;
+        if (model != null) {
+            resource = new MatchInfoResultResource();
+
+            resource.setVerificationResult(model.isVerificationResult());
         }
         return resource;
     }

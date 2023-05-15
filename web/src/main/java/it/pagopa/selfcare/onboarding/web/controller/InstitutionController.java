@@ -6,17 +6,18 @@ import io.swagger.annotations.ApiParam;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import it.pagopa.selfcare.commons.base.logging.LogUtils;
 import it.pagopa.selfcare.commons.web.model.Problem;
+import it.pagopa.selfcare.onboarding.connector.model.InstitutionLegalAddressData;
 import it.pagopa.selfcare.onboarding.connector.model.InstitutionOnboardingData;
+import it.pagopa.selfcare.onboarding.connector.model.institutions.MatchInfoResult;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.InstitutionType;
 import it.pagopa.selfcare.onboarding.core.InstitutionService;
-import it.pagopa.selfcare.onboarding.web.model.GeographicTaxonomyResource;
-import it.pagopa.selfcare.onboarding.web.model.InstitutionOnboardingInfoResource;
-import it.pagopa.selfcare.onboarding.web.model.InstitutionResource;
-import it.pagopa.selfcare.onboarding.web.model.OnboardingDto;
+import it.pagopa.selfcare.onboarding.web.model.*;
 import it.pagopa.selfcare.onboarding.web.model.mapper.GeographicTaxonomyMapper;
 import it.pagopa.selfcare.onboarding.web.model.mapper.InstitutionMapper;
 import it.pagopa.selfcare.onboarding.web.model.mapper.OnboardingMapper;
+import it.pagopa.selfcare.onboarding.web.model.mapper.UserMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -145,6 +146,39 @@ public class InstitutionController {
         log.debug("verifyOnboarding externalInstitutionId = {}, productId = {}", externalInstitutionId, productId);
         institutionService.verifyOnboarding(externalInstitutionId, productId);
         log.trace("verifyOnboarding end");
+    }
+
+    @PostMapping(value = "/{externalInstitutionId}/match")
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "", notes = "${swagger.onboarding.institutions.api.matchInstitutionAndUser}")
+    public MatchInfoResultResource matchInstitutionAndUser(@ApiParam("${swagger.onboarding.institutions.model.externalId}")
+                                                     @PathVariable("externalInstitutionId")
+                                                     String externalInstitutionId,
+                                                           @RequestBody
+                                                     @Valid
+                                                     UserDto userDto) {
+        log.trace("matchInstitutionAndUser start");
+        log.debug(LogUtils.CONFIDENTIAL_MARKER, "matchInstitutionAndUser userDto = {}", userDto);
+        MatchInfoResult matchInfoResult = institutionService.matchInstitutionAndUser(externalInstitutionId, UserMapper.toUser(userDto));
+        MatchInfoResultResource result = InstitutionMapper.toResource(matchInfoResult);
+        log.debug("matchInstitutionAndUser result = {}", result);
+        log.trace("matchInstitutionAndUser end");
+        return result;
+    }
+
+    @GetMapping(value = "/{externalInstitutionId}/legal-address")
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "", notes = "${swagger.onboarding.institutions.api.getInstitutionLegalAddress}")
+    public InstitutionLegalAddressResource getInstitutionLegalAddress(@ApiParam("${swagger.onboarding.institutions.model.externalId}")
+                                                                          @PathVariable("externalInstitutionId")
+                                                                          String externalInstitutionId) {
+        log.trace("getInstitutionLegalAddress start");
+        log.debug("getInstitutionLegalAddress institutionId = {}", externalInstitutionId);
+        InstitutionLegalAddressData institutionLegalAddressData = institutionService.getInstitutionLegalAddress(externalInstitutionId);
+        InstitutionLegalAddressResource result = OnboardingMapper.toResource(institutionLegalAddressData);
+        log.debug("getInstitutionLegalAddress result = {}", result);
+        log.trace("getInstitutionLegalAddress end");
+        return result;
     }
 
 }

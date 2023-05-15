@@ -1,8 +1,8 @@
 package it.pagopa.selfcare.onboarding.connector.rest.client;
 
-import it.pagopa.selfcare.onboarding.connector.model.PnPGInstitutionLegalAddressData;
+import it.pagopa.selfcare.onboarding.connector.model.InstitutionLegalAddressData;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionPnPGInfo;
-import it.pagopa.selfcare.onboarding.connector.model.institutions.PnPGMatchInfo;
+import it.pagopa.selfcare.onboarding.connector.model.institutions.MatchInfoResult;
 import it.pagopa.selfcare.onboarding.connector.rest.model.institution_pnpg.InstitutionByLegalTaxIdRequest;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;
@@ -22,11 +22,11 @@ public interface PartyRegistryProxyRestClient {
 
     @GetMapping(value = "${rest-client.party-registry-proxy.matchInstitutionAndUser.path}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    PnPGMatchInfo matchInstitutionAndUser(@RequestParam(value = "vatNumber") String institutionExternalId,
-                                          @RequestParam(value = "taxId") String taxCode);
+    MatchInfoResult matchInstitutionAndUser(@RequestParam(value = "vatNumber") String institutionExternalId,
+                                            @RequestParam(value = "taxId") String taxCode);
 
     @GetMapping(value = "${rest-client.party-registry-proxy.getInstitutionLegalAddress.path}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    PnPGInstitutionLegalAddressData getInstitutionLegalAddress(@RequestParam(value = "taxId") String externalInstitutionId);
+    InstitutionLegalAddressData getInstitutionLegalAddress(@RequestParam(value = "taxId") String externalInstitutionId);
 
 }

@@ -9,9 +9,9 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import it.pagopa.selfcare.onboarding.connector.model.BusinessPnPG;
-import it.pagopa.selfcare.onboarding.connector.model.PnPGInstitutionLegalAddressData;
+import it.pagopa.selfcare.onboarding.connector.model.InstitutionLegalAddressData;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionPnPGInfo;
-import it.pagopa.selfcare.onboarding.connector.model.institutions.PnPGMatchInfo;
+import it.pagopa.selfcare.onboarding.connector.model.institutions.MatchInfoResult;
 import it.pagopa.selfcare.onboarding.connector.rest.client.PartyRegistryProxyRestClient;
 import it.pagopa.selfcare.onboarding.connector.rest.model.institution_pnpg.InstitutionByLegalTaxIdRequest;
 import it.pagopa.selfcare.onboarding.connector.rest.model.institution_pnpg.InstitutionByLegalTaxIdRequestDto;
@@ -110,11 +110,11 @@ class PartyRegistryProxyImplTest {
         // given
         String externalId = "externalId";
         String taxCode = "taxCode";
-        PnPGMatchInfo pnPGMatchInfo = mockInstance(new PnPGMatchInfo());
+        MatchInfoResult pnPGMatchInfo = mockInstance(new MatchInfoResult());
         when(restClientMock.matchInstitutionAndUser(anyString(), anyString()))
                 .thenReturn(pnPGMatchInfo);
         // when
-        PnPGMatchInfo result = partyConnector.matchInstitutionAndUser(externalId, taxCode);
+        MatchInfoResult result = partyConnector.matchInstitutionAndUser(externalId, taxCode);
         // then
         assertNotNull(result);
         assertEquals(result.isVerificationResult(), pnPGMatchInfo.isVerificationResult());
@@ -153,11 +153,11 @@ class PartyRegistryProxyImplTest {
     void getInstitutionLegalAddress() {
         // given
         String externalId = "externalId";
-        PnPGInstitutionLegalAddressData data = mockInstance(new PnPGInstitutionLegalAddressData());
+        InstitutionLegalAddressData data = mockInstance(new InstitutionLegalAddressData());
         when(restClientMock.getInstitutionLegalAddress(anyString()))
                 .thenReturn(data);
         // when
-        PnPGInstitutionLegalAddressData result = partyConnector.getInstitutionLegalAddress(externalId);
+        InstitutionLegalAddressData result = partyConnector.getInstitutionLegalAddress(externalId);
         // then
         assertNotNull(result);
         assertEquals(result.getZipCode(), data.getZipCode());

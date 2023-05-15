@@ -3,7 +3,7 @@ package it.pagopa.selfcare.onboarding.connector.model;
 import lombok.Data;
 
 @Data
-public class PnPGInstitutionLegalAddressData {
+public class InstitutionLegalAddressData {
     private String address;
     private String zipCode;
 }

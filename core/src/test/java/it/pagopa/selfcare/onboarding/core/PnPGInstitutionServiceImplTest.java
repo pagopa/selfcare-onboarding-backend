@@ -7,10 +7,10 @@ import it.pagopa.selfcare.onboarding.connector.api.ProductsConnector;
 import it.pagopa.selfcare.onboarding.connector.api.UserRegistryConnector;
 import it.pagopa.selfcare.onboarding.connector.exceptions.ResourceNotFoundException;
 import it.pagopa.selfcare.onboarding.connector.model.BusinessPnPG;
-import it.pagopa.selfcare.onboarding.connector.model.PnPGInstitutionLegalAddressData;
+import it.pagopa.selfcare.onboarding.connector.model.InstitutionLegalAddressData;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionPnPGInfo;
-import it.pagopa.selfcare.onboarding.connector.model.institutions.PnPGMatchInfo;
+import it.pagopa.selfcare.onboarding.connector.model.institutions.MatchInfoResult;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.CreatePnPGInstitutionData;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.InstitutionType;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.PnPGOnboardingData;
@@ -102,11 +102,11 @@ class PnPGInstitutionServiceImplTest {
         UserId userId = mockInstance(new UserId());
         User user = mockInstance(new User(), "setId");
         user.setId(userId.toString());
-        PnPGMatchInfo pnPGMatchInfo = mockInstance(new PnPGMatchInfo());
+        MatchInfoResult pnPGMatchInfo = mockInstance(new MatchInfoResult());
         when(partyRegistryProxyConnectorMock.matchInstitutionAndUser(anyString(), anyString()))
                 .thenReturn(pnPGMatchInfo);
         //when
-        PnPGMatchInfo result = pnPGInstitutionService.matchInstitutionAndUser(externalId, user);
+        MatchInfoResult result = pnPGInstitutionService.matchInstitutionAndUser(externalId, user);
         //then
         assertNotNull(result);
         assertEquals(result.isVerificationResult(), pnPGMatchInfo.isVerificationResult());
@@ -120,11 +120,11 @@ class PnPGInstitutionServiceImplTest {
     void getInstitutionLegalAddress() {
         //given
         String externalId = "externalId";
-        PnPGInstitutionLegalAddressData data = mockInstance(new PnPGInstitutionLegalAddressData());
+        InstitutionLegalAddressData data = mockInstance(new InstitutionLegalAddressData());
         when(partyRegistryProxyConnectorMock.getInstitutionLegalAddress(anyString()))
                 .thenReturn(data);
         //when
-        PnPGInstitutionLegalAddressData result = pnPGInstitutionService.getInstitutionLegalAddress(externalId);
+        InstitutionLegalAddressData result = pnPGInstitutionService.getInstitutionLegalAddress(externalId);
         //then
         assertNotNull(result);
         assertEquals(result.getAddress(), data.getAddress());

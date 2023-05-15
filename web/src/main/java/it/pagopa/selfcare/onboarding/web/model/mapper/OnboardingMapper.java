@@ -1,5 +1,6 @@
 package it.pagopa.selfcare.onboarding.web.model.mapper;
 
+import it.pagopa.selfcare.onboarding.connector.model.InstitutionLegalAddressData;
 import it.pagopa.selfcare.onboarding.connector.model.InstitutionOnboardingData;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.AssistanceContacts;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.CompanyInformations;
@@ -157,6 +158,17 @@ public class OnboardingMapper {
             resource.setBillingData(billing);
             resource.setOrigin(model.getOrigin());
             resource.setInstitutionType(model.getInstitutionType());
+        }
+        return resource;
+    }
+
+    public static InstitutionLegalAddressResource toResource(InstitutionLegalAddressData model) {
+        InstitutionLegalAddressResource resource = null;
+        if (model != null) {
+            resource = new InstitutionLegalAddressResource();
+
+            resource.setAddress(model.getAddress());
+            resource.setZipCode(model.getZipCode());
         }
         return resource;
     }
