@@ -7,14 +7,14 @@ import lombok.Data;
 import javax.validation.constraints.NotBlank;
 
 @Data
-public class BusinessPnPGResource {
+public class BusinessResourceIC {
 
-    @ApiModelProperty(value = "${swagger.onboarding.pnPGInstitutions.businessPnpg.model.businessName}", required = true)
+    @ApiModelProperty(value = "${swagger.onboarding.institutions.businessIc.model.businessName}", required = true)
     @JsonProperty(required = true)
     @NotBlank
     private String businessName;
 
-    @ApiModelProperty(value = "${swagger.onboarding.pnPGInstitutions.businessPnpg.model.businessTaxId}", required = true)
+    @ApiModelProperty(value = "${swagger.onboarding.institutions.businessIc.model.businessTaxId}", required = true)
     @JsonProperty(required = true)
     @NotBlank
     private String businessTaxId;

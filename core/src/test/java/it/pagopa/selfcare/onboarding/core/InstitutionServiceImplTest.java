@@ -9,6 +9,8 @@ import it.pagopa.selfcare.onboarding.connector.model.institutions.Attribute;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionInfo;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.MatchInfoResult;
+import it.pagopa.selfcare.onboarding.connector.model.institutions.infocamere.BusinessInfoIC;
+import it.pagopa.selfcare.onboarding.connector.model.institutions.infocamere.InstitutionInfoIC;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.User;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.*;
 import it.pagopa.selfcare.onboarding.connector.model.product.Product;
@@ -1636,6 +1638,34 @@ class InstitutionServiceImplTest {
                 .verifyOnboarding(externalInstitutionId, productId);
         verifyNoMoreInteractions(onboardingValidationStrategyMock, partyConnectorMock);
         verifyNoInteractions(productsConnectorMock, userConnectorMock);
+    }
+
+    @Test
+    void getInstitutionsByUser_default() {
+        //given
+        String taxCode = "setTaxCode";
+        SaveUserDto saveUserDto = mockInstance(new SaveUserDto(), "setFiscalCode");
+        saveUserDto.setFiscalCode(taxCode);
+        UserId userId = mockInstance(new UserId());
+        User user = mockInstance(new User(), "setId");
+        user.setId(userId.toString());
+        List<BusinessInfoIC> businessInfoICSmock = List.of(mockInstance(new BusinessInfoIC()));
+        InstitutionInfoIC institutionInfoICmock = mockInstance(new InstitutionInfoIC(), "setBusinesses");
+        institutionInfoICmock.setBusinesses(businessInfoICSmock);
+        when(partyRegistryProxyConnectorMock.getInstitutionsByUserFiscalCode(anyString()))
+                .thenReturn(institutionInfoICmock);
+        //when
+        InstitutionInfoIC result = institutionService.getInstitutionsByUser(user);
+        //then
+        assertNotNull(result);
+        assertEquals(institutionInfoICmock.getBusinesses().get(0).getBusinessName(), result.getBusinesses().get(0).getBusinessName());
+        assertEquals(institutionInfoICmock.getBusinesses().get(0).getBusinessTaxId(), result.getBusinesses().get(0).getBusinessTaxId());
+        assertEquals(institutionInfoICmock.getLegalTaxId(), result.getLegalTaxId());
+        assertEquals(institutionInfoICmock.getRequestDateTime(), result.getRequestDateTime());
+        verify(partyRegistryProxyConnectorMock, times(1))
+                .getInstitutionsByUserFiscalCode(taxCode);
+        verifyNoMoreInteractions(partyRegistryProxyConnectorMock);
+        verifyNoMoreInteractions(userConnectorMock);
     }
 
     @Test

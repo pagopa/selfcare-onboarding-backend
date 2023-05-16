@@ -10,8 +10,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import it.pagopa.selfcare.commons.base.logging.LogUtils;
 import it.pagopa.selfcare.commons.web.model.Problem;
 import it.pagopa.selfcare.onboarding.connector.model.InstitutionLegalAddressData;
-import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionPnPGInfo;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.MatchInfoResult;
+import it.pagopa.selfcare.onboarding.connector.model.institutions.infocamere.InstitutionInfoIC;
 import it.pagopa.selfcare.onboarding.core.PnPGInstitutionService;
 import it.pagopa.selfcare.onboarding.web.model.*;
 import it.pagopa.selfcare.onboarding.web.model.mapper.PnPGInstitutionMapper;
@@ -44,13 +44,13 @@ public class PnPGInstitutionController {
     @PostMapping(value = "")
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "", notes = "${swagger.onboarding.pnPGInstitutions.api.getInstitutionsByUser}")
-    public InstitutionPnPGResource getInstitutionsByUser(@RequestBody
+    public InstitutionResourceIC getInstitutionsByUser(@RequestBody
                                                          @Valid
                                                          PnPGUserDto userDto) {
         log.trace("getInstitutionsByUserId start");
         log.debug(LogUtils.CONFIDENTIAL_MARKER, "getInstitutionsByUserId userDto = {}", userDto);
-        InstitutionPnPGInfo institutionPnPGInfo = pnPGInstitutionService.getInstitutionsByUser(PnPGUserMapper.toUser(userDto));
-        InstitutionPnPGResource institutionPnPGResources = PnPGInstitutionMapper.toResource(institutionPnPGInfo);
+        InstitutionInfoIC institutionPnPGInfo = pnPGInstitutionService.getInstitutionsByUser(PnPGUserMapper.toUser(userDto));
+        InstitutionResourceIC institutionPnPGResources = PnPGInstitutionMapper.toResource(institutionPnPGInfo);
         log.debug(LogUtils.CONFIDENTIAL_MARKER, "getInstitutionsByUserId result = {}", institutionPnPGResources);
         log.trace("getInstitutionsByUserId end");
         return institutionPnPGResources;
@@ -73,7 +73,7 @@ public class PnPGInstitutionController {
     @PostMapping(value = "/{externalInstitutionId}/products/{productId}/onboarding")
     @ResponseStatus(HttpStatus.CREATED)
     @ApiOperation(value = "", notes = "${swagger.onboarding.pnPGInstitutions.api.onboarding}")
-    public void onboardingPG(@ApiParam("${swagger.onboarding.pnPGInstitutions.model.externalId}")
+    public void onboardingPG(@ApiParam("${swagger.onboarding.institutions.model.externalId}")
                              @PathVariable("externalInstitutionId")
                              String externalInstitutionId,
                              @ApiParam("${swagger.onboarding.product.model.id}")

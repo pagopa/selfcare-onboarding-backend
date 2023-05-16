@@ -1,7 +1,7 @@
 package it.pagopa.selfcare.onboarding.connector.rest.client;
 
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.CreatePnPGInstitutionData;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.CreateInstitutionData;
 import it.pagopa.selfcare.onboarding.connector.rest.model.OnboardingInstitutionRequest;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
@@ -23,9 +23,9 @@ public interface MsCoreRestClient {
     @ResponseBody
     Institution getInstitutionByExternalId(@PathVariable("externalId") String externalId);
 
-    @PostMapping(value = "${rest-client.ms-core.createPGInstitutionUsingExternalId.path}", consumes = APPLICATION_JSON_VALUE)
+    @PostMapping(value = "${rest-client.ms-core.createInstitutionUsingInstitutionData.path}", consumes = APPLICATION_JSON_VALUE)
     @ResponseBody
-    Institution createPGInstitutionUsingExternalId(@RequestBody CreatePnPGInstitutionData request);
+    Institution createInstitutionUsingInstitutionData(@RequestBody CreateInstitutionData request);
 
     @RequestMapping(method = HEAD, value = "${rest-client.ms-core.verifyOnboarding.path}")
     @ResponseBody

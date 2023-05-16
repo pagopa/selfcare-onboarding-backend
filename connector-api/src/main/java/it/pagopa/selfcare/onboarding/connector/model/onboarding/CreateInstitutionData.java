@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class CreatePnPGInstitutionData {
+public class CreateInstitutionData {
 
     private String taxId;
     private String description;

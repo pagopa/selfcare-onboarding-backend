@@ -6,11 +6,13 @@ import io.swagger.annotations.ApiParam;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import it.pagopa.selfcare.commons.base.logging.LogUtils;
 import it.pagopa.selfcare.commons.web.model.Problem;
 import it.pagopa.selfcare.onboarding.connector.model.InstitutionLegalAddressData;
 import it.pagopa.selfcare.onboarding.connector.model.InstitutionOnboardingData;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.MatchInfoResult;
+import it.pagopa.selfcare.onboarding.connector.model.institutions.infocamere.InstitutionInfoIC;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.InstitutionType;
 import it.pagopa.selfcare.onboarding.core.InstitutionService;
 import it.pagopa.selfcare.onboarding.web.model.*;
@@ -47,12 +49,20 @@ public class InstitutionController {
     }
 
 
-    @ApiResponse(responseCode = "403",
-            description = "Forbidden",
-            content = {
-                    @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE,
-                            schema = @Schema(implementation = Problem.class))
-            })
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "403",
+                    description = "Forbidden",
+                    content = {
+                            @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE,
+                                    schema = @Schema(implementation = Problem.class))
+                    }),
+            @ApiResponse(responseCode = "409",
+                    description = "Conflict",
+                    content = {
+                            @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE,
+                                    schema = @Schema(implementation = Problem.class))
+                    }),
+    })
     @PostMapping(value = "/{externalInstitutionId}/products/{productId}/onboarding")
     @ResponseStatus(HttpStatus.CREATED)
     @ApiOperation(value = "", notes = "${swagger.onboarding.institutions.api.onboarding}")
@@ -146,6 +156,21 @@ public class InstitutionController {
         log.debug("verifyOnboarding externalInstitutionId = {}, productId = {}", externalInstitutionId, productId);
         institutionService.verifyOnboarding(externalInstitutionId, productId);
         log.trace("verifyOnboarding end");
+    }
+
+    @PostMapping(value = "")
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "", notes = "${swagger.onboarding.institutions.api.getInstitutionsByUser}")
+    public InstitutionResourceIC getInstitutionsByUser(@RequestBody
+                                                         @Valid
+                                                         UserDto userDto) {
+        log.trace("getInstitutionsByUser start");
+        log.debug(LogUtils.CONFIDENTIAL_MARKER, "getInstitutionsByUser userDto = {}", userDto);
+        InstitutionInfoIC institutionInfoIC = institutionService.getInstitutionsByUser(UserMapper.toUser(userDto));
+        InstitutionResourceIC institutionResourceIC = InstitutionMapper.toResource(institutionInfoIC);
+        log.debug(LogUtils.CONFIDENTIAL_MARKER, "getInstitutionsByUser result = {}", institutionResourceIC);
+        log.trace("getInstitutionsByUser end");
+        return institutionResourceIC;
     }
 
     @PostMapping(value = "/{externalInstitutionId}/match")

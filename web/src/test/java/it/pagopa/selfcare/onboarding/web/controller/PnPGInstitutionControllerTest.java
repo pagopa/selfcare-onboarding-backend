@@ -2,16 +2,16 @@ package it.pagopa.selfcare.onboarding.web.controller;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import it.pagopa.selfcare.onboarding.connector.model.BusinessPnPG;
 import it.pagopa.selfcare.onboarding.connector.model.InstitutionLegalAddressData;
-import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionPnPGInfo;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.MatchInfoResult;
+import it.pagopa.selfcare.onboarding.connector.model.institutions.infocamere.BusinessInfoIC;
+import it.pagopa.selfcare.onboarding.connector.model.institutions.infocamere.InstitutionInfoIC;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.PnPGOnboardingData;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.User;
 import it.pagopa.selfcare.onboarding.core.PnPGInstitutionService;
 import it.pagopa.selfcare.onboarding.web.config.WebTestConfig;
 import it.pagopa.selfcare.onboarding.web.model.InstitutionLegalAddressResource;
-import it.pagopa.selfcare.onboarding.web.model.InstitutionPnPGResource;
+import it.pagopa.selfcare.onboarding.web.model.InstitutionResourceIC;
 import it.pagopa.selfcare.onboarding.web.model.MatchInfoResultResource;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -58,8 +58,8 @@ class PnPGInstitutionControllerTest {
     void getInstitutionsByUserId(@Value("classpath:stubs/userDto.json") Resource userDto) throws Exception {
         //given
         String userId = randomUUID().toString();
-        List<BusinessPnPG> businessPnPGList = List.of(mockInstance(new BusinessPnPG()));
-        InstitutionPnPGInfo institutionPnPGInfo = mockInstance(new InstitutionPnPGInfo(), "setBusinesses");
+        List<BusinessInfoIC> businessPnPGList = List.of(mockInstance(new BusinessInfoIC()));
+        InstitutionInfoIC institutionPnPGInfo = mockInstance(new InstitutionInfoIC(), "setBusinesses");
         institutionPnPGInfo.setBusinesses(businessPnPGList);
         User user = mockInstance(new User(), "setEmail", "setId", "setProductRole");
         user.setEmail("n.surname@email.com");
@@ -74,7 +74,7 @@ class PnPGInstitutionControllerTest {
                 .andExpect(status().isOk())
                 .andReturn();
         // then
-        InstitutionPnPGResource response = objectMapper.readValue(
+        InstitutionResourceIC response = objectMapper.readValue(
                 result.getResponse().getContentAsString(),
                 new TypeReference<>() {
                 });

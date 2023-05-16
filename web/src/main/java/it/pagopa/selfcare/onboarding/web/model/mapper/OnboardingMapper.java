@@ -99,6 +99,10 @@ public class OnboardingMapper {
                 resource.setBilling(fromDto(model.getBillingData()));
             }
             resource.setInstitutionType(model.getInstitutionType());
+            if(InstitutionType.PG.equals(model.getInstitutionType()) && productId.startsWith("prod-pn-pg")) {
+                resource.setBusinessName(model.getBillingData().getBusinessName());
+                resource.setExistsInRegistry(model.getBillingData().isCertified());
+            }
         }
         return resource;
     }

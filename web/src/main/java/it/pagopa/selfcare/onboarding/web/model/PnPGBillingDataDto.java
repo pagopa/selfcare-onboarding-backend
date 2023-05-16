@@ -19,12 +19,12 @@ public class PnPGBillingDataDto {
     @NotBlank
     private String taxCode;
 
-    @ApiModelProperty(value = "${swagger.onboarding.pnPGInstitutions.model.certified}", required = true)
+    @ApiModelProperty(value = "${swagger.onboarding.institutions.model.certified}", required = true)
     @JsonProperty(required = true)
     @NotNull
     private boolean certified;
 
-    @ApiModelProperty(value = "${swagger.onboarding.pnPGInstitutions.model.digitalAddress}", required = true)
+    @ApiModelProperty(value = "${swagger.onboarding.institutions.model.digitalAddress}", required = true)
     @JsonProperty(required = true)
     @NotBlank
     private String digitalAddress;

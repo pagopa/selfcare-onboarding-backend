@@ -9,9 +9,9 @@ import it.pagopa.selfcare.onboarding.connector.api.UserRegistryConnector;
 import it.pagopa.selfcare.onboarding.connector.exceptions.ResourceNotFoundException;
 import it.pagopa.selfcare.onboarding.connector.model.InstitutionLegalAddressData;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
-import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionPnPGInfo;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.MatchInfoResult;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.CreatePnPGInstitutionData;
+import it.pagopa.selfcare.onboarding.connector.model.institutions.infocamere.InstitutionInfoIC;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.CreateInstitutionData;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.InstitutionType;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.PnPGOnboardingData;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.User;
@@ -58,10 +58,10 @@ class PnPGInstitutionServiceImpl implements PnPGInstitutionService {
     }
 
     @Override
-    public InstitutionPnPGInfo getInstitutionsByUser(User user) {
+    public InstitutionInfoIC getInstitutionsByUser(User user) {
         log.trace("getInstitutionsByUserId start");
         log.debug(LogUtils.CONFIDENTIAL_MARKER, "getInstitutionsByUserId user = {}", user);
-        InstitutionPnPGInfo result = partyRegistryProxyConnector.getInstitutionsByUserFiscalCode(user.getTaxCode());
+        InstitutionInfoIC result = partyRegistryProxyConnector.getInstitutionsByUserFiscalCode(user.getTaxCode());
         log.debug(LogUtils.CONFIDENTIAL_MARKER, "getInstitutionsByUserId result = {}", result);
         log.trace("getInstitutionsByUserId end");
         return result;
@@ -103,12 +103,12 @@ class PnPGInstitutionServiceImpl implements PnPGInstitutionService {
     }
 
     private Institution createInstitution(PnPGOnboardingData onboardingData) {
-        CreatePnPGInstitutionData createPGData = mapCreatePnPGInstitutionData(onboardingData);
+        CreateInstitutionData createPGData = mapCreatePnPGInstitutionData(onboardingData);
         Institution institution;
         try {
             institution = msCoreConnector.getInstitutionByExternalId(onboardingData.getInstitutionExternalId());
         } catch (ResourceNotFoundException e) {
-            institution = msCoreConnector.createPGInstitutionUsingExternalId(createPGData);
+            institution = msCoreConnector.createInstitutionUsingInstitutionData(createPGData);
         }
         return institution;
     }
@@ -127,8 +127,8 @@ class PnPGInstitutionServiceImpl implements PnPGInstitutionService {
         });
     }
 
-    private CreatePnPGInstitutionData mapCreatePnPGInstitutionData(PnPGOnboardingData onboardingData) {
-        CreatePnPGInstitutionData createPGData = new CreatePnPGInstitutionData();
+    private CreateInstitutionData mapCreatePnPGInstitutionData(PnPGOnboardingData onboardingData) {
+        CreateInstitutionData createPGData = new CreateInstitutionData();
         createPGData.setDescription(onboardingData.getBusinessName());
         createPGData.setTaxId(onboardingData.getInstitutionExternalId());
         createPGData.setExistsInRegistry(onboardingData.isExistsInRegistry());

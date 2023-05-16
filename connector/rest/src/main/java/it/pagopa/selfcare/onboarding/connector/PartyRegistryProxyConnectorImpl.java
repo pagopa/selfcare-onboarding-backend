@@ -3,8 +3,8 @@ package it.pagopa.selfcare.onboarding.connector;
 import it.pagopa.selfcare.commons.base.logging.LogUtils;
 import it.pagopa.selfcare.onboarding.connector.api.PartyRegistryProxyConnector;
 import it.pagopa.selfcare.onboarding.connector.model.InstitutionLegalAddressData;
-import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionPnPGInfo;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.MatchInfoResult;
+import it.pagopa.selfcare.onboarding.connector.model.institutions.infocamere.InstitutionInfoIC;
 import it.pagopa.selfcare.onboarding.connector.rest.client.PartyRegistryProxyRestClient;
 import it.pagopa.selfcare.onboarding.connector.rest.model.institution_pnpg.InstitutionByLegalTaxIdRequest;
 import it.pagopa.selfcare.onboarding.connector.rest.model.institution_pnpg.InstitutionByLegalTaxIdRequestDto;
@@ -30,7 +30,7 @@ class PartyRegistryProxyConnectorImpl implements PartyRegistryProxyConnector {
 
 
     @Override
-    public InstitutionPnPGInfo getInstitutionsByUserFiscalCode(String taxCode) {
+    public InstitutionInfoIC getInstitutionsByUserFiscalCode(String taxCode) {
         log.trace("getInstitutionsByUserFiscalCode start");
         log.debug(LogUtils.CONFIDENTIAL_MARKER, "getInstitutionsByUserFiscalCode taxCode = {}", taxCode);
         Assert.hasText(taxCode, REQUIRED_FISCAL_CODE_MESSAGE);
@@ -38,7 +38,7 @@ class PartyRegistryProxyConnectorImpl implements PartyRegistryProxyConnector {
         institutionByLegalTaxIdRequestDto.setLegalTaxId(taxCode);
         InstitutionByLegalTaxIdRequest institutionByLegalTaxIdRequest = new InstitutionByLegalTaxIdRequest();
         institutionByLegalTaxIdRequest.setFilter(institutionByLegalTaxIdRequestDto);
-        InstitutionPnPGInfo result = restClient.getInstitutionsByUserLegalTaxId(institutionByLegalTaxIdRequest);
+        InstitutionInfoIC result = restClient.getInstitutionsByUserLegalTaxId(institutionByLegalTaxIdRequest);
         log.debug(LogUtils.CONFIDENTIAL_MARKER, "getInstitutionsByUserFiscalCode result = {}", result);
         log.trace("getInstitutionsByUserFiscalCode end");
         return result;

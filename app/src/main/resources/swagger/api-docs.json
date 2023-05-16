@@ -107,6 +107,66 @@
         "security" : [ {
           "bearerAuth" : [ "global" ]
         } ]
+      },
+      "post" : {
+        "tags" : [ "institutions" ],
+        "summary" : "getInstitutionsByUser",
+        "description" : "Get Legal Representative's PN PG institution List",
+        "operationId" : "getInstitutionsByUserUsingPOST",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/UserDto"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/InstitutionResourceIC"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad Request",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Unauthorized",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "Internal Server Error",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ "global" ]
+        } ]
       }
     },
     "/institutions/{externalInstitutionId}/geographicTaxonomy" : {
@@ -565,6 +625,16 @@
               }
             }
           },
+          "409" : {
+            "description" : "Conflict",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
           "500" : {
             "description" : "Internal Server Error",
             "content" : {
@@ -586,7 +656,7 @@
         "tags" : [ "pnPGInstitutions" ],
         "summary" : "getInstitutionsByUser",
         "description" : "Get Legal Representative's PN PG institution List",
-        "operationId" : "getInstitutionsByUserUsingPOST",
+        "operationId" : "getInstitutionsByUserUsingPOST_1",
         "requestBody" : {
           "content" : {
             "application/json" : {
@@ -602,7 +672,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/InstitutionPnPGResource"
+                  "$ref" : "#/components/schemas/InstitutionResourceIC"
                 }
               }
             }
@@ -652,7 +722,7 @@
         "parameters" : [ {
           "name" : "externalInstitutionId",
           "in" : "path",
-          "description" : "PG Institution's unique external identifier",
+          "description" : "Institution's unique external identifier",
           "required" : true,
           "style" : "simple",
           "schema" : {
@@ -725,7 +795,7 @@
         "parameters" : [ {
           "name" : "externalInstitutionId",
           "in" : "path",
-          "description" : "PG Institution's unique external identifier",
+          "description" : "Institution's unique external identifier",
           "required" : true,
           "style" : "simple",
           "schema" : {
@@ -797,7 +867,7 @@
         "parameters" : [ {
           "name" : "externalInstitutionId",
           "in" : "path",
-          "description" : "PG Institution's unique external identifier",
+          "description" : "Institution's unique external identifier",
           "required" : true,
           "style" : "simple",
           "schema" : {
@@ -1074,6 +1144,11 @@
             "type" : "string",
             "description" : "Institution's legal name"
           },
+          "certified" : {
+            "type" : "boolean",
+            "description" : "Indicates whether the institution values come from INFOCAMERE (true) or MANUAL (false)",
+            "example" : false
+          },
           "digitalAddress" : {
             "type" : "string",
             "description" : "Institution's digitalAddress"
@@ -1105,8 +1180,8 @@
           }
         }
       },
-      "BusinessPnPGResource" : {
-        "title" : "BusinessPnPGResource",
+      "BusinessResourceIC" : {
+        "title" : "BusinessResourceIC",
         "required" : [ "businessName", "businessTaxId" ],
         "type" : "object",
         "properties" : {
@@ -1272,28 +1347,6 @@
           }
         }
       },
-      "InstitutionPnPGResource" : {
-        "title" : "InstitutionPnPGResource",
-        "required" : [ "businesses", "legalTaxId", "requestDateTime" ],
-        "type" : "object",
-        "properties" : {
-          "businesses" : {
-            "type" : "array",
-            "description" : "Legal Representative's institutions list",
-            "items" : {
-              "$ref" : "#/components/schemas/BusinessPnPGResource"
-            }
-          },
-          "legalTaxId" : {
-            "type" : "string",
-            "description" : "Legal Representative's tax ID"
-          },
-          "requestDateTime" : {
-            "type" : "string",
-            "description" : "Timestamp request institutions PNPG list"
-          }
-        }
-      },
       "InstitutionResource" : {
         "title" : "InstitutionResource",
         "required" : [ "address", "description", "digitalAddress", "externalId", "id", "institutionType", "origin", "originId", "taxCode", "userRole", "zipCode" ],
@@ -1345,6 +1398,28 @@
           "zipCode" : {
             "type" : "string",
             "description" : "Institution's zipCode"
+          }
+        }
+      },
+      "InstitutionResourceIC" : {
+        "title" : "InstitutionResourceIC",
+        "required" : [ "businesses", "legalTaxId", "requestDateTime" ],
+        "type" : "object",
+        "properties" : {
+          "businesses" : {
+            "type" : "array",
+            "description" : "Legal Representative's institutions list",
+            "items" : {
+              "$ref" : "#/components/schemas/BusinessResourceIC"
+            }
+          },
+          "legalTaxId" : {
+            "type" : "string",
+            "description" : "Legal Representative's tax ID"
+          },
+          "requestDateTime" : {
+            "type" : "string",
+            "description" : "Timestamp request institutions PNPG list"
           }
         }
       },
@@ -1441,7 +1516,7 @@
           },
           "digitalAddress" : {
             "type" : "string",
-            "description" : "Institution's email address"
+            "description" : "Institution's digitalAddress"
           },
           "taxCode" : {
             "type" : "string",

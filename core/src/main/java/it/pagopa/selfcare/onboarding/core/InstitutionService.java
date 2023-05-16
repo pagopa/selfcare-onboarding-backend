@@ -5,6 +5,7 @@ import it.pagopa.selfcare.onboarding.connector.model.InstitutionOnboardingData;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionInfo;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.MatchInfoResult;
+import it.pagopa.selfcare.onboarding.connector.model.institutions.infocamere.InstitutionInfoIC;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.GeographicTaxonomy;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.User;
@@ -29,5 +30,7 @@ public interface InstitutionService {
     MatchInfoResult matchInstitutionAndUser(String externalInstitutionId, User user);
 
     InstitutionLegalAddressData getInstitutionLegalAddress(String externalInstitutionId);
+
+    InstitutionInfoIC getInstitutionsByUser(User user);
 
 }
