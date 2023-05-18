@@ -39,10 +39,14 @@ public class InstitutionResource {
     @NotBlank
     private String digitalAddress;
 
-    @ApiModelProperty(value = "${swagger.onboarding.institutions.model.address}")
+    @ApiModelProperty(value = "${swagger.onboarding.institutions.model.address}", required = true)
+    @JsonProperty(required = true)
+    @NotBlank
     private String address;
 
-    @ApiModelProperty(value = "${swagger.onboarding.institutions.model.zipCode}")
+    @ApiModelProperty(value = "${swagger.onboarding.institutions.model.zipCode}", required = true)
+    @JsonProperty(required = true)
+    @NotBlank
     private String zipCode;
 
     @ApiModelProperty(value = "${swagger.onboarding.institutions.model.taxCode}", required = true)
