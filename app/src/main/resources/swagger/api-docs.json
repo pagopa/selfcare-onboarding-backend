@@ -1349,7 +1349,7 @@
       },
       "InstitutionResource" : {
         "title" : "InstitutionResource",
-        "required" : [ "address", "description", "digitalAddress", "externalId", "id", "institutionType", "origin", "originId", "taxCode", "userRole", "zipCode" ],
+        "required" : [ "description", "digitalAddress", "externalId", "id", "institutionType", "origin", "originId", "taxCode", "userRole" ],
         "type" : "object",
         "properties" : {
           "address" : {
