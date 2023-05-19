@@ -9,14 +9,13 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import it.pagopa.selfcare.commons.web.model.Problem;
 import it.pagopa.selfcare.onboarding.connector.model.InstitutionOnboardingData;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.InstitutionType;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
 import it.pagopa.selfcare.onboarding.core.InstitutionService;
-import it.pagopa.selfcare.onboarding.web.model.GeographicTaxonomyResource;
-import it.pagopa.selfcare.onboarding.web.model.InstitutionOnboardingInfoResource;
-import it.pagopa.selfcare.onboarding.web.model.InstitutionResource;
-import it.pagopa.selfcare.onboarding.web.model.OnboardingDto;
+import it.pagopa.selfcare.onboarding.web.model.*;
 import it.pagopa.selfcare.onboarding.web.model.mapper.GeographicTaxonomyMapper;
 import it.pagopa.selfcare.onboarding.web.model.mapper.InstitutionMapper;
 import it.pagopa.selfcare.onboarding.web.model.mapper.OnboardingMapper;
+import it.pagopa.selfcare.onboarding.web.model.mapper.OnboardingResourceMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -38,11 +37,32 @@ import static org.springframework.web.bind.annotation.RequestMethod.HEAD;
 public class InstitutionController {
 
     private final InstitutionService institutionService;
+    private final OnboardingResourceMapper onboardingResourceMapper;
 
 
     @Autowired
-    public InstitutionController(InstitutionService institutionService) {
+    public InstitutionController(InstitutionService institutionService, OnboardingResourceMapper onboardingResourceMapper) {
         this.institutionService = institutionService;
+        this.onboardingResourceMapper = onboardingResourceMapper;
+    }
+
+
+    @ApiResponse(responseCode = "403",
+            description = "Forbidden",
+            content = {
+                    @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE,
+                            schema = @Schema(implementation = Problem.class))
+            })
+    @PostMapping(value = "/onboarding/subunit")
+    @ResponseStatus(HttpStatus.CREATED)
+    @ApiOperation(value = "", notes = "${swagger.onboarding.institutions.api.onboarding.subunit}")
+    public void onboardingSubunit(@RequestBody @Valid OnboardingSubunitDto request) {
+        log.trace("onboarding subunit start");
+        log.debug("onboarding subunit request = {}", request);
+        OnboardingData onboardingData = onboardingResourceMapper.toEntity(request);
+        onboardingData.setInstitutionExternalId("");
+        institutionService.onboarding(onboardingData);
+        log.trace("onboarding end");
     }
 
 

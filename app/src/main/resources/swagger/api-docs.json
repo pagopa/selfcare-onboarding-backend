@@ -35,74 +35,135 @@
   "paths" : {
     "/institutions" : {
       "get" : {
-        "tags": [
-          "institutions"
-        ],
-        "summary": "getInstitutions",
-        "description": "The service retrieves all the onboarded institutions related to the logged user",
-        "operationId": "getInstitutionsUsingGET",
-        "parameters": [
-          {
-            "name": "productFilter",
-            "in": "query",
-            "description": "A product to filter the institutions based on whether the institution has an ACTIVE onboarding on the specified product. ",
-            "required": false,
-            "style": "form",
-            "schema": {
-              "type": "string"
-            }
+        "tags" : [ "institutions" ],
+        "summary" : "getInstitutions",
+        "description" : "The service retrieves all the onboarded institutions related to the logged user",
+        "operationId" : "getInstitutionsUsingGET",
+        "parameters" : [ {
+          "name" : "productFilter",
+          "in" : "query",
+          "description" : "A product to filter the institutions based on whether the institution has an ACTIVE onboarding on the specified product. ",
+          "required" : false,
+          "style" : "form",
+          "schema" : {
+            "type" : "string"
           }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/InstitutionResource"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/InstitutionResource"
                   }
                 }
               }
             }
           },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Problem"
+          "400" : {
+            "description" : "Bad Request",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
                 }
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Problem"
+          "401" : {
+            "description" : "Unauthorized",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
                 }
               }
             }
           },
-          "404": {
-            "description": "Not Found",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Problem"
+          "404" : {
+            "description" : "Not Found",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
                 }
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Problem"
+          "500" : {
+            "description" : "Internal Server Error",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ "global" ]
+        } ]
+      }
+    },
+    "/institutions/onboarding/subunit" : {
+      "post" : {
+        "tags" : [ "institutions" ],
+        "summary" : "onboardingSubunit",
+        "description" : "The service allows the onboarding of Users to a subunit of an Institution",
+        "operationId" : "onboardingSubunitUsingPOST",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/OnboardingSubunitDto"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "201" : {
+            "description" : "Created"
+          },
+          "400" : {
+            "description" : "Bad Request",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Unauthorized",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "Forbidden",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "Internal Server Error",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
                 }
               }
             }
@@ -682,55 +743,55 @@
           }
         },
         "responses" : {
-          "201": {
-            "description": "Created"
+          "201" : {
+            "description" : "Created"
           },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Problem"
+          "400" : {
+            "description" : "Bad Request",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
                 }
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Problem"
+          "401" : {
+            "description" : "Unauthorized",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
                 }
               }
             }
           },
-          "403": {
-            "description": "Forbidden",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Problem"
+          "403" : {
+            "description" : "Forbidden",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
                 }
               }
             }
           },
-          "409": {
-            "description": "Conflict",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Problem"
+          "409" : {
+            "description" : "Conflict",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
                 }
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Problem"
+          "500" : {
+            "description" : "Internal Server Error",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
                 }
               }
             }
@@ -1257,32 +1318,89 @@
           }
         }
       },
+      "OnboardingSubunitDto" : {
+        "title" : "OnboardingSubunitDto",
+        "required" : [ "billingData", "geographicTaxonomies", "institutionType", "productId", "subunitCode", "subunitType", "taxCode", "users" ],
+        "type" : "object",
+        "properties" : {
+          "assistanceContacts" : {
+            "description" : "Institution's assistance contacts",
+            "$ref" : "#/components/schemas/AssistanceContactsDto"
+          },
+          "billingData" : {
+            "description" : "Institution's billing information",
+            "$ref" : "#/components/schemas/BillingDataDto"
+          },
+          "companyInformations" : {
+            "description" : "GPS, SCP, PT optional data",
+            "$ref" : "#/components/schemas/CompanyInformationsDto"
+          },
+          "geographicTaxonomies" : {
+            "type" : "array",
+            "description" : "List of geographic Taxonomies",
+            "items" : {
+              "$ref" : "#/components/schemas/GeographicTaxonomyDto"
+            }
+          },
+          "institutionType" : {
+            "type" : "string",
+            "description" : "Institution's type",
+            "enum" : [ "GSP", "PA", "PG", "PSP", "PT", "SCP" ]
+          },
+          "origin" : {
+            "type" : "string",
+            "description" : "Institution data origin"
+          },
+          "pricingPlan" : {
+            "type" : "string",
+            "description" : "Product's pricing plan"
+          },
+          "productId" : {
+            "type" : "string",
+            "description" : "Product's unique identifier"
+          },
+          "subunitCode" : {
+            "type" : "string",
+            "description" : "Institution's subunitCode"
+          },
+          "subunitType" : {
+            "type" : "string",
+            "description" : "Institution's subunitType"
+          },
+          "taxCode" : {
+            "type" : "string",
+            "description" : "Institution's taxCode"
+          },
+          "users" : {
+            "type" : "array",
+            "description" : "List of onboarding users",
+            "items" : {
+              "$ref" : "#/components/schemas/UserDto"
+            }
+          }
+        }
+      },
       "PnPGBillingDataDto" : {
-        "title": "PnPGBillingDataDto",
-        "required": [
-          "businessName",
-          "certified",
-          "digitalAddress",
-          "taxCode"
-        ],
-        "type": "object",
-        "properties": {
-          "businessName": {
-            "type": "string",
-            "description": "Institution's legal name"
+        "title" : "PnPGBillingDataDto",
+        "required" : [ "businessName", "certified", "digitalAddress", "taxCode" ],
+        "type" : "object",
+        "properties" : {
+          "businessName" : {
+            "type" : "string",
+            "description" : "Institution's legal name"
           },
-          "certified": {
-            "type": "boolean",
-            "description": "Indicates whether the institution values come from INFOCAMERE (true) or MANUAL (false)",
-            "example": false
+          "certified" : {
+            "type" : "boolean",
+            "description" : "Indicates whether the institution values come from INFOCAMERE (true) or MANUAL (false)",
+            "example" : false
           },
-          "digitalAddress": {
-            "type": "string",
-            "description": "Institution's email address"
+          "digitalAddress" : {
+            "type" : "string",
+            "description" : "Institution's email address"
           },
-          "taxCode": {
-            "type": "string",
-            "description": "Institution's taxCode"
+          "taxCode" : {
+            "type" : "string",
+            "description" : "Institution's taxCode"
           }
         }
       },
@@ -1336,31 +1454,26 @@
         "required" : [ "name", "role", "surname", "taxCode" ],
         "type" : "object",
         "properties" : {
-          "email": {
-            "type": "string",
-            "description": "User's email"
+          "email" : {
+            "type" : "string",
+            "description" : "User's email"
           },
-          "name": {
-            "type": "string",
-            "description": "User's name"
+          "name" : {
+            "type" : "string",
+            "description" : "User's name"
           },
-          "role": {
-            "type": "string",
-            "description": "User's role",
-            "enum": [
-              "DELEGATE",
-              "MANAGER",
-              "OPERATOR",
-              "SUB_DELEGATE"
-            ]
+          "role" : {
+            "type" : "string",
+            "description" : "User's role",
+            "enum" : [ "DELEGATE", "MANAGER", "OPERATOR", "SUB_DELEGATE" ]
           },
-          "surname": {
-            "type": "string",
-            "description": "User's surname"
+          "surname" : {
+            "type" : "string",
+            "description" : "User's surname"
           },
-          "taxCode": {
-            "type": "string",
-            "description": "User's fiscal code"
+          "taxCode" : {
+            "type" : "string",
+            "description" : "User's fiscal code"
           }
         }
       },

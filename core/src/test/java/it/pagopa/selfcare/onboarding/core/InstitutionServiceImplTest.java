@@ -428,7 +428,7 @@ class InstitutionServiceImplTest {
         institution.setId(UUID.randomUUID().toString());
         when(partyConnectorMock.getInstitutionByExternalId(anyString()))
                 .thenThrow(ResourceNotFoundException.class);
-        when(partyConnectorMock.createInstitutionUsingExternalId(anyString()))
+        when(partyConnectorMock.createInstitutionFromIpa(anyString(),anyString(),anyString()))
                 .thenReturn(institution);
         productMock.setRoleMappings(roleMappings);
         when(productsConnectorMock.getProduct(onboardingData.getProductId(), onboardingData.getInstitutionType()))
@@ -447,7 +447,7 @@ class InstitutionServiceImplTest {
         verify(partyConnectorMock, times(1))
                 .getInstitutionByExternalId(onboardingData.getInstitutionExternalId());
         verify(partyConnectorMock, times(1))
-                .createInstitutionUsingExternalId(onboardingData.getInstitutionExternalId());
+                .createInstitutionFromIpa(onboardingData.getTaxCode(), onboardingData.getSubunitCode(), onboardingData.getSubunitType());
         verify(productsConnectorMock, times(1))
                 .getProduct(onboardingData.getProductId(), onboardingData.getInstitutionType());
         verify(onboardingValidationStrategyMock, times(1))
@@ -575,7 +575,7 @@ class InstitutionServiceImplTest {
         institution.setId(UUID.randomUUID().toString());
         when(partyConnectorMock.getInstitutionByExternalId(anyString()))
                 .thenThrow(ResourceNotFoundException.class);
-        when(partyConnectorMock.createInstitutionUsingExternalId(anyString()))
+        when(partyConnectorMock.createInstitutionFromIpa(anyString(),anyString(),anyString()))
                 .thenReturn(institution);
         productMock.setRoleMappings(roleMappings);
         when(productsConnectorMock.getProduct(onboardingData.getProductId(), onboardingData.getInstitutionType()))
@@ -616,7 +616,7 @@ class InstitutionServiceImplTest {
         verify(partyConnectorMock, times(1))
                 .getInstitutionByExternalId(onboardingData.getInstitutionExternalId());
         verify(partyConnectorMock, times(1))
-                .createInstitutionUsingExternalId(onboardingData.getInstitutionExternalId());
+                .createInstitutionFromIpa(onboardingData.getTaxCode(), onboardingData.getSubunitCode(), onboardingData.getSubunitType());
         verify(productsConnectorMock, times(1))
                 .getProduct(onboardingData.getProductId(), onboardingData.getInstitutionType());
         verify(onboardingValidationStrategyMock, times(1))
@@ -663,7 +663,7 @@ class InstitutionServiceImplTest {
         institution.setId(UUID.randomUUID().toString());
         when(partyConnectorMock.getInstitutionByExternalId(anyString()))
                 .thenThrow(ResourceNotFoundException.class);
-        when(partyConnectorMock.createInstitutionUsingExternalId(anyString()))
+        when(partyConnectorMock.createInstitutionFromIpa(anyString(), anyString(), anyString()))
                 .thenReturn(institution);
 
         when(userConnectorMock.search(any(), any()))
@@ -706,7 +706,7 @@ class InstitutionServiceImplTest {
         verify(partyConnectorMock, times(1))
                 .getInstitutionByExternalId(onboardingData.getInstitutionExternalId());
         verify(partyConnectorMock, times(1))
-                .createInstitutionUsingExternalId(onboardingData.getInstitutionExternalId());
+                .createInstitutionFromIpa(onboardingData.getTaxCode(), onboardingData.getSubunitCode(), onboardingData.getSubunitType());
         verify(productsConnectorMock, times(1))
                 .getProduct(onboardingData.getProductId(), onboardingData.getInstitutionType());
         verify(onboardingValidationStrategyMock, times(1))
@@ -758,7 +758,7 @@ class InstitutionServiceImplTest {
         institution.setId(UUID.randomUUID().toString());
         when(partyConnectorMock.getInstitutionByExternalId(anyString()))
                 .thenThrow(ResourceNotFoundException.class);
-        when(partyConnectorMock.createInstitutionUsingExternalId(anyString()))
+        when(partyConnectorMock.createInstitutionFromIpa(anyString(),anyString(),anyString()))
                 .thenReturn(institution);
 
         when(userConnectorMock.search(any(), any()))
@@ -795,7 +795,7 @@ class InstitutionServiceImplTest {
         verify(partyConnectorMock, times(1))
                 .getInstitutionByExternalId(onboardingData.getInstitutionExternalId());
         verify(partyConnectorMock, times(1))
-                .createInstitutionUsingExternalId(onboardingData.getInstitutionExternalId());
+                .createInstitutionFromIpa(onboardingData.getTaxCode(), onboardingData.getSubunitCode(), onboardingData.getSubunitType());
         verify(productsConnectorMock, times(1))
                 .getProduct(onboardingData.getProductId(), onboardingData.getInstitutionType());
         verify(onboardingValidationStrategyMock, times(1))
@@ -847,7 +847,7 @@ class InstitutionServiceImplTest {
         institution.setId(UUID.randomUUID().toString());
         when(partyConnectorMock.getInstitutionByExternalId(anyString()))
                 .thenThrow(ResourceNotFoundException.class);
-        when(partyConnectorMock.createInstitutionUsingExternalId(anyString()))
+        when(partyConnectorMock.createInstitutionFromIpa(anyString(),anyString(),anyString()))
                 .thenReturn(institution);
 
         when(userConnectorMock.search(any(), any()))
@@ -891,7 +891,7 @@ class InstitutionServiceImplTest {
         verify(partyConnectorMock, times(1))
                 .getInstitutionByExternalId(onboardingData.getInstitutionExternalId());
         verify(partyConnectorMock, times(1))
-                .createInstitutionUsingExternalId(onboardingData.getInstitutionExternalId());
+                .createInstitutionFromIpa(onboardingData.getTaxCode(), onboardingData.getSubunitCode(), onboardingData.getSubunitType());
         verify(productsConnectorMock, times(1))
                 .getProduct(onboardingData.getProductId(), onboardingData.getInstitutionType());
         verify(onboardingValidationStrategyMock, times(1))
@@ -941,7 +941,7 @@ class InstitutionServiceImplTest {
         institution.setId(UUID.randomUUID().toString());
         when(partyConnectorMock.getInstitutionByExternalId(anyString()))
                 .thenThrow(ResourceNotFoundException.class);
-        when(partyConnectorMock.createInstitutionUsingExternalId(anyString()))
+        when(partyConnectorMock.createInstitutionFromIpa(anyString(),anyString(),anyString()))
                 .thenReturn(institution);
 
         when(userConnectorMock.search(any(), any()))
@@ -984,7 +984,7 @@ class InstitutionServiceImplTest {
         verify(partyConnectorMock, times(1))
                 .getInstitutionByExternalId(onboardingData.getInstitutionExternalId());
         verify(partyConnectorMock, times(1))
-                .createInstitutionUsingExternalId(onboardingData.getInstitutionExternalId());
+                .createInstitutionFromIpa(onboardingData.getTaxCode(), onboardingData.getSubunitCode(), onboardingData.getSubunitType());
         verify(productsConnectorMock, times(1))
                 .getProduct(onboardingData.getProductId(), onboardingData.getInstitutionType());
         verify(onboardingValidationStrategyMock, times(1))

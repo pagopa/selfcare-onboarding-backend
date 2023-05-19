@@ -11,6 +11,10 @@ import lombok.NoArgsConstructor;
 
 import java.util.stream.Collectors;
 
+/**
+ * It's better using sdk such as https://reflectoring.io/java-mapping-with-mapstruct/, look at @classes OnboardingResourceMapper
+ * */
+@Deprecated
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class OnboardingMapper {
 

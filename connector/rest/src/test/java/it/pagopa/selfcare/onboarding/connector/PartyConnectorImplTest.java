@@ -11,6 +11,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import feign.FeignException;
 import it.pagopa.selfcare.commons.base.security.PartyRole;
 import it.pagopa.selfcare.commons.utils.TestUtils;
+import it.pagopa.selfcare.onboarding.connector.api.PartyConnector;
 import it.pagopa.selfcare.onboarding.connector.exceptions.ResourceNotFoundException;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipInfo;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipState;
@@ -20,6 +21,8 @@ import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionInf
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.InstitutionUpdate;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.*;
 import it.pagopa.selfcare.onboarding.connector.rest.client.PartyProcessRestClient;
+import it.pagopa.selfcare.onboarding.connector.rest.mapper.InstitutionMapper;
+import it.pagopa.selfcare.onboarding.connector.rest.mapper.InstitutionMapperImpl;
 import it.pagopa.selfcare.onboarding.connector.rest.model.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -50,6 +53,9 @@ class PartyConnectorImplTest {
 
     @Mock
     private PartyProcessRestClient restClientMock;
+
+    @Spy
+    private InstitutionMapper institutionMapper = new InstitutionMapperImpl();
 
     @Captor
     ArgumentCaptor<OnboardingInstitutionRequest> onboardingRequestCaptor;
@@ -537,7 +543,6 @@ class PartyConnectorImplTest {
     @Test
     void getUsers_nullResponse() {
         // given
-        PartyConnectorImpl partyConnector = new PartyConnectorImpl(restClientMock);
 
         String institutionId = "institutionId";
         UserInfo.UserInfoFilter userInfoFilter = new UserInfo.UserInfoFilter();

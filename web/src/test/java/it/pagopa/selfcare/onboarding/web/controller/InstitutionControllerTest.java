@@ -14,6 +14,7 @@ import it.pagopa.selfcare.onboarding.web.model.BillingDataDto;
 import it.pagopa.selfcare.onboarding.web.model.GeographicTaxonomyResource;
 import it.pagopa.selfcare.onboarding.web.model.InstitutionOnboardingInfoResource;
 import it.pagopa.selfcare.onboarding.web.model.InstitutionResource;
+import it.pagopa.selfcare.onboarding.web.model.mapper.OnboardingResourceMapperImpl;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +44,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(value = {InstitutionController.class}, excludeAutoConfiguration = SecurityAutoConfiguration.class)
-@ContextConfiguration(classes = {InstitutionController.class, WebTestConfig.class})
+@ContextConfiguration(classes = {InstitutionController.class, WebTestConfig.class, OnboardingResourceMapperImpl.class})
 class InstitutionControllerTest {
 
     private static final String BASE_URL = "/institutions";
@@ -67,6 +68,25 @@ class InstitutionControllerTest {
         mvc.perform(MockMvcRequestBuilders
                         .post(BASE_URL + "/{institutionId}/products/{productId}/onboarding", institutionId, productId)
                         .content(onboardingDto.getInputStream().readAllBytes())
+                        .contentType(APPLICATION_JSON_VALUE)
+                        .accept(APPLICATION_JSON_VALUE))
+                .andExpect(status().isCreated())
+                .andExpect(content().string(emptyString()));
+        // then
+        verify(institutionServiceMock, times(1))
+                .onboarding(any(OnboardingData.class));
+        verifyNoMoreInteractions(institutionServiceMock);
+    }
+
+
+    @Test
+    void onboardingSubunit(@Value("classpath:stubs/onboardingSubunitDto.json") Resource onboardingSubunitDto) throws Exception {
+        // given
+
+        // when
+        mvc.perform(MockMvcRequestBuilders
+                        .post(BASE_URL + "/onboarding/subunit")
+                        .content(onboardingSubunitDto.getInputStream().readAllBytes())
                         .contentType(APPLICATION_JSON_VALUE)
                         .accept(APPLICATION_JSON_VALUE))
                 .andExpect(status().isCreated())
