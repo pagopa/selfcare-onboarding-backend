@@ -53,15 +53,14 @@ public class InstitutionController {
                     @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE,
                             schema = @Schema(implementation = Problem.class))
             })
-    @PostMapping(value = "/onboarding/subunit")
+    @PostMapping(value = "/onboarding")
     @ResponseStatus(HttpStatus.CREATED)
     @ApiOperation(value = "", notes = "${swagger.onboarding.institutions.api.onboarding.subunit}")
-    public void onboardingSubunit(@RequestBody @Valid OnboardingSubunitDto request) {
+    public void onboarding(@RequestBody @Valid OnboardingProductDto request) {
         log.trace("onboarding subunit start");
         log.debug("onboarding subunit request = {}", request);
         OnboardingData onboardingData = onboardingResourceMapper.toEntity(request);
-        onboardingData.setInstitutionExternalId("");
-        institutionService.onboarding(onboardingData);
+        institutionService.onboardingProduct(onboardingData);
         log.trace("onboarding end");
     }
 
@@ -167,4 +166,27 @@ public class InstitutionController {
         log.trace("verifyOnboarding end");
     }
 
+    @ApiResponse(responseCode = "403",
+            description = "Forbidden",
+            content = {
+                    @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE,
+                            schema = @Schema(implementation = Problem.class))
+            })
+    @RequestMapping(method = HEAD, value = "/onboarding")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ApiOperation(value = "", notes = "${swagger.onboarding.institutions.api.verifyOnboarding}")
+    public void verifyOnboarding(@ApiParam("${swagger.onboarding.institutions.model.taxCode}")
+                                 @RequestParam("taxCode")
+                                 String taxCode,
+                                 @ApiParam("${swagger.onboarding.institutions.model.subunitCode}")
+                                 @RequestParam(value = "subunitCode", required = false)
+                                 String subunitCode,
+                                 @ApiParam("${swagger.onboarding.product.model.id}")
+                                 @RequestParam("productId")
+                                 String productId) {
+        log.trace("verifyOnboarding start");
+        log.debug("verifyOnboarding taxCode = {}, subunitCode = {}, productId = {}", taxCode, subunitCode, productId);
+        institutionService.verifyOnboarding(taxCode, subunitCode, productId);
+        log.trace("verifyOnboarding end");
+    }
 }

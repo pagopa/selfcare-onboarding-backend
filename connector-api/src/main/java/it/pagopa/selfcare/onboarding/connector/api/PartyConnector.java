@@ -7,6 +7,7 @@ import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.UserInfo;
 
 import java.util.Collection;
+import java.util.List;
 
 public interface PartyConnector {
 
@@ -17,6 +18,8 @@ public interface PartyConnector {
     RelationshipsResponse getUserInstitutionRelationships(String externalInstitutionId, UserInfo.UserInfoFilter userInfoFilter);
 
     Collection<UserInfo> getUsers(String externalInstitutionId, UserInfo.UserInfoFilter userInfoFilter);
+
+    List<Institution> getInstitutionsByTaxCodeAndSubunitCode(String taxCode, String subunitCode);
 
     Institution getInstitutionByExternalId(String externalInstitutionId);
 
@@ -34,4 +37,5 @@ public interface PartyConnector {
 
     void verifyOnboarding(String externalInstitutionId, String productId);
 
+    void verifyOnboarding(String taxCode, String subunitCode, String productId);
 }

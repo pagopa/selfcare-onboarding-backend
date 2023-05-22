@@ -47,6 +47,11 @@ public interface PartyProcessRestClient {
     @ResponseBody
     InstitutionResponse getInstitutionByExternalId(@PathVariable("externalId") String externalId);
 
+    @GetMapping(value = "${rest-client.party-process.getInstitutions.path}", produces = APPLICATION_JSON_VALUE)
+    @ResponseBody
+    InstitutionsResponse getInstitutions(@RequestParam("taxCode") String taxCode,
+                                        @RequestParam(value = "subunitCode", required = false) String subunitCode);
+
     @PostMapping(value = "${rest-client.party-process.createInstitutionFromIpa.path}", produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     InstitutionResponse createInstitutionFromIpa(@RequestBody InstitutionFromIpaPost institutionFromIpaPost);
@@ -70,9 +75,15 @@ public interface PartyProcessRestClient {
     BillingDataResponse getInstitutionBillingData(@PathVariable("externalId") String externalId,
                                                   @PathVariable("productId") String productId);
 
-    @RequestMapping(method = HEAD, value = "${rest-client.party-process.verifyOnboarding.path}")
+    @RequestMapping(method = HEAD, value = "${rest-client.party-process.verifyOnboardingByExternalId.path}")
     @ResponseBody
     void verifyOnboarding(@PathVariable("externalId") String externalInstitutionId,
                           @PathVariable("productId") String productId);
+
+    @RequestMapping(method = HEAD, value = "${rest-client.party-process.verifyOnboarding.path}")
+    @ResponseBody
+    void verifyOnboarding(@RequestParam("taxCode") String taxCode,
+                          @RequestParam("subunitCode") String subunitCode,
+                          @RequestParam("productId") String productId);
 
 }

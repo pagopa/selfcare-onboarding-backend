@@ -109,17 +109,17 @@
         } ]
       }
     },
-    "/institutions/onboarding/subunit" : {
+    "/institutions/onboarding" : {
       "post" : {
         "tags" : [ "institutions" ],
-        "summary" : "onboardingSubunit",
+        "summary" : "onboarding",
         "description" : "The service allows the onboarding of Users to a subunit of an Institution",
-        "operationId" : "onboardingSubunitUsingPOST",
+        "operationId" : "onboardingUsingPOST",
         "requestBody" : {
           "content" : {
             "application/json" : {
               "schema" : {
-                "$ref" : "#/components/schemas/OnboardingSubunitDto"
+                "$ref" : "#/components/schemas/OnboardingProductDto"
               }
             }
           }
@@ -150,6 +150,98 @@
           },
           "403" : {
             "description" : "Forbidden",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "Internal Server Error",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ "global" ]
+        } ]
+      },
+      "head" : {
+        "tags" : [ "institutions" ],
+        "summary" : "verifyOnboarding",
+        "description" : "Checks if the specified institution has been onboarded on the specified product.",
+        "operationId" : "verifyOnboardingUsingHEAD",
+        "parameters" : [ {
+          "name" : "taxCode",
+          "in" : "query",
+          "description" : "Institution's taxCode",
+          "required" : true,
+          "style" : "form",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "subunitCode",
+          "in" : "query",
+          "description" : "Institution's subunitCode",
+          "required" : false,
+          "style" : "form",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "productId",
+          "in" : "query",
+          "description" : "Product's unique identifier",
+          "required" : true,
+          "style" : "form",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "No Content"
+          },
+          "400" : {
+            "description" : "Bad Request",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Unauthorized",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "Forbidden",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "Not Found",
             "content" : {
               "application/problem+json" : {
                 "schema" : {
@@ -255,7 +347,7 @@
         "tags" : [ "institutions" ],
         "summary" : "verifyOnboarding",
         "description" : "Checks if the specified institution has been onboarded on the specified product.",
-        "operationId" : "verifyOnboardingUsingHEAD",
+        "operationId" : "verifyOnboardingUsingHEAD_1",
         "parameters" : [ {
           "name" : "externalInstitutionId",
           "in" : "path",
@@ -422,7 +514,7 @@
         "tags" : [ "institutions" ],
         "summary" : "onboarding",
         "description" : "The service allows the onboarding of Users to an Institution",
-        "operationId" : "onboardingUsingPOST",
+        "operationId" : "onboardingUsingPOST_1",
         "parameters" : [ {
           "name" : "externalInstitutionId",
           "in" : "path",
@@ -1318,9 +1410,9 @@
           }
         }
       },
-      "OnboardingSubunitDto" : {
-        "title" : "OnboardingSubunitDto",
-        "required" : [ "billingData", "geographicTaxonomies", "institutionType", "productId", "subunitCode", "subunitType", "taxCode", "users" ],
+      "OnboardingProductDto" : {
+        "title" : "OnboardingProductDto",
+        "required" : [ "billingData", "geographicTaxonomies", "institutionType", "productId", "taxCode", "users" ],
         "type" : "object",
         "properties" : {
           "assistanceContacts" : {

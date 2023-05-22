@@ -10,7 +10,7 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Data
-public class OnboardingSubunitDto {
+public class OnboardingProductDto {
 
     @ApiModelProperty(value = "${swagger.onboarding.institutions.model.users}", required = true)
     @NotEmpty
@@ -53,12 +53,10 @@ public class OnboardingSubunitDto {
     @NotNull
     private String taxCode;
 
-    @ApiModelProperty(value = "${swagger.onboarding.institutions.model.subunitCode}", required = true)
-    @NotNull
+    @ApiModelProperty(value = "${swagger.onboarding.institutions.model.subunitCode}")
     private String subunitCode;
 
-    @ApiModelProperty(value = "${swagger.onboarding.institutions.model.subunitType}", required = true)
-    @NotNull
+    @ApiModelProperty(value = "${swagger.onboarding.institutions.model.subunitType}")
     private String subunitType;
 
 }

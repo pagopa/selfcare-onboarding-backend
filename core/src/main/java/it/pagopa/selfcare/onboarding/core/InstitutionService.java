@@ -11,6 +11,8 @@ import java.util.List;
 
 public interface InstitutionService {
 
+    void onboardingProduct(OnboardingData onboardingData);
+
     void onboarding(OnboardingData onboardingData);
 
     Collection<InstitutionInfo> getInstitutions(String productFilter);
@@ -23,4 +25,5 @@ public interface InstitutionService {
 
     void verifyOnboarding(String externalInstitutionId, String productId);
 
+    void verifyOnboarding(String taxCode, String subunitCode, String productId);
 }

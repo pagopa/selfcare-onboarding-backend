@@ -2,6 +2,7 @@ package it.pagopa.selfcare.onboarding.connector;
 
 import it.pagopa.selfcare.commons.base.logging.LogUtils;
 import it.pagopa.selfcare.onboarding.connector.api.PartyConnector;
+import it.pagopa.selfcare.onboarding.connector.exceptions.ResourceNotFoundException;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipInfo;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipsResponse;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
@@ -15,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
+import org.springframework.util.CollectionUtils;
 
 import java.util.*;
 import java.util.function.BinaryOperator;
@@ -232,6 +234,20 @@ class PartyConnectorImpl implements PartyConnector {
     }
 
     @Override
+    public List<Institution> getInstitutionsByTaxCodeAndSubunitCode(String taxCode, String subunitCode) {
+        log.trace("getInstitution start");
+        log.debug("getInstitution taxCode = {}, subunitCode = {}", taxCode, subunitCode);
+        Assert.hasText(taxCode, REQUIRED_INSTITUTION_TAXCODE_MESSAGE);
+        InstitutionsResponse partyInstitutionResponse = restClient.getInstitutions(taxCode, subunitCode);
+        List<Institution> result = partyInstitutionResponse.getInstitutions().stream()
+                .map(institutionMapper::toEntity)
+                .collect(Collectors.toList());
+        log.debug("getInstitution result = {}", result);
+        log.trace("getInstitution end");
+        return result;
+    }
+
+    @Override
     public Institution getInstitutionByExternalId(String externalInstitutionId) {
         log.trace("getInstitution start");
         log.debug("getInstitution externalInstitutionId = {}", externalInstitutionId);
@@ -317,7 +333,6 @@ class PartyConnectorImpl implements PartyConnector {
         return result;
     }
 
-
     @Override
     public void verifyOnboarding(String externalInstitutionId, String productId) {
         log.trace("verifyOnboarding start");
@@ -328,4 +343,14 @@ class PartyConnectorImpl implements PartyConnector {
         log.trace("verifyOnboarding end");
     }
 
+
+    @Override
+    public void verifyOnboarding(String taxCode, String subunitCode, String productId) {
+        log.trace("verifyOnboarding start");
+        log.debug("verifyOnboarding taxCode = {}, subunitCode = {}, productId = {}", taxCode, subunitCode, productId);
+        Assert.hasText(taxCode, REQUIRED_INSTITUTION_ID_MESSAGE);
+        Assert.hasText(productId, REQUIRED_PRODUCT_ID_MESSAGE);
+        restClient.verifyOnboarding(taxCode, subunitCode, productId);
+        log.trace("verifyOnboarding end");
+    }
 }

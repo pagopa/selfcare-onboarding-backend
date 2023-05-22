@@ -85,7 +85,7 @@ class InstitutionControllerTest {
 
         // when
         mvc.perform(MockMvcRequestBuilders
-                        .post(BASE_URL + "/onboarding/subunit")
+                        .post(BASE_URL + "/onboarding")
                         .content(onboardingSubunitDto.getInputStream().readAllBytes())
                         .contentType(APPLICATION_JSON_VALUE)
                         .accept(APPLICATION_JSON_VALUE))
@@ -93,7 +93,7 @@ class InstitutionControllerTest {
                 .andExpect(content().string(emptyString()));
         // then
         verify(institutionServiceMock, times(1))
-                .onboarding(any(OnboardingData.class));
+                .onboardingProduct(any(OnboardingData.class));
         verifyNoMoreInteractions(institutionServiceMock);
     }
 
@@ -246,6 +246,19 @@ class InstitutionControllerTest {
         //when
         mvc.perform(MockMvcRequestBuilders
                         .head(BASE_URL + "/{externalInstitutionId}/products/{productId}", externalInstitutionId, productId)
+                        .contentType(APPLICATION_JSON_VALUE)
+                        .accept(APPLICATION_JSON_VALUE))
+                .andExpect(status().isNoContent());
+    }
+
+
+    @Test
+    void shouldOnboardingVerification() throws Exception {
+        //when
+        mvc.perform(MockMvcRequestBuilders
+                        .head(BASE_URL + "/onboarding")
+                        .queryParam("taxCode", "taxCode")
+                        .queryParam("productId", "productId")
                         .contentType(APPLICATION_JSON_VALUE)
                         .accept(APPLICATION_JSON_VALUE))
                 .andExpect(status().isNoContent());
