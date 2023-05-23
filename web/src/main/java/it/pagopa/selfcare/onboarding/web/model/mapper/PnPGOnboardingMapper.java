@@ -1,11 +1,11 @@
 package it.pagopa.selfcare.onboarding.web.model.mapper;
 
-import it.pagopa.selfcare.onboarding.connector.model.PnPGInstitutionLegalAddressData;
+import it.pagopa.selfcare.onboarding.connector.model.InstitutionLegalAddressData;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.Billing;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.InstitutionType;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.InstitutionUpdate;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.PnPGOnboardingData;
-import it.pagopa.selfcare.onboarding.web.model.PnPGInstitutionLegalAddressResource;
+import it.pagopa.selfcare.onboarding.web.model.InstitutionLegalAddressResource;
 import it.pagopa.selfcare.onboarding.web.model.PnPGOnboardingDto;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -54,10 +54,10 @@ public class PnPGOnboardingMapper {
         return billingData;
     }
 
-    public static PnPGInstitutionLegalAddressResource toResource(PnPGInstitutionLegalAddressData model) {
-        PnPGInstitutionLegalAddressResource resource = null;
+    public static InstitutionLegalAddressResource toResource(InstitutionLegalAddressData model) {
+        InstitutionLegalAddressResource resource = null;
         if (model != null) {
-            resource = new PnPGInstitutionLegalAddressResource();
+            resource = new InstitutionLegalAddressResource();
 
             resource.setAddress(model.getAddress());
             resource.setZipCode(model.getZipCode());

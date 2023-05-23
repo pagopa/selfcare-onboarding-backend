@@ -2,18 +2,16 @@ package it.pagopa.selfcare.onboarding.web.controller;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import it.pagopa.selfcare.onboarding.connector.model.InstitutionLegalAddressData;
 import it.pagopa.selfcare.onboarding.connector.model.InstitutionOnboardingData;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionInfo;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.Billing;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.GeographicTaxonomy;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.UserInfo;
+import it.pagopa.selfcare.onboarding.connector.model.institutions.MatchInfoResult;
+import it.pagopa.selfcare.onboarding.connector.model.institutions.infocamere.BusinessInfoIC;
+import it.pagopa.selfcare.onboarding.connector.model.institutions.infocamere.InstitutionInfoIC;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.*;
 import it.pagopa.selfcare.onboarding.core.InstitutionService;
 import it.pagopa.selfcare.onboarding.web.config.WebTestConfig;
-import it.pagopa.selfcare.onboarding.web.model.BillingDataDto;
-import it.pagopa.selfcare.onboarding.web.model.GeographicTaxonomyResource;
-import it.pagopa.selfcare.onboarding.web.model.InstitutionOnboardingInfoResource;
-import it.pagopa.selfcare.onboarding.web.model.InstitutionResource;
+import it.pagopa.selfcare.onboarding.web.model.*;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -229,6 +227,97 @@ class InstitutionControllerTest {
                         .contentType(APPLICATION_JSON_VALUE)
                         .accept(APPLICATION_JSON_VALUE))
                 .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void getInstitutionsByUserId(@Value("classpath:stubs/userDto.json") Resource userDto) throws Exception {
+        //given
+        String userId = randomUUID().toString();
+        List<BusinessInfoIC> businessInfoICSmock = List.of(mockInstance(new BusinessInfoIC()));
+        InstitutionInfoIC institutionInfoICmock = mockInstance(new InstitutionInfoIC(), "setBusinesses");
+        institutionInfoICmock.setBusinesses(businessInfoICSmock);
+        User user = mockInstance(new User(), "setEmail", "setId");
+        user.setEmail("n.surname@email.com");
+        when(institutionServiceMock.getInstitutionsByUser(Mockito.any()))
+                .thenReturn(institutionInfoICmock);
+        //when
+        MvcResult result = mvc.perform(MockMvcRequestBuilders
+                        .post(BASE_URL + "")
+                        .content(userDto.getInputStream().readAllBytes())
+                        .contentType(APPLICATION_JSON_VALUE)
+                        .accept(APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk())
+                .andReturn();
+        // then
+        InstitutionResourceIC response = objectMapper.readValue(
+                result.getResponse().getContentAsString(),
+                new TypeReference<>() {
+                });
+        assertNotNull(response);
+        assertEquals(institutionInfoICmock.getBusinesses().get(0).getBusinessName(), response.getBusinesses().get(0).getBusinessName());
+        assertEquals(institutionInfoICmock.getBusinesses().get(0).getBusinessTaxId(), response.getBusinesses().get(0).getBusinessTaxId());
+        assertEquals(institutionInfoICmock.getLegalTaxId(), response.getLegalTaxId());
+        assertEquals(institutionInfoICmock.getRequestDateTime(), response.getRequestDateTime());
+        verify(institutionServiceMock, times(1))
+                .getInstitutionsByUser(user);
+        verifyNoMoreInteractions(institutionServiceMock);
+    }
+
+    @Test
+    void matchInstitutionAndUser_ok(@Value("classpath:stubs/userDto.json") Resource userDto) throws Exception {
+        //given
+        String externalInstitutionId = "externalId";
+        MatchInfoResult matchInfo = mockInstance(new MatchInfoResult(), "setVerificationResult");
+        matchInfo.setVerificationResult(true);
+        User user = mockInstance(new User(), "setEmail", "setId");
+        user.setEmail("n.surname@email.com");
+        when(institutionServiceMock.matchInstitutionAndUser(Mockito.anyString(), Mockito.any()))
+                .thenReturn(matchInfo);
+        //when
+        MvcResult result = mvc.perform(MockMvcRequestBuilders
+                        .post(BASE_URL + "/{externalInstitutionId}/match", externalInstitutionId)
+                        .content(userDto.getInputStream().readAllBytes())
+                        .contentType(APPLICATION_JSON_VALUE)
+                        .accept(APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk())
+                .andReturn();
+        // then
+        MatchInfoResultResource response = objectMapper.readValue(
+                result.getResponse().getContentAsString(),
+                new TypeReference<>() {
+                });
+        assertNotNull(response);
+        assertEquals(response.isVerificationResult(), matchInfo.isVerificationResult());
+        verify(institutionServiceMock, times(1))
+                .matchInstitutionAndUser(externalInstitutionId, user);
+        verifyNoMoreInteractions(institutionServiceMock);
+    }
+
+    @Test
+    void getInstitutionLegalAddress() throws Exception {
+        //given
+        String externalInstitutionId = "externalId";
+        InstitutionLegalAddressData data = mockInstance(new InstitutionLegalAddressData());
+        when(institutionServiceMock.getInstitutionLegalAddress(Mockito.anyString()))
+                .thenReturn(data);
+        //when
+        MvcResult result = mvc.perform(MockMvcRequestBuilders
+                        .get(BASE_URL + "/{externalInstitutionId}/legal-address", externalInstitutionId)
+                        .contentType(APPLICATION_JSON_VALUE)
+                        .accept(APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk())
+                .andReturn();
+        // then
+        InstitutionLegalAddressResource response = objectMapper.readValue(
+                result.getResponse().getContentAsString(),
+                new TypeReference<>() {
+                });
+        assertNotNull(response);
+        assertEquals(response.getAddress(), data.getAddress());
+        assertEquals(response.getZipCode(), data.getZipCode());
+        verify(institutionServiceMock, times(1))
+                .getInstitutionLegalAddress(externalInstitutionId);
+        verifyNoMoreInteractions(institutionServiceMock);
     }
 
 }

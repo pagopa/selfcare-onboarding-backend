@@ -2,13 +2,14 @@ package it.pagopa.selfcare.onboarding.core;
 
 import it.pagopa.selfcare.commons.base.logging.LogUtils;
 import it.pagopa.selfcare.commons.base.security.PartyRole;
-import it.pagopa.selfcare.onboarding.connector.api.PartyConnector;
-import it.pagopa.selfcare.onboarding.connector.api.ProductsConnector;
-import it.pagopa.selfcare.onboarding.connector.api.UserRegistryConnector;
+import it.pagopa.selfcare.onboarding.connector.api.*;
 import it.pagopa.selfcare.onboarding.connector.exceptions.ResourceNotFoundException;
+import it.pagopa.selfcare.onboarding.connector.model.InstitutionLegalAddressData;
 import it.pagopa.selfcare.onboarding.connector.model.InstitutionOnboardingData;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionInfo;
+import it.pagopa.selfcare.onboarding.connector.model.institutions.MatchInfoResult;
+import it.pagopa.selfcare.onboarding.connector.model.institutions.infocamere.InstitutionInfoIC;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.*;
 import it.pagopa.selfcare.onboarding.connector.model.product.Product;
 import it.pagopa.selfcare.onboarding.connector.model.product.ProductRoleInfo;
@@ -51,7 +52,10 @@ class InstitutionServiceImpl implements InstitutionService {
     private final PartyConnector partyConnector;
     private final ProductsConnector productsConnector;
     private final UserRegistryConnector userConnector;
+    private final MsCoreConnector msCoreConnector;
     private final OnboardingValidationStrategy onboardingValidationStrategy;
+
+    private final PartyRegistryProxyConnector partyRegistryProxyConnector;
 
 
 
@@ -59,10 +63,14 @@ class InstitutionServiceImpl implements InstitutionService {
     InstitutionServiceImpl(PartyConnector partyConnector,
                            ProductsConnector productsConnector,
                            UserRegistryConnector userConnector,
+                           MsCoreConnector msCoreConnector,
+                           PartyRegistryProxyConnector partyRegistryProxyConnector,
                            OnboardingValidationStrategy onboardingValidationStrategy) {
         this.partyConnector = partyConnector;
+        this.partyRegistryProxyConnector = partyRegistryProxyConnector;
         this.productsConnector = productsConnector;
         this.userConnector = userConnector;
+        this.msCoreConnector = msCoreConnector;
         this.onboardingValidationStrategy = onboardingValidationStrategy;
     }
 
@@ -129,6 +137,9 @@ class InstitutionServiceImpl implements InstitutionService {
                     (InstitutionType.GSP.equals(onboardingData.getInstitutionType()) && onboardingData.getProductId().equals("prod-interop")
                             && onboardingData.getOrigin().equals("IPA"))) {
                 institution = partyConnector.createInstitutionUsingExternalId(onboardingData.getInstitutionExternalId());
+            } else if (InstitutionType.PG.equals(onboardingData.getInstitutionType()) && onboardingData.getProductId().startsWith("prod-pn-pg")) {
+                CreateInstitutionData createInstitutionData = mapCreateInstitutionData(onboardingData);
+                institution = msCoreConnector.createInstitutionUsingInstitutionData(createInstitutionData);
             } else {
                 institution = partyConnector.createInstitutionRaw(onboardingData);
             }
@@ -149,6 +160,15 @@ class InstitutionServiceImpl implements InstitutionService {
 
         partyConnector.onboardingOrganization(onboardingData);
         log.trace("onboarding end");
+    }
+
+
+    private CreateInstitutionData mapCreateInstitutionData(OnboardingData onboardingData) {
+        CreateInstitutionData createInstitutionData = new CreateInstitutionData();
+        createInstitutionData.setDescription(onboardingData.getBusinessName());
+        createInstitutionData.setTaxId(onboardingData.getInstitutionExternalId());
+        createInstitutionData.setExistsInRegistry(onboardingData.isExistsInRegistry());
+        return createInstitutionData;
     }
 
 
@@ -283,6 +303,36 @@ class InstitutionServiceImpl implements InstitutionService {
                     externalInstitutionId,
                     productId));
         }
+    }
+
+    @Override
+    public InstitutionInfoIC getInstitutionsByUser(User user) {
+        log.trace("getInstitutionsByUserId start");
+        log.debug(LogUtils.CONFIDENTIAL_MARKER, "getInstitutionsByUserId user = {}", user);
+        InstitutionInfoIC result = partyRegistryProxyConnector.getInstitutionsByUserFiscalCode(user.getTaxCode());
+        log.debug(LogUtils.CONFIDENTIAL_MARKER, "getInstitutionsByUserId result = {}", result);
+        log.trace("getInstitutionsByUserId end");
+        return result;
+    }
+
+    @Override
+    public MatchInfoResult matchInstitutionAndUser(String externalInstitutionId, User user) {
+        log.trace("matchInstitutionAndUser start");
+        log.debug(LogUtils.CONFIDENTIAL_MARKER, "matchInstitutionAndUser user = {}", user);
+        MatchInfoResult result = partyRegistryProxyConnector.matchInstitutionAndUser(externalInstitutionId, user.getTaxCode());
+        log.debug(LogUtils.CONFIDENTIAL_MARKER, "matchInstitutionAndUser result = {}", result);
+        log.trace("matchInstitutionAndUser end");
+        return result;
+    }
+
+    @Override
+    public InstitutionLegalAddressData getInstitutionLegalAddress(String externalInstitutionId) {
+        log.trace("getInstitutionLegalAddress start");
+        log.debug("getInstitutionLegalAddress externalInstitutionId = {}", externalInstitutionId);
+        InstitutionLegalAddressData result = partyRegistryProxyConnector.getInstitutionLegalAddress(externalInstitutionId);
+        log.debug("getInstitutionLegalAddress result = {}", result);
+        log.trace("getInstitutionLegalAddress end");
+        return result;
     }
 
 }
