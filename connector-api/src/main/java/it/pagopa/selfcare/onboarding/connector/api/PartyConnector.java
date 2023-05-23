@@ -4,6 +4,7 @@ import it.pagopa.selfcare.onboarding.connector.model.RelationshipsResponse;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionInfo;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingResource;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.UserInfo;
 
 import java.util.Collection;
@@ -23,7 +24,7 @@ public interface PartyConnector {
 
     Institution getInstitutionByExternalId(String externalInstitutionId);
 
-    InstitutionInfo getOnboardedInstitution(String externalInstitutionId);
+    OnboardingResource getOnboardings(String institutionId, String productId);
 
     Institution createInstitutionFromIpa(String taxCode, String subunitCode, String subunitType);
 

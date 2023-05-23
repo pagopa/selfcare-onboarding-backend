@@ -17,6 +17,8 @@ public interface InstitutionService {
 
     Collection<InstitutionInfo> getInstitutions(String productFilter);
 
+    InstitutionOnboardingData getInstitutionOnboardingData(String taxCode, String subunitCode, String productId);
+
     InstitutionOnboardingData getInstitutionOnboardingData(String externalInstitutionId, String productId);
 
     List<GeographicTaxonomy> getGeographicTaxonomyList(String externalInstitutionId);

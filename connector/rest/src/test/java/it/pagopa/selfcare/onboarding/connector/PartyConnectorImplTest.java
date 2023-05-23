@@ -11,7 +11,6 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import feign.FeignException;
 import it.pagopa.selfcare.commons.base.security.PartyRole;
 import it.pagopa.selfcare.commons.utils.TestUtils;
-import it.pagopa.selfcare.onboarding.connector.api.PartyConnector;
 import it.pagopa.selfcare.onboarding.connector.exceptions.ResourceNotFoundException;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipInfo;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipState;
@@ -38,7 +37,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static it.pagopa.selfcare.commons.utils.TestUtils.*;
-import static it.pagopa.selfcare.onboarding.connector.PartyConnectorImpl.REQUIRED_INSTITUTION_ID_MESSAGE;
+import static it.pagopa.selfcare.onboarding.connector.PartyConnectorImpl.REQUIRED_INSTITUTION_EXTERNAL_ID_MESSAGE;
 import static it.pagopa.selfcare.onboarding.connector.PartyConnectorImpl.REQUIRED_PRODUCT_ID_MESSAGE;
 import static it.pagopa.selfcare.onboarding.connector.model.RelationshipState.ACTIVE;
 import static org.junit.jupiter.api.Assertions.*;
@@ -493,7 +492,7 @@ class PartyConnectorImplTest {
         Executable executable = () -> partyConnector.getUserInstitutionRelationships(institutionId, userInfoFilter);
         //then
         IllegalArgumentException e = Assertions.assertThrows(IllegalArgumentException.class, executable);
-        assertEquals(REQUIRED_INSTITUTION_ID_MESSAGE, e.getMessage());
+        assertEquals(REQUIRED_INSTITUTION_EXTERNAL_ID_MESSAGE, e.getMessage());
         Mockito.verifyNoInteractions(restClientMock);
     }
 
@@ -519,7 +518,7 @@ class PartyConnectorImplTest {
         Executable executable = () -> partyConnector.getUsers(institutionId, filter);
         //then
         IllegalArgumentException e = assertThrows(IllegalArgumentException.class, executable);
-        assertEquals(REQUIRED_INSTITUTION_ID_MESSAGE, e.getMessage());
+        assertEquals(REQUIRED_INSTITUTION_EXTERNAL_ID_MESSAGE, e.getMessage());
         Mockito.verifyNoInteractions(restClientMock);
 
     }
@@ -764,7 +763,7 @@ class PartyConnectorImplTest {
         Executable exe = () -> partyConnector.getInstitutionByExternalId(institutionId);
         //then
         IllegalArgumentException e = assertThrows(IllegalArgumentException.class, exe);
-        assertEquals(REQUIRED_INSTITUTION_ID_MESSAGE, e.getMessage());
+        assertEquals(REQUIRED_INSTITUTION_EXTERNAL_ID_MESSAGE, e.getMessage());
         Mockito.verifyNoInteractions(restClientMock);
     }
 
@@ -836,7 +835,7 @@ class PartyConnectorImplTest {
         Executable executable = () -> partyConnector.getOnboardedInstitution(institutionId);
         //then
         IllegalArgumentException e = assertThrows(IllegalArgumentException.class, executable);
-        assertEquals(REQUIRED_INSTITUTION_ID_MESSAGE, e.getMessage());
+        assertEquals(REQUIRED_INSTITUTION_EXTERNAL_ID_MESSAGE, e.getMessage());
         Mockito.verifyNoInteractions(restClientMock);
     }
 
@@ -864,7 +863,7 @@ class PartyConnectorImplTest {
         Executable executable = () -> partyConnector.createInstitutionUsingExternalId(externalId);
         //then
         IllegalArgumentException e = assertThrows(IllegalArgumentException.class, executable);
-        assertEquals(REQUIRED_INSTITUTION_ID_MESSAGE, e.getMessage());
+        assertEquals(REQUIRED_INSTITUTION_EXTERNAL_ID_MESSAGE, e.getMessage());
         verifyNoInteractions(restClientMock);
     }
 
@@ -997,7 +996,7 @@ class PartyConnectorImplTest {
         Executable executable = () -> partyConnector.getInstitutionBillingData(externalId, productId);
         //then
         IllegalArgumentException e = assertThrows(IllegalArgumentException.class, executable);
-        assertEquals(REQUIRED_INSTITUTION_ID_MESSAGE, e.getMessage());
+        assertEquals(REQUIRED_INSTITUTION_EXTERNAL_ID_MESSAGE, e.getMessage());
         verifyNoInteractions(restClientMock);
     }
 

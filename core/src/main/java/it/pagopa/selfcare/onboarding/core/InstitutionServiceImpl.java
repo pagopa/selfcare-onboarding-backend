@@ -297,6 +297,47 @@ class InstitutionServiceImpl implements InstitutionService {
 
 
     @Override
+    public InstitutionOnboardingData getInstitutionOnboardingData(String taxCode, String subunitCode, String productId) {
+        log.trace("getInstitutionOnboardingData start");
+        log.debug("getInstitutionOnboardingData taxCode = {}, productId = {}", taxCode, productId);
+        Assert.hasText(taxCode, REQUIRED_INSTITUTION_ID_MESSAGE);
+        Assert.hasText(productId, A_PRODUCT_ID_IS_REQUIRED);
+        InstitutionOnboardingData result = new InstitutionOnboardingData();
+
+        List<Institution> institutions = partyConnector.getInstitutionsByTaxCodeAndSubunitCode(taxCode, subunitCode);
+        Institution institution = institutions.stream()
+                .findFirst()
+                .orElseThrow(() -> new ResourceNotFoundException(String.format("Institution with taxCode %s and subunitCode %s not found", taxCode, subunitCode)));
+
+        /*
+        OnboardingResource onboardingResource = partyConnector.getOnboardings(institution.getId(), productId);
+
+        UserInfo manager = partyConnector.getInstitutionManager(externalInstitutionId, productId);
+        if (manager == null) {
+            throw new ResourceNotFoundException(String.format("No Manager found for given institution: %s", externalInstitutionId));
+        }
+        manager.setUser(userConnector.getUserByInternalId(manager.getId(), USER_FIELD_LIST_ENHANCED));
+        result.setManager(manager);
+
+        InstitutionInfo institutionInfo = partyConnector.getInstitutionBillingData(externalInstitutionId, productId);
+        if (institutionInfo == null) {
+            throw new ResourceNotFoundException(String.format("Institution %s not found", externalInstitutionId));
+        }
+        result.setInstitution(institutionInfo);*/
+
+        if (institution.getGeographicTaxonomies() == null) {
+            throw new ValidationException(String.format("Institution with taxCode %s does not have geographic taxonomies.", taxCode));
+        }
+        result.setGeographicTaxonomies(institution.getGeographicTaxonomies());
+        result.setCompanyInformations(institution.getCompanyInformations());
+        result.setAssistanceContacts(institution.getAssistanceContacts());
+
+        log.debug(LogUtils.CONFIDENTIAL_MARKER, "getInstitutionOnboardingData result = {}", result);
+        log.trace("getInstitutionOnboardingData end");
+        return result;
+    }
+
+    @Override
     public InstitutionOnboardingData getInstitutionOnboardingData(String externalInstitutionId, String productId) {
         log.trace("getInstitutionOnboardingData start");
         log.debug("getInstitutionOnboardingData externalInstitutionId = {}, productId = {}", externalInstitutionId, productId);

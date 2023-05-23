@@ -12,12 +12,14 @@
 
 package it.pagopa.selfcare.onboarding.connector.model.onboarding;
 
-import java.io.File;
-
 public interface OnboardingResource {
+    String getProductId();
+    String getTokenId();
 
-    String getToken();
+    String getContract();
 
-    File getDocument();
+    String getPricingPlan();
+
+    Billing getBilling();
 
 }

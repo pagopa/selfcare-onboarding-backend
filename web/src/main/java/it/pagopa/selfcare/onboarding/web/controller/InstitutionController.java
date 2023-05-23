@@ -92,7 +92,6 @@ public class InstitutionController {
         log.trace("onboarding end");
     }
 
-
     @GetMapping(value = "/{externalInstitutionId}/products/{productId}/onboarded-institution-info")
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "", notes = "${swagger.onboarding.institutions.api.getInstitutionOnboardingInfo}")
@@ -105,6 +104,27 @@ public class InstitutionController {
         log.trace("getInstitutionOnBoardingInfo start");
         log.debug("getInstitutionOnBoardingInfo institutionId = {}, productId = {}", externalInstitutionId, productId);
         InstitutionOnboardingData institutionOnboardingData = institutionService.getInstitutionOnboardingData(externalInstitutionId, productId);
+        InstitutionOnboardingInfoResource result = OnboardingMapper.toResource(institutionOnboardingData);
+        log.debug("getInstitutionOnBoardingInfo result = {}", result);
+        log.trace("getInstitutionOnBoardingInfo end");
+        return result;
+    }
+
+    @GetMapping(value = "/onboarding/")
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "", notes = "${swagger.onboarding.institutions.api.getInstitutionOnboardingInfo}")
+    public InstitutionOnboardingInfoResource getInstitutionOnboardingInfo(@ApiParam("${swagger.onboarding.institutions.model.taxCode}")
+                                                                              @RequestParam("taxCode")
+                                                                              String taxCode,
+                                                                          @ApiParam("${swagger.onboarding.institutions.model.subunitCode}")
+                                                                              @RequestParam(value = "subunitCode", required = false)
+                                                                              String subunitCode,
+                                                                          @ApiParam("${swagger.onboarding.product.model.id}")
+                                                                              @RequestParam("productId")
+                                                                              String productId) {
+        log.trace("getInstitutionOnBoardingInfo start");
+        log.debug("getInstitutionOnBoardingInfo taxCode = {}, productId = {}", taxCode, productId);
+        InstitutionOnboardingData institutionOnboardingData = institutionService.getInstitutionOnboardingData(taxCode, subunitCode, productId);
         InstitutionOnboardingInfoResource result = OnboardingMapper.toResource(institutionOnboardingData);
         log.debug("getInstitutionOnBoardingInfo result = {}", result);
         log.trace("getInstitutionOnBoardingInfo end");

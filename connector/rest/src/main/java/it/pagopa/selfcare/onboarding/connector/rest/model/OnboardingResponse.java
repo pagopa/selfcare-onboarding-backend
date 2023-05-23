@@ -12,15 +12,23 @@
 
 package it.pagopa.selfcare.onboarding.connector.rest.model;
 
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.Billing;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingResource;
 import lombok.Data;
 
-import java.io.File;
+import java.time.OffsetDateTime;
 
 @Data
 public class OnboardingResponse implements OnboardingResource {
 
-    private String token;
-    private File document;
+    private String productId;
+    private String tokenId;
+    //private RelationshipResponse status;
+    private String contract;
+    private String pricingPlan;
+    private Billing billing;
+    private OffsetDateTime createdAt;
+    private OffsetDateTime updatedAt;
+    private OffsetDateTime closedAt;
 
 }
