@@ -32,6 +32,10 @@ public class OnboardingProductDto {
     @ApiModelProperty(value = "${swagger.onboarding.institutions.model.pricingPlan}")
     private String pricingPlan;
 
+    @ApiModelProperty(value = "${swagger.onboarding.institutions.model.pspData}")
+    @Valid
+    private PspDataDto pspData;
+
     @ApiModelProperty(value = "${swagger.onboarding.institutions.model.geographicTaxonomies}", required = true)
     @NotNull
     @Valid
