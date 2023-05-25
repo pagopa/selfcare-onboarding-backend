@@ -1,10 +1,9 @@
 package it.pagopa.selfcare.onboarding.connector.rest.mapper;
 
 
-import it.pagopa.selfcare.onboarding.connector.model.institutions.AssistanceContacts;
-import it.pagopa.selfcare.onboarding.connector.model.institutions.CompanyInformations;
-import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
+import it.pagopa.selfcare.onboarding.connector.model.institutions.*;
 import it.pagopa.selfcare.onboarding.connector.rest.model.InstitutionResponse;
+import it.pagopa.selfcare.onboarding.connector.rest.model.OnboardingResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
@@ -34,4 +33,6 @@ public interface InstitutionMapper {
         assistanceContacts.setSupportPhone(dto.getSupportPhone());
         return assistanceContacts;
     }
+
+    OnboardingResource toResource(OnboardingResponse response);
 }

@@ -7,7 +7,6 @@ import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionInf
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.Billing;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.GeographicTaxonomy;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.UserInfo;
 import it.pagopa.selfcare.onboarding.core.InstitutionService;
 import it.pagopa.selfcare.onboarding.web.config.WebTestConfig;
 import it.pagopa.selfcare.onboarding.web.model.BillingDataDto;
@@ -30,7 +29,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.UUID;
 
 import static it.pagopa.selfcare.commons.utils.TestUtils.mockInstance;
 import static java.util.UUID.randomUUID;
@@ -143,10 +141,7 @@ class InstitutionControllerTest {
         InstitutionOnboardingData onBoardingDataMock = mockInstance(new InstitutionOnboardingData());
         onBoardingDataMock.setInstitution(institutionInfoMock);
         onBoardingDataMock.setGeographicTaxonomies(List.of(mockInstance(new GeographicTaxonomy())));
-        final UserInfo manager = mockInstance(new UserInfo(), "setId", "setInstitutionId");
-        manager.setId(UUID.randomUUID().toString());
-        manager.setInstitutionId(UUID.randomUUID().toString());
-        onBoardingDataMock.setManager(manager);
+
         when(institutionServiceMock.getInstitutionOnboardingData(Mockito.anyString(), Mockito.anyString()))
                 .thenReturn(onBoardingDataMock);
         //when
@@ -163,7 +158,7 @@ class InstitutionControllerTest {
         );
         assertNotNull(response);
         assertNotNull(response.getInstitution());
-        assertNotNull(response.getManager());
+
         BillingDataDto responseBillings = response.getInstitution().getBillingData();
         assertEquals(onBoardingDataMock.getInstitution().getBilling().getRecipientCode(), responseBillings.getRecipientCode());
         assertEquals(onBoardingDataMock.getInstitution().getBilling().getPublicServices(), responseBillings.getPublicServices());
@@ -172,7 +167,7 @@ class InstitutionControllerTest {
         assertEquals(onBoardingDataMock.getInstitution().getTaxCode(), responseBillings.getTaxCode());
         assertEquals(onBoardingDataMock.getInstitution().getAddress(), responseBillings.getRegisteredOffice());
         assertEquals(onBoardingDataMock.getInstitution().getInstitutionType(), response.getInstitution().getInstitutionType());
-        assertNotNull(response.getManager().getId());
+
         verify(institutionServiceMock, times(1))
                 .getInstitutionOnboardingData(institutionId, productId);
         verifyNoMoreInteractions(institutionServiceMock);
@@ -217,7 +212,7 @@ class InstitutionControllerTest {
                 .thenReturn(Collections.singletonList(institutionInfo));
         //when
         MvcResult result = mvc.perform(MockMvcRequestBuilders
-                        .get(BASE_URL + "")
+                        .get(BASE_URL)
                         .queryParam("productFilter", productFilter)
                         .contentType(APPLICATION_JSON_VALUE)
                         .accept(APPLICATION_JSON_VALUE))

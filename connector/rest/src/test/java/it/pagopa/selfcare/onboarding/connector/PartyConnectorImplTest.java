@@ -17,6 +17,7 @@ import it.pagopa.selfcare.onboarding.connector.model.RelationshipState;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipsResponse;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionInfo;
+import it.pagopa.selfcare.onboarding.connector.model.institutions.OnboardingResource;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.InstitutionUpdate;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.*;
 import it.pagopa.selfcare.onboarding.connector.rest.client.PartyProcessRestClient;
@@ -37,8 +38,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static it.pagopa.selfcare.commons.utils.TestUtils.*;
-import static it.pagopa.selfcare.onboarding.connector.PartyConnectorImpl.REQUIRED_INSTITUTION_EXTERNAL_ID_MESSAGE;
-import static it.pagopa.selfcare.onboarding.connector.PartyConnectorImpl.REQUIRED_PRODUCT_ID_MESSAGE;
+import static it.pagopa.selfcare.onboarding.connector.PartyConnectorImpl.*;
 import static it.pagopa.selfcare.onboarding.connector.model.RelationshipState.ACTIVE;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
@@ -768,62 +768,19 @@ class PartyConnectorImplTest {
     }
 
     @Test
-    void getOnboardedInstitution() {
-        //given
-        String institutionId = "institutionId";
-        OnBoardingInfo onBoardingInfo = mockInstance(new OnBoardingInfo());
-        Billing billing = mockInstance(new Billing());
-        OnboardingResponseData onboardingData = mockInstance(new OnboardingResponseData());
-        onboardingData.setId(institutionId);
-        onboardingData.setBilling(billing);
-        onBoardingInfo.setInstitutions(Collections.singletonList(onboardingData));
-        when(restClientMock.getOnBoardingInfo(any(), any()))
-                .thenReturn(onBoardingInfo);
-        // when
-        InstitutionInfo institutionInfo = partyConnector.getOnboardedInstitution(institutionId);
-        // then
-        assertNotNull(institutionInfo);
-        assertEquals(onboardingData.getId(), institutionInfo.getId());
-        assertEquals(onboardingData.getDescription(), institutionInfo.getDescription());
-        assertEquals(onboardingData.getDigitalAddress(), institutionInfo.getDigitalAddress());
-        assertEquals(onboardingData.getExternalId(), institutionInfo.getExternalId());
-        assertEquals(onboardingData.getState().toString(), institutionInfo.getStatus());
-        assertEquals(onboardingData.getAddress(), institutionInfo.getAddress());
-        assertEquals(onboardingData.getBilling().getRecipientCode(), institutionInfo.getBilling().getRecipientCode());
-        assertEquals(onboardingData.getBilling().getPublicServices(), institutionInfo.getBilling().getPublicServices());
-        assertEquals(onboardingData.getBilling().getVatNumber(), institutionInfo.getBilling().getVatNumber());
-        verify(restClientMock, times(1))
-                .getOnBoardingInfo(institutionId, EnumSet.of(ACTIVE));
-        verifyNoMoreInteractions(restClientMock);
-    }
-
-    @Test
-    void getOnboardedInstitution_emptyInstitutions() {
+    void getOnboardings_emptyOnboardings() {
         // given
         String institutionId = "institutionId";
-        OnBoardingInfo onBoardingInfo = new OnBoardingInfo();
-        onBoardingInfo.setInstitutions(Collections.emptyList());
-        when(restClientMock.getOnBoardingInfo(any(), any()))
-                .thenReturn(onBoardingInfo);
+        OnboardingsResponse onboardingsResponse = new OnboardingsResponse();
+        onboardingsResponse.setOnboardings(Collections.emptyList());
+        when(restClientMock.getOnboardings(any(), any()))
+                .thenReturn(onboardingsResponse);
         // when
-        InstitutionInfo institutionInfo = partyConnector.getOnboardedInstitution(institutionId);
+        List<OnboardingResource> onboardings = partyConnector.getOnboardings(institutionId, null);
         // then
-        assertNull(institutionInfo);
+        assertTrue(onboardings.isEmpty());
         verify(restClientMock, times(1))
-                .getOnBoardingInfo(institutionId, EnumSet.of(ACTIVE));
-        verifyNoMoreInteractions(restClientMock);
-    }
-
-    @Test
-    void getOnboardedInstitution_nullOnBoardingInfo() {
-        // given
-        String institutionId = "institutionId";
-        // when
-        InstitutionInfo institutionInfo = partyConnector.getOnboardedInstitution(institutionId);
-        // then
-        assertNull(institutionInfo);
-        verify(restClientMock, times(1))
-                .getOnBoardingInfo(institutionId, EnumSet.of(ACTIVE));
+                .getOnboardings(institutionId, null);
         verifyNoMoreInteractions(restClientMock);
     }
 
@@ -832,27 +789,11 @@ class PartyConnectorImplTest {
         //given
         String institutionId = null;
         //when
-        Executable executable = () -> partyConnector.getOnboardedInstitution(institutionId);
+        Executable executable = () -> partyConnector.getOnboardings(institutionId, null);
         //then
         IllegalArgumentException e = assertThrows(IllegalArgumentException.class, executable);
-        assertEquals(REQUIRED_INSTITUTION_EXTERNAL_ID_MESSAGE, e.getMessage());
+        assertEquals(REQUIRED_INSTITUTION_ID_MESSAGE, e.getMessage());
         Mockito.verifyNoInteractions(restClientMock);
-    }
-
-    @Test
-    void getOnboardedInstitution_nullInstitutions() {
-        // given
-        String institutionId = "institutionId";
-        OnBoardingInfo onBoardingInfo = new OnBoardingInfo();
-        when(restClientMock.getOnBoardingInfo(any(), any()))
-                .thenReturn(onBoardingInfo);
-        // when
-        InstitutionInfo institutionInfo = partyConnector.getOnboardedInstitution(institutionId);
-        // then
-        assertNull(institutionInfo);
-        verify(restClientMock, times(1))
-                .getOnBoardingInfo(institutionId, EnumSet.of(ACTIVE));
-        verifyNoMoreInteractions(restClientMock);
     }
 
     @Test

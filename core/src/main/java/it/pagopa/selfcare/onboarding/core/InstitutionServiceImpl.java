@@ -9,6 +9,7 @@ import it.pagopa.selfcare.onboarding.connector.exceptions.ResourceNotFoundExcept
 import it.pagopa.selfcare.onboarding.connector.model.InstitutionOnboardingData;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionInfo;
+import it.pagopa.selfcare.onboarding.connector.model.institutions.OnboardingResource;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.*;
 import it.pagopa.selfcare.onboarding.connector.model.product.Product;
 import it.pagopa.selfcare.onboarding.connector.model.product.ProductRoleInfo;
@@ -21,6 +22,7 @@ import it.pagopa.selfcare.onboarding.connector.model.user.mapper.CertifiedFieldM
 import it.pagopa.selfcare.onboarding.connector.model.user.mapper.UserMapper;
 import it.pagopa.selfcare.onboarding.core.exception.OnboardingNotAllowedException;
 import it.pagopa.selfcare.onboarding.core.exception.UpdateNotAllowedException;
+import it.pagopa.selfcare.onboarding.core.mapper.InstitutionInfoMapper;
 import it.pagopa.selfcare.onboarding.core.strategy.OnboardingValidationStrategy;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,17 +55,19 @@ class InstitutionServiceImpl implements InstitutionService {
     private final UserRegistryConnector userConnector;
     private final OnboardingValidationStrategy onboardingValidationStrategy;
 
-
+    private final InstitutionInfoMapper institutionMapper;
 
     @Autowired
     InstitutionServiceImpl(PartyConnector partyConnector,
                            ProductsConnector productsConnector,
                            UserRegistryConnector userConnector,
-                           OnboardingValidationStrategy onboardingValidationStrategy) {
+                           OnboardingValidationStrategy onboardingValidationStrategy,
+                           InstitutionInfoMapper institutionMapper) {
         this.partyConnector = partyConnector;
         this.productsConnector = productsConnector;
         this.userConnector = userConnector;
         this.onboardingValidationStrategy = onboardingValidationStrategy;
+        this.institutionMapper = institutionMapper;
     }
 
 
@@ -149,6 +153,8 @@ class InstitutionServiceImpl implements InstitutionService {
             }, () -> user.setId(userConnector.saveUser(UserMapper.toSaveUserDto(user, finalInstitutionInternalId))
                     .getId().toString()));
         });
+
+        onboardingData.setInstitutionExternalId(institution.getExternalId());
 
         partyConnector.onboardingOrganization(onboardingData);
         log.trace("onboarding end");
@@ -302,32 +308,27 @@ class InstitutionServiceImpl implements InstitutionService {
         log.debug("getInstitutionOnboardingData taxCode = {}, productId = {}", taxCode, productId);
         Assert.hasText(taxCode, REQUIRED_INSTITUTION_ID_MESSAGE);
         Assert.hasText(productId, A_PRODUCT_ID_IS_REQUIRED);
-        InstitutionOnboardingData result = new InstitutionOnboardingData();
 
         List<Institution> institutions = partyConnector.getInstitutionsByTaxCodeAndSubunitCode(taxCode, subunitCode);
         Institution institution = institutions.stream()
                 .findFirst()
                 .orElseThrow(() -> new ResourceNotFoundException(String.format("Institution with taxCode %s and subunitCode %s not found", taxCode, subunitCode)));
 
-        /*
-        OnboardingResource onboardingResource = partyConnector.getOnboardings(institution.getId(), productId);
-
-        UserInfo manager = partyConnector.getInstitutionManager(externalInstitutionId, productId);
-        if (manager == null) {
-            throw new ResourceNotFoundException(String.format("No Manager found for given institution: %s", externalInstitutionId));
-        }
-        manager.setUser(userConnector.getUserByInternalId(manager.getId(), USER_FIELD_LIST_ENHANCED));
-        result.setManager(manager);
-
-        InstitutionInfo institutionInfo = partyConnector.getInstitutionBillingData(externalInstitutionId, productId);
-        if (institutionInfo == null) {
-            throw new ResourceNotFoundException(String.format("Institution %s not found", externalInstitutionId));
-        }
-        result.setInstitution(institutionInfo);*/
+        List<OnboardingResource> onboardingsResource = partyConnector.getOnboardings(institution.getId(), productId);
+        OnboardingResource onboardingResource = onboardingsResource.stream()
+                .findFirst()
+                .orElseThrow(() -> new ResourceNotFoundException(String.format("Institution with taxCode %s and subunitCode %s not found", taxCode, subunitCode)));
 
         if (institution.getGeographicTaxonomies() == null) {
             throw new ValidationException(String.format("Institution with taxCode %s does not have geographic taxonomies.", taxCode));
         }
+
+        InstitutionOnboardingData result = new InstitutionOnboardingData();
+        InstitutionInfo institutionInfo = institutionMapper.toInstitutionInfo(institution);
+        institutionInfo.setPricingPlan(onboardingResource.getPricingPlan());
+        institutionInfo.setBilling(onboardingResource.getBilling());
+
+        result.setInstitution(institutionInfo);
         result.setGeographicTaxonomies(institution.getGeographicTaxonomies());
         result.setCompanyInformations(institution.getCompanyInformations());
         result.setAssistanceContacts(institution.getAssistanceContacts());
@@ -344,13 +345,6 @@ class InstitutionServiceImpl implements InstitutionService {
         Assert.hasText(externalInstitutionId, REQUIRED_INSTITUTION_ID_MESSAGE);
         Assert.hasText(productId, A_PRODUCT_ID_IS_REQUIRED);
         InstitutionOnboardingData result = new InstitutionOnboardingData();
-
-        UserInfo manager = partyConnector.getInstitutionManager(externalInstitutionId, productId);
-        if (manager == null) {
-            throw new ResourceNotFoundException(String.format("No Manager found for given institution: %s", externalInstitutionId));
-        }
-        manager.setUser(userConnector.getUserByInternalId(manager.getId(), USER_FIELD_LIST_ENHANCED));
-        result.setManager(manager);
 
         InstitutionInfo institutionInfo = partyConnector.getInstitutionBillingData(externalInstitutionId, productId);
         if (institutionInfo == null) {

@@ -124,7 +124,7 @@ public class InstitutionController {
                                                                               @RequestParam("productId")
                                                                               String productId) {
         log.trace("getInstitutionOnBoardingInfo start");
-        log.debug("getInstitutionOnBoardingInfo taxCode = {}, productId = {}", taxCode, productId);
+        log.debug("getInstitutionOnBoardingInfo taxCode = {}, subunitCode = {}, productId = {}", taxCode, subunitCode, productId);
         InstitutionOnboardingData institutionOnboardingData = institutionService.getInstitutionOnboardingData(taxCode, subunitCode, productId);
         InstitutionOnboardingInfoResource result = OnboardingMapper.toResource(institutionOnboardingData);
         log.debug("getInstitutionOnBoardingInfo result = {}", result);

@@ -6,6 +6,7 @@ import it.pagopa.selfcare.onboarding.connector.model.RelationshipInfo;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipsResponse;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionInfo;
+import it.pagopa.selfcare.onboarding.connector.model.institutions.OnboardingResource;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.*;
 import it.pagopa.selfcare.onboarding.connector.rest.client.PartyProcessRestClient;
 import it.pagopa.selfcare.onboarding.connector.rest.mapper.InstitutionMapper;
@@ -259,16 +260,17 @@ class PartyConnectorImpl implements PartyConnector {
     }
 
     @Override
-    public OnboardingResource getOnboardings(String institutionId, String productId) {
+    public List<OnboardingResource> getOnboardings(String institutionId, String productId) {
         log.trace("getOnboardings start");
         log.debug("getOnboardings institutionId = {}", institutionId);
         Assert.hasText(institutionId, REQUIRED_INSTITUTION_ID_MESSAGE);
-        OnBoardingInfo onBoardingInfo = restClient.getOnBoardingInfo(institutionId, EnumSet.of(ACTIVE));
-        InstitutionInfo result = parseOnBoardingInfo(onBoardingInfo, null).stream()
-                .findAny().orElse(null);
-        log.debug(LogUtils.CONFIDENTIAL_MARKER, "getOnBoardedInstitution result = {}", result);
-        log.trace("getOnBoardedInstitution end");
-        return null;
+        OnboardingsResponse onboardings = restClient.getOnboardings(institutionId, productId);
+        List<OnboardingResource> onboardingResources = onboardings.getOnboardings().stream()
+                .map(institutionMapper::toResource)
+                .collect(Collectors.toList());
+        log.debug("getOnboardings result = {}", onboardingResources);
+        log.trace("getOnboardings end");
+        return onboardingResources;
     }
 
     @Override

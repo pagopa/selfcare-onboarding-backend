@@ -40,11 +40,14 @@ public class OnboardingMapper {
             resource.setZipCode(dto.getBillingData().getZipCode());
             resource.setDescription(dto.getBillingData().getBusinessName());
             resource.setTaxCode(dto.getBillingData().getTaxCode());
+
             resource.setPaymentServiceProvider(mapPaymentServiceProvider(dto.getPspData()));
             resource.setDataProtectionOfficer(mapDataProtectionOfficer(dto.getPspData()));
+
             resource.setGeographicTaxonomies(dto.getGeographicTaxonomies().stream()
                     .map(GeographicTaxonomyMapper::fromDto)
                     .collect(Collectors.toList()));
+
             if (dto.getCompanyInformations() != null) {
                 resource.setRea(dto.getCompanyInformations().getRea());
                 resource.setShareCapital(dto.getCompanyInformations().getShareCapital());
@@ -111,7 +114,6 @@ public class OnboardingMapper {
         InstitutionOnboardingInfoResource resource = null;
         if (model != null) {
             resource = new InstitutionOnboardingInfoResource();
-            resource.setManager(UserMapper.toResource(model.getManager()));
             resource.setInstitution(toData(model.getInstitution()));
             resource.setGeographicTaxonomies(model.getGeographicTaxonomies().stream()
                     .map(GeographicTaxonomyMapper::toResource)

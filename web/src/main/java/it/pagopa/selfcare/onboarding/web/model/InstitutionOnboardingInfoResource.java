@@ -10,9 +10,6 @@ import java.util.List;
 @Data
 public class InstitutionOnboardingInfoResource {
 
-    @ApiModelProperty(value = "${swagger.onboarding.user.model.manager}")
-    private UserResource manager;
-
     @ApiModelProperty(value = "${swagger.onboarding.institutions.model.institutionData}")
     @NotNull
     private InstitutionData institution;
