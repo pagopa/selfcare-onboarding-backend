@@ -2,7 +2,7 @@ package it.pagopa.selfcare.onboarding.connector;
 
 import it.pagopa.selfcare.onboarding.connector.api.MsCoreConnector;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.CreatePnPGInstitutionData;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.CreateInstitutionData;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.GeographicTaxonomy;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.PnPGOnboardingData;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.User;
@@ -86,14 +86,14 @@ class MsCoreConnectorImpl implements MsCoreConnector {
     }
 
     @Override
-    public Institution createPGInstitutionUsingExternalId(CreatePnPGInstitutionData createPnPGData) {
-        log.trace("createPGInstitutionUsingExternalId start");
-        log.debug("createPGInstitutionUsingExternalId externalId = {}, description = {}", createPnPGData.getTaxId(), createPnPGData.getDescription());
-        Assert.hasText(createPnPGData.getTaxId(), REQUIRED_INSTITUTION_ID_MESSAGE);
-        Assert.hasText(createPnPGData.getDescription(), REQUIRED_DESCRIPTION_MESSAGE);
-        Institution result = restClient.createPGInstitutionUsingExternalId(createPnPGData);
-        log.debug("createPGInstitutionUsingExternalId result = {}", result);
-        log.trace("createPGInstitutionUsingExternalId end");
+    public Institution createInstitutionUsingInstitutionData(CreateInstitutionData createInstitutionData) {
+        log.trace("createInstitutionUsingInstitutionData start");
+        log.debug("createInstitutionUsingInstitutionData externalId = {}, description = {}", createInstitutionData.getTaxId(), createInstitutionData.getDescription());
+        Assert.hasText(createInstitutionData.getTaxId(), REQUIRED_INSTITUTION_ID_MESSAGE);
+        Assert.hasText(createInstitutionData.getDescription(), REQUIRED_DESCRIPTION_MESSAGE);
+        Institution result = restClient.createInstitutionUsingInstitutionData(createInstitutionData);
+        log.debug("createInstitutionUsingInstitutionData result = {}", result);
+        log.trace("createInstitutionUsingInstitutionData end");
         return result;
     }
 

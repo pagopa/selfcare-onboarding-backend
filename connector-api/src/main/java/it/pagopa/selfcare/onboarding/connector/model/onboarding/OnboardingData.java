@@ -37,6 +37,8 @@ public class OnboardingData {
     private InstitutionType institutionType;
     private String origin;
     private String pricingPlan;
+    private String businessName;
+    private boolean existsInRegistry;
 
     public List<User> getUsers() {
         return Optional.ofNullable(users).orElse(Collections.emptyList());

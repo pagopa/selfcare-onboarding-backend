@@ -2,17 +2,17 @@ package it.pagopa.selfcare.onboarding.web.controller;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import it.pagopa.selfcare.onboarding.connector.model.BusinessPnPG;
-import it.pagopa.selfcare.onboarding.connector.model.PnPGInstitutionLegalAddressData;
-import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionPnPGInfo;
-import it.pagopa.selfcare.onboarding.connector.model.institutions.PnPGMatchInfo;
+import it.pagopa.selfcare.onboarding.connector.model.InstitutionLegalAddressData;
+import it.pagopa.selfcare.onboarding.connector.model.institutions.MatchInfoResult;
+import it.pagopa.selfcare.onboarding.connector.model.institutions.infocamere.BusinessInfoIC;
+import it.pagopa.selfcare.onboarding.connector.model.institutions.infocamere.InstitutionInfoIC;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.PnPGOnboardingData;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.User;
 import it.pagopa.selfcare.onboarding.core.PnPGInstitutionService;
 import it.pagopa.selfcare.onboarding.web.config.WebTestConfig;
-import it.pagopa.selfcare.onboarding.web.model.InstitutionPnPGResource;
-import it.pagopa.selfcare.onboarding.web.model.PnPGInstitutionLegalAddressResource;
-import it.pagopa.selfcare.onboarding.web.model.PnPGMatchResource;
+import it.pagopa.selfcare.onboarding.web.model.InstitutionLegalAddressResource;
+import it.pagopa.selfcare.onboarding.web.model.InstitutionResourceIC;
+import it.pagopa.selfcare.onboarding.web.model.MatchInfoResultResource;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,8 +58,8 @@ class PnPGInstitutionControllerTest {
     void getInstitutionsByUserId(@Value("classpath:stubs/userDto.json") Resource userDto) throws Exception {
         //given
         String userId = randomUUID().toString();
-        List<BusinessPnPG> businessPnPGList = List.of(mockInstance(new BusinessPnPG()));
-        InstitutionPnPGInfo institutionPnPGInfo = mockInstance(new InstitutionPnPGInfo(), "setBusinesses");
+        List<BusinessInfoIC> businessPnPGList = List.of(mockInstance(new BusinessInfoIC()));
+        InstitutionInfoIC institutionPnPGInfo = mockInstance(new InstitutionInfoIC(), "setBusinesses");
         institutionPnPGInfo.setBusinesses(businessPnPGList);
         User user = mockInstance(new User(), "setEmail", "setId", "setProductRole");
         user.setEmail("n.surname@email.com");
@@ -74,7 +74,7 @@ class PnPGInstitutionControllerTest {
                 .andExpect(status().isOk())
                 .andReturn();
         // then
-        InstitutionPnPGResource response = objectMapper.readValue(
+        InstitutionResourceIC response = objectMapper.readValue(
                 result.getResponse().getContentAsString(),
                 new TypeReference<>() {
                 });
@@ -111,7 +111,7 @@ class PnPGInstitutionControllerTest {
     void matchInstitutionAndUser_ok(@Value("classpath:stubs/userDto.json") Resource userDto) throws Exception {
         //given
         String externalInstitutionId = "externalId";
-        PnPGMatchInfo pnPGMatchInfo = mockInstance(new PnPGMatchInfo(), "setVerificationResult");
+        MatchInfoResult pnPGMatchInfo = mockInstance(new MatchInfoResult(), "setVerificationResult");
         pnPGMatchInfo.setVerificationResult(true);
         User user = mockInstance(new User(), "setEmail", "setId", "setProductRole");
         user.setEmail("n.surname@email.com");
@@ -126,7 +126,7 @@ class PnPGInstitutionControllerTest {
                 .andExpect(status().isOk())
                 .andReturn();
         // then
-        PnPGMatchResource response = objectMapper.readValue(
+        MatchInfoResultResource response = objectMapper.readValue(
                 result.getResponse().getContentAsString(),
                 new TypeReference<>() {
                 });
@@ -141,7 +141,7 @@ class PnPGInstitutionControllerTest {
     void getInstitutionLegalAddress() throws Exception {
         //given
         String externalInstitutionId = "externalId";
-        PnPGInstitutionLegalAddressData data = mockInstance(new PnPGInstitutionLegalAddressData());
+        InstitutionLegalAddressData data = mockInstance(new InstitutionLegalAddressData());
         when(pnPGInstitutionServiceMock.getInstitutionLegalAddress(Mockito.anyString()))
                 .thenReturn(data);
         //when
@@ -152,7 +152,7 @@ class PnPGInstitutionControllerTest {
                 .andExpect(status().isOk())
                 .andReturn();
         // then
-        PnPGInstitutionLegalAddressResource response = objectMapper.readValue(
+        InstitutionLegalAddressResource response = objectMapper.readValue(
                 result.getResponse().getContentAsString(),
                 new TypeReference<>() {
                 });

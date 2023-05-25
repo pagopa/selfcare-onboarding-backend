@@ -1,14 +1,16 @@
 package it.pagopa.selfcare.onboarding.core;
 
 import it.pagopa.selfcare.commons.base.security.PartyRole;
-import it.pagopa.selfcare.onboarding.connector.api.PartyConnector;
-import it.pagopa.selfcare.onboarding.connector.api.ProductsConnector;
-import it.pagopa.selfcare.onboarding.connector.api.UserRegistryConnector;
+import it.pagopa.selfcare.onboarding.connector.api.*;
 import it.pagopa.selfcare.onboarding.connector.exceptions.ResourceNotFoundException;
+import it.pagopa.selfcare.onboarding.connector.model.InstitutionLegalAddressData;
 import it.pagopa.selfcare.onboarding.connector.model.InstitutionOnboardingData;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Attribute;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionInfo;
+import it.pagopa.selfcare.onboarding.connector.model.institutions.MatchInfoResult;
+import it.pagopa.selfcare.onboarding.connector.model.institutions.infocamere.BusinessInfoIC;
+import it.pagopa.selfcare.onboarding.connector.model.institutions.infocamere.InstitutionInfoIC;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.User;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.*;
 import it.pagopa.selfcare.onboarding.connector.model.product.Product;
@@ -57,6 +59,12 @@ class InstitutionServiceImplTest {
 
     @Mock
     private UserRegistryConnector userConnectorMock;
+
+    @Mock
+    private MsCoreConnector msCoreConnectorMock;
+
+    @Mock
+    private PartyRegistryProxyConnector partyRegistryProxyConnectorMock;
 
     @Mock
     private OnboardingValidationStrategy onboardingValidationStrategyMock;
@@ -1638,6 +1646,75 @@ class InstitutionServiceImplTest {
                 .verifyOnboarding(externalInstitutionId, productId);
         verifyNoMoreInteractions(onboardingValidationStrategyMock, partyConnectorMock);
         verifyNoInteractions(productsConnectorMock, userConnectorMock);
+    }
+
+    @Test
+    void getInstitutionsByUser_default() {
+        //given
+        String taxCode = "setTaxCode";
+        SaveUserDto saveUserDto = mockInstance(new SaveUserDto(), "setFiscalCode");
+        saveUserDto.setFiscalCode(taxCode);
+        UserId userId = mockInstance(new UserId());
+        User user = mockInstance(new User(), "setId");
+        user.setId(userId.toString());
+        List<BusinessInfoIC> businessInfoICSmock = List.of(mockInstance(new BusinessInfoIC()));
+        InstitutionInfoIC institutionInfoICmock = mockInstance(new InstitutionInfoIC(), "setBusinesses");
+        institutionInfoICmock.setBusinesses(businessInfoICSmock);
+        when(partyRegistryProxyConnectorMock.getInstitutionsByUserFiscalCode(anyString()))
+                .thenReturn(institutionInfoICmock);
+        //when
+        InstitutionInfoIC result = institutionService.getInstitutionsByUser(user);
+        //then
+        assertNotNull(result);
+        assertEquals(institutionInfoICmock.getBusinesses().get(0).getBusinessName(), result.getBusinesses().get(0).getBusinessName());
+        assertEquals(institutionInfoICmock.getBusinesses().get(0).getBusinessTaxId(), result.getBusinesses().get(0).getBusinessTaxId());
+        assertEquals(institutionInfoICmock.getLegalTaxId(), result.getLegalTaxId());
+        assertEquals(institutionInfoICmock.getRequestDateTime(), result.getRequestDateTime());
+        verify(partyRegistryProxyConnectorMock, times(1))
+                .getInstitutionsByUserFiscalCode(taxCode);
+        verifyNoMoreInteractions(partyRegistryProxyConnectorMock);
+        verifyNoMoreInteractions(userConnectorMock);
+    }
+
+    @Test
+    void matchInstitutionAndUser() {
+        //given
+        String externalId = "externalId";
+        String taxCode = "setTaxCode";
+        UserId userId = mockInstance(new UserId());
+        User user = mockInstance(new User(), "setId");
+        user.setId(userId.toString());
+        MatchInfoResult matchInfo = mockInstance(new MatchInfoResult());
+        when(partyRegistryProxyConnectorMock.matchInstitutionAndUser(anyString(), anyString()))
+                .thenReturn(matchInfo);
+        //when
+        MatchInfoResult result = institutionService.matchInstitutionAndUser(externalId, user);
+        //then
+        assertNotNull(result);
+        assertEquals(result.isVerificationResult(), matchInfo.isVerificationResult());
+        verify(partyRegistryProxyConnectorMock, times(1))
+                .matchInstitutionAndUser(externalId, taxCode);
+        verifyNoMoreInteractions(partyRegistryProxyConnectorMock);
+
+    }
+
+    @Test
+    void getInstitutionLegalAddress() {
+        //given
+        String externalId = "externalId";
+        InstitutionLegalAddressData data = mockInstance(new InstitutionLegalAddressData());
+        when(partyRegistryProxyConnectorMock.getInstitutionLegalAddress(anyString()))
+                .thenReturn(data);
+        //when
+        InstitutionLegalAddressData result = institutionService.getInstitutionLegalAddress(externalId);
+        //then
+        assertNotNull(result);
+        assertEquals(result.getAddress(), data.getAddress());
+        assertEquals(result.getZipCode(), data.getZipCode());
+        verify(partyRegistryProxyConnectorMock, times(1))
+                .getInstitutionLegalAddress(externalId);
+        verifyNoMoreInteractions(partyRegistryProxyConnectorMock);
+
     }
 
 }

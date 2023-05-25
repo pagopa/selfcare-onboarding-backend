@@ -47,4 +47,7 @@ public class BillingDataDto {
     @ApiModelProperty(value = "${swagger.onboarding.institutions.model.publicServices}")
     private Boolean publicServices;
 
+    @ApiModelProperty(value = "${swagger.onboarding.institutions.model.certified}")
+    private boolean certified;
+
 }

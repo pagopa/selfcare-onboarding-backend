@@ -1,11 +1,11 @@
 package it.pagopa.selfcare.onboarding.web.model.mapper;
 
-import it.pagopa.selfcare.onboarding.connector.model.BusinessPnPG;
-import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionPnPGInfo;
-import it.pagopa.selfcare.onboarding.connector.model.institutions.PnPGMatchInfo;
-import it.pagopa.selfcare.onboarding.web.model.BusinessPnPGResource;
-import it.pagopa.selfcare.onboarding.web.model.InstitutionPnPGResource;
-import it.pagopa.selfcare.onboarding.web.model.PnPGMatchResource;
+import it.pagopa.selfcare.onboarding.connector.model.institutions.MatchInfoResult;
+import it.pagopa.selfcare.onboarding.connector.model.institutions.infocamere.BusinessInfoIC;
+import it.pagopa.selfcare.onboarding.connector.model.institutions.infocamere.InstitutionInfoIC;
+import it.pagopa.selfcare.onboarding.web.model.BusinessResourceIC;
+import it.pagopa.selfcare.onboarding.web.model.InstitutionResourceIC;
+import it.pagopa.selfcare.onboarding.web.model.MatchInfoResultResource;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -14,10 +14,10 @@ import java.util.stream.Collectors;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class PnPGInstitutionMapper {
 
-    public static InstitutionPnPGResource toResource(InstitutionPnPGInfo model) {
-        InstitutionPnPGResource resource = null;
+    public static InstitutionResourceIC toResource(InstitutionInfoIC model) {
+        InstitutionResourceIC resource = null;
         if (model != null) {
-            resource = new InstitutionPnPGResource();
+            resource = new InstitutionResourceIC();
 
             resource.setLegalTaxId(model.getLegalTaxId());
             resource.setRequestDateTime(model.getRequestDateTime());
@@ -29,10 +29,10 @@ public class PnPGInstitutionMapper {
         return resource;
     }
 
-    public static BusinessPnPGResource toResource(BusinessPnPG model) {
-        BusinessPnPGResource resource = null;
+    public static BusinessResourceIC toResource(BusinessInfoIC model) {
+        BusinessResourceIC resource = null;
         if (model != null) {
-            resource = new BusinessPnPGResource();
+            resource = new BusinessResourceIC();
 
             resource.setBusinessName(model.getBusinessName());
             resource.setBusinessTaxId(model.getBusinessTaxId());
@@ -41,15 +41,14 @@ public class PnPGInstitutionMapper {
         return resource;
     }
 
-    public static PnPGMatchResource toResource(PnPGMatchInfo model) {
-        PnPGMatchResource resource = null;
+    public static MatchInfoResultResource toResource(MatchInfoResult model) {
+        MatchInfoResultResource resource = null;
         if (model != null) {
-            resource = new PnPGMatchResource();
+            resource = new MatchInfoResultResource();
 
             resource.setVerificationResult(model.isVerificationResult());
         }
         return resource;
     }
-
 
 }
