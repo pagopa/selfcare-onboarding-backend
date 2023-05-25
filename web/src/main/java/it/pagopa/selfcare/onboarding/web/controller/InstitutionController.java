@@ -20,6 +20,7 @@ import it.pagopa.selfcare.onboarding.web.model.mapper.GeographicTaxonomyMapper;
 import it.pagopa.selfcare.onboarding.web.model.mapper.InstitutionMapper;
 import it.pagopa.selfcare.onboarding.web.model.mapper.OnboardingMapper;
 import it.pagopa.selfcare.onboarding.web.model.mapper.UserMapper;
+import it.pagopa.selfcare.onboarding.web.model.mapper.OnboardingResourceMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -41,11 +42,33 @@ import static org.springframework.web.bind.annotation.RequestMethod.HEAD;
 public class InstitutionController {
 
     private final InstitutionService institutionService;
+    private final OnboardingResourceMapper onboardingResourceMapper;
 
 
     @Autowired
-    public InstitutionController(InstitutionService institutionService) {
+    public InstitutionController(InstitutionService institutionService, OnboardingResourceMapper onboardingResourceMapper) {
         this.institutionService = institutionService;
+        this.onboardingResourceMapper = onboardingResourceMapper;
+    }
+
+
+    @ApiResponse(responseCode = "403",
+            description = "Forbidden",
+            content = {
+                    @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE,
+                            schema = @Schema(implementation = Problem.class))
+            })
+    @PostMapping(value = "/onboarding")
+    @ResponseStatus(HttpStatus.CREATED)
+    @ApiOperation(value = "", notes = "${swagger.onboarding.institutions.api.onboarding.subunit}")
+    public void onboarding(@RequestBody @Valid OnboardingProductDto request) {
+        log.trace("onboarding start");
+        log.debug("onboarding request = {}", request);
+        if (InstitutionType.PSP.equals(request.getInstitutionType()) && request.getPspData() == null) {
+            throw new ValidationException("Field 'pspData' is required for PSP institution onboarding");
+        }
+        institutionService.onboardingProduct(onboardingResourceMapper.toEntity(request));
+        log.trace("onboarding end");
     }
 
 
@@ -84,7 +107,6 @@ public class InstitutionController {
         log.trace("onboarding end");
     }
 
-
     @GetMapping(value = "/{externalInstitutionId}/products/{productId}/onboarded-institution-info")
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "", notes = "${swagger.onboarding.institutions.api.getInstitutionOnboardingInfo}")
@@ -97,6 +119,27 @@ public class InstitutionController {
         log.trace("getInstitutionOnBoardingInfo start");
         log.debug("getInstitutionOnBoardingInfo institutionId = {}, productId = {}", externalInstitutionId, productId);
         InstitutionOnboardingData institutionOnboardingData = institutionService.getInstitutionOnboardingData(externalInstitutionId, productId);
+        InstitutionOnboardingInfoResource result = OnboardingMapper.toResource(institutionOnboardingData);
+        log.debug("getInstitutionOnBoardingInfo result = {}", result);
+        log.trace("getInstitutionOnBoardingInfo end");
+        return result;
+    }
+
+    @GetMapping(value = "/onboarding/")
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "", notes = "${swagger.onboarding.institutions.api.getInstitutionOnboardingInfo}")
+    public InstitutionOnboardingInfoResource getInstitutionOnboardingInfo(@ApiParam("${swagger.onboarding.institutions.model.taxCode}")
+                                                                              @RequestParam("taxCode")
+                                                                              String taxCode,
+                                                                          @ApiParam("${swagger.onboarding.institutions.model.subunitCode}")
+                                                                              @RequestParam(value = "subunitCode", required = false)
+                                                                              String subunitCode,
+                                                                          @ApiParam("${swagger.onboarding.product.model.id}")
+                                                                              @RequestParam("productId")
+                                                                              String productId) {
+        log.trace("getInstitutionOnBoardingInfo start");
+        log.debug("getInstitutionOnBoardingInfo taxCode = {}, subunitCode = {}, productId = {}", taxCode, subunitCode, productId);
+        InstitutionOnboardingData institutionOnboardingData = institutionService.getInstitutionOnboardingData(taxCode, subunitCode, productId);
         InstitutionOnboardingInfoResource result = OnboardingMapper.toResource(institutionOnboardingData);
         log.debug("getInstitutionOnBoardingInfo result = {}", result);
         log.trace("getInstitutionOnBoardingInfo end");
@@ -158,6 +201,29 @@ public class InstitutionController {
         log.trace("verifyOnboarding end");
     }
 
+    @ApiResponse(responseCode = "403",
+            description = "Forbidden",
+            content = {
+                    @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE,
+                            schema = @Schema(implementation = Problem.class))
+            })
+    @RequestMapping(method = HEAD, value = "/onboarding")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ApiOperation(value = "", notes = "${swagger.onboarding.institutions.api.verifyOnboarding}")
+    public void verifyOnboarding(@ApiParam("${swagger.onboarding.institutions.model.taxCode}")
+                                 @RequestParam("taxCode")
+                                 String taxCode,
+                                 @ApiParam("${swagger.onboarding.institutions.model.subunitCode}")
+                                 @RequestParam(value = "subunitCode", required = false)
+                                 String subunitCode,
+                                 @ApiParam("${swagger.onboarding.product.model.id}")
+                                 @RequestParam("productId")
+                                 String productId) {
+        log.trace("verifyOnboarding start");
+        log.debug("verifyOnboarding taxCode = {}, subunitCode = {}, productId = {}", taxCode, subunitCode, productId);
+        institutionService.verifyOnboarding(taxCode, subunitCode, productId);
+        log.trace("verifyOnboarding end");
+    }
     @PostMapping(value = "")
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "", notes = "${swagger.onboarding.institutions.api.getInstitutionsByUser}")

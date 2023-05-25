@@ -4,6 +4,7 @@ import it.pagopa.selfcare.commons.base.security.PartyRole;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipInfo;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipState;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipsResponse;
+import it.pagopa.selfcare.onboarding.connector.rest.model.OnboardingsResponse;
 import it.pagopa.selfcare.onboarding.connector.rest.model.*;
 import org.springframework.cloud.openfeign.CollectionFormat;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -42,10 +43,23 @@ public interface PartyProcessRestClient {
     @CollectionFormat(CSV)
     OnBoardingInfo getOnBoardingInfo(@RequestParam(value = "institutionExternalId", required = false) String institutionExternalId,
                                      @RequestParam(value = "states", required = false) EnumSet<RelationshipState> states);
+    @GetMapping(value = "${rest-client.party-process.getOnboardings.path}", produces = APPLICATION_JSON_VALUE)
+    @ResponseBody
+    OnboardingsResponse getOnboardings(@PathVariable(value = "institutionId") String institutionId,
+                                       @RequestParam(value = "productId", required = false) String productId);
 
     @GetMapping(value = "${rest-client.party-process.getInstitutionByExternalId.path}", produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     InstitutionResponse getInstitutionByExternalId(@PathVariable("externalId") String externalId);
+
+    @GetMapping(value = "${rest-client.party-process.getInstitutions.path}", produces = APPLICATION_JSON_VALUE)
+    @ResponseBody
+    InstitutionsResponse getInstitutions(@RequestParam("taxCode") String taxCode,
+                                        @RequestParam(value = "subunitCode", required = false) String subunitCode);
+
+    @PostMapping(value = "${rest-client.party-process.createInstitutionFromIpa.path}", produces = APPLICATION_JSON_VALUE)
+    @ResponseBody
+    InstitutionResponse createInstitutionFromIpa(@RequestBody InstitutionFromIpaPost institutionFromIpaPost);
 
     @PostMapping(value = "${rest-client.party-process.createInstitutionUsingExternalId.path}", produces = APPLICATION_JSON_VALUE)
     @ResponseBody
@@ -66,9 +80,15 @@ public interface PartyProcessRestClient {
     BillingDataResponse getInstitutionBillingData(@PathVariable("externalId") String externalId,
                                                   @PathVariable("productId") String productId);
 
-    @RequestMapping(method = HEAD, value = "${rest-client.party-process.verifyOnboarding.path}")
+    @RequestMapping(method = HEAD, value = "${rest-client.party-process.verifyOnboardingByExternalId.path}")
     @ResponseBody
     void verifyOnboarding(@PathVariable("externalId") String externalInstitutionId,
                           @PathVariable("productId") String productId);
+
+    @RequestMapping(method = HEAD, value = "${rest-client.party-process.verifyOnboarding.path}")
+    @ResponseBody
+    void verifyOnboarding(@RequestParam("taxCode") String taxCode,
+                          @RequestParam("subunitCode") String subunitCode,
+                          @RequestParam("productId") String productId);
 
 }

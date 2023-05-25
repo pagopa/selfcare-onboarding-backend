@@ -8,10 +8,14 @@ import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionInf
 import it.pagopa.selfcare.onboarding.connector.model.institutions.MatchInfoResult;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.infocamere.BusinessInfoIC;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.infocamere.InstitutionInfoIC;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.*;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.Billing;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.GeographicTaxonomy;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.User;
 import it.pagopa.selfcare.onboarding.core.InstitutionService;
 import it.pagopa.selfcare.onboarding.web.config.WebTestConfig;
 import it.pagopa.selfcare.onboarding.web.model.*;
+import it.pagopa.selfcare.onboarding.web.model.mapper.OnboardingResourceMapperImpl;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +31,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.UUID;
 
 import static it.pagopa.selfcare.commons.utils.TestUtils.mockInstance;
 import static java.util.UUID.randomUUID;
@@ -41,7 +44,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(value = {InstitutionController.class}, excludeAutoConfiguration = SecurityAutoConfiguration.class)
-@ContextConfiguration(classes = {InstitutionController.class, WebTestConfig.class})
+@ContextConfiguration(classes = {InstitutionController.class, WebTestConfig.class, OnboardingResourceMapperImpl.class})
 class InstitutionControllerTest {
 
     private static final String BASE_URL = "/institutions";
@@ -72,6 +75,25 @@ class InstitutionControllerTest {
         // then
         verify(institutionServiceMock, times(1))
                 .onboarding(any(OnboardingData.class));
+        verifyNoMoreInteractions(institutionServiceMock);
+    }
+
+
+    @Test
+    void onboardingSubunit(@Value("classpath:stubs/onboardingSubunitDto.json") Resource onboardingSubunitDto) throws Exception {
+        // given
+
+        // when
+        mvc.perform(MockMvcRequestBuilders
+                        .post(BASE_URL + "/onboarding")
+                        .content(onboardingSubunitDto.getInputStream().readAllBytes())
+                        .contentType(APPLICATION_JSON_VALUE)
+                        .accept(APPLICATION_JSON_VALUE))
+                .andExpect(status().isCreated())
+                .andExpect(content().string(emptyString()));
+        // then
+        verify(institutionServiceMock, times(1))
+                .onboardingProduct(any(OnboardingData.class));
         verifyNoMoreInteractions(institutionServiceMock);
     }
 
@@ -121,10 +143,7 @@ class InstitutionControllerTest {
         InstitutionOnboardingData onBoardingDataMock = mockInstance(new InstitutionOnboardingData());
         onBoardingDataMock.setInstitution(institutionInfoMock);
         onBoardingDataMock.setGeographicTaxonomies(List.of(mockInstance(new GeographicTaxonomy())));
-        final UserInfo manager = mockInstance(new UserInfo(), "setId", "setInstitutionId");
-        manager.setId(UUID.randomUUID().toString());
-        manager.setInstitutionId(UUID.randomUUID().toString());
-        onBoardingDataMock.setManager(manager);
+
         when(institutionServiceMock.getInstitutionOnboardingData(Mockito.anyString(), Mockito.anyString()))
                 .thenReturn(onBoardingDataMock);
         //when
@@ -141,7 +160,7 @@ class InstitutionControllerTest {
         );
         assertNotNull(response);
         assertNotNull(response.getInstitution());
-        assertNotNull(response.getManager());
+
         BillingDataDto responseBillings = response.getInstitution().getBillingData();
         assertEquals(onBoardingDataMock.getInstitution().getBilling().getRecipientCode(), responseBillings.getRecipientCode());
         assertEquals(onBoardingDataMock.getInstitution().getBilling().getPublicServices(), responseBillings.getPublicServices());
@@ -150,7 +169,7 @@ class InstitutionControllerTest {
         assertEquals(onBoardingDataMock.getInstitution().getTaxCode(), responseBillings.getTaxCode());
         assertEquals(onBoardingDataMock.getInstitution().getAddress(), responseBillings.getRegisteredOffice());
         assertEquals(onBoardingDataMock.getInstitution().getInstitutionType(), response.getInstitution().getInstitutionType());
-        assertNotNull(response.getManager().getId());
+
         verify(institutionServiceMock, times(1))
                 .getInstitutionOnboardingData(institutionId, productId);
         verifyNoMoreInteractions(institutionServiceMock);
@@ -195,7 +214,7 @@ class InstitutionControllerTest {
                 .thenReturn(Collections.singletonList(institutionInfo));
         //when
         MvcResult result = mvc.perform(MockMvcRequestBuilders
-                        .get(BASE_URL + "")
+                        .get(BASE_URL)
                         .queryParam("productFilter", productFilter)
                         .contentType(APPLICATION_JSON_VALUE)
                         .accept(APPLICATION_JSON_VALUE))
@@ -229,6 +248,18 @@ class InstitutionControllerTest {
                 .andExpect(status().isNoContent());
     }
 
+
+    @Test
+    void shouldOnboardingVerification() throws Exception {
+        //when
+        mvc.perform(MockMvcRequestBuilders
+                        .head(BASE_URL + "/onboarding")
+                        .queryParam("taxCode", "taxCode")
+                        .queryParam("productId", "productId")
+                        .contentType(APPLICATION_JSON_VALUE)
+                        .accept(APPLICATION_JSON_VALUE))
+                .andExpect(status().isNoContent());
+    }
     @Test
     void getInstitutionsByUserId(@Value("classpath:stubs/userDto.json") Resource userDto) throws Exception {
         //given

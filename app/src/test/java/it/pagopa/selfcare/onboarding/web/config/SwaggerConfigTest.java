@@ -5,6 +5,7 @@ import it.pagopa.selfcare.onboarding.core.InstitutionService;
 import it.pagopa.selfcare.onboarding.core.PnPGInstitutionService;
 import it.pagopa.selfcare.onboarding.core.ProductService;
 import it.pagopa.selfcare.onboarding.core.UserService;
+import it.pagopa.selfcare.onboarding.web.model.mapper.OnboardingResourceMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -32,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 })
 @EnableOpenApi
 @EnableWebMvc
-@ComponentScan(basePackages = "it.pagopa.selfcare.onboarding.web.controller")
+@ComponentScan(basePackages = {"it.pagopa.selfcare.onboarding.web.controller", "it.pagopa.selfcare.onboarding.web.model.mapper"})
 @TestPropertySource(locations = "classpath:config/application.yml")
 class SwaggerConfigTest {
 
