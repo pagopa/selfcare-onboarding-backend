@@ -227,11 +227,9 @@ class InstitutionServiceImpl implements InstitutionService {
         try {
             institution = partyConnector.getInstitutionByExternalId(onboardingData.getInstitutionExternalId());
         } catch (ResourceNotFoundException e) {
-            if (InstitutionType.PA.equals(onboardingData.getInstitutionType())) {
-                institution = partyConnector.createInstitutionFromIpa(onboardingData.getTaxCode(), onboardingData.getSubunitCode(), onboardingData.getSubunitType());
-            }
-            else if (InstitutionType.GSP.equals(onboardingData.getInstitutionType()) && onboardingData.getProductId().equals("prod-interop")
-                            && onboardingData.getOrigin().equals("IPA")) {
+            if (InstitutionType.PA.equals(onboardingData.getInstitutionType()) ||
+                    (InstitutionType.GSP.equals(onboardingData.getInstitutionType()) && onboardingData.getProductId().equals("prod-interop")
+                            && onboardingData.getOrigin().equals("IPA"))) {
                 institution = partyConnector.createInstitutionUsingExternalId(onboardingData.getInstitutionExternalId());
             } else if (InstitutionType.PG.equals(onboardingData.getInstitutionType()) && onboardingData.getProductId().startsWith("prod-pn-pg")) {
                 CreateInstitutionData createInstitutionData = mapCreateInstitutionData(onboardingData);
