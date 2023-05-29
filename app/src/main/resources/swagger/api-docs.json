@@ -35,74 +35,378 @@
   "paths" : {
     "/institutions" : {
       "get" : {
-        "tags": [
-          "institutions"
-        ],
-        "summary": "getInstitutions",
-        "description": "The service retrieves all the onboarded institutions related to the logged user",
-        "operationId": "getInstitutionsUsingGET",
-        "parameters": [
-          {
-            "name": "productFilter",
-            "in": "query",
-            "description": "A product to filter the institutions based on whether the institution has an ACTIVE onboarding on the specified product. ",
-            "required": false,
-            "style": "form",
-            "schema": {
-              "type": "string"
-            }
+        "tags" : [ "institutions" ],
+        "summary" : "getInstitutions",
+        "description" : "The service retrieves all the onboarded institutions related to the logged user",
+        "operationId" : "getInstitutionsUsingGET",
+        "parameters" : [ {
+          "name" : "productFilter",
+          "in" : "query",
+          "description" : "A product to filter the institutions based on whether the institution has an ACTIVE onboarding on the specified product. ",
+          "required" : false,
+          "style" : "form",
+          "schema" : {
+            "type" : "string"
           }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/InstitutionResource"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/InstitutionResource"
                   }
                 }
               }
             }
           },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Problem"
+          "400" : {
+            "description" : "Bad Request",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
                 }
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Problem"
+          "401" : {
+            "description" : "Unauthorized",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
                 }
               }
             }
           },
-          "404": {
-            "description": "Not Found",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Problem"
+          "404" : {
+            "description" : "Not Found",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
                 }
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Problem"
+          "500" : {
+            "description" : "Internal Server Error",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ "global" ]
+        } ]
+      },
+      "post" : {
+        "tags" : [ "institutions" ],
+        "summary" : "getInstitutionsByUser",
+        "description" : "Get Legal Representative's PN PG institution List",
+        "operationId" : "getInstitutionsByUserUsingPOST",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/UserDto"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/InstitutionResourceIC"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad Request",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Unauthorized",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "Internal Server Error",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ "global" ]
+        } ]
+      }
+    },
+    "/institutions/onboarding" : {
+      "post" : {
+        "tags" : [ "institutions" ],
+        "summary" : "onboarding",
+        "description" : "The service allows the onboarding of Users to a subunit of an Institution",
+        "operationId" : "onboardingUsingPOST",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/OnboardingProductDto"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "201" : {
+            "description" : "Created"
+          },
+          "400" : {
+            "description" : "Bad Request",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Unauthorized",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "Forbidden",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "Internal Server Error",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ "global" ]
+        } ]
+      },
+      "head" : {
+        "tags" : [ "institutions" ],
+        "summary" : "verifyOnboarding",
+        "description" : "Checks if the specified institution has been onboarded on the specified product.",
+        "operationId" : "verifyOnboardingUsingHEAD",
+        "parameters" : [ {
+          "name" : "taxCode",
+          "in" : "query",
+          "description" : "Institution's taxCode",
+          "required" : true,
+          "style" : "form",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "subunitCode",
+          "in" : "query",
+          "description" : "Institution's subunitCode",
+          "required" : false,
+          "style" : "form",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "productId",
+          "in" : "query",
+          "description" : "Product's unique identifier",
+          "required" : true,
+          "style" : "form",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "No Content"
+          },
+          "400" : {
+            "description" : "Bad Request",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Unauthorized",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "Forbidden",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "Not Found",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "Internal Server Error",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ "global" ]
+        } ]
+      }
+    },
+    "/institutions/onboarding/" : {
+      "get" : {
+        "tags" : [ "institutions" ],
+        "summary" : "getInstitutionOnboardingInfo",
+        "description" : "The service retrieves the institutions Manager and institution informations",
+        "operationId" : "getInstitutionOnboardingInfoUsingGET",
+        "parameters" : [ {
+          "name" : "taxCode",
+          "in" : "query",
+          "description" : "Institution's taxCode",
+          "required" : true,
+          "style" : "form",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "subunitCode",
+          "in" : "query",
+          "description" : "Institution's subunitCode",
+          "required" : false,
+          "style" : "form",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "productId",
+          "in" : "query",
+          "description" : "Product's unique identifier",
+          "required" : true,
+          "style" : "form",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/InstitutionOnboardingInfoResource"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad Request",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Unauthorized",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "Not Found",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "Internal Server Error",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
                 }
               }
             }
@@ -189,12 +493,157 @@
         } ]
       }
     },
+    "/institutions/{externalInstitutionId}/legal-address" : {
+      "get" : {
+        "tags" : [ "institutions" ],
+        "summary" : "getInstitutionLegalAddress",
+        "description" : "Get legal address by business tax id",
+        "operationId" : "getInstitutionLegalAddressUsingGET",
+        "parameters" : [ {
+          "name" : "externalInstitutionId",
+          "in" : "path",
+          "description" : "Institution's unique external identifier",
+          "required" : true,
+          "style" : "simple",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/InstitutionLegalAddressResource"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad Request",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Unauthorized",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "Not Found",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "Internal Server Error",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ "global" ]
+        } ]
+      }
+    },
+    "/institutions/{externalInstitutionId}/match" : {
+      "post" : {
+        "tags" : [ "institutions" ],
+        "summary" : "matchInstitutionAndUser",
+        "description" : "MatchLegal Representative and inserted Institution by querying on Agenzia delle Entrate",
+        "operationId" : "matchInstitutionAndUserUsingPOST",
+        "parameters" : [ {
+          "name" : "externalInstitutionId",
+          "in" : "path",
+          "description" : "Institution's unique external identifier",
+          "required" : true,
+          "style" : "simple",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/UserDto"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/MatchInfoResultResource"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad Request",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Unauthorized",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "Internal Server Error",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ "global" ]
+        } ]
+      }
+    },
     "/institutions/{externalInstitutionId}/products/{productId}" : {
       "head" : {
         "tags" : [ "institutions" ],
         "summary" : "verifyOnboarding",
         "description" : "Checks if the specified institution has been onboarded on the specified product.",
-        "operationId" : "verifyOnboardingUsingHEAD",
+        "operationId" : "verifyOnboardingUsingHEAD_1",
         "parameters" : [ {
           "name" : "externalInstitutionId",
           "in" : "path",
@@ -279,7 +728,7 @@
         "tags" : [ "institutions" ],
         "summary" : "getInstitutionOnboardingInfo",
         "description" : "The service retrieves the institutions Manager and institution informations",
-        "operationId" : "getInstitutionOnboardingInfoUsingGET",
+        "operationId" : "getInstitutionOnboardingInfoUsingGET_1",
         "parameters" : [ {
           "name" : "externalInstitutionId",
           "in" : "path",
@@ -361,7 +810,7 @@
         "tags" : [ "institutions" ],
         "summary" : "onboarding",
         "description" : "The service allows the onboarding of Users to an Institution",
-        "operationId" : "onboardingUsingPOST",
+        "operationId" : "onboardingUsingPOST_1",
         "parameters" : [ {
           "name" : "externalInstitutionId",
           "in" : "path",
@@ -424,6 +873,16 @@
               }
             }
           },
+          "409" : {
+            "description" : "Conflict",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
           "500" : {
             "description" : "Internal Server Error",
             "content" : {
@@ -445,7 +904,7 @@
         "tags" : [ "pnPGInstitutions" ],
         "summary" : "getInstitutionsByUser",
         "description" : "Get Legal Representative's PN PG institution List",
-        "operationId" : "getInstitutionsByUserUsingPOST",
+        "operationId" : "getInstitutionsByUserUsingPOST_1",
         "requestBody" : {
           "content" : {
             "application/json" : {
@@ -461,7 +920,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/InstitutionPnPGResource"
+                  "$ref" : "#/components/schemas/InstitutionResourceIC"
                 }
               }
             }
@@ -507,11 +966,11 @@
         "tags" : [ "pnPGInstitutions" ],
         "summary" : "getInstitutionLegalAddress",
         "description" : "Get legal address by business tax id",
-        "operationId" : "getInstitutionLegalAddressUsingGET",
+        "operationId" : "getInstitutionLegalAddressUsingGET_1",
         "parameters" : [ {
           "name" : "externalInstitutionId",
           "in" : "path",
-          "description" : "PG Institution's unique external identifier",
+          "description" : "Institution's unique external identifier",
           "required" : true,
           "style" : "simple",
           "schema" : {
@@ -524,7 +983,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/PnPGInstitutionLegalAddressResource"
+                  "$ref" : "#/components/schemas/InstitutionLegalAddressResource"
                 }
               }
             }
@@ -580,11 +1039,11 @@
         "tags" : [ "pnPGInstitutions" ],
         "summary" : "matchInstitutionAndUser",
         "description" : "MatchLegal Representative and inserted Institution by querying on Agenzia delle Entrate",
-        "operationId" : "matchInstitutionAndUserUsingPOST",
+        "operationId" : "matchInstitutionAndUserUsingPOST_1",
         "parameters" : [ {
           "name" : "externalInstitutionId",
           "in" : "path",
-          "description" : "PG Institution's unique external identifier",
+          "description" : "Institution's unique external identifier",
           "required" : true,
           "style" : "simple",
           "schema" : {
@@ -606,7 +1065,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/PnPGMatchResource"
+                  "$ref" : "#/components/schemas/MatchInfoResultResource"
                 }
               }
             }
@@ -656,7 +1115,7 @@
         "parameters" : [ {
           "name" : "externalInstitutionId",
           "in" : "path",
-          "description" : "PG Institution's unique external identifier",
+          "description" : "Institution's unique external identifier",
           "required" : true,
           "style" : "simple",
           "schema" : {
@@ -682,55 +1141,55 @@
           }
         },
         "responses" : {
-          "201": {
-            "description": "Created"
+          "201" : {
+            "description" : "Created"
           },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Problem"
+          "400" : {
+            "description" : "Bad Request",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
                 }
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Problem"
+          "401" : {
+            "description" : "Unauthorized",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
                 }
               }
             }
           },
-          "403": {
-            "description": "Forbidden",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Problem"
+          "403" : {
+            "description" : "Forbidden",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
                 }
               }
             }
           },
-          "409": {
-            "description": "Conflict",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Problem"
+          "409" : {
+            "description" : "Conflict",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
                 }
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Problem"
+          "500" : {
+            "description" : "Internal Server Error",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
                 }
               }
             }
@@ -933,6 +1392,11 @@
             "type" : "string",
             "description" : "Institution's legal name"
           },
+          "certified" : {
+            "type" : "boolean",
+            "description" : "Indicates whether the institution values come from INFOCAMERE (true) or MANUAL (false)",
+            "example" : false
+          },
           "digitalAddress" : {
             "type" : "string",
             "description" : "Institution's digitalAddress"
@@ -964,8 +1428,8 @@
           }
         }
       },
-      "BusinessPnPGResource" : {
-        "title" : "BusinessPnPGResource",
+      "BusinessResourceIC" : {
+        "title" : "BusinessResourceIC",
         "required" : [ "businessName", "businessTaxId" ],
         "type" : "object",
         "properties" : {
@@ -1094,6 +1558,21 @@
           }
         }
       },
+      "InstitutionLegalAddressResource" : {
+        "title" : "InstitutionLegalAddressResource",
+        "required" : [ "address", "zipCode" ],
+        "type" : "object",
+        "properties" : {
+          "address" : {
+            "type" : "string",
+            "description" : "Institution's physical address"
+          },
+          "zipCode" : {
+            "type" : "string",
+            "description" : "Institution's zipCode"
+          }
+        }
+      },
       "InstitutionOnboardingInfoResource" : {
         "title" : "InstitutionOnboardingInfoResource",
         "required" : [ "geographicTaxonomies" ],
@@ -1109,32 +1588,6 @@
           "institution" : {
             "description" : "Institution's billing and type information",
             "$ref" : "#/components/schemas/InstitutionData"
-          },
-          "manager" : {
-            "description" : "Institution Manager's informations",
-            "$ref" : "#/components/schemas/UserResource"
-          }
-        }
-      },
-      "InstitutionPnPGResource" : {
-        "title" : "InstitutionPnPGResource",
-        "required" : [ "businesses", "legalTaxId", "requestDateTime" ],
-        "type" : "object",
-        "properties" : {
-          "businesses" : {
-            "type" : "array",
-            "description" : "Legal Representative's institutions list",
-            "items" : {
-              "$ref" : "#/components/schemas/BusinessPnPGResource"
-            }
-          },
-          "legalTaxId" : {
-            "type" : "string",
-            "description" : "Legal Representative's tax ID"
-          },
-          "requestDateTime" : {
-            "type" : "string",
-            "description" : "Timestamp request institutions PNPG list"
           }
         }
       },
@@ -1192,6 +1645,28 @@
           }
         }
       },
+      "InstitutionResourceIC" : {
+        "title" : "InstitutionResourceIC",
+        "required" : [ "businesses", "legalTaxId", "requestDateTime" ],
+        "type" : "object",
+        "properties" : {
+          "businesses" : {
+            "type" : "array",
+            "description" : "Legal Representative's institutions list",
+            "items" : {
+              "$ref" : "#/components/schemas/BusinessResourceIC"
+            }
+          },
+          "legalTaxId" : {
+            "type" : "string",
+            "description" : "Legal Representative's tax ID"
+          },
+          "requestDateTime" : {
+            "type" : "string",
+            "description" : "Timestamp request institutions PNPG list"
+          }
+        }
+      },
       "InvalidParam" : {
         "title" : "InvalidParam",
         "required" : [ "name", "reason" ],
@@ -1204,6 +1679,18 @@
           "reason" : {
             "type" : "string",
             "description" : "Invalid parameter reason."
+          }
+        }
+      },
+      "MatchInfoResultResource" : {
+        "title" : "MatchInfoResultResource",
+        "required" : [ "verificationResult" ],
+        "type" : "object",
+        "properties" : {
+          "verificationResult" : {
+            "type" : "boolean",
+            "description" : "Legal Representative and Institution match result on Agenzia delle Entrate",
+            "example" : false
           }
         }
       },
@@ -1257,59 +1744,93 @@
           }
         }
       },
+      "OnboardingProductDto" : {
+        "title" : "OnboardingProductDto",
+        "required" : [ "billingData", "geographicTaxonomies", "institutionType", "productId", "taxCode", "users" ],
+        "type" : "object",
+        "properties" : {
+          "assistanceContacts" : {
+            "description" : "Institution's assistance contacts",
+            "$ref" : "#/components/schemas/AssistanceContactsDto"
+          },
+          "billingData" : {
+            "description" : "Institution's billing information",
+            "$ref" : "#/components/schemas/BillingDataDto"
+          },
+          "companyInformations" : {
+            "description" : "GPS, SCP, PT optional data",
+            "$ref" : "#/components/schemas/CompanyInformationsDto"
+          },
+          "geographicTaxonomies" : {
+            "type" : "array",
+            "description" : "List of geographic Taxonomies",
+            "items" : {
+              "$ref" : "#/components/schemas/GeographicTaxonomyDto"
+            }
+          },
+          "institutionType" : {
+            "type" : "string",
+            "description" : "Institution's type",
+            "enum" : [ "GSP", "PA", "PG", "PSP", "PT", "SCP" ]
+          },
+          "origin" : {
+            "type" : "string",
+            "description" : "Institution data origin"
+          },
+          "pricingPlan" : {
+            "type" : "string",
+            "description" : "Product's pricing plan"
+          },
+          "productId" : {
+            "type" : "string",
+            "description" : "Product's unique identifier"
+          },
+          "pspData" : {
+            "description" : "Payment Service Provider (PSP) specific data",
+            "$ref" : "#/components/schemas/PspDataDto"
+          },
+          "subunitCode" : {
+            "type" : "string",
+            "description" : "Institution's subunitCode"
+          },
+          "subunitType" : {
+            "type" : "string",
+            "description" : "Institution's subunitType"
+          },
+          "taxCode" : {
+            "type" : "string",
+            "description" : "Institution's taxCode"
+          },
+          "users" : {
+            "type" : "array",
+            "description" : "List of onboarding users",
+            "items" : {
+              "$ref" : "#/components/schemas/UserDto"
+            }
+          }
+        }
+      },
       "PnPGBillingDataDto" : {
-        "title": "PnPGBillingDataDto",
-        "required": [
-          "businessName",
-          "certified",
-          "digitalAddress",
-          "taxCode"
-        ],
-        "type": "object",
-        "properties": {
-          "businessName": {
-            "type": "string",
-            "description": "Institution's legal name"
-          },
-          "certified": {
-            "type": "boolean",
-            "description": "Indicates whether the institution values come from INFOCAMERE (true) or MANUAL (false)",
-            "example": false
-          },
-          "digitalAddress": {
-            "type": "string",
-            "description": "Institution's email address"
-          },
-          "taxCode": {
-            "type": "string",
-            "description": "Institution's taxCode"
-          }
-        }
-      },
-      "PnPGInstitutionLegalAddressResource" : {
-        "title" : "PnPGInstitutionLegalAddressResource",
-        "required" : [ "address", "zipCode" ],
+        "title" : "PnPGBillingDataDto",
+        "required" : [ "businessName", "certified", "digitalAddress", "taxCode" ],
         "type" : "object",
         "properties" : {
-          "address" : {
+          "businessName" : {
             "type" : "string",
-            "description" : "Legal Representative's institution legal address"
+            "description" : "Institution's legal name"
           },
-          "zipCode" : {
-            "type" : "string",
-            "description" : "Legal Representative's institution legal address zip code"
-          }
-        }
-      },
-      "PnPGMatchResource" : {
-        "title" : "PnPGMatchResource",
-        "required" : [ "verificationResult" ],
-        "type" : "object",
-        "properties" : {
-          "verificationResult" : {
+          "certified" : {
             "type" : "boolean",
-            "description" : "Legal Representative and Institution match result on Agenzia delle Entrate",
+            "description" : "Indicates whether the institution values come from INFOCAMERE (true) or MANUAL (false)",
             "example" : false
+          },
+          "digitalAddress" : {
+            "type" : "string",
+            "description" : "Institution's digitalAddress"
+          },
+          "taxCode" : {
+            "type" : "string",
+            "description" : "Institution's taxCode"
           }
         }
       },
@@ -1336,31 +1857,26 @@
         "required" : [ "name", "role", "surname", "taxCode" ],
         "type" : "object",
         "properties" : {
-          "email": {
-            "type": "string",
-            "description": "User's email"
+          "email" : {
+            "type" : "string",
+            "description" : "User's email"
           },
-          "name": {
-            "type": "string",
-            "description": "User's name"
+          "name" : {
+            "type" : "string",
+            "description" : "User's name"
           },
-          "role": {
-            "type": "string",
-            "description": "User's role",
-            "enum": [
-              "DELEGATE",
-              "MANAGER",
-              "OPERATOR",
-              "SUB_DELEGATE"
-            ]
+          "role" : {
+            "type" : "string",
+            "description" : "User's role",
+            "enum" : [ "DELEGATE", "MANAGER", "OPERATOR", "SUB_DELEGATE" ]
           },
-          "surname": {
-            "type": "string",
-            "description": "User's surname"
+          "surname" : {
+            "type" : "string",
+            "description" : "User's surname"
           },
-          "taxCode": {
-            "type": "string",
-            "description": "User's fiscal code"
+          "taxCode" : {
+            "type" : "string",
+            "description" : "User's fiscal code"
           }
         }
       },
@@ -1478,14 +1994,12 @@
       },
       "UserDto" : {
         "title" : "UserDto",
-        "required" : [ "email", "name", "role", "surname", "taxCode" ],
+        "required" : [ "name", "role", "surname", "taxCode" ],
         "type" : "object",
         "properties" : {
           "email" : {
             "type" : "string",
-            "description" : "User's email",
-            "format" : "email",
-            "example" : "email@example.com"
+            "description" : "User's email"
           },
           "name" : {
             "type" : "string",
@@ -1495,50 +2009,6 @@
             "type" : "string",
             "description" : "User's role",
             "enum" : [ "DELEGATE", "MANAGER", "OPERATOR", "SUB_DELEGATE" ]
-          },
-          "surname" : {
-            "type" : "string",
-            "description" : "User's surname"
-          },
-          "taxCode" : {
-            "type" : "string",
-            "description" : "User's fiscal code"
-          }
-        }
-      },
-      "UserResource" : {
-        "title" : "UserResource",
-        "required" : [ "id", "institutionId", "role", "status", "taxCode" ],
-        "type" : "object",
-        "properties" : {
-          "email" : {
-            "type" : "string",
-            "description" : "User's institutional email",
-            "format" : "email",
-            "example" : "email@example.com"
-          },
-          "id" : {
-            "type" : "string",
-            "description" : "User's unique identifier",
-            "format" : "uuid"
-          },
-          "institutionId" : {
-            "type" : "string",
-            "description" : "Institution's unique internal Id",
-            "format" : "uuid"
-          },
-          "name" : {
-            "type" : "string",
-            "description" : "User's name"
-          },
-          "role" : {
-            "type" : "string",
-            "description" : "User's role",
-            "enum" : [ "DELEGATE", "MANAGER", "OPERATOR", "SUB_DELEGATE" ]
-          },
-          "status" : {
-            "type" : "string",
-            "description" : "User's status"
           },
           "surname" : {
             "type" : "string",

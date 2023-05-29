@@ -9,6 +9,7 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.lang.annotation.Annotation;
 import java.util.HashMap;
 import java.util.List;
@@ -17,7 +18,7 @@ import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class BusinessPnPGResourceTest {
+class InstitutionResourceICTest {
     private Validator validator;
 
     @BeforeEach
@@ -30,13 +31,14 @@ class BusinessPnPGResourceTest {
     void validateNullFields() {
         // given
         HashMap<String, Class<? extends Annotation>> toCheckMap = new HashMap<>();
-        toCheckMap.put("businessName", NotBlank.class);
-        toCheckMap.put("businessTaxId", NotBlank.class);
+        toCheckMap.put("legalTaxId", NotBlank.class);
+        toCheckMap.put("requestDateTime", NotBlank.class);
+        toCheckMap.put("businesses", NotNull.class);
 
-        BusinessPnPGResource businessPnPGResource = new BusinessPnPGResource();
+        InstitutionResourceIC institutionResourceIC = new InstitutionResourceIC();
 
         // when
-        Set<ConstraintViolation<Object>> violations = validator.validate(businessPnPGResource);
+        Set<ConstraintViolation<Object>> violations = validator.validate(institutionResourceIC);
         // then
         List<ConstraintViolation<Object>> filteredViolations = violations.stream()
                 .filter(violation -> {

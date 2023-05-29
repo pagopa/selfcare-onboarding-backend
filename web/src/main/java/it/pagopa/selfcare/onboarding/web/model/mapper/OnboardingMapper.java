@@ -1,5 +1,6 @@
 package it.pagopa.selfcare.onboarding.web.model.mapper;
 
+import it.pagopa.selfcare.onboarding.connector.model.InstitutionLegalAddressData;
 import it.pagopa.selfcare.onboarding.connector.model.InstitutionOnboardingData;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.AssistanceContacts;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.CompanyInformations;
@@ -11,6 +12,10 @@ import lombok.NoArgsConstructor;
 
 import java.util.stream.Collectors;
 
+/**
+ * It's better using sdk such as https://reflectoring.io/java-mapping-with-mapstruct/, look at @classes OnboardingResourceMapper
+ * */
+@Deprecated
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class OnboardingMapper {
 
@@ -36,11 +41,14 @@ public class OnboardingMapper {
             resource.setZipCode(dto.getBillingData().getZipCode());
             resource.setDescription(dto.getBillingData().getBusinessName());
             resource.setTaxCode(dto.getBillingData().getTaxCode());
+
             resource.setPaymentServiceProvider(mapPaymentServiceProvider(dto.getPspData()));
             resource.setDataProtectionOfficer(mapDataProtectionOfficer(dto.getPspData()));
+
             resource.setGeographicTaxonomies(dto.getGeographicTaxonomies().stream()
                     .map(GeographicTaxonomyMapper::fromDto)
                     .collect(Collectors.toList()));
+
             if (dto.getCompanyInformations() != null) {
                 resource.setRea(dto.getCompanyInformations().getRea());
                 resource.setShareCapital(dto.getCompanyInformations().getShareCapital());
@@ -98,6 +106,10 @@ public class OnboardingMapper {
                 resource.setBilling(fromDto(model.getBillingData()));
             }
             resource.setInstitutionType(model.getInstitutionType());
+            if(InstitutionType.PG.equals(model.getInstitutionType()) && productId.startsWith("prod-pn-pg")) {
+                resource.setBusinessName(model.getBillingData().getBusinessName());
+                resource.setExistsInRegistry(model.getBillingData().isCertified());
+            }
         }
         return resource;
     }
@@ -107,7 +119,6 @@ public class OnboardingMapper {
         InstitutionOnboardingInfoResource resource = null;
         if (model != null) {
             resource = new InstitutionOnboardingInfoResource();
-            resource.setManager(UserMapper.toResource(model.getManager()));
             resource.setInstitution(toData(model.getInstitution()));
             resource.setGeographicTaxonomies(model.getGeographicTaxonomies().stream()
                     .map(GeographicTaxonomyMapper::toResource)
@@ -157,6 +168,17 @@ public class OnboardingMapper {
             resource.setBillingData(billing);
             resource.setOrigin(model.getOrigin());
             resource.setInstitutionType(model.getInstitutionType());
+        }
+        return resource;
+    }
+
+    public static InstitutionLegalAddressResource toResource(InstitutionLegalAddressData model) {
+        InstitutionLegalAddressResource resource = null;
+        if (model != null) {
+            resource = new InstitutionLegalAddressResource();
+
+            resource.setAddress(model.getAddress());
+            resource.setZipCode(model.getZipCode());
         }
         return resource;
     }

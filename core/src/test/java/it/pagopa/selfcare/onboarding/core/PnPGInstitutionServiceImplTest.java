@@ -6,12 +6,12 @@ import it.pagopa.selfcare.onboarding.connector.api.PartyRegistryProxyConnector;
 import it.pagopa.selfcare.onboarding.connector.api.ProductsConnector;
 import it.pagopa.selfcare.onboarding.connector.api.UserRegistryConnector;
 import it.pagopa.selfcare.onboarding.connector.exceptions.ResourceNotFoundException;
-import it.pagopa.selfcare.onboarding.connector.model.BusinessPnPG;
-import it.pagopa.selfcare.onboarding.connector.model.PnPGInstitutionLegalAddressData;
+import it.pagopa.selfcare.onboarding.connector.model.InstitutionLegalAddressData;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
-import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionPnPGInfo;
-import it.pagopa.selfcare.onboarding.connector.model.institutions.PnPGMatchInfo;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.CreatePnPGInstitutionData;
+import it.pagopa.selfcare.onboarding.connector.model.institutions.MatchInfoResult;
+import it.pagopa.selfcare.onboarding.connector.model.institutions.infocamere.BusinessInfoIC;
+import it.pagopa.selfcare.onboarding.connector.model.institutions.infocamere.InstitutionInfoIC;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.CreateInstitutionData;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.InstitutionType;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.PnPGOnboardingData;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.User;
@@ -75,13 +75,13 @@ class PnPGInstitutionServiceImplTest {
         UserId userId = mockInstance(new UserId());
         User user = mockInstance(new User(), "setId");
         user.setId(userId.toString());
-        List<BusinessPnPG> businessPnPGList = List.of(mockInstance(new BusinessPnPG()));
-        InstitutionPnPGInfo institutionPnPGInfo = mockInstance(new InstitutionPnPGInfo(), "setBusinesses");
+        List<BusinessInfoIC> businessPnPGList = List.of(mockInstance(new BusinessInfoIC()));
+        InstitutionInfoIC institutionPnPGInfo = mockInstance(new InstitutionInfoIC(), "setBusinesses");
         institutionPnPGInfo.setBusinesses(businessPnPGList);
         when(partyRegistryProxyConnectorMock.getInstitutionsByUserFiscalCode(anyString()))
                 .thenReturn(institutionPnPGInfo);
         //when
-        InstitutionPnPGInfo result = pnPGInstitutionService.getInstitutionsByUser(user);
+        InstitutionInfoIC result = pnPGInstitutionService.getInstitutionsByUser(user);
         //then
         assertNotNull(result);
         assertEquals(institutionPnPGInfo.getBusinesses().get(0).getBusinessName(), result.getBusinesses().get(0).getBusinessName());
@@ -102,11 +102,11 @@ class PnPGInstitutionServiceImplTest {
         UserId userId = mockInstance(new UserId());
         User user = mockInstance(new User(), "setId");
         user.setId(userId.toString());
-        PnPGMatchInfo pnPGMatchInfo = mockInstance(new PnPGMatchInfo());
+        MatchInfoResult pnPGMatchInfo = mockInstance(new MatchInfoResult());
         when(partyRegistryProxyConnectorMock.matchInstitutionAndUser(anyString(), anyString()))
                 .thenReturn(pnPGMatchInfo);
         //when
-        PnPGMatchInfo result = pnPGInstitutionService.matchInstitutionAndUser(externalId, user);
+        MatchInfoResult result = pnPGInstitutionService.matchInstitutionAndUser(externalId, user);
         //then
         assertNotNull(result);
         assertEquals(result.isVerificationResult(), pnPGMatchInfo.isVerificationResult());
@@ -120,11 +120,11 @@ class PnPGInstitutionServiceImplTest {
     void getInstitutionLegalAddress() {
         //given
         String externalId = "externalId";
-        PnPGInstitutionLegalAddressData data = mockInstance(new PnPGInstitutionLegalAddressData());
+        InstitutionLegalAddressData data = mockInstance(new InstitutionLegalAddressData());
         when(partyRegistryProxyConnectorMock.getInstitutionLegalAddress(anyString()))
                 .thenReturn(data);
         //when
-        PnPGInstitutionLegalAddressData result = pnPGInstitutionService.getInstitutionLegalAddress(externalId);
+        InstitutionLegalAddressData result = pnPGInstitutionService.getInstitutionLegalAddress(externalId);
         //then
         assertNotNull(result);
         assertEquals(result.getAddress(), data.getAddress());
@@ -276,7 +276,7 @@ class PnPGInstitutionServiceImplTest {
         PnPGOnboardingData onboardingData = mockInstance(new PnPGOnboardingData(), "setInstitutionType", "setUsers");
         onboardingData.setInstitutionType(InstitutionType.PG);
         onboardingData.setUsers(List.of(userInfo1, userInfo2));
-        CreatePnPGInstitutionData createOnboardingData = mockInstance(new CreatePnPGInstitutionData(), "setTaxId", "setDescription");
+        CreateInstitutionData createOnboardingData = mockInstance(new CreateInstitutionData(), "setTaxId", "setDescription");
         createOnboardingData.setTaxId("setInstitutionExternalId");
         createOnboardingData.setDescription("setBusinessName");
         Product productMock = mockInstance(new Product(), "setRoleMappings", "setParentId", "setId");
@@ -297,7 +297,7 @@ class PnPGInstitutionServiceImplTest {
         institution.setId(UUID.randomUUID().toString());
         when(msCoreConnectorMock.getInstitutionByExternalId(anyString()))
                 .thenThrow(ResourceNotFoundException.class);
-        when(msCoreConnectorMock.createPGInstitutionUsingExternalId(any()))
+        when(msCoreConnectorMock.createInstitutionUsingInstitutionData(any()))
                 .thenReturn(institution);
         productMock.setRoleMappings(roleMappings);
         when(productsConnectorMock.getProduct(onboardingData.getProductId(), onboardingData.getInstitutionType()))
@@ -314,7 +314,7 @@ class PnPGInstitutionServiceImplTest {
         verify(msCoreConnectorMock, times(1))
                 .getInstitutionByExternalId(onboardingData.getInstitutionExternalId());
         verify(msCoreConnectorMock, times(1))
-                .createPGInstitutionUsingExternalId(createOnboardingData);
+                .createInstitutionUsingInstitutionData(createOnboardingData);
         verify(productsConnectorMock, times(1))
                 .getProduct(onboardingData.getProductId(), onboardingData.getInstitutionType());
         verify(msCoreConnectorMock, times(1))
@@ -348,7 +348,7 @@ class PnPGInstitutionServiceImplTest {
         PnPGOnboardingData onboardingData = mockInstance(new PnPGOnboardingData(), "setInstitutionType", "setUsers");
         onboardingData.setInstitutionType(InstitutionType.PG);
         onboardingData.setUsers(List.of(userInfo1, userInfo2));
-        CreatePnPGInstitutionData createOnboardingData = mockInstance(new CreatePnPGInstitutionData(), "setTaxId", "setDescription");
+        CreateInstitutionData createOnboardingData = mockInstance(new CreateInstitutionData(), "setTaxId", "setDescription");
         createOnboardingData.setTaxId("setInstitutionExternalId");
         createOnboardingData.setDescription("setBusinessName");
         Product productMock = mockInstance(new Product(), "setRoleMappings", "setParentId", "setId");
@@ -369,7 +369,7 @@ class PnPGInstitutionServiceImplTest {
         institution.setId(UUID.randomUUID().toString());
         when(msCoreConnectorMock.getInstitutionByExternalId(anyString()))
                 .thenThrow(ResourceNotFoundException.class);
-        when(msCoreConnectorMock.createPGInstitutionUsingExternalId(any()))
+        when(msCoreConnectorMock.createInstitutionUsingInstitutionData(any()))
                 .thenReturn(institution);
         productMock.setRoleMappings(roleMappings);
         when(productsConnectorMock.getProduct(onboardingData.getProductId(), onboardingData.getInstitutionType()))
@@ -408,7 +408,7 @@ class PnPGInstitutionServiceImplTest {
         verify(msCoreConnectorMock, times(1))
                 .getInstitutionByExternalId(onboardingData.getInstitutionExternalId());
         verify(msCoreConnectorMock, times(1))
-                .createPGInstitutionUsingExternalId(createOnboardingData);
+                .createInstitutionUsingInstitutionData(createOnboardingData);
         verify(productsConnectorMock, times(1))
                 .getProduct(onboardingData.getProductId(), onboardingData.getInstitutionType());
         verify(userConnectorMock, times(1))
@@ -432,7 +432,7 @@ class PnPGInstitutionServiceImplTest {
         onboardingData.setInstitutionType(InstitutionType.PG);
         onboardingData.setUsers(List.of(userInfo1, userInfo2));
 
-        CreatePnPGInstitutionData createOnboardingData = mockInstance(new CreatePnPGInstitutionData(), "setTaxId", "setDescription");
+        CreateInstitutionData createOnboardingData = mockInstance(new CreateInstitutionData(), "setTaxId", "setDescription");
         createOnboardingData.setTaxId("setInstitutionExternalId");
         createOnboardingData.setDescription("setBusinessName");
 
@@ -457,7 +457,7 @@ class PnPGInstitutionServiceImplTest {
         institution.setId(UUID.randomUUID().toString());
         when(msCoreConnectorMock.getInstitutionByExternalId(anyString()))
                 .thenThrow(ResourceNotFoundException.class);
-        when(msCoreConnectorMock.createPGInstitutionUsingExternalId(any()))
+        when(msCoreConnectorMock.createInstitutionUsingInstitutionData(any()))
                 .thenReturn(institution);
 
         when(userConnectorMock.search(any(), any()))
@@ -498,7 +498,7 @@ class PnPGInstitutionServiceImplTest {
         verify(msCoreConnectorMock, times(1))
                 .getInstitutionByExternalId(onboardingData.getInstitutionExternalId());
         verify(msCoreConnectorMock, times(1))
-                .createPGInstitutionUsingExternalId(createOnboardingData);
+                .createInstitutionUsingInstitutionData(createOnboardingData);
         verify(productsConnectorMock, times(1))
                 .getProduct(onboardingData.getProductId(), onboardingData.getInstitutionType());
         ArgumentCaptor<SaveUserDto> saveUserCaptor = ArgumentCaptor.forClass(SaveUserDto.class);

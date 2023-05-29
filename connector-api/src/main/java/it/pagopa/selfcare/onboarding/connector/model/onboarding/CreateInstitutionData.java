@@ -12,12 +12,15 @@
 
 package it.pagopa.selfcare.onboarding.connector.model.onboarding;
 
-import java.io.File;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-public interface OnboardingResource {
+@Data
+@NoArgsConstructor
+public class CreateInstitutionData {
 
-    String getToken();
-
-    File getDocument();
+    private String taxId;
+    private String description;
+    private boolean existsInRegistry;
 
 }

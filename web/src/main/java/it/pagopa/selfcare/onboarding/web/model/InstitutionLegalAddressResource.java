@@ -5,13 +5,13 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-public class PnPGInstitutionLegalAddressResource {
+public class InstitutionLegalAddressResource {
 
-    @ApiModelProperty(value = "${swagger.onboarding.pnPGInstitutions.model.address}", required = true)
+    @ApiModelProperty(value = "${swagger.onboarding.institutions.model.address}", required = true)
     @JsonProperty(required = true)
     private String address;
 
-    @ApiModelProperty(value = "${swagger.onboarding.pnPGInstitutions.model.zipCode}", required = true)
+    @ApiModelProperty(value = "${swagger.onboarding.institutions.model.zipCode}", required = true)
     @JsonProperty(required = true)
     private String zipCode;
 

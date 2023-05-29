@@ -3,10 +3,12 @@ package it.pagopa.selfcare.onboarding.connector.api;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipsResponse;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionInfo;
+import it.pagopa.selfcare.onboarding.connector.model.institutions.OnboardingResource;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.UserInfo;
 
 import java.util.Collection;
+import java.util.List;
 
 public interface PartyConnector {
 
@@ -18,9 +20,13 @@ public interface PartyConnector {
 
     Collection<UserInfo> getUsers(String externalInstitutionId, UserInfo.UserInfoFilter userInfoFilter);
 
+    List<Institution> getInstitutionsByTaxCodeAndSubunitCode(String taxCode, String subunitCode);
+
     Institution getInstitutionByExternalId(String externalInstitutionId);
 
-    InstitutionInfo getOnboardedInstitution(String externalInstitutionId);
+    List<OnboardingResource> getOnboardings(String institutionId, String productId);
+
+    Institution createInstitutionFromIpa(String taxCode, String subunitCode, String subunitType);
 
     Institution createInstitutionUsingExternalId(String institutionExternalId);
 
@@ -32,4 +38,5 @@ public interface PartyConnector {
 
     void verifyOnboarding(String externalInstitutionId, String productId);
 
+    void verifyOnboarding(String taxCode, String subunitCode, String productId);
 }

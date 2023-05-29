@@ -10,7 +10,7 @@
  * Do not edit the class manually.
  */
 
-package it.pagopa.selfcare.onboarding.connector.rest.model;
+package it.pagopa.selfcare.onboarding.connector.model.institutions;
 
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.Billing;
 import lombok.Data;
@@ -18,7 +18,7 @@ import lombok.Data;
 import java.time.OffsetDateTime;
 
 @Data
-public class OnboardingResponse {
+public class OnboardingResource {
 
     private String productId;
     private String tokenId;
