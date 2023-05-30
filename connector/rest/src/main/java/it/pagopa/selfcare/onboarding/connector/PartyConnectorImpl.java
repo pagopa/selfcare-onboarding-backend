@@ -240,8 +240,8 @@ class PartyConnectorImpl implements PartyConnector {
         Assert.hasText(taxCode, REQUIRED_INSTITUTION_TAXCODE_MESSAGE);
         InstitutionsResponse partyInstitutionResponse = restClient.getInstitutions(taxCode, subunitCode);
         List<Institution> result = partyInstitutionResponse.getInstitutions().stream()
-                .map(institutionMapper::toEntity)
-                .collect(Collectors.toList());
+                    .map(institutionMapper::toEntity)
+                    .collect(Collectors.toList());
         log.debug("getInstitution result = {}", result);
         log.trace("getInstitution end");
         return result;
@@ -278,7 +278,11 @@ class PartyConnectorImpl implements PartyConnector {
         log.trace("createInstitutionFromIpa start");
         log.debug("createInstitutionFromIpa taxCode = {}, subunitCode = {}, subunitType = {}", taxCode, subunitCode, subunitType);
         Assert.hasText(taxCode, REQUIRED_INSTITUTION_TAXCODE_MESSAGE);
-        InstitutionResponse partyInstitutionResponse = restClient.createInstitutionUsingExternalId("institutionExternalId");
+        InstitutionFromIpaPost institutionFromIpaPost = new InstitutionFromIpaPost();
+        institutionFromIpaPost.setSubunitCode(subunitCode);
+        institutionFromIpaPost.setTaxCode(taxCode);
+        institutionFromIpaPost.setSubunitType(subunitType);
+        InstitutionResponse partyInstitutionResponse = restClient.createInstitutionFromIpa(institutionFromIpaPost);
         Institution result = institutionMapper.toEntity(partyInstitutionResponse);
         log.debug("createInstitutionFromIpa result = {}", result);
         log.trace("createInstitutionFromIpa end");
