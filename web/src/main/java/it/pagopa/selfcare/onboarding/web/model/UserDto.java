@@ -30,6 +30,9 @@ public class UserDto {
     @JsonProperty(required = true)
     private PartyRole role;
 
+    @ApiModelProperty(value = "${swagger.onboarding.user.model.email}")
+    private String email;
+
     @ApiModelProperty(hidden = true)
     private String productRole;
 

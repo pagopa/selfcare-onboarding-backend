@@ -1,17 +1,12 @@
 package it.pagopa.selfcare.onboarding.web.model.mapper;
 
-import it.pagopa.selfcare.onboarding.connector.model.PnPGInstitutionLegalAddressData;
+import it.pagopa.selfcare.onboarding.connector.model.InstitutionLegalAddressData;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.PnPGOnboardingData;
-import it.pagopa.selfcare.onboarding.web.model.PnPGBillingDataDto;
-import it.pagopa.selfcare.onboarding.web.model.PnPGInstitutionLegalAddressResource;
+import it.pagopa.selfcare.onboarding.web.model.InstitutionLegalAddressResource;
 import it.pagopa.selfcare.onboarding.web.model.PnPGOnboardingDto;
-import it.pagopa.selfcare.onboarding.web.model.UserDto;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
-
 import static it.pagopa.selfcare.commons.utils.TestUtils.mockInstance;
-import static it.pagopa.selfcare.commons.utils.TestUtils.reflectionEqualsByName;
 import static org.junit.jupiter.api.Assertions.*;
 
 class PnPGOnboardingMapperTest {
@@ -84,9 +79,9 @@ class PnPGOnboardingMapperTest {
     @Test
     void toResource() {
         //given
-        PnPGInstitutionLegalAddressData data = mockInstance(new PnPGInstitutionLegalAddressData());
+        InstitutionLegalAddressData data = mockInstance(new InstitutionLegalAddressData());
         //when
-        PnPGInstitutionLegalAddressResource resource = PnPGOnboardingMapper.toResource(data);
+        InstitutionLegalAddressResource resource = PnPGOnboardingMapper.toResource(data);
         //then
         assertNotNull(resource);
         assertEquals(data.getAddress(), resource.getAddress());

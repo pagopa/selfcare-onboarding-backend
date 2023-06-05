@@ -8,17 +8,12 @@ import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionInf
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.Billing;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.GeographicTaxonomy;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.UserInfo;
 import it.pagopa.selfcare.onboarding.connector.model.user.CertifiedField;
-import it.pagopa.selfcare.onboarding.connector.model.user.User;
 import it.pagopa.selfcare.onboarding.connector.model.user.WorkContact;
 import it.pagopa.selfcare.onboarding.web.model.*;
 import org.junit.jupiter.api.Test;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 
 import static it.pagopa.selfcare.commons.utils.TestUtils.mockInstance;
 import static it.pagopa.selfcare.commons.utils.TestUtils.reflectionEqualsByName;
@@ -96,22 +91,11 @@ class OnboardingMapperTest {
     void toResource() {
         //given
         InstitutionOnboardingData model = mockInstance(new InstitutionOnboardingData());
-        UserInfo manager = mockInstance(new UserInfo());
-        String institutionId = UUID.randomUUID().toString();
-        User user = mockInstance(new User());
-        user.setEmail(mockInstance(new CertifiedField<String>()));
-        user.setName(mockInstance(new CertifiedField<String>()));
-        user.setFamilyName(mockInstance(new CertifiedField<String>()));
-        Map<String, WorkContact> workContactMap = new HashMap<>();
+
         WorkContact contact = new WorkContact();
         contact.setEmail(mockInstance(new CertifiedField<String>()));
-        workContactMap.put(institutionId, contact);
-        user.setWorkContacts(workContactMap);
-        manager.setUser(user);
-        manager.setId(UUID.randomUUID().toString());
-        manager.setInstitutionId(institutionId);
+
         InstitutionInfo institutionInfo = mockInstance(new InstitutionInfo());
-        model.setManager(manager);
         model.setInstitution(institutionInfo);
         model.setGeographicTaxonomies(List.of(mockInstance(new GeographicTaxonomy())));
         //when
@@ -120,7 +104,7 @@ class OnboardingMapperTest {
         reflectionEqualsByName(institutionInfo, resource.getInstitution().getBillingData());
         reflectionEqualsByName(model.getAssistanceContacts(), resource.getInstitution().getAssistanceContacts());
         reflectionEqualsByName(model.getCompanyInformations(), resource.getInstitution().getCompanyInformations());
-        TestUtils.checkNotNullFields(resource.getManager());
+
         TestUtils.checkNotNullFields(resource.getInstitution().getBillingData());
         assertEquals(institutionInfo.getInstitutionType(), resource.getInstitution().getInstitutionType());
         assertEquals(institutionInfo.getZipCode(), resource.getInstitution().getBillingData().getZipCode());

@@ -24,6 +24,9 @@ import java.util.Optional;
 public class OnboardingData {
 
     private String institutionExternalId;
+    private String taxCode;
+    private String subunitCode;
+    private String subunitType;
     private String productId;
     private String productName;
     private List<User> users;
@@ -34,6 +37,8 @@ public class OnboardingData {
     private InstitutionType institutionType;
     private String origin;
     private String pricingPlan;
+    private String businessName;
+    private boolean existsInRegistry;
 
     public List<User> getUsers() {
         return Optional.ofNullable(users).orElse(Collections.emptyList());

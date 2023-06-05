@@ -8,16 +8,21 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import feign.FeignException;
 import it.pagopa.selfcare.commons.base.security.PartyRole;
 import it.pagopa.selfcare.commons.utils.TestUtils;
+import it.pagopa.selfcare.onboarding.connector.exceptions.ResourceNotFoundException;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipInfo;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipState;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipsResponse;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionInfo;
+import it.pagopa.selfcare.onboarding.connector.model.institutions.OnboardingResource;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.InstitutionUpdate;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.*;
 import it.pagopa.selfcare.onboarding.connector.rest.client.PartyProcessRestClient;
+import it.pagopa.selfcare.onboarding.connector.rest.mapper.InstitutionMapper;
+import it.pagopa.selfcare.onboarding.connector.rest.mapper.InstitutionMapperImpl;
 import it.pagopa.selfcare.onboarding.connector.rest.model.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -33,8 +38,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static it.pagopa.selfcare.commons.utils.TestUtils.*;
-import static it.pagopa.selfcare.onboarding.connector.PartyConnectorImpl.REQUIRED_INSTITUTION_ID_MESSAGE;
-import static it.pagopa.selfcare.onboarding.connector.PartyConnectorImpl.REQUIRED_PRODUCT_ID_MESSAGE;
+import static it.pagopa.selfcare.onboarding.connector.PartyConnectorImpl.*;
 import static it.pagopa.selfcare.onboarding.connector.model.RelationshipState.ACTIVE;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
@@ -48,6 +52,9 @@ class PartyConnectorImplTest {
 
     @Mock
     private PartyProcessRestClient restClientMock;
+
+    @Spy
+    private InstitutionMapper institutionMapper = new InstitutionMapperImpl();
 
     @Captor
     ArgumentCaptor<OnboardingInstitutionRequest> onboardingRequestCaptor;
@@ -179,7 +186,7 @@ class PartyConnectorImplTest {
         when(restClientMock.getOnBoardingInfo(any(), any()))
                 .thenReturn(onBoardingInfo);
         // when
-        Collection<InstitutionInfo> institutions = partyConnector.getOnBoardedInstitutions();
+        Collection<InstitutionInfo> institutions = partyConnector.getOnBoardedInstitutions(null);
         // then
         assertNotNull(institutions);
         assertEquals(2, institutions.size());
@@ -192,15 +199,214 @@ class PartyConnectorImplTest {
         assertEquals(onboardingData2.getDescription(), institutionInfos.get(0).getDescription());
         assertEquals(onboardingData2.getExternalId(), institutionInfos.get(0).getExternalId());
         assertEquals(onboardingData2.getState().toString(), institutionInfos.get(0).getStatus());
-        assertEquals(onboardingData2.getRole(), institutionInfos.get(0).getUserRole());        institutionInfos = map.get(PartyRole.OPERATOR);
+        assertEquals(onboardingData2.getRole(), institutionInfos.get(0).getUserRole());
+        institutionInfos = map.get(PartyRole.OPERATOR);
         assertNotNull(institutionInfos);
         assertEquals(1, institutionInfos.size());
         assertEquals(onboardingData3.getId(), institutionInfos.get(0).getId());
         assertEquals(onboardingData3.getDescription(), institutionInfos.get(0).getDescription());
         assertEquals(onboardingData3.getExternalId(), institutionInfos.get(0).getExternalId());
         assertEquals(onboardingData3.getState().toString(), institutionInfos.get(0).getStatus());
-        assertEquals(onboardingData3.getRole(), institutionInfos.get(0).getUserRole());        verify(restClientMock, times(1))
+        assertEquals(onboardingData3.getRole(), institutionInfos.get(0).getUserRole());
+        verify(restClientMock, times(1))
                 .getOnBoardingInfo(isNull(), eq(EnumSet.of(ACTIVE)));
+        verifyNoMoreInteractions(restClientMock);
+    }
+
+    @Test
+    void getOnboardedInstitutions_productFilterEmpty() {
+        // given
+        OnBoardingInfo onBoardingInfo = new OnBoardingInfo();
+        OnboardingResponseData onboardingData1 = mockInstance(new OnboardingResponseData(), 1, "setState", "setRole");
+        onboardingData1.setState(ACTIVE);
+        onboardingData1.setRole(PartyRole.OPERATOR);
+        OnboardingResponseData onboardingData2 = mockInstance(new OnboardingResponseData(), 2, "setState", "setId", "setRole");
+        onboardingData2.setState(ACTIVE);
+        onboardingData2.setId(onboardingData1.getId());
+        onboardingData2.setRole(PartyRole.MANAGER);
+        OnboardingResponseData onboardingData4 = mockInstance(new OnboardingResponseData(), 4, "setState", "setId", "setRole");
+        onboardingData4.setState(ACTIVE);
+        onboardingData4.setId(onboardingData1.getId());
+        onboardingData4.setRole(PartyRole.SUB_DELEGATE);
+        OnboardingResponseData onboardingData3 = mockInstance(new OnboardingResponseData(), 3, "setState", "setRole");
+        onboardingData3.setState(ACTIVE);
+        onboardingData3.setRole(PartyRole.OPERATOR);
+        onBoardingInfo.setInstitutions(List.of(onboardingData1, onboardingData2, onboardingData3, onboardingData3, onboardingData4));
+        when(restClientMock.getOnBoardingInfo(any(), any()))
+                .thenReturn(onBoardingInfo);
+        String productFilter = "";
+        // when
+        Collection<InstitutionInfo> institutions = partyConnector.getOnBoardedInstitutions(productFilter);
+        // then
+        assertNotNull(institutions);
+        assertEquals(2, institutions.size());
+        Map<PartyRole, List<InstitutionInfo>> map = institutions.stream()
+                .collect(Collectors.groupingBy(InstitutionInfo::getUserRole));
+        List<InstitutionInfo> institutionInfos = map.get(PartyRole.MANAGER);
+        assertNotNull(institutionInfos);
+        assertEquals(1, institutionInfos.size());
+        assertEquals(onboardingData2.getId(), institutionInfos.get(0).getId());
+        assertEquals(onboardingData2.getDescription(), institutionInfos.get(0).getDescription());
+        assertEquals(onboardingData2.getExternalId(), institutionInfos.get(0).getExternalId());
+        assertEquals(onboardingData2.getState().toString(), institutionInfos.get(0).getStatus());
+        assertEquals(onboardingData2.getRole(), institutionInfos.get(0).getUserRole());
+        institutionInfos = map.get(PartyRole.OPERATOR);
+        assertNotNull(institutionInfos);
+        assertEquals(1, institutionInfos.size());
+        assertEquals(onboardingData3.getId(), institutionInfos.get(0).getId());
+        assertEquals(onboardingData3.getDescription(), institutionInfos.get(0).getDescription());
+        assertEquals(onboardingData3.getExternalId(), institutionInfos.get(0).getExternalId());
+        assertEquals(onboardingData3.getState().toString(), institutionInfos.get(0).getStatus());
+        assertEquals(onboardingData3.getRole(), institutionInfos.get(0).getUserRole());
+        verify(restClientMock, times(1))
+                .getOnBoardingInfo(isNull(), eq(EnumSet.of(ACTIVE)));
+        verifyNoMoreInteractions(restClientMock);
+    }
+
+    @Test
+    void getOnboardedInstitutions_productFilterFound() {
+        // given
+        OnBoardingInfo onBoardingInfo = new OnBoardingInfo();
+        OnboardingResponseData onboardingData1 = mockInstance(new OnboardingResponseData(), 1, "setState", "setRole");
+        onboardingData1.setState(ACTIVE);
+        onboardingData1.setRole(PartyRole.OPERATOR);
+        onboardingData1.getProductInfo().setId("prod-io");
+        OnboardingResponseData onboardingData2 = mockInstance(new OnboardingResponseData(), 2, "setState", "setId", "setRole");
+        onboardingData2.setState(ACTIVE);
+        onboardingData2.setRole(PartyRole.MANAGER);
+        onboardingData2.getProductInfo().setId("prod-ciban");
+        OnboardingResponseData onboardingData3 = mockInstance(new OnboardingResponseData(), 3, "setState", "setRole");
+        onboardingData3.setState(ACTIVE);
+        onboardingData3.setRole(PartyRole.SUB_DELEGATE);
+        onboardingData3.getProductInfo().setId("prod-pagopa");
+        OnboardingResponseData onboardingData4 = mockInstance(new OnboardingResponseData(), 4, "setState", "setId", "setRole");
+        onboardingData4.setState(ACTIVE);
+        onboardingData4.setId(onboardingData1.getId());
+        onboardingData4.setRole(PartyRole.OPERATOR);
+        onboardingData4.getProductInfo().setId("prod-pn");
+        onBoardingInfo.setInstitutions(List.of(onboardingData1, onboardingData2, onboardingData3, onboardingData3, onboardingData4));
+        when(restClientMock.getOnBoardingInfo(any(), any()))
+                .thenReturn(onBoardingInfo);
+        String productFilter = "prod-io";
+        // when
+        Collection<InstitutionInfo> institutions = partyConnector.getOnBoardedInstitutions(productFilter);
+        // then
+        assertNotNull(institutions);
+        assertEquals(1, institutions.size());
+        Map<PartyRole, List<InstitutionInfo>> map = institutions.stream()
+                .collect(Collectors.groupingBy(InstitutionInfo::getUserRole));
+        List<InstitutionInfo> institutionInfos = map.get(PartyRole.OPERATOR);
+        assertNotNull(institutionInfos);
+        assertEquals(1, institutionInfos.size());
+        assertEquals(onboardingData1.getId(), institutionInfos.get(0).getId());
+        assertEquals(onboardingData1.getDescription(), institutionInfos.get(0).getDescription());
+        assertEquals(onboardingData1.getExternalId(), institutionInfos.get(0).getExternalId());
+        assertEquals(onboardingData1.getState().toString(), institutionInfos.get(0).getStatus());
+        assertEquals(onboardingData1.getRole(), institutionInfos.get(0).getUserRole());
+        institutionInfos = map.get(PartyRole.SUB_DELEGATE);
+        assertNull(institutionInfos);
+        institutionInfos = map.get(PartyRole.MANAGER);
+        assertNull(institutionInfos);
+        verify(restClientMock, times(1))
+                .getOnBoardingInfo(isNull(), eq(EnumSet.of(ACTIVE)));
+        verifyNoMoreInteractions(restClientMock);
+    }
+
+    @Test
+    void getOnboardedInstitutions_productFilterNotFound() {
+        // given
+        OnBoardingInfo onBoardingInfo = new OnBoardingInfo();
+        OnboardingResponseData onboardingData1 = mockInstance(new OnboardingResponseData(), 1, "setState", "setRole");
+        onboardingData1.setState(ACTIVE);
+        onboardingData1.setRole(PartyRole.OPERATOR);
+        onboardingData1.getProductInfo().setId("product-1");
+        OnboardingResponseData onboardingData2 = mockInstance(new OnboardingResponseData(), 2, "setState", "setId", "setRole");
+        onboardingData2.setState(ACTIVE);
+        onboardingData2.setId(onboardingData1.getId());
+        onboardingData2.setRole(PartyRole.MANAGER);
+        onboardingData2.getProductInfo().setId("product-2");
+        OnboardingResponseData onboardingData3 = mockInstance(new OnboardingResponseData(), 3, "setState", "setRole");
+        onboardingData3.setState(ACTIVE);
+        onboardingData3.setRole(PartyRole.OPERATOR);
+        onboardingData3.getProductInfo().setId("product-3");
+        OnboardingResponseData onboardingData4 = mockInstance(new OnboardingResponseData(), 4, "setState", "setId", "setRole");
+        onboardingData4.setState(ACTIVE);
+        onboardingData4.setId(onboardingData1.getId());
+        onboardingData4.setRole(PartyRole.SUB_DELEGATE);
+        onboardingData4.getProductInfo().setId("product-4");
+        onBoardingInfo.setInstitutions(List.of(onboardingData1, onboardingData2, onboardingData3, onboardingData3, onboardingData4));
+        when(restClientMock.getOnBoardingInfo(any(), any()))
+                .thenReturn(onBoardingInfo);
+        String productFilter = "produdct-to-find";
+        // when
+        Collection<InstitutionInfo> institutions = partyConnector.getOnBoardedInstitutions(productFilter);
+        // then
+        assertTrue(institutions.isEmpty());
+        verify(restClientMock, times(1))
+                .getOnBoardingInfo(isNull(), eq(EnumSet.of(ACTIVE)));
+        verifyNoMoreInteractions(restClientMock);
+    }
+
+    @Test
+    void getOnboardedInstitutions_productFilterPremium() {
+        // Given
+        String productFilter = "prod-dummy-premium";
+        OnBoardingInfo onBoardingInfo = new OnBoardingInfo();
+        OnboardingResponseData onboardingData1 = mockInstance(new OnboardingResponseData(), 1, "setState", "setRole");
+        onboardingData1.setState(ACTIVE);
+        onboardingData1.setRole(PartyRole.OPERATOR);
+        onboardingData1.getProductInfo().setId("prod-dummy");
+        OnboardingResponseData onboardingData2 = mockInstance(new OnboardingResponseData(), 2, "setState", "setId", "setRole");
+        onboardingData2.setState(ACTIVE);
+        onboardingData2.setId(onboardingData1.getId());
+        onboardingData2.setRole(PartyRole.MANAGER);
+        onboardingData2.getProductInfo().setId("prod-dummy2");
+        OnboardingResponseData onboardingData3 = mockInstance(new OnboardingResponseData(), 3, "setState", "setRole");
+        onboardingData3.setState(ACTIVE);
+        onboardingData3.setRole(PartyRole.OPERATOR);
+        onboardingData3.getProductInfo().setId("prod-dummy");
+        OnboardingResponseData onboardingData4 = mockInstance(new OnboardingResponseData(), 4, "setState", "setId", "setRole");
+        onboardingData4.setState(ACTIVE);
+        onboardingData4.setId(onboardingData1.getId());
+        onboardingData4.setRole(PartyRole.SUB_DELEGATE);
+        onboardingData4.getProductInfo().setId("prod-dummy");
+        onBoardingInfo.setInstitutions(List.of(onboardingData1, onboardingData2, onboardingData3, onboardingData3, onboardingData4));
+        when(restClientMock.getOnBoardingInfo(any(), any()))
+                .thenReturn(onBoardingInfo);
+        doNothing()
+                .when(restClientMock)
+                .verifyOnboarding(onboardingData1.getExternalId(), productFilter);
+        doThrow(ResourceNotFoundException.class)
+                .when(restClientMock)
+                .verifyOnboarding(onboardingData3.getExternalId(), productFilter);
+        doThrow(FeignException.FeignClientException.BadRequest.class)
+                .when(restClientMock)
+                .verifyOnboarding(onboardingData4.getExternalId(), productFilter);
+        // When
+        Collection<InstitutionInfo> institutions = partyConnector.getOnBoardedInstitutions(productFilter);
+        // Then
+        assertNotNull(institutions);
+        assertEquals(1, institutions.size());
+        Map<PartyRole, List<InstitutionInfo>> map = institutions.stream()
+                .collect(Collectors.groupingBy(InstitutionInfo::getUserRole));
+        List<InstitutionInfo> institutionInfos = map.get(PartyRole.OPERATOR);
+        assertNotNull(institutionInfos);
+        assertEquals(onboardingData1.getId(), institutionInfos.get(0).getId());
+        assertEquals(onboardingData1.getExternalId(), institutionInfos.get(0).getExternalId());
+        assertEquals(onboardingData1.getState().toString(), institutionInfos.get(0).getStatus());
+        assertEquals(onboardingData1.getRole(), institutionInfos.get(0).getUserRole());
+        institutionInfos = map.get(PartyRole.MANAGER);
+        assertNull(institutionInfos);
+        institutionInfos = map.get(PartyRole.SUB_DELEGATE);
+        assertNull(institutionInfos);
+        verify(restClientMock, times(1))
+                .getOnBoardingInfo(isNull(), eq(EnumSet.of(ACTIVE)));
+        verify(restClientMock, times(1))
+                .verifyOnboarding(onboardingData1.getExternalId(), productFilter);
+        verify(restClientMock, times(2))
+                .verifyOnboarding(onboardingData3.getExternalId(), productFilter);
+        verify(restClientMock, times(1))
+                .verifyOnboarding(onboardingData4.getExternalId(), productFilter);
         verifyNoMoreInteractions(restClientMock);
     }
 
@@ -208,7 +414,7 @@ class PartyConnectorImplTest {
     void getOnboardedInstitutions_nullOnboardingInfo() {
         //given
         //when
-        Collection<InstitutionInfo> institutionInfos = partyConnector.getOnBoardedInstitutions();
+        Collection<InstitutionInfo> institutionInfos = partyConnector.getOnBoardedInstitutions(null);
         //then
         assertNotNull(institutionInfos);
         assertTrue(institutionInfos.isEmpty());
@@ -225,7 +431,7 @@ class PartyConnectorImplTest {
         when(restClientMock.getOnBoardingInfo(any(), any()))
                 .thenReturn(onboardingInfo);
         //when
-        Collection<InstitutionInfo> institutionInfos = partyConnector.getOnBoardedInstitutions();
+        Collection<InstitutionInfo> institutionInfos = partyConnector.getOnBoardedInstitutions(null);
         //then
         assertNotNull(institutionInfos);
         assertTrue(institutionInfos.isEmpty());
@@ -286,7 +492,7 @@ class PartyConnectorImplTest {
         Executable executable = () -> partyConnector.getUserInstitutionRelationships(institutionId, userInfoFilter);
         //then
         IllegalArgumentException e = Assertions.assertThrows(IllegalArgumentException.class, executable);
-        assertEquals(REQUIRED_INSTITUTION_ID_MESSAGE, e.getMessage());
+        assertEquals(REQUIRED_INSTITUTION_EXTERNAL_ID_MESSAGE, e.getMessage());
         Mockito.verifyNoInteractions(restClientMock);
     }
 
@@ -312,7 +518,7 @@ class PartyConnectorImplTest {
         Executable executable = () -> partyConnector.getUsers(institutionId, filter);
         //then
         IllegalArgumentException e = assertThrows(IllegalArgumentException.class, executable);
-        assertEquals(REQUIRED_INSTITUTION_ID_MESSAGE, e.getMessage());
+        assertEquals(REQUIRED_INSTITUTION_EXTERNAL_ID_MESSAGE, e.getMessage());
         Mockito.verifyNoInteractions(restClientMock);
 
     }
@@ -336,7 +542,6 @@ class PartyConnectorImplTest {
     @Test
     void getUsers_nullResponse() {
         // given
-        PartyConnectorImpl partyConnector = new PartyConnectorImpl(restClientMock);
 
         String institutionId = "institutionId";
         UserInfo.UserInfoFilter userInfoFilter = new UserInfo.UserInfoFilter();
@@ -558,67 +763,24 @@ class PartyConnectorImplTest {
         Executable exe = () -> partyConnector.getInstitutionByExternalId(institutionId);
         //then
         IllegalArgumentException e = assertThrows(IllegalArgumentException.class, exe);
-        assertEquals(REQUIRED_INSTITUTION_ID_MESSAGE, e.getMessage());
+        assertEquals(REQUIRED_INSTITUTION_EXTERNAL_ID_MESSAGE, e.getMessage());
         Mockito.verifyNoInteractions(restClientMock);
     }
 
     @Test
-    void getOnboardedInstitution() {
-        //given
-        String institutionId = "institutionId";
-        OnBoardingInfo onBoardingInfo = mockInstance(new OnBoardingInfo());
-        Billing billing = mockInstance(new Billing());
-        OnboardingResponseData onboardingData = mockInstance(new OnboardingResponseData());
-        onboardingData.setId(institutionId);
-        onboardingData.setBilling(billing);
-        onBoardingInfo.setInstitutions(Collections.singletonList(onboardingData));
-        when(restClientMock.getOnBoardingInfo(any(), any()))
-                .thenReturn(onBoardingInfo);
-        // when
-        InstitutionInfo institutionInfo = partyConnector.getOnboardedInstitution(institutionId);
-        // then
-        assertNotNull(institutionInfo);
-        assertEquals(onboardingData.getId(), institutionInfo.getId());
-        assertEquals(onboardingData.getDescription(), institutionInfo.getDescription());
-        assertEquals(onboardingData.getDigitalAddress(), institutionInfo.getDigitalAddress());
-        assertEquals(onboardingData.getExternalId(), institutionInfo.getExternalId());
-        assertEquals(onboardingData.getState().toString(), institutionInfo.getStatus());
-        assertEquals(onboardingData.getAddress(), institutionInfo.getAddress());
-        assertEquals(onboardingData.getBilling().getRecipientCode(), institutionInfo.getBilling().getRecipientCode());
-        assertEquals(onboardingData.getBilling().getPublicServices(), institutionInfo.getBilling().getPublicServices());
-        assertEquals(onboardingData.getBilling().getVatNumber(), institutionInfo.getBilling().getVatNumber());
-        verify(restClientMock, times(1))
-                .getOnBoardingInfo(institutionId, EnumSet.of(ACTIVE));
-        verifyNoMoreInteractions(restClientMock);
-    }
-
-    @Test
-    void getOnboardedInstitution_emptyInstitutions() {
+    void getOnboardings_emptyOnboardings() {
         // given
         String institutionId = "institutionId";
-        OnBoardingInfo onBoardingInfo = new OnBoardingInfo();
-        onBoardingInfo.setInstitutions(Collections.emptyList());
-        when(restClientMock.getOnBoardingInfo(any(), any()))
-                .thenReturn(onBoardingInfo);
+        OnboardingsResponse onboardingsResponse = new OnboardingsResponse();
+        onboardingsResponse.setOnboardings(Collections.emptyList());
+        when(restClientMock.getOnboardings(any(), any()))
+                .thenReturn(onboardingsResponse);
         // when
-        InstitutionInfo institutionInfo = partyConnector.getOnboardedInstitution(institutionId);
+        List<OnboardingResource> onboardings = partyConnector.getOnboardings(institutionId, null);
         // then
-        assertNull(institutionInfo);
+        assertTrue(onboardings.isEmpty());
         verify(restClientMock, times(1))
-                .getOnBoardingInfo(institutionId, EnumSet.of(ACTIVE));
-        verifyNoMoreInteractions(restClientMock);
-    }
-
-    @Test
-    void getOnboardedInstitution_nullOnBoardingInfo() {
-        // given
-        String institutionId = "institutionId";
-        // when
-        InstitutionInfo institutionInfo = partyConnector.getOnboardedInstitution(institutionId);
-        // then
-        assertNull(institutionInfo);
-        verify(restClientMock, times(1))
-                .getOnBoardingInfo(institutionId, EnumSet.of(ACTIVE));
+                .getOnboardings(institutionId, null);
         verifyNoMoreInteractions(restClientMock);
     }
 
@@ -627,27 +789,11 @@ class PartyConnectorImplTest {
         //given
         String institutionId = null;
         //when
-        Executable executable = () -> partyConnector.getOnboardedInstitution(institutionId);
+        Executable executable = () -> partyConnector.getOnboardings(institutionId, null);
         //then
         IllegalArgumentException e = assertThrows(IllegalArgumentException.class, executable);
         assertEquals(REQUIRED_INSTITUTION_ID_MESSAGE, e.getMessage());
         Mockito.verifyNoInteractions(restClientMock);
-    }
-
-    @Test
-    void getOnboardedInstitution_nullInstitutions() {
-        // given
-        String institutionId = "institutionId";
-        OnBoardingInfo onBoardingInfo = new OnBoardingInfo();
-        when(restClientMock.getOnBoardingInfo(any(), any()))
-                .thenReturn(onBoardingInfo);
-        // when
-        InstitutionInfo institutionInfo = partyConnector.getOnboardedInstitution(institutionId);
-        // then
-        assertNull(institutionInfo);
-        verify(restClientMock, times(1))
-                .getOnBoardingInfo(institutionId, EnumSet.of(ACTIVE));
-        verifyNoMoreInteractions(restClientMock);
     }
 
     @Test
@@ -658,7 +804,7 @@ class PartyConnectorImplTest {
         Executable executable = () -> partyConnector.createInstitutionUsingExternalId(externalId);
         //then
         IllegalArgumentException e = assertThrows(IllegalArgumentException.class, executable);
-        assertEquals(REQUIRED_INSTITUTION_ID_MESSAGE, e.getMessage());
+        assertEquals(REQUIRED_INSTITUTION_EXTERNAL_ID_MESSAGE, e.getMessage());
         verifyNoInteractions(restClientMock);
     }
 
@@ -791,7 +937,7 @@ class PartyConnectorImplTest {
         Executable executable = () -> partyConnector.getInstitutionBillingData(externalId, productId);
         //then
         IllegalArgumentException e = assertThrows(IllegalArgumentException.class, executable);
-        assertEquals(REQUIRED_INSTITUTION_ID_MESSAGE, e.getMessage());
+        assertEquals(REQUIRED_INSTITUTION_EXTERNAL_ID_MESSAGE, e.getMessage());
         verifyNoInteractions(restClientMock);
     }
 

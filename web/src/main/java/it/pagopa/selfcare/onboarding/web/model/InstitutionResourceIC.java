@@ -9,22 +9,22 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Data
-public class InstitutionPnPGResource {
+public class InstitutionResourceIC {
 
 
-    @ApiModelProperty(value = "${swagger.onboarding.pnPGInstitutions.model.legalTaxId}", required = true)
+    @ApiModelProperty(value = "${swagger.onboarding.institutions.model.legalTaxId}", required = true)
     @JsonProperty(required = true)
     @NotBlank
     private String legalTaxId;
 
-    @ApiModelProperty(value = "${swagger.onboarding.pnPGInstitutions.model.requestDateTime}", required = true)
+    @ApiModelProperty(value = "${swagger.onboarding.institutions.model.requestDateTime}", required = true)
     @JsonProperty(required = true)
     @NotBlank
     private String requestDateTime;
 
-    @ApiModelProperty(value = "${swagger.onboarding.pnPGInstitutions.model.businesses}", required = true)
+    @ApiModelProperty(value = "${swagger.onboarding.institutions.model.businesses}", required = true)
     @JsonProperty(required = true)
     @NotNull
-    private List<BusinessPnPGResource> businesses;
+    private List<BusinessResourceIC> businesses;
 
 }

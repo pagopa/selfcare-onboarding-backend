@@ -7,10 +7,10 @@ import lombok.Data;
 import javax.validation.constraints.NotBlank;
 
 @Data
-public class PnPGMatchResource {
+public class MatchInfoResultResource {
 
 
-    @ApiModelProperty(value = "${swagger.onboarding.pnPGInstitutions.model.matchResult}", required = true)
+    @ApiModelProperty(value = "${swagger.onboarding.institutions.model.matchResult}", required = true)
     @JsonProperty(required = true)
     @NotBlank
     private boolean verificationResult;

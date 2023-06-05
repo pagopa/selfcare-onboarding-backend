@@ -6,17 +6,17 @@ import io.swagger.annotations.ApiParam;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import it.pagopa.selfcare.commons.base.logging.LogUtils;
 import it.pagopa.selfcare.commons.web.model.Problem;
-import it.pagopa.selfcare.onboarding.connector.model.PnPGInstitutionLegalAddressData;
-import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionPnPGInfo;
-import it.pagopa.selfcare.onboarding.connector.model.institutions.PnPGMatchInfo;
+import it.pagopa.selfcare.onboarding.connector.model.InstitutionLegalAddressData;
+import it.pagopa.selfcare.onboarding.connector.model.institutions.MatchInfoResult;
+import it.pagopa.selfcare.onboarding.connector.model.institutions.infocamere.InstitutionInfoIC;
 import it.pagopa.selfcare.onboarding.core.PnPGInstitutionService;
 import it.pagopa.selfcare.onboarding.web.model.*;
 import it.pagopa.selfcare.onboarding.web.model.mapper.PnPGInstitutionMapper;
 import it.pagopa.selfcare.onboarding.web.model.mapper.PnPGOnboardingMapper;
 import it.pagopa.selfcare.onboarding.web.model.mapper.PnPGUserMapper;
-import it.pagopa.selfcare.onboarding.web.model.mapper.UserMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -44,28 +44,36 @@ public class PnPGInstitutionController {
     @PostMapping(value = "")
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "", notes = "${swagger.onboarding.pnPGInstitutions.api.getInstitutionsByUser}")
-    public InstitutionPnPGResource getInstitutionsByUser(@RequestBody
+    public InstitutionResourceIC getInstitutionsByUser(@RequestBody
                                                          @Valid
                                                          PnPGUserDto userDto) {
         log.trace("getInstitutionsByUserId start");
         log.debug(LogUtils.CONFIDENTIAL_MARKER, "getInstitutionsByUserId userDto = {}", userDto);
-        InstitutionPnPGInfo institutionPnPGInfo = pnPGInstitutionService.getInstitutionsByUser(PnPGUserMapper.toUser(userDto));
-        InstitutionPnPGResource institutionPnPGResources = PnPGInstitutionMapper.toResource(institutionPnPGInfo);
+        InstitutionInfoIC institutionPnPGInfo = pnPGInstitutionService.getInstitutionsByUser(PnPGUserMapper.toUser(userDto));
+        InstitutionResourceIC institutionPnPGResources = PnPGInstitutionMapper.toResource(institutionPnPGInfo);
         log.debug(LogUtils.CONFIDENTIAL_MARKER, "getInstitutionsByUserId result = {}", institutionPnPGResources);
         log.trace("getInstitutionsByUserId end");
         return institutionPnPGResources;
     }
 
-    @ApiResponse(responseCode = "403",
-            description = "Forbidden",
-            content = {
-                    @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE,
-                            schema = @Schema(implementation = Problem.class))
-            })
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "403",
+                    description = "Forbidden",
+                    content = {
+                            @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE,
+                                    schema = @Schema(implementation = Problem.class))
+                    }),
+            @ApiResponse(responseCode = "409",
+                    description = "Conflict",
+                    content = {
+                            @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE,
+                                    schema = @Schema(implementation = Problem.class))
+                    }),
+    })
     @PostMapping(value = "/{externalInstitutionId}/products/{productId}/onboarding")
     @ResponseStatus(HttpStatus.CREATED)
     @ApiOperation(value = "", notes = "${swagger.onboarding.pnPGInstitutions.api.onboarding}")
-    public void onboardingPG(@ApiParam("${swagger.onboarding.pnPGInstitutions.model.externalId}")
+    public void onboardingPG(@ApiParam("${swagger.onboarding.institutions.model.externalId}")
                              @PathVariable("externalInstitutionId")
                              String externalInstitutionId,
                              @ApiParam("${swagger.onboarding.product.model.id}")
@@ -83,16 +91,16 @@ public class PnPGInstitutionController {
     @PostMapping(value = "/{externalInstitutionId}/match")
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "", notes = "${swagger.onboarding.pnPGInstitutions.api.matchInstitutionAndUser}")
-    public PnPGMatchResource matchInstitutionAndUser(@ApiParam("${swagger.onboarding.pnPGInstitutions.model.externalId}")
+    public MatchInfoResultResource matchInstitutionAndUser(@ApiParam("${swagger.onboarding.pnPGInstitutions.model.externalId}")
                                                      @PathVariable("externalInstitutionId")
                                                      String externalInstitutionId,
-                                                     @RequestBody
+                                                           @RequestBody
                                                      @Valid
-                                                     UserDto userDto) {
+                                                     PnPGUserDto userDto) {
         log.trace("matchInstitutionAndUser start");
         log.debug(LogUtils.CONFIDENTIAL_MARKER, "matchInstitutionAndUser userDto = {}", userDto);
-        PnPGMatchInfo pnPGMatchInfo = pnPGInstitutionService.matchInstitutionAndUser(externalInstitutionId, UserMapper.toUser(userDto));
-        PnPGMatchResource pnPGMatchResource = PnPGInstitutionMapper.toResource(pnPGMatchInfo);
+        MatchInfoResult pnPGMatchInfo = pnPGInstitutionService.matchInstitutionAndUser(externalInstitutionId, PnPGUserMapper.toUser(userDto));
+        MatchInfoResultResource pnPGMatchResource = PnPGInstitutionMapper.toResource(pnPGMatchInfo);
         log.debug(LogUtils.CONFIDENTIAL_MARKER, "matchInstitutionAndUser result = {}", pnPGMatchResource);
         log.trace("matchInstitutionAndUser end");
         return pnPGMatchResource;
@@ -101,13 +109,13 @@ public class PnPGInstitutionController {
     @GetMapping(value = "/{externalInstitutionId}/legal-address")
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "", notes = "${swagger.onboarding.pnPGInstitutions.api.getInstitutionLegalAddress}")
-    public PnPGInstitutionLegalAddressResource getInstitutionLegalAddress(@ApiParam("${swagger.onboarding.pnPGInstitutions.model.externalId}")
+    public InstitutionLegalAddressResource getInstitutionLegalAddress(@ApiParam("${swagger.onboarding.pnPGInstitutions.model.externalId}")
                                                                           @PathVariable("externalInstitutionId")
                                                                           String externalInstitutionId) {
         log.trace("getInstitutionLegalAddress start");
         log.debug("getInstitutionLegalAddress institutionId = {}", externalInstitutionId);
-        PnPGInstitutionLegalAddressData institutionLegalAddressData = pnPGInstitutionService.getInstitutionLegalAddress(externalInstitutionId);
-        PnPGInstitutionLegalAddressResource result = PnPGOnboardingMapper.toResource(institutionLegalAddressData);
+        InstitutionLegalAddressData institutionLegalAddressData = pnPGInstitutionService.getInstitutionLegalAddress(externalInstitutionId);
+        InstitutionLegalAddressResource result = PnPGOnboardingMapper.toResource(institutionLegalAddressData);
         log.debug("getInstitutionLegalAddress result = {}", result);
         log.trace("getInstitutionLegalAddress end");
         return result;

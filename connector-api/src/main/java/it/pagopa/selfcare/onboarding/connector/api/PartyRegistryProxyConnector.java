@@ -1,15 +1,15 @@
 package it.pagopa.selfcare.onboarding.connector.api;
 
-import it.pagopa.selfcare.onboarding.connector.model.PnPGInstitutionLegalAddressData;
-import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionPnPGInfo;
-import it.pagopa.selfcare.onboarding.connector.model.institutions.PnPGMatchInfo;
+import it.pagopa.selfcare.onboarding.connector.model.InstitutionLegalAddressData;
+import it.pagopa.selfcare.onboarding.connector.model.institutions.MatchInfoResult;
+import it.pagopa.selfcare.onboarding.connector.model.institutions.infocamere.InstitutionInfoIC;
 
 public interface PartyRegistryProxyConnector {
 
-    InstitutionPnPGInfo getInstitutionsByUserFiscalCode(String taxCode);
+    InstitutionInfoIC getInstitutionsByUserFiscalCode(String taxCode);
 
-    PnPGMatchInfo matchInstitutionAndUser(String matchInstitutionAndUser, String userTaxCode);
+    MatchInfoResult matchInstitutionAndUser(String matchInstitutionAndUser, String userTaxCode);
 
-    PnPGInstitutionLegalAddressData getInstitutionLegalAddress(String externalInstitutionId);
+    InstitutionLegalAddressData getInstitutionLegalAddress(String externalInstitutionId);
 
 }

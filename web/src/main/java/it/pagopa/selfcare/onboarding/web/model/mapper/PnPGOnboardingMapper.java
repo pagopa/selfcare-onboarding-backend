@@ -1,15 +1,16 @@
 package it.pagopa.selfcare.onboarding.web.model.mapper;
 
-import it.pagopa.selfcare.onboarding.connector.model.PnPGInstitutionLegalAddressData;
+import it.pagopa.selfcare.onboarding.connector.model.InstitutionLegalAddressData;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.Billing;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.InstitutionType;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.InstitutionUpdate;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.PnPGOnboardingData;
-import it.pagopa.selfcare.onboarding.web.model.PnPGInstitutionLegalAddressResource;
+import it.pagopa.selfcare.onboarding.web.model.InstitutionLegalAddressResource;
 import it.pagopa.selfcare.onboarding.web.model.PnPGOnboardingDto;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.stream.Collectors;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -25,22 +26,24 @@ public class PnPGOnboardingMapper {
             resource.setInstitutionExternalId(externalId);
             resource.setBusinessName(model.getBillingData().getBusinessName());
             resource.setProductId(productId);
-            resource.setInstitutionUpdate(fillInstitutionUpdate(externalId));
+            resource.setInstitutionUpdate(fillInstitutionUpdate(model));
             if (model.getBillingData() != null) {
                 resource.setBillingRequest(fillBillingData(externalId));
             }
             resource.setInstitutionType(InstitutionType.PG);
-            if (model.getBillingData().getBusinessName().equals("")) {
-                resource.setExistsInRegistry(false);
-            }
+            resource.setExistsInRegistry(model.getBillingData().isCertified());
+            resource.setDigitalAddress(model.getBillingData().getDigitalAddress());
         }
         return resource;
     }
 
-    private static InstitutionUpdate fillInstitutionUpdate(String externalId) {
+    private static InstitutionUpdate fillInstitutionUpdate(PnPGOnboardingDto model) {
         InstitutionUpdate institutionUpdate = new InstitutionUpdate();
         institutionUpdate.setInstitutionType(InstitutionType.PG);
-        institutionUpdate.setTaxCode(externalId);
+        institutionUpdate.setTaxCode(model.getBillingData().getTaxCode());
+        institutionUpdate.setDescription(model.getBillingData().getBusinessName());
+        institutionUpdate.setDigitalAddress(model.getBillingData().getDigitalAddress());
+        institutionUpdate.setGeographicTaxonomies(new ArrayList<>());
         return institutionUpdate;
     }
 
@@ -51,10 +54,10 @@ public class PnPGOnboardingMapper {
         return billingData;
     }
 
-    public static PnPGInstitutionLegalAddressResource toResource(PnPGInstitutionLegalAddressData model) {
-        PnPGInstitutionLegalAddressResource resource = null;
+    public static InstitutionLegalAddressResource toResource(InstitutionLegalAddressData model) {
+        InstitutionLegalAddressResource resource = null;
         if (model != null) {
-            resource = new PnPGInstitutionLegalAddressResource();
+            resource = new InstitutionLegalAddressResource();
 
             resource.setAddress(model.getAddress());
             resource.setZipCode(model.getZipCode());
