@@ -302,13 +302,13 @@ class PartyConnectorImpl implements PartyConnector {
     }
 
     @Override
-    public Institution createInstitutionRaw(OnboardingData onboardingData) {
-        log.trace("createInstitutionUsingExternalId start");
+    public Institution createInstitution(OnboardingData onboardingData) {
+        log.trace("createInstitution start");
         Assert.notNull(onboardingData, "An OnboardingData is required");
-        InstitutionResponse partyInstitutionResponse = restClient.createInstitutionRaw(onboardingData.getInstitutionExternalId(), new InstitutionSeed(onboardingData));
+        InstitutionResponse partyInstitutionResponse = restClient.createInstitution(new InstitutionSeed(onboardingData));
         Institution result = institutionMapper.toEntity(partyInstitutionResponse);
-        log.debug("createInstitutionUsingExternalId result = {}", result);
-        log.trace("createInstitutionUsingExternalId end");
+        log.debug("createInstitution result = {}", result);
+        log.trace("createInstitution end");
         return result;
     }
 

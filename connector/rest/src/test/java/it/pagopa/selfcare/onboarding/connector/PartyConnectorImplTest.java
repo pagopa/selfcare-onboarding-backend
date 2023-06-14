@@ -830,19 +830,7 @@ class PartyConnectorImplTest {
     }
 
     @Test
-    void createInstitutionRaw_nullInput() {
-        //given
-        final OnboardingData onboardingData = null;
-        //when
-        Executable executable = () -> partyConnector.createInstitutionRaw(onboardingData);
-        //then
-        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, executable);
-        assertEquals("An OnboardingData is required", e.getMessage());
-        verifyNoInteractions(restClientMock);
-    }
-
-    @Test
-    void createInstitutionRaw() {
+    void createInstitution() {
         //given
         final OnboardingData onboardingData = mockInstance(new OnboardingData());
         InstitutionResponse institutionResponse = mockInstance(new InstitutionResponse());
@@ -850,10 +838,10 @@ class PartyConnectorImplTest {
         InstitutionUpdate institutionUpdate = mockInstance(new InstitutionUpdate());
         institutionUpdate.setGeographicTaxonomies(geographicTaxonomyList);
         institutionResponse.setGeographicTaxonomies(geographicTaxonomyList);
-        when(restClientMock.createInstitutionRaw(anyString(), any()))
+        when(restClientMock.createInstitution(any()))
                 .thenReturn(institutionResponse);
         //when
-        Institution result = partyConnector.createInstitutionRaw(onboardingData);
+        Institution result = partyConnector.createInstitution(onboardingData);
         //then
         assertNotNull(result);
         reflectionEqualsByName(institutionResponse, result);
@@ -864,8 +852,7 @@ class PartyConnectorImplTest {
         assertEquals(institutionResponse.getSupportPhone(), result.getAssistanceContacts().getSupportPhone());
         final ArgumentCaptor<InstitutionSeed> argumentCaptor = ArgumentCaptor.forClass(InstitutionSeed.class);
         verify(restClientMock, times(1))
-                .createInstitutionRaw(eq(onboardingData.getInstitutionExternalId()),
-                        argumentCaptor.capture());
+                .createInstitution( argumentCaptor.capture());
         final InstitutionSeed institutionSeed = argumentCaptor.getValue();
         assertEquals(onboardingData.getInstitutionUpdate().getDescription(), institutionSeed.getDescription());
         assertEquals(onboardingData.getInstitutionUpdate().getDigitalAddress(), institutionSeed.getDigitalAddress());
