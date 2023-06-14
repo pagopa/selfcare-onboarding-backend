@@ -256,13 +256,13 @@ class PartyProcessRestClientTest extends BaseFeignRestClientTest {
     }
 
     @Test
-    void createInstitutionRaw() {
+    void createInstitution() {
         //given
-        String externalId = "externalId";
+
         InstitutionSeed institutionSeed = mockInstance(new InstitutionSeed());
         institutionSeed.setGeographicTaxonomies(List.of(mockInstance(new GeographicTaxonomy())));
         //when
-        InstitutionResponse response = restClient.createInstitutionRaw(externalId, institutionSeed);
+        InstitutionResponse response = restClient.createInstitution(institutionSeed);
         //then
         assertNotNull(response);
         checkNotNullFields(response);
