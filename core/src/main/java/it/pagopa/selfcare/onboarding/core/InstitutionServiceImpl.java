@@ -138,7 +138,7 @@ class InstitutionServiceImpl implements InstitutionService {
             institution = partyConnector.getInstitutionsByTaxCodeAndSubunitCode(onboardingData.getTaxCode(), onboardingData.getSubunitCode())
                     .stream()
                     .findFirst()
-                    .orElseThrow(RuntimeException::new);
+                    .orElseThrow(ResourceNotFoundException::new);
         } catch (ResourceNotFoundException e) {
             if (InstitutionType.PA.equals(onboardingData.getInstitutionType()) ||
                     (InstitutionType.GSP.equals(onboardingData.getInstitutionType()) && onboardingData.getProductId().equals("prod-interop")
