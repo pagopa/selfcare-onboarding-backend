@@ -30,7 +30,7 @@ public interface PartyConnector {
 
     Institution createInstitutionUsingExternalId(String institutionExternalId);
 
-    Institution createInstitutionRaw(OnboardingData onboardingData);
+    Institution createInstitution(OnboardingData onboardingData);
 
     UserInfo getInstitutionManager(String externalInstitutionId, String productId);
 
