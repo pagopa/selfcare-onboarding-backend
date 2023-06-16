@@ -16,6 +16,7 @@ import java.util.Set;
 import static feign.CollectionFormat.CSV;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.HEAD;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 /**
  * Party Process Rest Client
@@ -89,5 +90,9 @@ public interface PartyProcessRestClient {
     void verifyOnboarding(@RequestParam("taxCode") String taxCode,
                           @RequestParam("subunitCode") String subunitCode,
                           @RequestParam("productId") String productId);
+
+    @RequestMapping(method = POST, value = "${rest-client.party-process.tokensVerify.path}")
+    @ResponseBody
+    TokenResponse tokensVerify(@PathVariable("tokenId") String tokenId);
 
 }

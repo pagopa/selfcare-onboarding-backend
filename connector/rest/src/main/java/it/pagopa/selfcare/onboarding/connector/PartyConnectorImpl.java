@@ -33,6 +33,8 @@ class PartyConnectorImpl implements PartyConnector {
     protected static final String REQUIRED_PRODUCT_ID_MESSAGE = "A product Id is required";
     protected static final String REQUIRED_INSTITUTION_TAXCODE_MESSAGE = "An Institution tax code is required";
 
+    public static final String REQUIRED_TOKEN_ID_MESSAGE = "A token Id is required";
+
     private final PartyProcessRestClient restClient;
     private final InstitutionMapper institutionMapper;
 
@@ -356,6 +358,15 @@ class PartyConnectorImpl implements PartyConnector {
         Assert.hasText(taxCode, REQUIRED_INSTITUTION_EXTERNAL_ID_MESSAGE);
         Assert.hasText(productId, REQUIRED_PRODUCT_ID_MESSAGE);
         restClient.verifyOnboarding(taxCode, subunitCode, productId);
+        log.trace("verifyOnboarding end");
+    }
+
+    @Override
+    public void tokensVerify(String tokenId) {
+        log.trace("tokensVerify start");
+        log.debug("tokensVerify tokenId = {}", tokenId);
+        Assert.hasText(tokenId, REQUIRED_TOKEN_ID_MESSAGE);
+        restClient.tokensVerify(tokenId);
         log.trace("verifyOnboarding end");
     }
 }

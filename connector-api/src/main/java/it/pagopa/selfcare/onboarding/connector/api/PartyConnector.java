@@ -39,4 +39,6 @@ public interface PartyConnector {
     void verifyOnboarding(String externalInstitutionId, String productId);
 
     void verifyOnboarding(String taxCode, String subunitCode, String productId);
+
+    void tokensVerify(String tokenId);
 }

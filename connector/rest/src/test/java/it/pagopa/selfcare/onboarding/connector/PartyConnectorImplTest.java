@@ -1005,4 +1005,31 @@ class PartyConnectorImplTest {
         verifyNoMoreInteractions(restClientMock);
     }
 
+
+    @Test
+    void tokensVerify_nullProductId() {
+        // given
+        final String tokenId = null;
+        // when
+        final Executable executable = () -> partyConnector.tokensVerify(tokenId);
+        // then
+        final Exception e = assertThrows(IllegalArgumentException.class, executable);
+        assertEquals("A token Id is required", e.getMessage());
+        verifyNoInteractions(restClientMock);
+    }
+
+
+    @Test
+    void tokensVerify() {
+        // given
+        final String tokenId = "tokenId";
+        // when
+        final Executable executable = () -> partyConnector.tokensVerify(tokenId);
+        // then
+        assertDoesNotThrow(executable);
+        verify(restClientMock, times(1))
+                .tokensVerify(tokenId);
+        verifyNoMoreInteractions(restClientMock);
+    }
+
 }
