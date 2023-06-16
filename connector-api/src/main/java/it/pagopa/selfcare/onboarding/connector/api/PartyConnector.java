@@ -6,6 +6,7 @@ import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionInf
 import it.pagopa.selfcare.onboarding.connector.model.institutions.OnboardingResource;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.UserInfo;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Collection;
 import java.util.List;
@@ -41,4 +42,6 @@ public interface PartyConnector {
     void verifyOnboarding(String taxCode, String subunitCode, String productId);
 
     void tokensVerify(String tokenId);
+
+    void onboardingTokenComplete(String tokenId, MultipartFile contract);
 }

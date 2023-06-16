@@ -4,11 +4,12 @@ import it.pagopa.selfcare.commons.base.security.PartyRole;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipInfo;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipState;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipsResponse;
-import it.pagopa.selfcare.onboarding.connector.rest.model.OnboardingsResponse;
 import it.pagopa.selfcare.onboarding.connector.rest.model.*;
 import org.springframework.cloud.openfeign.CollectionFormat;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.EnumSet;
 import java.util.Set;
@@ -94,5 +95,7 @@ public interface PartyProcessRestClient {
     @RequestMapping(method = POST, value = "${rest-client.party-process.tokensVerify.path}")
     @ResponseBody
     TokenResponse tokensVerify(@PathVariable("tokenId") String tokenId);
+    @RequestMapping(method = POST, value = "${rest-client.party-process.onboardingComplete.path}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    void onboardingComplete(@PathVariable("tokenId") String tokenId, @RequestPart MultipartFile contract);
 
 }

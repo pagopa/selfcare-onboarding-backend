@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
 import java.util.function.BinaryOperator;
@@ -368,5 +369,14 @@ class PartyConnectorImpl implements PartyConnector {
         Assert.hasText(tokenId, REQUIRED_TOKEN_ID_MESSAGE);
         restClient.tokensVerify(tokenId);
         log.trace("verifyOnboarding end");
+    }
+
+    @Override
+    public void onboardingTokenComplete(String tokenId, MultipartFile contract) {
+        log.trace("onboardingTokenComplete start");
+        log.debug("onboardingTokenComplete tokenId = {}", tokenId);
+        Assert.hasText(tokenId, REQUIRED_TOKEN_ID_MESSAGE);
+        restClient.onboardingComplete(tokenId, contract);
+        log.trace("onboardingTokenComplete end");
     }
 }

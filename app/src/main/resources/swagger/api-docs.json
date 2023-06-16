@@ -29,6 +29,9 @@
     "name" : "product",
     "description" : "Product operations"
   }, {
+    "name" : "tokens",
+    "description" : "Token Controller"
+  }, {
     "name" : "user",
     "description" : "User Controller"
   } ],
@@ -1285,6 +1288,142 @@
         } ]
       }
     },
+    "/tokens/{tokenId}/complete" : {
+      "post" : {
+        "tags" : [ "tokens" ],
+        "summary" : "Complete an onboarding request",
+        "description" : "Complete an onboarding request",
+        "operationId" : "completeUsingPOST",
+        "parameters" : [ {
+          "name" : "tokenId",
+          "in" : "path",
+          "description" : "Contract's unique identifier",
+          "required" : true,
+          "style" : "simple",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "multipart/form-data" : {
+              "schema" : {
+                "required" : [ "contract" ],
+                "type" : "object",
+                "properties" : {
+                  "contract" : {
+                    "type" : "string",
+                    "description" : "contract",
+                    "format" : "binary"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses" : {
+          "204" : {
+            "description" : "No Content"
+          },
+          "400" : {
+            "description" : "Bad Request",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Unauthorized",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "Internal Server Error",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ "global" ]
+        } ]
+      }
+    },
+    "/tokens/{tokenId}/verify" : {
+      "post" : {
+        "tags" : [ "tokens" ],
+        "summary" : "Verify if the token is already consumed",
+        "description" : "Verify if the token is already consumed",
+        "operationId" : "verifyTokenUsingPOST",
+        "parameters" : [ {
+          "name" : "tokenId",
+          "in" : "path",
+          "description" : "Contract's unique identifier",
+          "required" : true,
+          "style" : "simple",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/TokenVerifyResponse"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad Request",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Unauthorized",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "Internal Server Error",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ "global" ]
+        } ]
+      }
+    },
     "/users/validate" : {
       "post" : {
         "tags" : [ "user" ],
@@ -1972,6 +2111,15 @@
             "type" : "boolean",
             "description" : "PSP's Vat Number group",
             "example" : false
+          }
+        }
+      },
+      "TokenVerifyResponse" : {
+        "title" : "TokenVerifyResponse",
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string"
           }
         }
       },

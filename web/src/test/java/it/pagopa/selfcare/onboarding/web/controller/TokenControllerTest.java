@@ -8,9 +8,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.UUID;
 
@@ -31,6 +35,9 @@ public class TokenControllerTest {
     @MockBean
     private TokenService tokenService;
 
+    /**
+     * Method under test: {@link TokenController#verifyToken(String)}}
+     */
     @Test
     void shouldVerifyToken() throws Exception {
         //given
@@ -47,5 +54,20 @@ public class TokenControllerTest {
 
         //then
        verify(tokenService, times(1)).verifyToken(id);
+    }
+
+    /**
+     * Method under test: {@link TokenController#complete(String, MultipartFile)}
+     */
+    @Test
+    void shouldCompleteToken() throws Exception {
+
+        MockMultipartFile file = new MockMultipartFile("contract", "".getBytes());
+        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
+                .multipart("/tokens/{tokenId}/complete",
+                        "42")
+                .file(file);
+        mvc.perform(requestBuilder)
+                .andExpect(MockMvcResultMatchers.status().isNoContent());
     }
 }

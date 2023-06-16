@@ -30,10 +30,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.util.ResourceUtils;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -1029,6 +1032,22 @@ class PartyConnectorImplTest {
         assertDoesNotThrow(executable);
         verify(restClientMock, times(1))
                 .tokensVerify(tokenId);
+        verifyNoMoreInteractions(restClientMock);
+    }
+
+    @Test
+    void onboardingComplete() throws IOException {
+        // given
+        final String tokenId = "tokenId";
+        final MockMultipartFile mockMultipartFile =
+                new MockMultipartFile("example", new ByteArrayInputStream("example".getBytes(StandardCharsets.UTF_8)));
+
+        // when
+        final Executable executable = () -> partyConnector.onboardingTokenComplete(tokenId, mockMultipartFile);
+        // then
+        assertDoesNotThrow(executable);
+        verify(restClientMock, times(1))
+                .onboardingComplete(tokenId, mockMultipartFile);
         verifyNoMoreInteractions(restClientMock);
     }
 
