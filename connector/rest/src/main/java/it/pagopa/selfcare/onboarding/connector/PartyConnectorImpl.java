@@ -8,6 +8,8 @@ import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionInfo;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.OnboardingResource;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.*;
+import it.pagopa.selfcare.onboarding.connector.rest.client.MsCoreOnboardingApiClient;
+import it.pagopa.selfcare.onboarding.connector.rest.client.MsCoreTokenApiClient;
 import it.pagopa.selfcare.onboarding.connector.rest.client.PartyProcessRestClient;
 import it.pagopa.selfcare.onboarding.connector.rest.mapper.InstitutionMapper;
 import it.pagopa.selfcare.onboarding.connector.rest.model.InstitutionUpdate;
@@ -16,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
 import java.util.function.BinaryOperator;
@@ -32,6 +35,11 @@ class PartyConnectorImpl implements PartyConnector {
     protected static final String REQUIRED_INSTITUTION_ID_MESSAGE = "An Institution id is required";
     protected static final String REQUIRED_PRODUCT_ID_MESSAGE = "A product Id is required";
     protected static final String REQUIRED_INSTITUTION_TAXCODE_MESSAGE = "An Institution tax code is required";
+
+    public static final String REQUIRED_TOKEN_ID_MESSAGE = "A token Id is required";
+
+    private final MsCoreTokenApiClient msCoreTokenApiClient;
+    private final MsCoreOnboardingApiClient msCoreOnboardingApiClient;
 
     private final PartyProcessRestClient restClient;
     private final InstitutionMapper institutionMapper;
@@ -81,7 +89,9 @@ class PartyConnectorImpl implements PartyConnector {
     };
 
     @Autowired
-    public PartyConnectorImpl(PartyProcessRestClient restClient, InstitutionMapper institutionMapper) {
+    public PartyConnectorImpl(MsCoreTokenApiClient msCoreTokenApiClient, MsCoreOnboardingApiClient msCoreOnboardingApiClient, PartyProcessRestClient restClient, InstitutionMapper institutionMapper) {
+        this.msCoreTokenApiClient = msCoreTokenApiClient;
+        this.msCoreOnboardingApiClient = msCoreOnboardingApiClient;
         this.restClient = restClient;
         this.institutionMapper = institutionMapper;
     }
@@ -357,5 +367,23 @@ class PartyConnectorImpl implements PartyConnector {
         Assert.hasText(productId, REQUIRED_PRODUCT_ID_MESSAGE);
         restClient.verifyOnboarding(taxCode, subunitCode, productId);
         log.trace("verifyOnboarding end");
+    }
+
+    @Override
+    public void tokensVerify(String tokenId) {
+        log.trace("tokensVerify start");
+        log.debug("tokensVerify tokenId = {}", tokenId);
+        Assert.hasText(tokenId, REQUIRED_TOKEN_ID_MESSAGE);
+        msCoreTokenApiClient._verifyTokenUsingPOST(tokenId);
+        log.trace("verifyOnboarding end");
+    }
+
+    @Override
+    public void onboardingTokenComplete(String tokenId, MultipartFile contract) {
+        log.trace("onboardingTokenComplete start");
+        log.debug("onboardingTokenComplete tokenId = {}", tokenId);
+        Assert.hasText(tokenId, REQUIRED_TOKEN_ID_MESSAGE);
+        msCoreOnboardingApiClient._completeOnboardingUsingPOST(tokenId, contract);
+        log.trace("onboardingTokenComplete end");
     }
 }
