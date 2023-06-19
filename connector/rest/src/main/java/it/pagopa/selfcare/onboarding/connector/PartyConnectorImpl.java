@@ -8,6 +8,8 @@ import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionInfo;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.OnboardingResource;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.*;
+import it.pagopa.selfcare.onboarding.connector.rest.client.MsCoreOnboardingApiClient;
+import it.pagopa.selfcare.onboarding.connector.rest.client.MsCoreTokenApiClient;
 import it.pagopa.selfcare.onboarding.connector.rest.client.PartyProcessRestClient;
 import it.pagopa.selfcare.onboarding.connector.rest.mapper.InstitutionMapper;
 import it.pagopa.selfcare.onboarding.connector.rest.model.InstitutionUpdate;
@@ -35,6 +37,9 @@ class PartyConnectorImpl implements PartyConnector {
     protected static final String REQUIRED_INSTITUTION_TAXCODE_MESSAGE = "An Institution tax code is required";
 
     public static final String REQUIRED_TOKEN_ID_MESSAGE = "A token Id is required";
+
+    private final MsCoreTokenApiClient msCoreTokenApiClient;
+    private final MsCoreOnboardingApiClient msCoreOnboardingApiClient;
 
     private final PartyProcessRestClient restClient;
     private final InstitutionMapper institutionMapper;
@@ -84,7 +89,9 @@ class PartyConnectorImpl implements PartyConnector {
     };
 
     @Autowired
-    public PartyConnectorImpl(PartyProcessRestClient restClient, InstitutionMapper institutionMapper) {
+    public PartyConnectorImpl(MsCoreTokenApiClient msCoreTokenApiClient, MsCoreOnboardingApiClient msCoreOnboardingApiClient, PartyProcessRestClient restClient, InstitutionMapper institutionMapper) {
+        this.msCoreTokenApiClient = msCoreTokenApiClient;
+        this.msCoreOnboardingApiClient = msCoreOnboardingApiClient;
         this.restClient = restClient;
         this.institutionMapper = institutionMapper;
     }
@@ -367,7 +374,7 @@ class PartyConnectorImpl implements PartyConnector {
         log.trace("tokensVerify start");
         log.debug("tokensVerify tokenId = {}", tokenId);
         Assert.hasText(tokenId, REQUIRED_TOKEN_ID_MESSAGE);
-        restClient.tokensVerify(tokenId);
+        msCoreTokenApiClient._verifyTokenUsingPOST(tokenId);
         log.trace("verifyOnboarding end");
     }
 
@@ -376,7 +383,7 @@ class PartyConnectorImpl implements PartyConnector {
         log.trace("onboardingTokenComplete start");
         log.debug("onboardingTokenComplete tokenId = {}", tokenId);
         Assert.hasText(tokenId, REQUIRED_TOKEN_ID_MESSAGE);
-        restClient.onboardingComplete(tokenId, contract);
+        msCoreOnboardingApiClient._completeOnboardingUsingPOST(tokenId, contract);
         log.trace("onboardingTokenComplete end");
     }
 }

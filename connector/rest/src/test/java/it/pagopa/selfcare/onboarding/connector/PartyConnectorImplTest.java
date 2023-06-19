@@ -20,6 +20,8 @@ import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionInf
 import it.pagopa.selfcare.onboarding.connector.model.institutions.OnboardingResource;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.InstitutionUpdate;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.*;
+import it.pagopa.selfcare.onboarding.connector.rest.client.MsCoreOnboardingApiClient;
+import it.pagopa.selfcare.onboarding.connector.rest.client.MsCoreTokenApiClient;
 import it.pagopa.selfcare.onboarding.connector.rest.client.PartyProcessRestClient;
 import it.pagopa.selfcare.onboarding.connector.rest.mapper.InstitutionMapper;
 import it.pagopa.selfcare.onboarding.connector.rest.mapper.InstitutionMapperImpl;
@@ -55,6 +57,12 @@ class PartyConnectorImplTest {
 
     @Mock
     private PartyProcessRestClient restClientMock;
+
+    @Mock
+    private MsCoreTokenApiClient msCoreTokenApiClient;
+
+    @Mock
+    private MsCoreOnboardingApiClient msCoreOnboardingApiClient;
 
     @Spy
     private InstitutionMapper institutionMapper = new InstitutionMapperImpl();
@@ -1027,11 +1035,11 @@ class PartyConnectorImplTest {
         // given
         final String tokenId = "tokenId";
         // when
-        final Executable executable = () -> partyConnector.tokensVerify(tokenId);
+        final Executable executable = () -> msCoreTokenApiClient._verifyTokenUsingPOST(tokenId);
         // then
         assertDoesNotThrow(executable);
-        verify(restClientMock, times(1))
-                .tokensVerify(tokenId);
+        verify(msCoreTokenApiClient, times(1))
+                ._verifyTokenUsingPOST(tokenId);
         verifyNoMoreInteractions(restClientMock);
     }
 
@@ -1043,11 +1051,11 @@ class PartyConnectorImplTest {
                 new MockMultipartFile("example", new ByteArrayInputStream("example".getBytes(StandardCharsets.UTF_8)));
 
         // when
-        final Executable executable = () -> partyConnector.onboardingTokenComplete(tokenId, mockMultipartFile);
+        final Executable executable = () -> msCoreOnboardingApiClient._completeOnboardingUsingPOST(tokenId, mockMultipartFile);
         // then
         assertDoesNotThrow(executable);
-        verify(restClientMock, times(1))
-                .onboardingComplete(tokenId, mockMultipartFile);
+        verify(msCoreOnboardingApiClient, times(1))
+                ._completeOnboardingUsingPOST(tokenId, mockMultipartFile);
         verifyNoMoreInteractions(restClientMock);
     }
 

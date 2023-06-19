@@ -7,9 +7,7 @@ import it.pagopa.selfcare.onboarding.connector.model.RelationshipsResponse;
 import it.pagopa.selfcare.onboarding.connector.rest.model.*;
 import org.springframework.cloud.openfeign.CollectionFormat;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.EnumSet;
 import java.util.Set;
@@ -17,7 +15,6 @@ import java.util.Set;
 import static feign.CollectionFormat.CSV;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.HEAD;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 /**
  * Party Process Rest Client
@@ -91,11 +88,5 @@ public interface PartyProcessRestClient {
     void verifyOnboarding(@RequestParam("taxCode") String taxCode,
                           @RequestParam("subunitCode") String subunitCode,
                           @RequestParam("productId") String productId);
-
-    @RequestMapping(method = POST, value = "${rest-client.party-process.tokensVerify.path}")
-    @ResponseBody
-    TokenResponse tokensVerify(@PathVariable("tokenId") String tokenId);
-    @RequestMapping(method = POST, value = "${rest-client.party-process.onboardingComplete.path}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    void onboardingComplete(@PathVariable("tokenId") String tokenId, @RequestPart MultipartFile contract);
 
 }
