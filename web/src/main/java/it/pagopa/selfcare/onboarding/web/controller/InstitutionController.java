@@ -11,6 +11,7 @@ import it.pagopa.selfcare.commons.base.logging.LogUtils;
 import it.pagopa.selfcare.commons.web.model.Problem;
 import it.pagopa.selfcare.onboarding.connector.model.InstitutionLegalAddressData;
 import it.pagopa.selfcare.onboarding.connector.model.InstitutionOnboardingData;
+import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.MatchInfoResult;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.infocamere.InstitutionInfoIC;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.InstitutionType;
@@ -273,4 +274,18 @@ public class InstitutionController {
         return result;
     }
 
+    @GetMapping(value = "/{externalInstitutionId}")
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "", notes = "${swagger.onboarding.institutions.api.getInstitutionByExternalId}")
+    public InstitutionResource getInstitutionByExternalId(@ApiParam("${swagger.onboarding.institutions.model.externalId}")
+                                                                      @PathVariable("externalInstitutionId")
+                                                                      String externalInstitutionId) {
+        log.trace("getInstitutionByExternalId start");
+        log.debug("getInstitutionByExternalId institutionId = {}", externalInstitutionId);
+        Institution institution = institutionService.getInstitutionByExternalId(externalInstitutionId);
+        InstitutionResource result = InstitutionMapper.toResource(institution);
+        log.debug("getInstitutionByExternalId result = {}", result);
+        log.trace("getInstitutionByExternalId end");
+        return result;
+    }
 }

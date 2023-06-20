@@ -82,6 +82,9 @@ public class InstitutionMapper {
             resource.setTaxCode(model.getTaxCode());
             resource.setZipCode(model.getZipCode());
             resource.setOrigin(model.getOrigin());
+            resource.setSubUnitCode(model.getSubunitCode());
+            resource.setSubUnitType(model.getSubunitCode());
+            resource.setAooParentCode(model.getAooParentCode());
         }
         return resource;
     }

@@ -32,5 +32,8 @@ public class InstitutionResponse {
     private String supportEmail;
     private String supportPhone;
     private Boolean imported;
+    private String subunitCode;
+    private String subunitType;
+    private String aooParentCode;
 
 }

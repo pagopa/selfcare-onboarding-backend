@@ -27,4 +27,7 @@ public class Institution {
     private List<GeographicTaxonomy> geographicTaxonomies;
     private CompanyInformations companyInformations;
     private AssistanceContacts assistanceContacts;
+    private String subunitCode;
+    private String subunitType;
+    private String aooParentCode;
 }

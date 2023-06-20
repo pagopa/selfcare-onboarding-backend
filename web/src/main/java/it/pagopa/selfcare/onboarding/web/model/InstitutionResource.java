@@ -61,4 +61,14 @@ public class InstitutionResource {
     @JsonProperty(required = true)
     @NotNull
     private SelfCareAuthority userRole;
+
+    @ApiModelProperty(value = "${swagger.onboarding.institutions.model.subUnitCode}")
+    private String subUnitCode;
+
+    @ApiModelProperty(value = "${swagger.onboarding.institutions.model.subUnitType}")
+    private String subUnitType;
+
+    @ApiModelProperty(value = "${swagger.onboarding.institutions.model.aooParentCode}")
+    private String aooParentCode;
+
 }
