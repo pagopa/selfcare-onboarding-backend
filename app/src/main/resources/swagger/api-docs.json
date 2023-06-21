@@ -420,6 +420,79 @@
         } ]
       }
     },
+    "/institutions/{externalInstitutionId}" : {
+      "get" : {
+        "tags" : [ "institutions" ],
+        "summary" : "getInstitutionByExternalId",
+        "description" : "retrieve institution's info using external id",
+        "operationId" : "getInstitutionByExternalIdUsingGET",
+        "parameters" : [ {
+          "name" : "externalInstitutionId",
+          "in" : "path",
+          "description" : "Institution's unique external identifier",
+          "required" : true,
+          "style" : "simple",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/InstitutionResource"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad Request",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Unauthorized",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "Not Found",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "Internal Server Error",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ "global" ]
+        } ]
+      }
+    },
     "/institutions/{externalInstitutionId}/geographicTaxonomy" : {
       "get" : {
         "tags" : [ "institutions" ],
@@ -1741,6 +1814,10 @@
             "type" : "string",
             "description" : "Institution's physical address"
           },
+          "aooParentCode" : {
+            "type" : "string",
+            "description" : "UO's parent AOO code"
+          },
           "description" : {
             "type" : "string",
             "description" : "Institution's legal name"
@@ -1770,6 +1847,14 @@
           "originId" : {
             "type" : "string",
             "description" : "Institution's details origin Id"
+          },
+          "subUnitCode" : {
+            "type" : "string",
+            "description" : "AOO o UO unique code"
+          },
+          "subUnitType" : {
+            "type" : "string",
+            "description" : "Institution's subunit type"
           },
           "taxCode" : {
             "type" : "string",

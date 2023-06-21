@@ -258,7 +258,6 @@ class PartyProcessRestClientTest extends BaseFeignRestClientTest {
     @Test
     void createInstitution() {
         //given
-
         InstitutionSeed institutionSeed = mockInstance(new InstitutionSeed());
         institutionSeed.setGeographicTaxonomies(List.of(mockInstance(new GeographicTaxonomy())));
         //when

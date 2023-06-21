@@ -51,7 +51,10 @@
       "businessRegisterPlace": "Rome",
       "supportEmail": "string",
       "supportPhone": "string",
-      "imported": true
+      "imported": true,
+      "subunitCode": "string",
+      "subunitType": "string",
+      "aooParentCode": "string"
     },
     "headers": {
       "Content-Type": "application/json"

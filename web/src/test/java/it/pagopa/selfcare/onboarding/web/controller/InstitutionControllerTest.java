@@ -4,14 +4,10 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.pagopa.selfcare.onboarding.connector.model.InstitutionLegalAddressData;
 import it.pagopa.selfcare.onboarding.connector.model.InstitutionOnboardingData;
-import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionInfo;
-import it.pagopa.selfcare.onboarding.connector.model.institutions.MatchInfoResult;
+import it.pagopa.selfcare.onboarding.connector.model.institutions.*;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.infocamere.BusinessInfoIC;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.infocamere.InstitutionInfoIC;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.Billing;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.GeographicTaxonomy;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.User;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.*;
 import it.pagopa.selfcare.onboarding.core.InstitutionService;
 import it.pagopa.selfcare.onboarding.web.config.WebTestConfig;
 import it.pagopa.selfcare.onboarding.web.model.*;
@@ -31,6 +27,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 import static it.pagopa.selfcare.commons.utils.TestUtils.mockInstance;
 import static java.util.UUID.randomUUID;
@@ -143,6 +140,8 @@ class InstitutionControllerTest {
         InstitutionOnboardingData onBoardingDataMock = mockInstance(new InstitutionOnboardingData());
         onBoardingDataMock.setInstitution(institutionInfoMock);
         onBoardingDataMock.setGeographicTaxonomies(List.of(mockInstance(new GeographicTaxonomy())));
+        onBoardingDataMock.setCompanyInformations(mockInstance(new CompanyInformations()));
+        onBoardingDataMock.setAssistanceContacts(mockInstance(new AssistanceContacts()));
 
         when(institutionServiceMock.getInstitutionOnboardingData(Mockito.anyString(), Mockito.anyString()))
                 .thenReturn(onBoardingDataMock);
@@ -172,6 +171,43 @@ class InstitutionControllerTest {
 
         verify(institutionServiceMock, times(1))
                 .getInstitutionOnboardingData(institutionId, productId);
+        verifyNoMoreInteractions(institutionServiceMock);
+
+    }
+
+    @Test
+    void getInstitutionByExternalId() throws Exception {
+        //given
+        String externalInstitutionId = "externalInstitutionId";
+        Institution institutionMock = mockInstance(new Institution());
+        institutionMock.setId(UUID.randomUUID().toString());
+        Attribute attribute = mockInstance(new Attribute());
+        institutionMock.setAttributes(List.of(attribute));
+        institutionMock.setPaymentServiceProvider(mockInstance(new PaymentServiceProvider()));
+        institutionMock.setDataProtectionOfficer(mockInstance(new DataProtectionOfficer()));
+        institutionMock.setGeographicTaxonomies(List.of(mockInstance(new GeographicTaxonomy())));
+        institutionMock.setAssistanceContacts(mockInstance(new AssistanceContacts()));
+        institutionMock.setCompanyInformations(mockInstance(new CompanyInformations()));
+
+        when(institutionServiceMock.getInstitutionByExternalId(Mockito.anyString()))
+                .thenReturn(institutionMock);
+        //when
+        MvcResult result =mvc.perform(MockMvcRequestBuilders
+                        .get(BASE_URL + "/{externalInstitutionId}", externalInstitutionId)
+                        .contentType(APPLICATION_JSON_VALUE)
+                        .accept(APPLICATION_JSON_VALUE))
+                        .andExpect(status().isOk())
+                        .andReturn();
+        //then
+
+        InstitutionResource response = objectMapper.readValue(
+                result.getResponse().getContentAsString(),
+                InstitutionResource.class
+        );
+        assertNotNull(response);
+
+        verify(institutionServiceMock, times(1))
+                .getInstitutionByExternalId(externalInstitutionId);
         verifyNoMoreInteractions(institutionServiceMock);
 
     }
