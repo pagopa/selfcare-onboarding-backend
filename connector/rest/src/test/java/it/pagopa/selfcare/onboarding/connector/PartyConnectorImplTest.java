@@ -109,12 +109,12 @@ class PartyConnectorImplTest {
     }
 
     @Test
-    void onboardingOrganization_emptyGeographicTaxonomies() {
+    void onboardingOrganization_nullGeographicTaxonomies() {
         // given
         OnboardingData onboardingData = mockInstance(new OnboardingData());
         Billing billing = mockInstance(new Billing());
         InstitutionUpdate institutionUpdate = mockInstance(new InstitutionUpdate());
-        institutionUpdate.setGeographicTaxonomies(List.of());
+        institutionUpdate.setGeographicTaxonomies(null);
         onboardingData.setBilling(billing);
         onboardingData.setUsers(List.of(mockInstance(new User())));
         onboardingData.setInstitutionUpdate(institutionUpdate);
@@ -125,8 +125,7 @@ class PartyConnectorImplTest {
                 .onboardingOrganization(onboardingRequestCaptor.capture());
         OnboardingInstitutionRequest request = onboardingRequestCaptor.getValue();
         assertEquals(onboardingData.getInstitutionExternalId(), request.getInstitutionExternalId());
-        assertNotNull(request.getInstitutionUpdate().getGeographicTaxonomyCodes());
-        assertTrue(request.getInstitutionUpdate().getGeographicTaxonomyCodes().isEmpty());
+        assertNull(request.getInstitutionUpdate().getGeographicTaxonomyCodes());
         verifyNoMoreInteractions(restClientMock);
     }
 

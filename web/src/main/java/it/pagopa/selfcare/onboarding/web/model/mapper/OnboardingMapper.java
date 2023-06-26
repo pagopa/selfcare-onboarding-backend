@@ -10,6 +10,7 @@ import it.pagopa.selfcare.onboarding.web.model.*;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -45,9 +46,11 @@ public class OnboardingMapper {
             resource.setPaymentServiceProvider(mapPaymentServiceProvider(dto.getPspData()));
             resource.setDataProtectionOfficer(mapDataProtectionOfficer(dto.getPspData()));
 
-            resource.setGeographicTaxonomies(dto.getGeographicTaxonomies().stream()
-                    .map(GeographicTaxonomyMapper::fromDto)
-                    .collect(Collectors.toList()));
+            if(Objects.nonNull(dto.getGeographicTaxonomies())) {
+                resource.setGeographicTaxonomies(dto.getGeographicTaxonomies().stream()
+                        .map(GeographicTaxonomyMapper::fromDto)
+                        .collect(Collectors.toList()));
+            }
 
             if (dto.getCompanyInformations() != null) {
                 resource.setRea(dto.getCompanyInformations().getRea());
