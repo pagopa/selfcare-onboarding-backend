@@ -1016,5 +1016,59 @@ class PartyConnectorImplTest {
                 .verifyOnboarding(externalInstitutionId, productId);
         verifyNoMoreInteractions(restClientMock);
     }
+    @Test
+    void verifyOnboardingSubunitCode() {
+        // given
+        final String taxCode = "taxCode";
+        final String subunitCode = "subunitCode";
+        final String productId = "productId";
+        doNothing().when(restClientMock).verifyOnboarding(anyString(), anyString(), anyString());
+
+        // when
+        final Executable executable = () -> partyConnector.verifyOnboarding(taxCode, subunitCode, productId);
+        // then
+        assertDoesNotThrow(executable);
+        verify(restClientMock, times(1))
+                .verifyOnboarding(taxCode, subunitCode, productId);
+        verifyNoMoreInteractions(restClientMock);
+    }
+    @Test
+    void getInstitutionsByTaxCodeAndSubunitCode_nullTaxCode() {
+        // given
+        final String taxCode = null;
+        // when
+        final Executable executable = () -> partyConnector.getInstitutionsByTaxCodeAndSubunitCode(taxCode, null);
+        // then
+        final Exception e = assertThrows(IllegalArgumentException.class, executable);
+        assertEquals(REQUIRED_INSTITUTION_TAXCODE_MESSAGE, e.getMessage());
+        verifyNoInteractions(restClientMock);
+    }
+    @Test
+    void getInstitutionsByTaxCodeAndSubunitCode() {
+        // given
+        final String taxCode = "taxCode";
+        final String subunitCode = "subunitCode";
+        InstitutionsResponse institutionsResponse = new InstitutionsResponse();
+        institutionsResponse.setInstitutions(List.of());
+        when(restClientMock.getInstitutions(anyString(), anyString())).thenReturn(institutionsResponse);
+        // when
+        final Executable executable = () -> partyConnector.getInstitutionsByTaxCodeAndSubunitCode(taxCode, subunitCode);
+        // then
+        assertDoesNotThrow(executable);
+        verify(restClientMock, times(1))
+                .getInstitutions(taxCode, subunitCode);
+        verifyNoMoreInteractions(restClientMock);
+    }
+    @Test
+    void createInstitutionFromIpa_nullTaxCode() {
+        // given
+        final String taxCode = null;
+        // when
+        final Executable executable = () -> partyConnector.createInstitutionFromIpa(taxCode, null, null);
+        // then
+        final Exception e = assertThrows(IllegalArgumentException.class, executable);
+        assertEquals(REQUIRED_INSTITUTION_TAXCODE_MESSAGE, e.getMessage());
+        verifyNoInteractions(restClientMock);
+    }
 
 }
