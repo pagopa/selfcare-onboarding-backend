@@ -1878,7 +1878,7 @@
       },
       "OnboardingProductDto" : {
         "title" : "OnboardingProductDto",
-        "required" : [ "billingData", "geographicTaxonomies", "institutionType", "productId", "taxCode", "users" ],
+        "required" : [ "billingData", "institutionType", "productId", "taxCode", "users" ],
         "type" : "object",
         "properties" : {
           "assistanceContacts" : {
