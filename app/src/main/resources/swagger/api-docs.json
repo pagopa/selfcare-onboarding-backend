@@ -1514,9 +1514,7 @@
         "properties" : {
           "supportEmail" : {
             "type" : "string",
-            "description" : "Institution's support email contact",
-            "format" : "email",
-            "example" : "email@example.com"
+            "description" : "Institution's support email contact"
           },
           "supportPhone" : {
             "type" : "string",
@@ -1571,7 +1569,6 @@
       },
       "BusinessResourceIC" : {
         "title" : "BusinessResourceIC",
-        "required" : [ "businessName", "businessTaxId" ],
         "type" : "object",
         "properties" : {
           "businessName" : {
@@ -1660,7 +1657,6 @@
       },
       "GeographicTaxonomyResource" : {
         "title" : "GeographicTaxonomyResource",
-        "required" : [ "code", "desc" ],
         "type" : "object",
         "properties" : {
           "code" : {
@@ -1701,7 +1697,6 @@
       },
       "InstitutionLegalAddressResource" : {
         "title" : "InstitutionLegalAddressResource",
-        "required" : [ "address", "zipCode" ],
         "type" : "object",
         "properties" : {
           "address" : {
@@ -1716,7 +1711,6 @@
       },
       "InstitutionOnboardingInfoResource" : {
         "title" : "InstitutionOnboardingInfoResource",
-        "required" : [ "geographicTaxonomies" ],
         "type" : "object",
         "properties" : {
           "geographicTaxonomies" : {
@@ -1734,7 +1728,6 @@
       },
       "InstitutionResource" : {
         "title" : "InstitutionResource",
-        "required" : [ "address", "description", "digitalAddress", "externalId", "id", "institutionType", "origin", "originId", "taxCode", "userRole", "zipCode" ],
         "type" : "object",
         "properties" : {
           "address" : {
@@ -1788,7 +1781,6 @@
       },
       "InstitutionResourceIC" : {
         "title" : "InstitutionResourceIC",
-        "required" : [ "businesses", "legalTaxId", "requestDateTime" ],
         "type" : "object",
         "properties" : {
           "businesses" : {
@@ -1825,7 +1817,6 @@
       },
       "MatchInfoResultResource" : {
         "title" : "MatchInfoResultResource",
-        "required" : [ "verificationResult" ],
         "type" : "object",
         "properties" : {
           "verificationResult" : {
@@ -2060,7 +2051,6 @@
       },
       "ProductResource" : {
         "title" : "ProductResource",
-        "required" : [ "id", "status", "title" ],
         "type" : "object",
         "properties" : {
           "id" : {
