@@ -80,6 +80,26 @@ class InstitutionControllerTest {
 
 
     @Test
+    void shouldOnboardingProductWithoutGeotax(@Value("classpath:stubs/onboardingProductsDtoWithoutGeo.json") Resource onboardingDto) throws Exception {
+        // given
+        String institutionId = "institutionId";
+        String productId = "productId";
+        // when
+        mvc.perform(MockMvcRequestBuilders
+                        .post(BASE_URL + "/onboarding", institutionId, productId)
+                        .content(onboardingDto.getInputStream().readAllBytes())
+                        .contentType(APPLICATION_JSON_VALUE)
+                        .accept(APPLICATION_JSON_VALUE))
+                .andExpect(status().isCreated())
+                .andExpect(content().string(emptyString()));
+        // then
+        verify(institutionServiceMock, times(1))
+                .onboardingProduct(any(OnboardingData.class));
+        verifyNoMoreInteractions(institutionServiceMock);
+    }
+
+
+    @Test
     void shouldOnboardingWithoutGeotax(@Value("classpath:stubs/onboardingDtoWithoutGeo.json") Resource onboardingDto) throws Exception {
         // given
         String institutionId = "institutionId";
