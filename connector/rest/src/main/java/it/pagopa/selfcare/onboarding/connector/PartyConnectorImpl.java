@@ -389,4 +389,13 @@ class PartyConnectorImpl implements PartyConnector {
         msCoreOnboardingApiClient._completeOnboardingUsingPOST(tokenId, contract);
         log.trace("onboardingTokenComplete end");
     }
+
+    @Override
+    public void deleteTokenComplete(String tokenId) {
+        log.trace("deleteTokenComplete start");
+        log.debug("deleteTokenComplete tokenId = {}", tokenId);
+        Assert.hasText(tokenId, REQUIRED_TOKEN_ID_MESSAGE);
+        msCoreOnboardingApiClient._invalidateOnboardingUsingDELETE(tokenId);
+        log.trace("deleteTokenComplete end");
+    }
 }

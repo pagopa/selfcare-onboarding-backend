@@ -77,4 +77,16 @@ public class TokenServiceImplTest {
         Mockito.verify(partyConnector, Mockito.times(1))
                 .onboardingTokenComplete(tokenId, mockMultipartFile);
     }
+
+    @Test
+    void shouldDeleteToken() {
+        //given
+        String tokenId = "example";
+        doNothing().when(partyConnector).deleteTokenComplete(anyString());
+        // when
+        tokenService.deleteToken(tokenId);
+        //then
+        Mockito.verify(partyConnector, Mockito.times(1))
+                .deleteTokenComplete(tokenId);
+    }
 }
