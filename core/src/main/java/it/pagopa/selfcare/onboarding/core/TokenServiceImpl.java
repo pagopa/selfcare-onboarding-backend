@@ -35,4 +35,14 @@ public class TokenServiceImpl implements TokenService {
         log.debug("completeToken result = success");
         log.trace("completeToken end");
     }
+
+    @Override
+    public void deleteToken(String tokenId) {
+        log.trace("deleteToken start");
+        log.debug("deleteToken id = {}", tokenId);
+        Assert.notNull(tokenId, "TokenId is required");
+        partyConnector.deleteTokenComplete(tokenId);
+        log.debug("deleteToken result = success");
+        log.trace("deleteToken end");
+    }
 }

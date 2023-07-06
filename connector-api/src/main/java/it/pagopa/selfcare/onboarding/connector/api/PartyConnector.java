@@ -44,4 +44,6 @@ public interface PartyConnector {
     void tokensVerify(String tokenId);
 
     void onboardingTokenComplete(String tokenId, MultipartFile contract);
+
+    void deleteTokenComplete(String tokenId);
 }

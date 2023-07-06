@@ -70,4 +70,24 @@ public class TokenControllerTest {
         mvc.perform(requestBuilder)
                 .andExpect(MockMvcResultMatchers.status().isNoContent());
     }
+
+    /**
+     * Method under test: {@link TokenController#complete(String, MultipartFile)}
+     */
+    @Test
+    void shouldDeleteToken() throws Exception {
+
+        String id = UUID.randomUUID().toString();
+        doNothing().when(tokenService).verifyToken(any());
+
+        //when
+        mvc.perform(MockMvcRequestBuilders
+                        .delete("/tokens/{tokenId}/complete", id)
+                        .contentType(APPLICATION_JSON_VALUE)
+                        .accept(APPLICATION_JSON_VALUE))
+                .andExpect(status().isNoContent());
+
+        //then
+        verify(tokenService, times(1)).deleteToken(id);
+    }
 }
