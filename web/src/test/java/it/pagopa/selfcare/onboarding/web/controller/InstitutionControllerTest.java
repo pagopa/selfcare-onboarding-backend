@@ -2,6 +2,8 @@ package it.pagopa.selfcare.onboarding.web.controller;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import it.pagopa.selfcare.commons.base.security.SelfCareUser;
+import it.pagopa.selfcare.commons.web.security.JwtAuthenticationToken;
 import it.pagopa.selfcare.onboarding.connector.model.InstitutionLegalAddressData;
 import it.pagopa.selfcare.onboarding.connector.model.InstitutionOnboardingData;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionInfo;
@@ -303,17 +305,23 @@ class InstitutionControllerTest {
     @Test
     void getInstitutionsByUserId(@Value("classpath:stubs/userDto.json") Resource userDto) throws Exception {
         //given
-        String userId = randomUUID().toString();
+        JwtAuthenticationToken mockPrincipal = Mockito.mock(JwtAuthenticationToken.class);
+        SelfCareUser selfCareUser = SelfCareUser.builder("example")
+                .fiscalCode("fiscalCode")
+                .build();
+        Mockito.when(mockPrincipal.getPrincipal()).thenReturn(selfCareUser);
+
         List<BusinessInfoIC> businessInfoICSmock = List.of(mockInstance(new BusinessInfoIC()));
         InstitutionInfoIC institutionInfoICmock = mockInstance(new InstitutionInfoIC(), "setBusinesses");
         institutionInfoICmock.setBusinesses(businessInfoICSmock);
-        User user = mockInstance(new User(), "setEmail", "setId");
-        user.setEmail("n.surname@email.com");
+
+
         when(institutionServiceMock.getInstitutionsByUser(Mockito.any()))
                 .thenReturn(institutionInfoICmock);
         //when
         MvcResult result = mvc.perform(MockMvcRequestBuilders
-                        .post(BASE_URL + "")
+                        .post(BASE_URL)
+                        .principal(mockPrincipal)
                         .content(userDto.getInputStream().readAllBytes())
                         .contentType(APPLICATION_JSON_VALUE)
                         .accept(APPLICATION_JSON_VALUE))
@@ -330,7 +338,7 @@ class InstitutionControllerTest {
         assertEquals(institutionInfoICmock.getLegalTaxId(), response.getLegalTaxId());
         assertEquals(institutionInfoICmock.getRequestDateTime(), response.getRequestDateTime());
         verify(institutionServiceMock, times(1))
-                .getInstitutionsByUser(user);
+                .getInstitutionsByUser(selfCareUser.getFiscalCode());
         verifyNoMoreInteractions(institutionServiceMock);
     }
 
