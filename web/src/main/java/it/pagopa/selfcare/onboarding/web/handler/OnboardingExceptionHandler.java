@@ -2,6 +2,7 @@ package it.pagopa.selfcare.onboarding.web.handler;
 
 import it.pagopa.selfcare.commons.web.model.Problem;
 import it.pagopa.selfcare.commons.web.model.mapper.ProblemMapper;
+import it.pagopa.selfcare.onboarding.connector.exceptions.InternalGatewayErrorException;
 import it.pagopa.selfcare.onboarding.connector.exceptions.ManagerNotFoundException;
 import it.pagopa.selfcare.onboarding.connector.exceptions.ResourceNotFoundException;
 import it.pagopa.selfcare.onboarding.core.exception.InvalidUserFieldsException;
@@ -58,6 +59,12 @@ public class OnboardingExceptionHandler {
     ResponseEntity<Problem> handleOnboardingNotAllowedException(OnboardingNotAllowedException e) {
         log.warn(e.toString());
         return ProblemMapper.toResponseEntity(new Problem(FORBIDDEN, e.getMessage()));
+    }
+
+    @ExceptionHandler({InternalGatewayErrorException.class})
+    ResponseEntity<Problem> handleInternalGatewayErrorException(InternalGatewayErrorException e) {
+        log.warn(e.toString());
+        return ProblemMapper.toResponseEntity(new Problem(BAD_GATEWAY, e.getMessage()));
     }
 
 }

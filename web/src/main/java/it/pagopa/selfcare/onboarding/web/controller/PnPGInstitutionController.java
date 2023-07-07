@@ -11,9 +11,11 @@ import it.pagopa.selfcare.commons.base.logging.LogUtils;
 import it.pagopa.selfcare.commons.web.model.Problem;
 import it.pagopa.selfcare.onboarding.connector.model.InstitutionLegalAddressData;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.MatchInfoResult;
-import it.pagopa.selfcare.onboarding.connector.model.institutions.infocamere.InstitutionInfoIC;
 import it.pagopa.selfcare.onboarding.core.PnPGInstitutionService;
-import it.pagopa.selfcare.onboarding.web.model.*;
+import it.pagopa.selfcare.onboarding.web.model.InstitutionLegalAddressResource;
+import it.pagopa.selfcare.onboarding.web.model.MatchInfoResultResource;
+import it.pagopa.selfcare.onboarding.web.model.PnPGOnboardingDto;
+import it.pagopa.selfcare.onboarding.web.model.PnPGUserDto;
 import it.pagopa.selfcare.onboarding.web.model.mapper.PnPGInstitutionMapper;
 import it.pagopa.selfcare.onboarding.web.model.mapper.PnPGOnboardingMapper;
 import it.pagopa.selfcare.onboarding.web.model.mapper.PnPGUserMapper;
@@ -28,6 +30,7 @@ import javax.validation.Valid;
 import static org.springframework.http.MediaType.APPLICATION_PROBLEM_JSON_VALUE;
 
 @Slf4j
+@Deprecated
 @RestController
 @RequestMapping(value = "/pnPGInstitutions", produces = MediaType.APPLICATION_JSON_VALUE)
 @Api(tags = "pnPGInstitutions")
@@ -39,21 +42,6 @@ public class PnPGInstitutionController {
     @Autowired
     public PnPGInstitutionController(PnPGInstitutionService pnPGInstitutionService) {
         this.pnPGInstitutionService = pnPGInstitutionService;
-    }
-
-    @PostMapping(value = "")
-    @ResponseStatus(HttpStatus.OK)
-    @ApiOperation(value = "", notes = "${swagger.onboarding.pnPGInstitutions.api.getInstitutionsByUser}")
-    public InstitutionResourceIC getInstitutionsByUser(@RequestBody
-                                                         @Valid
-                                                         PnPGUserDto userDto) {
-        log.trace("getInstitutionsByUserId start");
-        log.debug(LogUtils.CONFIDENTIAL_MARKER, "getInstitutionsByUserId userDto = {}", userDto);
-        InstitutionInfoIC institutionPnPGInfo = pnPGInstitutionService.getInstitutionsByUser(PnPGUserMapper.toUser(userDto));
-        InstitutionResourceIC institutionPnPGResources = PnPGInstitutionMapper.toResource(institutionPnPGInfo);
-        log.debug(LogUtils.CONFIDENTIAL_MARKER, "getInstitutionsByUserId result = {}", institutionPnPGResources);
-        log.trace("getInstitutionsByUserId end");
-        return institutionPnPGResources;
     }
 
     @ApiResponses(value = {

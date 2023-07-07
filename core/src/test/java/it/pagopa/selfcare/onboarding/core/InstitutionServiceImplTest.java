@@ -1749,7 +1749,7 @@ class InstitutionServiceImplTest {
         when(partyRegistryProxyConnectorMock.getInstitutionsByUserFiscalCode(anyString()))
                 .thenReturn(institutionInfoICmock);
         //when
-        InstitutionInfoIC result = institutionService.getInstitutionsByUser(user);
+        InstitutionInfoIC result = institutionService.getInstitutionsByUser(user.getTaxCode());
         //then
         assertNotNull(result);
         assertEquals(institutionInfoICmock.getBusinesses().get(0).getBusinessName(), result.getBusinesses().get(0).getBusinessName());
