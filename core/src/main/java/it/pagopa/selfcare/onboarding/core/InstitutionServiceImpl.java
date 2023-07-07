@@ -438,10 +438,10 @@ class InstitutionServiceImpl implements InstitutionService {
     }
 
     @Override
-    public InstitutionInfoIC getInstitutionsByUser(String taxCode) {
+    public InstitutionInfoIC getInstitutionsByUser(String fiscalCode) {
         log.trace("getInstitutionsByUserId start");
-        log.debug(LogUtils.CONFIDENTIAL_MARKER, "getInstitutionsByUserId user = {}", taxCode);
-        InstitutionInfoIC result = partyRegistryProxyConnector.getInstitutionsByUserFiscalCode(taxCode);
+        log.debug(LogUtils.CONFIDENTIAL_MARKER, "getInstitutionsByUserId user = {}", fiscalCode);
+        InstitutionInfoIC result = partyRegistryProxyConnector.getInstitutionsByUserFiscalCode(fiscalCode);
         log.debug(LogUtils.CONFIDENTIAL_MARKER, "getInstitutionsByUserId result = {}", result);
         log.trace("getInstitutionsByUserId end");
         return result;
