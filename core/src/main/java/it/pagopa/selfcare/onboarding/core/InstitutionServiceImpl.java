@@ -13,6 +13,7 @@ import it.pagopa.selfcare.onboarding.connector.model.institutions.infocamere.Ins
 import it.pagopa.selfcare.onboarding.connector.model.institutions.OnboardingResource;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.*;
 import it.pagopa.selfcare.onboarding.connector.model.product.Product;
+import it.pagopa.selfcare.onboarding.connector.model.product.ProductId;
 import it.pagopa.selfcare.onboarding.connector.model.product.ProductRoleInfo;
 import it.pagopa.selfcare.onboarding.connector.model.product.ProductStatus;
 import it.pagopa.selfcare.onboarding.connector.model.user.Certification;
@@ -33,6 +34,9 @@ import org.springframework.util.Assert;
 import javax.validation.ValidationException;
 import java.util.*;
 
+import static it.pagopa.selfcare.onboarding.connector.model.onboarding.InstitutionType.GSP;
+import static it.pagopa.selfcare.onboarding.connector.model.product.ProductId.PROD_INTEROP;
+import static it.pagopa.selfcare.onboarding.connector.model.product.ProductId.PROD_PN_PG;
 import static it.pagopa.selfcare.onboarding.connector.model.user.User.Fields.*;
 
 @Slf4j
@@ -50,6 +54,8 @@ class InstitutionServiceImpl implements InstitutionService {
     private static final EnumSet<it.pagopa.selfcare.onboarding.connector.model.user.User.Fields> USER_FIELD_LIST_ENHANCED = EnumSet.of(fiscalCode, name, familyName, workContacts);
     private static final EnumSet<it.pagopa.selfcare.onboarding.connector.model.user.User.Fields> USER_FIELD_LIST = EnumSet.of(name, familyName, workContacts);
     private static final String ONBOARDING_NOT_ALLOWED_ERROR_MESSAGE_TEMPLATE = "Institution with external id '%s' is not allowed to onboard '%s' product";
+
+    private static final Set<String> VALID_PT_PRODUCTS =  Set.of(ProductId.PROD_IO.getValue(), ProductId.PROD_PAGOPA.getValue());
 
     private final PartyConnector partyConnector;
     private final ProductsConnector productsConnector;
@@ -86,7 +92,7 @@ class InstitutionServiceImpl implements InstitutionService {
         Assert.notNull(onboardingData, REQUIRED_ONBOARDING_DATA_MESSAGE);
         Assert.notNull(onboardingData.getBilling(), REQUIRED_INSTITUTION_BILLING_DATA_MESSAGE);
         Assert.notNull(onboardingData.getInstitutionType(), REQUIRED_INSTITUTION_TYPE_MESSAGE);
-
+        checkProductAvaibility(onboardingData.getProductId(), onboardingData.getInstitutionType(), onboardingData.getInstitutionExternalId());
         Product product = productsConnector.getProduct(onboardingData.getProductId(), onboardingData.getInstitutionType());
         Assert.notNull(product, "Product is required");
 
@@ -141,7 +147,7 @@ class InstitutionServiceImpl implements InstitutionService {
                     .orElseThrow(ResourceNotFoundException::new);
         } catch (ResourceNotFoundException e) {
             if (InstitutionType.PA.equals(onboardingData.getInstitutionType()) ||
-                    (InstitutionType.GSP.equals(onboardingData.getInstitutionType()) && onboardingData.getProductId().equals("prod-interop")
+                    (GSP.equals(onboardingData.getInstitutionType()) && onboardingData.getProductId().equals(PROD_INTEROP.getValue())
                     && onboardingData.getOrigin().equals("IPA"))) {
                 institution = partyConnector.createInstitutionFromIpa(onboardingData.getTaxCode(), onboardingData.getSubunitCode(), onboardingData.getSubunitType());
             } else {
@@ -166,6 +172,14 @@ class InstitutionServiceImpl implements InstitutionService {
 
         partyConnector.onboardingOrganization(onboardingData);
         log.trace("onboarding end");
+    }
+
+    private void checkProductAvaibility(String productId, InstitutionType institutionType, String externalInstitutionId) {
+        if(InstitutionType.PT == institutionType && VALID_PT_PRODUCTS.stream().noneMatch(s -> s.equalsIgnoreCase(productId))){
+            throw new OnboardingNotAllowedException(String.format(ONBOARDING_NOT_ALLOWED_ERROR_MESSAGE_TEMPLATE,
+                    externalInstitutionId,
+                    productId));
+        }
     }
 
     @Deprecated
@@ -228,10 +242,10 @@ class InstitutionServiceImpl implements InstitutionService {
             institution = partyConnector.getInstitutionByExternalId(onboardingData.getInstitutionExternalId());
         } catch (ResourceNotFoundException e) {
             if (InstitutionType.PA.equals(onboardingData.getInstitutionType()) ||
-                    (InstitutionType.GSP.equals(onboardingData.getInstitutionType()) && onboardingData.getProductId().equals("prod-interop")
+                    (InstitutionType.GSP.equals(onboardingData.getInstitutionType()) && onboardingData.getProductId().equals(PROD_INTEROP.getValue())
                             && onboardingData.getOrigin().equals("IPA"))) {
                 institution = partyConnector.createInstitutionUsingExternalId(onboardingData.getInstitutionExternalId());
-            } else if (InstitutionType.PG.equals(onboardingData.getInstitutionType()) && onboardingData.getProductId().startsWith("prod-pn-pg")) {
+            } else if (InstitutionType.PG.equals(onboardingData.getInstitutionType()) && onboardingData.getProductId().startsWith(PROD_PN_PG.getValue())) {
                 CreateInstitutionData createInstitutionData = mapCreateInstitutionData(onboardingData);
                 institution = msCoreConnector.createInstitutionUsingInstitutionData(createInstitutionData);
             } else {
