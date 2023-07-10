@@ -29,6 +29,9 @@
     "name" : "product",
     "description" : "Product operations"
   }, {
+    "name" : "tokens",
+    "description" : "Token Controller"
+  }, {
     "name" : "user",
     "description" : "User Controller"
   } ],
@@ -113,6 +116,15 @@
         "summary" : "getInstitutionsByUser",
         "description" : "Get Legal Representative's PN PG institution List",
         "operationId" : "getInstitutionsByUserUsingPOST",
+        "parameters" : [ {
+          "name" : "name",
+          "in" : "query",
+          "required" : false,
+          "style" : "form",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
         "requestBody" : {
           "content" : {
             "application/json" : {
@@ -145,6 +157,79 @@
           },
           "401" : {
             "description" : "Unauthorized",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "Internal Server Error",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        },
+        "deprecated" : true,
+        "security" : [ {
+          "bearerAuth" : [ "global" ]
+        } ]
+      }
+    },
+    "/institutions/from-infocamere/" : {
+      "get" : {
+        "tags" : [ "institutions" ],
+        "summary" : "getInstitutionsFromInfocamere",
+        "description" : "Get Legal Representative's PN PG institution List",
+        "operationId" : "getInstitutionsFromInfocamereUsingGET",
+        "parameters" : [ {
+          "name" : "name",
+          "in" : "query",
+          "required" : false,
+          "style" : "form",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/InstitutionResourceIC"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad Request",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Unauthorized",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "Not Found",
             "content" : {
               "application/problem+json" : {
                 "schema" : {
@@ -800,6 +885,7 @@
             }
           }
         },
+        "deprecated" : true,
         "security" : [ {
           "bearerAuth" : [ "global" ]
         } ]
@@ -894,68 +980,7 @@
             }
           }
         },
-        "security" : [ {
-          "bearerAuth" : [ "global" ]
-        } ]
-      }
-    },
-    "/pnPGInstitutions" : {
-      "post" : {
-        "tags" : [ "pnPGInstitutions" ],
-        "summary" : "getInstitutionsByUser",
-        "description" : "Get Legal Representative's PN PG institution List",
-        "operationId" : "getInstitutionsByUserUsingPOST_1",
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/PnPGUserDto"
-              }
-            }
-          }
-        },
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/InstitutionResourceIC"
-                }
-              }
-            }
-          },
-          "400" : {
-            "description" : "Bad Request",
-            "content" : {
-              "application/problem+json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Problem"
-                }
-              }
-            }
-          },
-          "401" : {
-            "description" : "Unauthorized",
-            "content" : {
-              "application/problem+json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Problem"
-                }
-              }
-            }
-          },
-          "500" : {
-            "description" : "Internal Server Error",
-            "content" : {
-              "application/problem+json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Problem"
-                }
-              }
-            }
-          }
-        },
+        "deprecated" : true,
         "security" : [ {
           "bearerAuth" : [ "global" ]
         } ]
@@ -1029,6 +1054,7 @@
             }
           }
         },
+        "deprecated" : true,
         "security" : [ {
           "bearerAuth" : [ "global" ]
         } ]
@@ -1101,6 +1127,7 @@
             }
           }
         },
+        "deprecated" : true,
         "security" : [ {
           "bearerAuth" : [ "global" ]
         } ]
@@ -1195,6 +1222,7 @@
             }
           }
         },
+        "deprecated" : true,
         "security" : [ {
           "bearerAuth" : [ "global" ]
         } ]
@@ -1259,6 +1287,196 @@
           },
           "404" : {
             "description" : "Not Found",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "Internal Server Error",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ "global" ]
+        } ]
+      }
+    },
+    "/tokens/{tokenId}/complete" : {
+      "post" : {
+        "tags" : [ "tokens" ],
+        "summary" : "Complete an onboarding request",
+        "description" : "Complete an onboarding request",
+        "operationId" : "completeUsingPOST",
+        "parameters" : [ {
+          "name" : "tokenId",
+          "in" : "path",
+          "description" : "Contract's unique identifier",
+          "required" : true,
+          "style" : "simple",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "multipart/form-data" : {
+              "schema" : {
+                "required" : [ "contract" ],
+                "type" : "object",
+                "properties" : {
+                  "contract" : {
+                    "type" : "string",
+                    "description" : "contract",
+                    "format" : "binary"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses" : {
+          "204" : {
+            "description" : "No Content"
+          },
+          "400" : {
+            "description" : "Bad Request",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Unauthorized",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "Internal Server Error",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ "global" ]
+        } ]
+      },
+      "delete" : {
+        "tags" : [ "tokens" ],
+        "summary" : "Complete an onboarding request",
+        "description" : "Complete an onboarding request",
+        "operationId" : "deleteUsingDELETE",
+        "parameters" : [ {
+          "name" : "tokenId",
+          "in" : "path",
+          "description" : "Contract's unique identifier",
+          "required" : true,
+          "style" : "simple",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "No Content"
+          },
+          "400" : {
+            "description" : "Bad Request",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Unauthorized",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "Internal Server Error",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ "global" ]
+        } ]
+      }
+    },
+    "/tokens/{tokenId}/verify" : {
+      "post" : {
+        "tags" : [ "tokens" ],
+        "summary" : "Verify if the token is already consumed",
+        "description" : "Verify if the token is already consumed",
+        "operationId" : "verifyTokenUsingPOST",
+        "parameters" : [ {
+          "name" : "tokenId",
+          "in" : "path",
+          "description" : "Contract's unique identifier",
+          "required" : true,
+          "style" : "simple",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/TokenVerifyResponse"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad Request",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Unauthorized",
             "content" : {
               "application/problem+json" : {
                 "schema" : {
@@ -1373,9 +1591,7 @@
         "properties" : {
           "supportEmail" : {
             "type" : "string",
-            "description" : "Institution's support email contact",
-            "format" : "email",
-            "example" : "email@example.com"
+            "description" : "Institution's support email contact"
           },
           "supportPhone" : {
             "type" : "string",
@@ -1430,7 +1646,6 @@
       },
       "BusinessResourceIC" : {
         "title" : "BusinessResourceIC",
-        "required" : [ "businessName", "businessTaxId" ],
         "type" : "object",
         "properties" : {
           "businessName" : {
@@ -1519,7 +1734,6 @@
       },
       "GeographicTaxonomyResource" : {
         "title" : "GeographicTaxonomyResource",
-        "required" : [ "code", "desc" ],
         "type" : "object",
         "properties" : {
           "code" : {
@@ -1560,7 +1774,6 @@
       },
       "InstitutionLegalAddressResource" : {
         "title" : "InstitutionLegalAddressResource",
-        "required" : [ "address", "zipCode" ],
         "type" : "object",
         "properties" : {
           "address" : {
@@ -1575,7 +1788,6 @@
       },
       "InstitutionOnboardingInfoResource" : {
         "title" : "InstitutionOnboardingInfoResource",
-        "required" : [ "geographicTaxonomies" ],
         "type" : "object",
         "properties" : {
           "geographicTaxonomies" : {
@@ -1593,7 +1805,6 @@
       },
       "InstitutionResource" : {
         "title" : "InstitutionResource",
-        "required" : [ "address", "description", "digitalAddress", "externalId", "id", "institutionType", "origin", "originId", "taxCode", "userRole", "zipCode" ],
         "type" : "object",
         "properties" : {
           "address" : {
@@ -1647,7 +1858,6 @@
       },
       "InstitutionResourceIC" : {
         "title" : "InstitutionResourceIC",
-        "required" : [ "businesses", "legalTaxId", "requestDateTime" ],
         "type" : "object",
         "properties" : {
           "businesses" : {
@@ -1684,7 +1894,6 @@
       },
       "MatchInfoResultResource" : {
         "title" : "MatchInfoResultResource",
-        "required" : [ "verificationResult" ],
         "type" : "object",
         "properties" : {
           "verificationResult" : {
@@ -1746,7 +1955,7 @@
       },
       "OnboardingProductDto" : {
         "title" : "OnboardingProductDto",
-        "required" : [ "billingData", "geographicTaxonomies", "institutionType", "productId", "taxCode", "users" ],
+        "required" : [ "billingData", "institutionType", "productId", "taxCode", "users" ],
         "type" : "object",
         "properties" : {
           "assistanceContacts" : {
@@ -1919,7 +2128,6 @@
       },
       "ProductResource" : {
         "title" : "ProductResource",
-        "required" : [ "id", "status", "title" ],
         "type" : "object",
         "properties" : {
           "id" : {
@@ -1970,6 +2178,15 @@
             "type" : "boolean",
             "description" : "PSP's Vat Number group",
             "example" : false
+          }
+        }
+      },
+      "TokenVerifyResponse" : {
+        "title" : "TokenVerifyResponse",
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string"
           }
         }
       },

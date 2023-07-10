@@ -1,31 +1,22 @@
 package it.pagopa.selfcare.onboarding.web.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModelProperty;
 import it.pagopa.selfcare.onboarding.connector.model.product.ProductStatus;
 import lombok.Data;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-
 @Data
 public class ProductResource {
 
-    @ApiModelProperty(value = "${swagger.onboarding.product.model.id}", required = true)
-    @JsonProperty(required = true)
-    @NotBlank
+    @ApiModelProperty(value = "${swagger.onboarding.product.model.id}")
     private String id;
 
-    @ApiModelProperty(value = "${swagger.onboarding.product.model.title}", required = true)
-    @JsonProperty(required = true)
-    @NotBlank
+    @ApiModelProperty(value = "${swagger.onboarding.product.model.title}")
     private String title;
 
-    @ApiModelProperty(value = "${swagger.onboarding.product.model.parentId}", required = false)
+    @ApiModelProperty(value = "${swagger.onboarding.product.model.parentId}")
     private String parentId;
 
-    @ApiModelProperty(value = "${swagger.onboarding.product.model.status}", required = true)
-    @JsonProperty(required = true)
-    @NotNull
+    @ApiModelProperty(value = "${swagger.onboarding.product.model.status}")
     private ProductStatus status;
+
 }

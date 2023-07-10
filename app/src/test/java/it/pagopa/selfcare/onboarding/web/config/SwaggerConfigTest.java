@@ -1,11 +1,7 @@
 package it.pagopa.selfcare.onboarding.web.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import it.pagopa.selfcare.onboarding.core.InstitutionService;
-import it.pagopa.selfcare.onboarding.core.PnPGInstitutionService;
-import it.pagopa.selfcare.onboarding.core.ProductService;
-import it.pagopa.selfcare.onboarding.core.UserService;
-import it.pagopa.selfcare.onboarding.web.model.mapper.OnboardingResourceMapper;
+import it.pagopa.selfcare.onboarding.core.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -45,6 +41,9 @@ class SwaggerConfigTest {
 
     @MockBean
     private UserService userService;
+
+    @MockBean
+    private TokenService tokenService;
 
     @MockBean
     private PnPGInstitutionService pnpgInstitutionService;

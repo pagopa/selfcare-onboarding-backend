@@ -4,7 +4,6 @@ import it.pagopa.selfcare.commons.base.security.PartyRole;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipInfo;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipState;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipsResponse;
-import it.pagopa.selfcare.onboarding.connector.rest.model.OnboardingsResponse;
 import it.pagopa.selfcare.onboarding.connector.rest.model.*;
 import org.springframework.cloud.openfeign.CollectionFormat;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -65,10 +64,9 @@ public interface PartyProcessRestClient {
     @ResponseBody
     InstitutionResponse createInstitutionUsingExternalId(@PathVariable("externalId") String externalId);
 
-    @PostMapping(value = "${rest-client.party-process.createInstitutionRaw.path}", produces = APPLICATION_JSON_VALUE)
+    @PostMapping(value = "${rest-client.party-process.createInstitution.path}", produces = APPLICATION_JSON_VALUE)
     @ResponseBody
-    InstitutionResponse createInstitutionRaw(@PathVariable("externalId") String externalId,
-                                             @RequestBody InstitutionSeed institutionSeed);
+    InstitutionResponse createInstitution(@RequestBody InstitutionSeed institutionSeed);
 
     @GetMapping(value = "${rest-client.party-process.getInstitutionManager.path}", produces = APPLICATION_JSON_VALUE)
     @ResponseBody

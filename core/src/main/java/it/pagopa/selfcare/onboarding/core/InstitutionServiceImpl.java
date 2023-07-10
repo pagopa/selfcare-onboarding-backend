@@ -138,14 +138,14 @@ class InstitutionServiceImpl implements InstitutionService {
             institution = partyConnector.getInstitutionsByTaxCodeAndSubunitCode(onboardingData.getTaxCode(), onboardingData.getSubunitCode())
                     .stream()
                     .findFirst()
-                    .orElseThrow(RuntimeException::new);
+                    .orElseThrow(ResourceNotFoundException::new);
         } catch (ResourceNotFoundException e) {
             if (InstitutionType.PA.equals(onboardingData.getInstitutionType()) ||
                     (InstitutionType.GSP.equals(onboardingData.getInstitutionType()) && onboardingData.getProductId().equals("prod-interop")
                     && onboardingData.getOrigin().equals("IPA"))) {
                 institution = partyConnector.createInstitutionFromIpa(onboardingData.getTaxCode(), onboardingData.getSubunitCode(), onboardingData.getSubunitType());
             } else {
-                institution = partyConnector.createInstitutionRaw(onboardingData);
+                institution = partyConnector.createInstitution(onboardingData);
             }
         }
         String finalInstitutionInternalId = institution.getId();
@@ -235,7 +235,7 @@ class InstitutionServiceImpl implements InstitutionService {
                 CreateInstitutionData createInstitutionData = mapCreateInstitutionData(onboardingData);
                 institution = msCoreConnector.createInstitutionUsingInstitutionData(createInstitutionData);
             } else {
-                institution = partyConnector.createInstitutionRaw(onboardingData);
+                institution = partyConnector.createInstitution(onboardingData);
             }
         }
         String finalInstitutionInternalId = institution.getId();
@@ -438,10 +438,10 @@ class InstitutionServiceImpl implements InstitutionService {
     }
 
     @Override
-    public InstitutionInfoIC getInstitutionsByUser(User user) {
+    public InstitutionInfoIC getInstitutionsByUser(String fiscalCode) {
         log.trace("getInstitutionsByUserId start");
-        log.debug(LogUtils.CONFIDENTIAL_MARKER, "getInstitutionsByUserId user = {}", user);
-        InstitutionInfoIC result = partyRegistryProxyConnector.getInstitutionsByUserFiscalCode(user.getTaxCode());
+        log.debug(LogUtils.CONFIDENTIAL_MARKER, "getInstitutionsByUserId user = {}", fiscalCode);
+        InstitutionInfoIC result = partyRegistryProxyConnector.getInstitutionsByUserFiscalCode(fiscalCode);
         log.debug(LogUtils.CONFIDENTIAL_MARKER, "getInstitutionsByUserId result = {}", result);
         log.trace("getInstitutionsByUserId end");
         return result;

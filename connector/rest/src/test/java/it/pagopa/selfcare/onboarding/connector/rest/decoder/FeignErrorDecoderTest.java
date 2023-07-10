@@ -2,6 +2,7 @@ package it.pagopa.selfcare.onboarding.connector.rest.decoder;
 
 import feign.Request;
 import feign.Response;
+import it.pagopa.selfcare.onboarding.connector.exceptions.InternalGatewayErrorException;
 import it.pagopa.selfcare.onboarding.connector.exceptions.ResourceNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
@@ -35,6 +36,21 @@ class FeignErrorDecoderTest {
         Executable executable = () -> feignDecoder.decode("", response);
         //then
         assertThrows(ResourceNotFoundException.class, executable);
+    }
+
+    @Test
+    void testDecodeToServerError() throws Throwable {
+        //given
+        Response response = Response.builder()
+                .status(500)
+                .reason("ResourceNotFound")
+                .request(Request.create(Request.HttpMethod.GET, "/api", Collections.emptyMap(), null, UTF_8))
+                .headers(headers)
+                .build();
+        //when
+        Executable executable = () -> feignDecoder.decode("", response);
+        //then
+        assertThrows(InternalGatewayErrorException.class, executable);
     }
 
     @Test
