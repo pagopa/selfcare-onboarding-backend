@@ -6,4 +6,6 @@ public interface TokenService {
 
     public void verifyToken(String tokenId);
     public void completeToken(String tokenId, MultipartFile contract);
+
+    void deleteToken(String tokenId);
 }

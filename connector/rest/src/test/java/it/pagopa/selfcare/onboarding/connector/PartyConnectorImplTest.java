@@ -1111,5 +1111,17 @@ class PartyConnectorImplTest {
                 ._completeOnboardingUsingPOST(tokenId, mockMultipartFile);
         verifyNoMoreInteractions(restClientMock);
     }
+    @Test
+    void deleteOnboardingToken() {
+        // given
+        final String tokenId = "tokenId";
+        // when
+        final Executable executable = () -> msCoreOnboardingApiClient._invalidateOnboardingUsingDELETE(tokenId);
+        // then
+        assertDoesNotThrow(executable);
+        verify(msCoreOnboardingApiClient, times(1))
+                ._invalidateOnboardingUsingDELETE(tokenId);
+        verifyNoMoreInteractions(restClientMock);
+    }
 
 }

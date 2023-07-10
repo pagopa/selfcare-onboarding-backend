@@ -68,4 +68,24 @@ public class TokenController {
         tokenService.completeToken(tokenId, contract);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
+
+    /**
+     * The function delete token on onboarding request
+     *
+     * @param tokenId String
+     * @return no content
+     * * Code: 204, Message: successful operation, DataType: TokenId
+     * * Code: 400, Message: Invalid ID supplied, DataType: Problem
+     * * Code: 404, Message: Not found, DataType: Problem
+     */
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ApiOperation(value = "${swagger.tokens.complete}", notes = "${swagger.tokens.complete}")
+    @DeleteMapping(value = "/{tokenId}/complete")
+    public ResponseEntity<Void> delete(@ApiParam("${swagger.tokens.tokenId}")
+                                         @PathVariable(value = "tokenId") String tokenId) {
+        log.trace("delete Token start");
+        log.debug("delete Token tokenId = {}", tokenId);
+        tokenService.deleteToken(tokenId);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
 }
