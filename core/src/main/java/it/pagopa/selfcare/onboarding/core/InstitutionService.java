@@ -36,6 +36,6 @@ public interface InstitutionService {
 
     InstitutionLegalAddressData getInstitutionLegalAddress(String externalInstitutionId);
 
-    InstitutionInfoIC getInstitutionsByUser(User user);
+    InstitutionInfoIC getInstitutionsByUser(String taxCode);
 
 }

@@ -4,14 +4,11 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.pagopa.selfcare.onboarding.connector.model.InstitutionLegalAddressData;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.MatchInfoResult;
-import it.pagopa.selfcare.onboarding.connector.model.institutions.infocamere.BusinessInfoIC;
-import it.pagopa.selfcare.onboarding.connector.model.institutions.infocamere.InstitutionInfoIC;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.PnPGOnboardingData;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.User;
 import it.pagopa.selfcare.onboarding.core.PnPGInstitutionService;
 import it.pagopa.selfcare.onboarding.web.config.WebTestConfig;
 import it.pagopa.selfcare.onboarding.web.model.InstitutionLegalAddressResource;
-import it.pagopa.selfcare.onboarding.web.model.InstitutionResourceIC;
 import it.pagopa.selfcare.onboarding.web.model.MatchInfoResultResource;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -26,10 +23,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import java.util.List;
-
 import static it.pagopa.selfcare.commons.utils.TestUtils.mockInstance;
-import static java.util.UUID.randomUUID;
 import static org.hamcrest.Matchers.emptyString;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -52,41 +46,6 @@ class PnPGInstitutionControllerTest {
 
     @MockBean
     private PnPGInstitutionService pnPGInstitutionServiceMock;
-
-
-    @Test
-    void getInstitutionsByUserId(@Value("classpath:stubs/userDto.json") Resource userDto) throws Exception {
-        //given
-        String userId = randomUUID().toString();
-        List<BusinessInfoIC> businessPnPGList = List.of(mockInstance(new BusinessInfoIC()));
-        InstitutionInfoIC institutionPnPGInfo = mockInstance(new InstitutionInfoIC(), "setBusinesses");
-        institutionPnPGInfo.setBusinesses(businessPnPGList);
-        User user = mockInstance(new User(), "setEmail", "setId", "setProductRole");
-        user.setEmail("n.surname@email.com");
-        when(pnPGInstitutionServiceMock.getInstitutionsByUser(Mockito.any()))
-                .thenReturn(institutionPnPGInfo);
-        //when
-        MvcResult result = mvc.perform(MockMvcRequestBuilders
-                        .post(BASE_URL + "")
-                        .content(userDto.getInputStream().readAllBytes())
-                        .contentType(APPLICATION_JSON_VALUE)
-                        .accept(APPLICATION_JSON_VALUE))
-                .andExpect(status().isOk())
-                .andReturn();
-        // then
-        InstitutionResourceIC response = objectMapper.readValue(
-                result.getResponse().getContentAsString(),
-                new TypeReference<>() {
-                });
-        assertNotNull(response);
-        assertEquals(institutionPnPGInfo.getBusinesses().get(0).getBusinessName(), response.getBusinesses().get(0).getBusinessName());
-        assertEquals(institutionPnPGInfo.getBusinesses().get(0).getBusinessTaxId(), response.getBusinesses().get(0).getBusinessTaxId());
-        assertEquals(institutionPnPGInfo.getLegalTaxId(), response.getLegalTaxId());
-        assertEquals(institutionPnPGInfo.getRequestDateTime(), response.getRequestDateTime());
-        verify(pnPGInstitutionServiceMock, times(1))
-                .getInstitutionsByUser(user);
-        verifyNoMoreInteractions(pnPGInstitutionServiceMock);
-    }
 
     @Test
     void onboarding(@Value("classpath:stubs/onboardingDto.json") Resource onboardingDto) throws Exception {
