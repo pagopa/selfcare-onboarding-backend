@@ -13,7 +13,6 @@ import it.pagopa.selfcare.onboarding.connector.model.institutions.infocamere.Ins
 import it.pagopa.selfcare.onboarding.connector.model.institutions.OnboardingResource;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.*;
 import it.pagopa.selfcare.onboarding.connector.model.product.Product;
-import it.pagopa.selfcare.onboarding.connector.model.product.ProductId;
 import it.pagopa.selfcare.onboarding.connector.model.product.ProductRoleInfo;
 import it.pagopa.selfcare.onboarding.connector.model.product.ProductStatus;
 import it.pagopa.selfcare.onboarding.connector.model.user.Certification;
@@ -103,7 +102,7 @@ class InstitutionServiceImpl implements InstitutionService {
         onboardingData.setContractPath(product.getContractTemplatePath());
         onboardingData.setContractVersion(product.getContractTemplateVersion());
 
-        addUserProductRoleFromProduct(product, onboardingData);
+        checkIfProductIsActiveAndSetUserProductRole(product, onboardingData);
         onboardingData.setProductName(product.getTitle());
 
         Institution institution;
@@ -141,7 +140,7 @@ class InstitutionServiceImpl implements InstitutionService {
         log.trace("onboarding end");
     }
 
-    private void addUserProductRoleFromProduct(Product product, OnboardingData onboardingData) {
+    private void checkIfProductIsActiveAndSetUserProductRole(Product product, OnboardingData onboardingData) {
         EnumMap<PartyRole, ProductRoleInfo> roleMappings;
         if (product.getParentId() != null) {
             final Product baseProduct = productsConnector.getProduct(product.getParentId(), null);

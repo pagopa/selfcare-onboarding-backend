@@ -507,6 +507,95 @@ class InstitutionServiceImplTest {
     }
 
     @Test
+    void onboardingProductShouldThrowErrorWhenParentProductHasNotValidState() {
+        // given
+        String productRole = "role";
+
+        OnboardingData onboardingData = mockInstance(new OnboardingData(), "setInstitutionType", "setUsers");
+        onboardingData.setInstitutionType(InstitutionType.PSP);
+        onboardingData.setUsers(List.of(dummyManager, dummyDelegate));
+
+        ProductRoleInfo productRoleInfo1 = mockInstance(new ProductRoleInfo(), 1, "setRoles");
+        ProductRoleInfo.ProductRole productRole1 = mockInstance(new ProductRoleInfo.ProductRole(), 1);
+        productRole1.setCode(productRole);
+        productRoleInfo1.setRoles(List.of(productRole1));
+        ProductRoleInfo productRoleInfo2 = mockInstance(new ProductRoleInfo(), 2, "setRoles");
+        ProductRoleInfo.ProductRole productRole2 = mockInstance(new ProductRoleInfo.ProductRole(), 2);
+        productRole2.setCode(productRole);
+        productRoleInfo2.setRoles(List.of(productRole2));
+        EnumMap<PartyRole, ProductRoleInfo> roleMappings = new EnumMap<>(PartyRole.class) {{
+            put(PartyRole.MANAGER, productRoleInfo1);
+            put(PartyRole.DELEGATE, productRoleInfo2);
+        }};
+
+        Product productMock = new Product();
+        productMock.setId(onboardingData.getProductId());
+        productMock.setRoleMappings(roleMappings);
+        productMock.setParentId("test");
+
+        Product parentProductMock = new Product();
+        parentProductMock.setId(onboardingData.getProductId());
+        parentProductMock.setRoleMappings(roleMappings);
+        parentProductMock.setStatus(ProductStatus.PHASE_OUT);
+
+        Institution institution = mockInstance(new Institution());
+        institution.setId(UUID.randomUUID().toString());
+
+        when(productsConnectorMock.getProduct(any(), any()))
+                .thenReturn(productMock)
+                .thenReturn(parentProductMock);
+
+        Assertions.assertThrows(ValidationException.class, () -> institutionService.onboardingProduct(onboardingData));
+        verify(productsConnectorMock, times(2)).getProduct(any(), any());
+    }
+
+    @Test
+    void onboardingProductShouldThrowErrorWhenParentProductIsNotOnboarded() {
+        // given
+        String productRole = "role";
+
+        OnboardingData onboardingData = mockInstance(new OnboardingData(), "setInstitutionType", "setUsers");
+        onboardingData.setInstitutionType(InstitutionType.PSP);
+        onboardingData.setUsers(List.of(dummyManager, dummyDelegate));
+
+        ProductRoleInfo productRoleInfo1 = mockInstance(new ProductRoleInfo(), 1, "setRoles");
+        ProductRoleInfo.ProductRole productRole1 = mockInstance(new ProductRoleInfo.ProductRole(), 1);
+        productRole1.setCode(productRole);
+        productRoleInfo1.setRoles(List.of(productRole1));
+        ProductRoleInfo productRoleInfo2 = mockInstance(new ProductRoleInfo(), 2, "setRoles");
+        ProductRoleInfo.ProductRole productRole2 = mockInstance(new ProductRoleInfo.ProductRole(), 2);
+        productRole2.setCode(productRole);
+        productRoleInfo2.setRoles(List.of(productRole2));
+        EnumMap<PartyRole, ProductRoleInfo> roleMappings = new EnumMap<>(PartyRole.class) {{
+            put(PartyRole.MANAGER, productRoleInfo1);
+            put(PartyRole.DELEGATE, productRoleInfo2);
+        }};
+
+        Product productMock = new Product();
+        productMock.setId(onboardingData.getProductId());
+        productMock.setRoleMappings(roleMappings);
+        productMock.setParentId("test");
+
+        Product parentProductMock = new Product();
+        parentProductMock.setId(onboardingData.getProductId());
+        parentProductMock.setRoleMappings(roleMappings);
+        parentProductMock.setStatus(ProductStatus.ACTIVE);
+
+        Institution institution = mockInstance(new Institution());
+        institution.setId(UUID.randomUUID().toString());
+
+        when(productsConnectorMock.getProduct(any(), any()))
+                .thenReturn(productMock)
+                .thenReturn(parentProductMock);
+
+        doThrow(new RuntimeException("")).when(partyConnectorMock).verifyOnboarding(any(), any());
+        when(onboardingValidationStrategyMock.validate(any(), any())).thenReturn(true);
+
+        Assertions.assertThrows(ValidationException.class, () -> institutionService.onboardingProduct(onboardingData));
+        verify(productsConnectorMock, times(2)).getProduct(any(), any());
+    }
+
+    @Test
     void shouldOnboardingProductInstitutionPTInvalidProduct() {
 
         OnboardingData onboardingData = mockInstance(new OnboardingData(), "setInstitutionType", "setUsers");
