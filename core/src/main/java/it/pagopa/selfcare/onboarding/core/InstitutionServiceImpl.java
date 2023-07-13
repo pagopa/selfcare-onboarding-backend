@@ -55,8 +55,6 @@ class InstitutionServiceImpl implements InstitutionService {
     private static final EnumSet<it.pagopa.selfcare.onboarding.connector.model.user.User.Fields> USER_FIELD_LIST = EnumSet.of(name, familyName, workContacts);
     private static final String ONBOARDING_NOT_ALLOWED_ERROR_MESSAGE_TEMPLATE = "Institution with external id '%s' is not allowed to onboard '%s' product";
 
-    private static final Set<String> VALID_PT_PRODUCTS =  Set.of(ProductId.PROD_IO.getValue(), ProductId.PROD_PAGOPA.getValue());
-
     private final PartyConnector partyConnector;
     private final ProductsConnector productsConnector;
     private final UserRegistryConnector userConnector;
@@ -92,9 +90,9 @@ class InstitutionServiceImpl implements InstitutionService {
         Assert.notNull(onboardingData, REQUIRED_ONBOARDING_DATA_MESSAGE);
         Assert.notNull(onboardingData.getBilling(), REQUIRED_INSTITUTION_BILLING_DATA_MESSAGE);
         Assert.notNull(onboardingData.getInstitutionType(), REQUIRED_INSTITUTION_TYPE_MESSAGE);
-        checkProductAvaibility(onboardingData.getProductId(), onboardingData.getInstitutionType(), onboardingData.getInstitutionExternalId());
         Product product = productsConnector.getProduct(onboardingData.getProductId(), onboardingData.getInstitutionType());
         Assert.notNull(product, "Product is required");
+        checkIfProductIsDelegable(onboardingData, product.isDelegable());
 
         if(product.getStatus() == ProductStatus.PHASE_OUT){
             throw new ValidationException(String.format("Unable to complete the onboarding for institution with taxCode '%s' to product '%s', the product is dismissed.",
@@ -105,39 +103,8 @@ class InstitutionServiceImpl implements InstitutionService {
         onboardingData.setContractPath(product.getContractTemplatePath());
         onboardingData.setContractVersion(product.getContractTemplateVersion());
 
-        final EnumMap<PartyRole, ProductRoleInfo> roleMappings;
-        if (product.getParentId() != null) {
-            final Product baseProduct = productsConnector.getProduct(product.getParentId(), null);
-            if(baseProduct.getStatus() == ProductStatus.PHASE_OUT){
-                throw new ValidationException(String.format("Unable to complete the onboarding for institution with taxCode '%s' to product '%s', the base product is dismissed.",
-                        onboardingData.getTaxCode(),
-                        baseProduct.getId()));
-            }
-            validateOnboarding(onboardingData.getTaxCode(), baseProduct.getId());
-            try {
-                partyConnector.verifyOnboarding(onboardingData.getTaxCode(), onboardingData.getSubunitCode(), baseProduct.getId());
-            } catch (RuntimeException e) {
-                throw new ValidationException(String.format("Unable to complete the onboarding for institution with taxCode '%s' to product '%s'. Please onboard first the '%s' product for the same institution",
-                        onboardingData.getTaxCode(),
-                        product.getId(),
-                        baseProduct.getId()));
-            }
-            roleMappings = baseProduct.getRoleMappings();
-        } else {
-            validateOnboarding(onboardingData.getTaxCode(), product.getId());
-            roleMappings = product.getRoleMappings();
-        }
+        addUserProductRoleFromProduct(product, onboardingData);
         onboardingData.setProductName(product.getTitle());
-        Assert.notNull(roleMappings, "Role mappings is required");
-        onboardingData.getUsers().forEach(userInfo -> {
-            Assert.notNull(roleMappings.get(userInfo.getRole()),
-                    String.format(ATLEAST_ONE_PRODUCT_ROLE_REQUIRED, userInfo.getRole()));
-            Assert.notEmpty(roleMappings.get(userInfo.getRole()).getRoles(),
-                    String.format(ATLEAST_ONE_PRODUCT_ROLE_REQUIRED, userInfo.getRole()));
-            Assert.state(roleMappings.get(userInfo.getRole()).getRoles().size() == 1,
-                    String.format(MORE_THAN_ONE_PRODUCT_ROLE_AVAILABLE, userInfo.getRole()));
-            userInfo.setProductRole(roleMappings.get(userInfo.getRole()).getRoles().get(0).getCode());
-        });
 
         Institution institution;
         try {
@@ -174,11 +141,47 @@ class InstitutionServiceImpl implements InstitutionService {
         log.trace("onboarding end");
     }
 
-    private void checkProductAvaibility(String productId, InstitutionType institutionType, String externalInstitutionId) {
-        if(InstitutionType.PT == institutionType && VALID_PT_PRODUCTS.stream().noneMatch(s -> s.equalsIgnoreCase(productId))){
+    private void addUserProductRoleFromProduct(Product product, OnboardingData onboardingData) {
+        EnumMap<PartyRole, ProductRoleInfo> roleMappings;
+        if (product.getParentId() != null) {
+            final Product baseProduct = productsConnector.getProduct(product.getParentId(), null);
+            if(baseProduct.getStatus() == ProductStatus.PHASE_OUT){
+                throw new ValidationException(String.format("Unable to complete the onboarding for institution with taxCode '%s' to product '%s', the base product is dismissed.",
+                        onboardingData.getTaxCode(),
+                        baseProduct.getId()));
+            }
+            validateOnboarding(onboardingData.getTaxCode(), baseProduct.getId());
+            try {
+                partyConnector.verifyOnboarding(onboardingData.getTaxCode(), onboardingData.getSubunitCode(), baseProduct.getId());
+            } catch (RuntimeException e) {
+                throw new ValidationException(String.format("Unable to complete the onboarding for institution with taxCode '%s' to product '%s'. Please onboard first the '%s' product for the same institution",
+                        onboardingData.getTaxCode(),
+                        product.getId(),
+                        baseProduct.getId()));
+            }
+            roleMappings = baseProduct.getRoleMappings();
+        } else {
+            validateOnboarding(onboardingData.getTaxCode(), product.getId());
+            roleMappings = product.getRoleMappings();
+        }
+
+        Assert.notNull(roleMappings, "Role mappings is required");
+        onboardingData.getUsers().forEach(userInfo -> {
+            Assert.notNull(roleMappings.get(userInfo.getRole()),
+                    String.format(ATLEAST_ONE_PRODUCT_ROLE_REQUIRED, userInfo.getRole()));
+            Assert.notEmpty(roleMappings.get(userInfo.getRole()).getRoles(),
+                    String.format(ATLEAST_ONE_PRODUCT_ROLE_REQUIRED, userInfo.getRole()));
+            Assert.state(roleMappings.get(userInfo.getRole()).getRoles().size() == 1,
+                    String.format(MORE_THAN_ONE_PRODUCT_ROLE_AVAILABLE, userInfo.getRole()));
+            userInfo.setProductRole(roleMappings.get(userInfo.getRole()).getRoles().get(0).getCode());
+        });
+    }
+
+    private void checkIfProductIsDelegable(OnboardingData onboardingData, boolean delegable) {
+        if(InstitutionType.PT == onboardingData.getInstitutionType() && !delegable) {
             throw new OnboardingNotAllowedException(String.format(ONBOARDING_NOT_ALLOWED_ERROR_MESSAGE_TEMPLATE,
-                    externalInstitutionId,
-                    productId));
+                    onboardingData.getTaxCode(),
+                    onboardingData.getProductId()));
         }
     }
 

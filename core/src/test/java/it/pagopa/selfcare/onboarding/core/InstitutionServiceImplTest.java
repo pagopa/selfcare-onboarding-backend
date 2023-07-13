@@ -455,6 +455,7 @@ class InstitutionServiceImplTest {
         Product productMock = new Product();
         productMock.setId(onboardingData.getProductId());
         productMock.setRoleMappings(roleMappings);
+        productMock.setParentId("test");
 
         Institution institution = mockInstance(new Institution());
         institution.setId(UUID.randomUUID().toString());
@@ -463,7 +464,7 @@ class InstitutionServiceImplTest {
                 .thenThrow(ResourceNotFoundException.class);
         when(partyConnectorMock.createInstitution(any())).thenReturn(institution);
 
-        when(productsConnectorMock.getProduct(onboardingData.getProductId(), onboardingData.getInstitutionType()))
+        when(productsConnectorMock.getProduct(any(), any()))
                 .thenReturn(productMock);
         when(userConnectorMock.saveUser(any()))
                 .thenAnswer(invocation -> {
@@ -501,7 +502,8 @@ class InstitutionServiceImplTest {
             assertEquals(productRole, userInfo.getProductRole());
             assertNotNull(userInfo.getId());
         });
-        verifyNoMoreInteractions(productsConnectorMock, partyConnectorMock, userConnectorMock, onboardingValidationStrategyMock);
+        verify(productsConnectorMock, times(2)).getProduct(any(), any());
+        verifyNoMoreInteractions(userConnectorMock, onboardingValidationStrategyMock);
     }
 
     @Test
@@ -511,6 +513,13 @@ class InstitutionServiceImplTest {
         onboardingData.setInstitutionType(InstitutionType.PT);
         onboardingData.setProductId(PROD_INTEROP.getValue());
         onboardingData.setUsers(List.of(dummyManager, dummyDelegate));
+
+        Product product = new Product();
+        product.setId("prod-id");
+        product.setTitle("title");
+        product.setStatus(ProductStatus.ACTIVE);
+        product.setDelegable(false);
+        when(productsConnectorMock.getProduct(any(), any())).thenReturn(product);
 
         Assertions.assertThrows(OnboardingNotAllowedException.class, () -> institutionService.onboardingProduct(onboardingData));
     }

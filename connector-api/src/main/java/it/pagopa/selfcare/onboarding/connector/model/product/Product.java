@@ -15,4 +15,5 @@ public class Product {
     private String title;
     private String parentId;
     private ProductStatus status;
+    private boolean delegable;
 }
