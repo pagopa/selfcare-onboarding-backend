@@ -19,4 +19,4 @@ configEnvSpecific:
   APPLICATIONINSIGHTS_INSTRUMENTATION_LOGGING_LEVEL: "OFF"
   B4F_ONBOARDING_LOG_LEVEL: "INFO"
   REST_CLIENT_LOGGER_LEVEL: "BASIC"
-  ONBOARDING_ALLOWED_INSTITUTIONS_PRODUCTS: "{'prod-interop':{'*'},'prod-pn':{'*'},'prod-io':{'*'},'prod-io-premium':{'*'},'prod-pagopa':{'*'}}"
+  ONBOARDING_ALLOWED_INSTITUTIONS_PRODUCTS: "{'prod-interop':{'*'},'prod-pn':{'*'},'prod-io':{'*'},'prod-io-premium':{'*'},'prod-pagopa':{'*'},'prod-io-sign':{'*'}}"
