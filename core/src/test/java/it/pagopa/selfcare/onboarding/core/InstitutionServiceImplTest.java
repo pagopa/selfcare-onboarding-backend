@@ -1688,10 +1688,32 @@ class InstitutionServiceImplTest {
                 .thenReturn(institutionMock);
         // when
         List<GeographicTaxonomy> result = institutionService.getGeographicTaxonomyList(institutionId);
+
+        GeographicTaxonomy expected = institutionMock.getGeographicTaxonomies().get(0);
         // then
         assertNotNull(result);
-        assertEquals(institutionMock.getGeographicTaxonomies().get(0).getCode(), result.get(0).getCode());
-        assertEquals(institutionMock.getGeographicTaxonomies().get(0).getDesc(), result.get(0).getDesc());
+        assertEquals(expected.getCode(), result.get(0).getCode());
+        assertEquals(expected.getDesc(), result.get(0).getDesc());
+        verify(partyConnectorMock, times(1))
+                .getInstitutionByExternalId(institutionId);
+        verifyNoMoreInteractions(partyConnectorMock);
+        verifyNoInteractions(productsConnectorMock, userConnectorMock);
+    }
+
+    @Test
+    void shouldGeographicTaxonomyListEmptyWhenInstitutionGeoListIsNull() {
+        // given
+        String institutionId = "institutionId";
+        Institution institutionMock = mockInstance(new Institution());
+        when(partyConnectorMock.getInstitutionByExternalId(anyString()))
+                .thenReturn(institutionMock);
+        // when
+        List<GeographicTaxonomy> result = institutionService.getGeographicTaxonomyList(institutionId);
+
+        // then
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+
         verify(partyConnectorMock, times(1))
                 .getInstitutionByExternalId(institutionId);
         verifyNoMoreInteractions(partyConnectorMock);
