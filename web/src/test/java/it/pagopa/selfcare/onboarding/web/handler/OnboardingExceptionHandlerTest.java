@@ -1,6 +1,8 @@
 package it.pagopa.selfcare.onboarding.web.handler;
 
 import it.pagopa.selfcare.commons.web.model.Problem;
+import it.pagopa.selfcare.onboarding.connector.exceptions.InternalGatewayErrorException;
+import it.pagopa.selfcare.onboarding.connector.exceptions.InvalidRequestException;
 import it.pagopa.selfcare.onboarding.connector.exceptions.ManagerNotFoundException;
 import it.pagopa.selfcare.onboarding.connector.exceptions.ResourceNotFoundException;
 import it.pagopa.selfcare.onboarding.core.exception.InvalidUserFieldsException;
@@ -26,6 +28,40 @@ class OnboardingExceptionHandlerTest {
     public OnboardingExceptionHandlerTest() {
         this.handler = new OnboardingExceptionHandler();
     }
+
+
+    @Test
+    void handleInvalidRequestException() {
+        //given
+        InvalidRequestException exceptionMock = mock(InvalidRequestException.class);
+        when(exceptionMock.getMessage())
+                .thenReturn(DETAIL_MESSAGE);
+        //when
+        ResponseEntity<Problem> responseEntity = handler.handleInvalidRequestException(exceptionMock);
+        //then
+        assertNotNull(responseEntity);
+        assertEquals(BAD_REQUEST, responseEntity.getStatusCode());
+        assertNotNull(responseEntity.getBody());
+        assertEquals(DETAIL_MESSAGE, responseEntity.getBody().getDetail());
+        assertEquals(BAD_REQUEST.value(), responseEntity.getBody().getStatus());
+    }
+
+    @Test
+    void handleInternalGatewayErrorException() {
+        //given
+        InternalGatewayErrorException exceptionMock = mock(InternalGatewayErrorException.class);
+        when(exceptionMock.getMessage())
+                .thenReturn(DETAIL_MESSAGE);
+        //when
+        ResponseEntity<Problem> responseEntity = handler.handleInternalGatewayErrorException(exceptionMock);
+        //then
+        assertNotNull(responseEntity);
+        assertEquals(BAD_GATEWAY, responseEntity.getStatusCode());
+        assertNotNull(responseEntity.getBody());
+        assertEquals(DETAIL_MESSAGE, responseEntity.getBody().getDetail());
+        assertEquals(BAD_GATEWAY.value(), responseEntity.getBody().getStatus());
+    }
+
 
     @Test
     void handleResourceNotFoundException() {
