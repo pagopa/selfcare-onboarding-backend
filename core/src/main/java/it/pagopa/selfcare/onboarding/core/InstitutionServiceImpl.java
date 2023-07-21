@@ -33,6 +33,9 @@ import org.springframework.util.Assert;
 import javax.validation.ValidationException;
 import java.util.*;
 
+import static it.pagopa.selfcare.onboarding.connector.model.onboarding.InstitutionType.GSP;
+import static it.pagopa.selfcare.onboarding.connector.model.product.ProductId.PROD_INTEROP;
+import static it.pagopa.selfcare.onboarding.connector.model.product.ProductId.PROD_PN_PG;
 import static it.pagopa.selfcare.onboarding.connector.model.user.User.Fields.*;
 
 @Slf4j
@@ -86,9 +89,9 @@ class InstitutionServiceImpl implements InstitutionService {
         Assert.notNull(onboardingData, REQUIRED_ONBOARDING_DATA_MESSAGE);
         Assert.notNull(onboardingData.getBilling(), REQUIRED_INSTITUTION_BILLING_DATA_MESSAGE);
         Assert.notNull(onboardingData.getInstitutionType(), REQUIRED_INSTITUTION_TYPE_MESSAGE);
-
         Product product = productsConnector.getProduct(onboardingData.getProductId(), onboardingData.getInstitutionType());
         Assert.notNull(product, "Product is required");
+        checkIfProductIsDelegable(onboardingData, product.isDelegable());
 
         if(product.getStatus() == ProductStatus.PHASE_OUT){
             throw new ValidationException(String.format("Unable to complete the onboarding for institution with taxCode '%s' to product '%s', the product is dismissed.",
@@ -99,39 +102,8 @@ class InstitutionServiceImpl implements InstitutionService {
         onboardingData.setContractPath(product.getContractTemplatePath());
         onboardingData.setContractVersion(product.getContractTemplateVersion());
 
-        final EnumMap<PartyRole, ProductRoleInfo> roleMappings;
-        if (product.getParentId() != null) {
-            final Product baseProduct = productsConnector.getProduct(product.getParentId(), null);
-            if(baseProduct.getStatus() == ProductStatus.PHASE_OUT){
-                throw new ValidationException(String.format("Unable to complete the onboarding for institution with taxCode '%s' to product '%s', the base product is dismissed.",
-                        onboardingData.getTaxCode(),
-                        baseProduct.getId()));
-            }
-            validateOnboarding(onboardingData.getTaxCode(), baseProduct.getId());
-            try {
-                partyConnector.verifyOnboarding(onboardingData.getTaxCode(), onboardingData.getSubunitCode(), baseProduct.getId());
-            } catch (RuntimeException e) {
-                throw new ValidationException(String.format("Unable to complete the onboarding for institution with taxCode '%s' to product '%s'. Please onboard first the '%s' product for the same institution",
-                        onboardingData.getTaxCode(),
-                        product.getId(),
-                        baseProduct.getId()));
-            }
-            roleMappings = baseProduct.getRoleMappings();
-        } else {
-            validateOnboarding(onboardingData.getTaxCode(), product.getId());
-            roleMappings = product.getRoleMappings();
-        }
+        checkIfProductIsActiveAndSetUserProductRole(product, onboardingData);
         onboardingData.setProductName(product.getTitle());
-        Assert.notNull(roleMappings, "Role mappings is required");
-        onboardingData.getUsers().forEach(userInfo -> {
-            Assert.notNull(roleMappings.get(userInfo.getRole()),
-                    String.format(ATLEAST_ONE_PRODUCT_ROLE_REQUIRED, userInfo.getRole()));
-            Assert.notEmpty(roleMappings.get(userInfo.getRole()).getRoles(),
-                    String.format(ATLEAST_ONE_PRODUCT_ROLE_REQUIRED, userInfo.getRole()));
-            Assert.state(roleMappings.get(userInfo.getRole()).getRoles().size() == 1,
-                    String.format(MORE_THAN_ONE_PRODUCT_ROLE_AVAILABLE, userInfo.getRole()));
-            userInfo.setProductRole(roleMappings.get(userInfo.getRole()).getRoles().get(0).getCode());
-        });
 
         Institution institution;
         try {
@@ -141,7 +113,7 @@ class InstitutionServiceImpl implements InstitutionService {
                     .orElseThrow(ResourceNotFoundException::new);
         } catch (ResourceNotFoundException e) {
             if (InstitutionType.PA.equals(onboardingData.getInstitutionType()) ||
-                    (InstitutionType.GSP.equals(onboardingData.getInstitutionType()) && onboardingData.getProductId().equals("prod-interop")
+                    (GSP.equals(onboardingData.getInstitutionType()) && onboardingData.getProductId().equals(PROD_INTEROP.getValue())
                     && onboardingData.getOrigin().equals("IPA"))) {
                 institution = partyConnector.createInstitutionFromIpa(onboardingData.getTaxCode(), onboardingData.getSubunitCode(), onboardingData.getSubunitType());
             } else {
@@ -166,6 +138,50 @@ class InstitutionServiceImpl implements InstitutionService {
 
         partyConnector.onboardingOrganization(onboardingData);
         log.trace("onboarding end");
+    }
+
+    private void checkIfProductIsActiveAndSetUserProductRole(Product product, OnboardingData onboardingData) {
+        EnumMap<PartyRole, ProductRoleInfo> roleMappings;
+        if (product.getParentId() != null) {
+            final Product baseProduct = productsConnector.getProduct(product.getParentId(), null);
+            if(baseProduct.getStatus() == ProductStatus.PHASE_OUT){
+                throw new ValidationException(String.format("Unable to complete the onboarding for institution with taxCode '%s' to product '%s', the base product is dismissed.",
+                        onboardingData.getTaxCode(),
+                        baseProduct.getId()));
+            }
+            validateOnboarding(onboardingData.getTaxCode(), baseProduct.getId());
+            try {
+                partyConnector.verifyOnboarding(onboardingData.getTaxCode(), onboardingData.getSubunitCode(), baseProduct.getId());
+            } catch (RuntimeException e) {
+                throw new ValidationException(String.format("Unable to complete the onboarding for institution with taxCode '%s' to product '%s'. Please onboard first the '%s' product for the same institution",
+                        onboardingData.getTaxCode(),
+                        product.getId(),
+                        baseProduct.getId()));
+            }
+            roleMappings = baseProduct.getRoleMappings();
+        } else {
+            validateOnboarding(onboardingData.getTaxCode(), product.getId());
+            roleMappings = product.getRoleMappings();
+        }
+
+        Assert.notNull(roleMappings, "Role mappings is required");
+        onboardingData.getUsers().forEach(userInfo -> {
+            Assert.notNull(roleMappings.get(userInfo.getRole()),
+                    String.format(ATLEAST_ONE_PRODUCT_ROLE_REQUIRED, userInfo.getRole()));
+            Assert.notEmpty(roleMappings.get(userInfo.getRole()).getRoles(),
+                    String.format(ATLEAST_ONE_PRODUCT_ROLE_REQUIRED, userInfo.getRole()));
+            Assert.state(roleMappings.get(userInfo.getRole()).getRoles().size() == 1,
+                    String.format(MORE_THAN_ONE_PRODUCT_ROLE_AVAILABLE, userInfo.getRole()));
+            userInfo.setProductRole(roleMappings.get(userInfo.getRole()).getRoles().get(0).getCode());
+        });
+    }
+
+    private void checkIfProductIsDelegable(OnboardingData onboardingData, boolean delegable) {
+        if(InstitutionType.PT == onboardingData.getInstitutionType() && !delegable) {
+            throw new OnboardingNotAllowedException(String.format(ONBOARDING_NOT_ALLOWED_ERROR_MESSAGE_TEMPLATE,
+                    onboardingData.getTaxCode(),
+                    onboardingData.getProductId()));
+        }
     }
 
     @Deprecated
@@ -228,10 +244,10 @@ class InstitutionServiceImpl implements InstitutionService {
             institution = partyConnector.getInstitutionByExternalId(onboardingData.getInstitutionExternalId());
         } catch (ResourceNotFoundException e) {
             if (InstitutionType.PA.equals(onboardingData.getInstitutionType()) ||
-                    (InstitutionType.GSP.equals(onboardingData.getInstitutionType()) && onboardingData.getProductId().equals("prod-interop")
+                    (InstitutionType.GSP.equals(onboardingData.getInstitutionType()) && onboardingData.getProductId().equals(PROD_INTEROP.getValue())
                             && onboardingData.getOrigin().equals("IPA"))) {
                 institution = partyConnector.createInstitutionUsingExternalId(onboardingData.getInstitutionExternalId());
-            } else if (InstitutionType.PG.equals(onboardingData.getInstitutionType()) && onboardingData.getProductId().startsWith("prod-pn-pg")) {
+            } else if (InstitutionType.PG.equals(onboardingData.getInstitutionType()) && onboardingData.getProductId().startsWith(PROD_PN_PG.getValue())) {
                 CreateInstitutionData createInstitutionData = mapCreateInstitutionData(onboardingData);
                 institution = msCoreConnector.createInstitutionUsingInstitutionData(createInstitutionData);
             } else {
@@ -403,7 +419,9 @@ class InstitutionServiceImpl implements InstitutionService {
         log.trace("geographicTaxonomyList start");
         log.debug("geographicTaxonomyList externalInstitutionId = {}", externalInstitutionId);
         Assert.hasText(externalInstitutionId, REQUIRED_INSTITUTION_ID_MESSAGE);
-        List<GeographicTaxonomy> result = partyConnector.getInstitutionByExternalId(externalInstitutionId).getGeographicTaxonomies();
+        Institution institution = partyConnector.getInstitutionByExternalId(externalInstitutionId);
+        List<GeographicTaxonomy> result = Optional.ofNullable(institution.getGeographicTaxonomies())
+                .orElse(Collections.emptyList());
         log.debug("geographicTaxonomyList result = {}", result);
         log.trace("geographicTaxonomyList end");
         return result;

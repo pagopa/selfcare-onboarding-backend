@@ -20,6 +20,7 @@ import it.pagopa.selfcare.onboarding.connector.model.user.*;
 import it.pagopa.selfcare.onboarding.core.exception.OnboardingNotAllowedException;
 import it.pagopa.selfcare.onboarding.core.exception.UpdateNotAllowedException;
 import it.pagopa.selfcare.onboarding.core.strategy.OnboardingValidationStrategy;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -38,6 +39,7 @@ import java.util.*;
 
 import static it.pagopa.selfcare.commons.utils.TestUtils.checkNotNullFields;
 import static it.pagopa.selfcare.commons.utils.TestUtils.mockInstance;
+import static it.pagopa.selfcare.onboarding.connector.model.product.ProductId.PROD_INTEROP;
 import static it.pagopa.selfcare.onboarding.connector.model.user.User.Fields.*;
 import static it.pagopa.selfcare.onboarding.core.InstitutionServiceImpl.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -453,6 +455,7 @@ class InstitutionServiceImplTest {
         Product productMock = new Product();
         productMock.setId(onboardingData.getProductId());
         productMock.setRoleMappings(roleMappings);
+        productMock.setParentId("test");
 
         Institution institution = mockInstance(new Institution());
         institution.setId(UUID.randomUUID().toString());
@@ -461,7 +464,7 @@ class InstitutionServiceImplTest {
                 .thenThrow(ResourceNotFoundException.class);
         when(partyConnectorMock.createInstitution(any())).thenReturn(institution);
 
-        when(productsConnectorMock.getProduct(onboardingData.getProductId(), onboardingData.getInstitutionType()))
+        when(productsConnectorMock.getProduct(any(), any()))
                 .thenReturn(productMock);
         when(userConnectorMock.saveUser(any()))
                 .thenAnswer(invocation -> {
@@ -499,7 +502,115 @@ class InstitutionServiceImplTest {
             assertEquals(productRole, userInfo.getProductRole());
             assertNotNull(userInfo.getId());
         });
-        verifyNoMoreInteractions(productsConnectorMock, partyConnectorMock, userConnectorMock, onboardingValidationStrategyMock);
+        verify(productsConnectorMock, times(2)).getProduct(any(), any());
+        verifyNoMoreInteractions(userConnectorMock, onboardingValidationStrategyMock);
+    }
+
+    @Test
+    void onboardingProductShouldThrowErrorWhenParentProductHasNotValidState() {
+        // given
+        String productRole = "role";
+
+        OnboardingData onboardingData = mockInstance(new OnboardingData(), "setInstitutionType", "setUsers");
+        onboardingData.setInstitutionType(InstitutionType.PSP);
+        onboardingData.setUsers(List.of(dummyManager, dummyDelegate));
+
+        ProductRoleInfo productRoleInfo1 = mockInstance(new ProductRoleInfo(), 1, "setRoles");
+        ProductRoleInfo.ProductRole productRole1 = mockInstance(new ProductRoleInfo.ProductRole(), 1);
+        productRole1.setCode(productRole);
+        productRoleInfo1.setRoles(List.of(productRole1));
+        ProductRoleInfo productRoleInfo2 = mockInstance(new ProductRoleInfo(), 2, "setRoles");
+        ProductRoleInfo.ProductRole productRole2 = mockInstance(new ProductRoleInfo.ProductRole(), 2);
+        productRole2.setCode(productRole);
+        productRoleInfo2.setRoles(List.of(productRole2));
+        EnumMap<PartyRole, ProductRoleInfo> roleMappings = new EnumMap<>(PartyRole.class) {{
+            put(PartyRole.MANAGER, productRoleInfo1);
+            put(PartyRole.DELEGATE, productRoleInfo2);
+        }};
+
+        Product productMock = new Product();
+        productMock.setId(onboardingData.getProductId());
+        productMock.setRoleMappings(roleMappings);
+        productMock.setParentId("test");
+
+        Product parentProductMock = new Product();
+        parentProductMock.setId(onboardingData.getProductId());
+        parentProductMock.setRoleMappings(roleMappings);
+        parentProductMock.setStatus(ProductStatus.PHASE_OUT);
+
+        Institution institution = mockInstance(new Institution());
+        institution.setId(UUID.randomUUID().toString());
+
+        when(productsConnectorMock.getProduct(any(), any()))
+                .thenReturn(productMock)
+                .thenReturn(parentProductMock);
+
+        Assertions.assertThrows(ValidationException.class, () -> institutionService.onboardingProduct(onboardingData));
+        verify(productsConnectorMock, times(2)).getProduct(any(), any());
+    }
+
+    @Test
+    void onboardingProductShouldThrowErrorWhenParentProductIsNotOnboarded() {
+        // given
+        String productRole = "role";
+
+        OnboardingData onboardingData = mockInstance(new OnboardingData(), "setInstitutionType", "setUsers");
+        onboardingData.setInstitutionType(InstitutionType.PSP);
+        onboardingData.setUsers(List.of(dummyManager, dummyDelegate));
+
+        ProductRoleInfo productRoleInfo1 = mockInstance(new ProductRoleInfo(), 1, "setRoles");
+        ProductRoleInfo.ProductRole productRole1 = mockInstance(new ProductRoleInfo.ProductRole(), 1);
+        productRole1.setCode(productRole);
+        productRoleInfo1.setRoles(List.of(productRole1));
+        ProductRoleInfo productRoleInfo2 = mockInstance(new ProductRoleInfo(), 2, "setRoles");
+        ProductRoleInfo.ProductRole productRole2 = mockInstance(new ProductRoleInfo.ProductRole(), 2);
+        productRole2.setCode(productRole);
+        productRoleInfo2.setRoles(List.of(productRole2));
+        EnumMap<PartyRole, ProductRoleInfo> roleMappings = new EnumMap<>(PartyRole.class) {{
+            put(PartyRole.MANAGER, productRoleInfo1);
+            put(PartyRole.DELEGATE, productRoleInfo2);
+        }};
+
+        Product productMock = new Product();
+        productMock.setId(onboardingData.getProductId());
+        productMock.setRoleMappings(roleMappings);
+        productMock.setParentId("test");
+
+        Product parentProductMock = new Product();
+        parentProductMock.setId(onboardingData.getProductId());
+        parentProductMock.setRoleMappings(roleMappings);
+        parentProductMock.setStatus(ProductStatus.ACTIVE);
+
+        Institution institution = mockInstance(new Institution());
+        institution.setId(UUID.randomUUID().toString());
+
+        when(productsConnectorMock.getProduct(any(), any()))
+                .thenReturn(productMock)
+                .thenReturn(parentProductMock);
+
+        doThrow(new RuntimeException("")).when(partyConnectorMock).verifyOnboarding(any(), any());
+        when(onboardingValidationStrategyMock.validate(any(), any())).thenReturn(true);
+
+        Assertions.assertThrows(ValidationException.class, () -> institutionService.onboardingProduct(onboardingData));
+        verify(productsConnectorMock, times(2)).getProduct(any(), any());
+    }
+
+    @Test
+    void shouldOnboardingProductInstitutionPTInvalidProduct() {
+
+        OnboardingData onboardingData = mockInstance(new OnboardingData(), "setInstitutionType", "setUsers");
+        onboardingData.setInstitutionType(InstitutionType.PT);
+        onboardingData.setProductId(PROD_INTEROP.getValue());
+        onboardingData.setUsers(List.of(dummyManager, dummyDelegate));
+
+        Product product = new Product();
+        product.setId("prod-id");
+        product.setTitle("title");
+        product.setStatus(ProductStatus.ACTIVE);
+        product.setDelegable(false);
+        when(productsConnectorMock.getProduct(any(), any())).thenReturn(product);
+
+        Assertions.assertThrows(OnboardingNotAllowedException.class, () -> institutionService.onboardingProduct(onboardingData));
     }
 
     @Test
@@ -1688,10 +1799,32 @@ class InstitutionServiceImplTest {
                 .thenReturn(institutionMock);
         // when
         List<GeographicTaxonomy> result = institutionService.getGeographicTaxonomyList(institutionId);
+
+        GeographicTaxonomy expected = institutionMock.getGeographicTaxonomies().get(0);
         // then
         assertNotNull(result);
-        assertEquals(institutionMock.getGeographicTaxonomies().get(0).getCode(), result.get(0).getCode());
-        assertEquals(institutionMock.getGeographicTaxonomies().get(0).getDesc(), result.get(0).getDesc());
+        assertEquals(expected.getCode(), result.get(0).getCode());
+        assertEquals(expected.getDesc(), result.get(0).getDesc());
+        verify(partyConnectorMock, times(1))
+                .getInstitutionByExternalId(institutionId);
+        verifyNoMoreInteractions(partyConnectorMock);
+        verifyNoInteractions(productsConnectorMock, userConnectorMock);
+    }
+
+    @Test
+    void shouldGeographicTaxonomyListEmptyWhenInstitutionGeoListIsNull() {
+        // given
+        String institutionId = "institutionId";
+        Institution institutionMock = mockInstance(new Institution());
+        when(partyConnectorMock.getInstitutionByExternalId(anyString()))
+                .thenReturn(institutionMock);
+        // when
+        List<GeographicTaxonomy> result = institutionService.getGeographicTaxonomyList(institutionId);
+
+        // then
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+
         verify(partyConnectorMock, times(1))
                 .getInstitutionByExternalId(institutionId);
         verifyNoMoreInteractions(partyConnectorMock);
