@@ -8,7 +8,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import it.pagopa.selfcare.commons.base.logging.LogUtils;
+import it.pagopa.selfcare.commons.base.security.SelfCareUser;
 import it.pagopa.selfcare.commons.web.model.Problem;
+import it.pagopa.selfcare.commons.web.security.JwtAuthenticationToken;
 import it.pagopa.selfcare.onboarding.connector.model.InstitutionLegalAddressData;
 import it.pagopa.selfcare.onboarding.connector.model.InstitutionOnboardingData;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.MatchInfoResult;
@@ -16,11 +18,7 @@ import it.pagopa.selfcare.onboarding.connector.model.institutions.infocamere.Ins
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.InstitutionType;
 import it.pagopa.selfcare.onboarding.core.InstitutionService;
 import it.pagopa.selfcare.onboarding.web.model.*;
-import it.pagopa.selfcare.onboarding.web.model.mapper.GeographicTaxonomyMapper;
-import it.pagopa.selfcare.onboarding.web.model.mapper.InstitutionMapper;
-import it.pagopa.selfcare.onboarding.web.model.mapper.OnboardingMapper;
-import it.pagopa.selfcare.onboarding.web.model.mapper.UserMapper;
-import it.pagopa.selfcare.onboarding.web.model.mapper.OnboardingResourceMapper;
+import it.pagopa.selfcare.onboarding.web.model.mapper.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -29,6 +27,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.ValidationException;
+import java.security.Principal;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -71,7 +70,7 @@ public class InstitutionController {
         log.trace("onboarding end");
     }
 
-
+    @Deprecated
     @ApiResponses(value = {
             @ApiResponse(responseCode = "403",
                     description = "Forbidden",
@@ -107,6 +106,7 @@ public class InstitutionController {
         log.trace("onboarding end");
     }
 
+    @Deprecated
     @GetMapping(value = "/{externalInstitutionId}/products/{productId}/onboarded-institution-info")
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "", notes = "${swagger.onboarding.institutions.api.getInstitutionOnboardingInfo}")
@@ -224,18 +224,39 @@ public class InstitutionController {
         institutionService.verifyOnboarding(taxCode, subunitCode, productId);
         log.trace("verifyOnboarding end");
     }
+
+    @Deprecated
     @PostMapping(value = "")
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "", notes = "${swagger.onboarding.institutions.api.getInstitutionsByUser}")
     public InstitutionResourceIC getInstitutionsByUser(@RequestBody
-                                                         @Valid
-                                                         UserDto userDto) {
+                                                           @Valid
+                                                           UserDto userDto, Principal principal) {
         log.trace("getInstitutionsByUser start");
-        log.debug(LogUtils.CONFIDENTIAL_MARKER, "getInstitutionsByUser userDto = {}", userDto);
-        InstitutionInfoIC institutionInfoIC = institutionService.getInstitutionsByUser(UserMapper.toUser(userDto));
+
+        JwtAuthenticationToken jwtAuthenticationToken = (JwtAuthenticationToken) principal;
+        SelfCareUser selfCareUser = (SelfCareUser) jwtAuthenticationToken.getPrincipal();
+
+        InstitutionInfoIC institutionInfoIC = institutionService.getInstitutionsByUser(selfCareUser.getFiscalCode());
         InstitutionResourceIC institutionResourceIC = InstitutionMapper.toResource(institutionInfoIC);
         log.debug(LogUtils.CONFIDENTIAL_MARKER, "getInstitutionsByUser result = {}", institutionResourceIC);
         log.trace("getInstitutionsByUser end");
+        return institutionResourceIC;
+    }
+
+    @GetMapping(value = "/from-infocamere/")
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "", notes = "${swagger.onboarding.institutions.api.getInstitutionsByUser}")
+    public InstitutionResourceIC getInstitutionsFromInfocamere(Principal principal) {
+        log.trace("getInstitutionsFromInfocamere start");
+
+        JwtAuthenticationToken jwtAuthenticationToken = (JwtAuthenticationToken) principal;
+        SelfCareUser selfCareUser = (SelfCareUser) jwtAuthenticationToken.getPrincipal();
+
+        InstitutionInfoIC institutionInfoIC = institutionService.getInstitutionsByUser(selfCareUser.getFiscalCode());
+        InstitutionResourceIC institutionResourceIC = InstitutionMapper.toResource(institutionInfoIC);
+        log.debug(LogUtils.CONFIDENTIAL_MARKER, "getInstitutionsFromInfocamere result = {}", institutionResourceIC);
+        log.trace("getInstitutionsFromInfocamere end");
         return institutionResourceIC;
     }
 

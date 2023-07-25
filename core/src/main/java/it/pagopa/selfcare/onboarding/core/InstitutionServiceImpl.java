@@ -33,6 +33,9 @@ import org.springframework.util.Assert;
 import javax.validation.ValidationException;
 import java.util.*;
 
+import static it.pagopa.selfcare.onboarding.connector.model.onboarding.InstitutionType.GSP;
+import static it.pagopa.selfcare.onboarding.connector.model.product.ProductId.PROD_INTEROP;
+import static it.pagopa.selfcare.onboarding.connector.model.product.ProductId.PROD_PN_PG;
 import static it.pagopa.selfcare.onboarding.connector.model.user.User.Fields.*;
 
 @Slf4j
@@ -86,9 +89,9 @@ class InstitutionServiceImpl implements InstitutionService {
         Assert.notNull(onboardingData, REQUIRED_ONBOARDING_DATA_MESSAGE);
         Assert.notNull(onboardingData.getBilling(), REQUIRED_INSTITUTION_BILLING_DATA_MESSAGE);
         Assert.notNull(onboardingData.getInstitutionType(), REQUIRED_INSTITUTION_TYPE_MESSAGE);
-
         Product product = productsConnector.getProduct(onboardingData.getProductId(), onboardingData.getInstitutionType());
         Assert.notNull(product, "Product is required");
+        checkIfProductIsDelegable(onboardingData, product.isDelegable());
 
         if(product.getStatus() == ProductStatus.PHASE_OUT){
             throw new ValidationException(String.format("Unable to complete the onboarding for institution with taxCode '%s' to product '%s', the product is dismissed.",
@@ -99,7 +102,46 @@ class InstitutionServiceImpl implements InstitutionService {
         onboardingData.setContractPath(product.getContractTemplatePath());
         onboardingData.setContractVersion(product.getContractTemplateVersion());
 
-        final EnumMap<PartyRole, ProductRoleInfo> roleMappings;
+        checkIfProductIsActiveAndSetUserProductRole(product, onboardingData);
+        onboardingData.setProductName(product.getTitle());
+
+        Institution institution;
+        try {
+            institution = partyConnector.getInstitutionsByTaxCodeAndSubunitCode(onboardingData.getTaxCode(), onboardingData.getSubunitCode())
+                    .stream()
+                    .findFirst()
+                    .orElseThrow(ResourceNotFoundException::new);
+        } catch (ResourceNotFoundException e) {
+            if (InstitutionType.PA.equals(onboardingData.getInstitutionType()) ||
+                    (GSP.equals(onboardingData.getInstitutionType()) && onboardingData.getProductId().equals(PROD_INTEROP.getValue())
+                    && onboardingData.getOrigin().equals("IPA"))) {
+                institution = partyConnector.createInstitutionFromIpa(onboardingData.getTaxCode(), onboardingData.getSubunitCode(), onboardingData.getSubunitType());
+            } else {
+                institution = partyConnector.createInstitution(onboardingData);
+            }
+        }
+        String finalInstitutionInternalId = institution.getId();
+        onboardingData.getUsers().forEach(user -> {
+
+            final Optional<it.pagopa.selfcare.onboarding.connector.model.user.User> searchResult =
+                    userConnector.search(user.getTaxCode(), USER_FIELD_LIST);
+            searchResult.ifPresentOrElse(foundUser -> {
+                Optional<MutableUserFieldsDto> updateRequest = createUpdateRequest(user, foundUser, finalInstitutionInternalId);
+                updateRequest.ifPresent(mutableUserFieldsDto ->
+                        userConnector.updateUser(UUID.fromString(foundUser.getId()), mutableUserFieldsDto));
+                user.setId(foundUser.getId());
+            }, () -> user.setId(userConnector.saveUser(UserMapper.toSaveUserDto(user, finalInstitutionInternalId))
+                    .getId().toString()));
+        });
+
+        onboardingData.setInstitutionExternalId(institution.getExternalId());
+
+        partyConnector.onboardingOrganization(onboardingData);
+        log.trace("onboarding end");
+    }
+
+    private void checkIfProductIsActiveAndSetUserProductRole(Product product, OnboardingData onboardingData) {
+        EnumMap<PartyRole, ProductRoleInfo> roleMappings;
         if (product.getParentId() != null) {
             final Product baseProduct = productsConnector.getProduct(product.getParentId(), null);
             if(baseProduct.getStatus() == ProductStatus.PHASE_OUT){
@@ -121,7 +163,7 @@ class InstitutionServiceImpl implements InstitutionService {
             validateOnboarding(onboardingData.getTaxCode(), product.getId());
             roleMappings = product.getRoleMappings();
         }
-        onboardingData.setProductName(product.getTitle());
+
         Assert.notNull(roleMappings, "Role mappings is required");
         onboardingData.getUsers().forEach(userInfo -> {
             Assert.notNull(roleMappings.get(userInfo.getRole()),
@@ -132,40 +174,14 @@ class InstitutionServiceImpl implements InstitutionService {
                     String.format(MORE_THAN_ONE_PRODUCT_ROLE_AVAILABLE, userInfo.getRole()));
             userInfo.setProductRole(roleMappings.get(userInfo.getRole()).getRoles().get(0).getCode());
         });
+    }
 
-        Institution institution;
-        try {
-            institution = partyConnector.getInstitutionsByTaxCodeAndSubunitCode(onboardingData.getTaxCode(), onboardingData.getSubunitCode())
-                    .stream()
-                    .findFirst()
-                    .orElseThrow(ResourceNotFoundException::new);
-        } catch (ResourceNotFoundException e) {
-            if (InstitutionType.PA.equals(onboardingData.getInstitutionType()) ||
-                    (InstitutionType.GSP.equals(onboardingData.getInstitutionType()) && onboardingData.getProductId().equals("prod-interop")
-                    && onboardingData.getOrigin().equals("IPA"))) {
-                institution = partyConnector.createInstitutionFromIpa(onboardingData.getTaxCode(), onboardingData.getSubunitCode(), onboardingData.getSubunitType());
-            } else {
-                institution = partyConnector.createInstitutionRaw(onboardingData);
-            }
+    private void checkIfProductIsDelegable(OnboardingData onboardingData, boolean delegable) {
+        if(InstitutionType.PT == onboardingData.getInstitutionType() && !delegable) {
+            throw new OnboardingNotAllowedException(String.format(ONBOARDING_NOT_ALLOWED_ERROR_MESSAGE_TEMPLATE,
+                    onboardingData.getTaxCode(),
+                    onboardingData.getProductId()));
         }
-        String finalInstitutionInternalId = institution.getId();
-        onboardingData.getUsers().forEach(user -> {
-
-            final Optional<it.pagopa.selfcare.onboarding.connector.model.user.User> searchResult =
-                    userConnector.search(user.getTaxCode(), USER_FIELD_LIST);
-            searchResult.ifPresentOrElse(foundUser -> {
-                Optional<MutableUserFieldsDto> updateRequest = createUpdateRequest(user, foundUser, finalInstitutionInternalId);
-                updateRequest.ifPresent(mutableUserFieldsDto ->
-                        userConnector.updateUser(UUID.fromString(foundUser.getId()), mutableUserFieldsDto));
-                user.setId(foundUser.getId());
-            }, () -> user.setId(userConnector.saveUser(UserMapper.toSaveUserDto(user, finalInstitutionInternalId))
-                    .getId().toString()));
-        });
-
-        onboardingData.setInstitutionExternalId(institution.getExternalId());
-
-        partyConnector.onboardingOrganization(onboardingData);
-        log.trace("onboarding end");
     }
 
     @Deprecated
@@ -228,14 +244,14 @@ class InstitutionServiceImpl implements InstitutionService {
             institution = partyConnector.getInstitutionByExternalId(onboardingData.getInstitutionExternalId());
         } catch (ResourceNotFoundException e) {
             if (InstitutionType.PA.equals(onboardingData.getInstitutionType()) ||
-                    (InstitutionType.GSP.equals(onboardingData.getInstitutionType()) && onboardingData.getProductId().equals("prod-interop")
+                    (InstitutionType.GSP.equals(onboardingData.getInstitutionType()) && onboardingData.getProductId().equals(PROD_INTEROP.getValue())
                             && onboardingData.getOrigin().equals("IPA"))) {
                 institution = partyConnector.createInstitutionUsingExternalId(onboardingData.getInstitutionExternalId());
-            } else if (InstitutionType.PG.equals(onboardingData.getInstitutionType()) && onboardingData.getProductId().startsWith("prod-pn-pg")) {
+            } else if (InstitutionType.PG.equals(onboardingData.getInstitutionType()) && onboardingData.getProductId().startsWith(PROD_PN_PG.getValue())) {
                 CreateInstitutionData createInstitutionData = mapCreateInstitutionData(onboardingData);
                 institution = msCoreConnector.createInstitutionUsingInstitutionData(createInstitutionData);
             } else {
-                institution = partyConnector.createInstitutionRaw(onboardingData);
+                institution = partyConnector.createInstitution(onboardingData);
             }
         }
         String finalInstitutionInternalId = institution.getId();
@@ -403,7 +419,9 @@ class InstitutionServiceImpl implements InstitutionService {
         log.trace("geographicTaxonomyList start");
         log.debug("geographicTaxonomyList externalInstitutionId = {}", externalInstitutionId);
         Assert.hasText(externalInstitutionId, REQUIRED_INSTITUTION_ID_MESSAGE);
-        List<GeographicTaxonomy> result = partyConnector.getInstitutionByExternalId(externalInstitutionId).getGeographicTaxonomies();
+        Institution institution = partyConnector.getInstitutionByExternalId(externalInstitutionId);
+        List<GeographicTaxonomy> result = Optional.ofNullable(institution.getGeographicTaxonomies())
+                .orElse(Collections.emptyList());
         log.debug("geographicTaxonomyList result = {}", result);
         log.trace("geographicTaxonomyList end");
         return result;
@@ -438,10 +456,10 @@ class InstitutionServiceImpl implements InstitutionService {
     }
 
     @Override
-    public InstitutionInfoIC getInstitutionsByUser(User user) {
+    public InstitutionInfoIC getInstitutionsByUser(String fiscalCode) {
         log.trace("getInstitutionsByUserId start");
-        log.debug(LogUtils.CONFIDENTIAL_MARKER, "getInstitutionsByUserId user = {}", user);
-        InstitutionInfoIC result = partyRegistryProxyConnector.getInstitutionsByUserFiscalCode(user.getTaxCode());
+        log.debug(LogUtils.CONFIDENTIAL_MARKER, "getInstitutionsByUserId user = {}", fiscalCode);
+        InstitutionInfoIC result = partyRegistryProxyConnector.getInstitutionsByUserFiscalCode(fiscalCode);
         log.debug(LogUtils.CONFIDENTIAL_MARKER, "getInstitutionsByUserId result = {}", result);
         log.trace("getInstitutionsByUserId end");
         return result;

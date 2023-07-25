@@ -20,6 +20,8 @@ import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionInf
 import it.pagopa.selfcare.onboarding.connector.model.institutions.OnboardingResource;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.InstitutionUpdate;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.*;
+import it.pagopa.selfcare.onboarding.connector.rest.client.MsCoreOnboardingApiClient;
+import it.pagopa.selfcare.onboarding.connector.rest.client.MsCoreTokenApiClient;
 import it.pagopa.selfcare.onboarding.connector.rest.client.PartyProcessRestClient;
 import it.pagopa.selfcare.onboarding.connector.rest.mapper.InstitutionMapper;
 import it.pagopa.selfcare.onboarding.connector.rest.mapper.InstitutionMapperImpl;
@@ -30,10 +32,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.util.ResourceUtils;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -52,6 +57,12 @@ class PartyConnectorImplTest {
 
     @Mock
     private PartyProcessRestClient restClientMock;
+
+    @Mock
+    private MsCoreTokenApiClient msCoreTokenApiClient;
+
+    @Mock
+    private MsCoreOnboardingApiClient msCoreOnboardingApiClient;
 
     @Spy
     private InstitutionMapper institutionMapper = new InstitutionMapperImpl();
@@ -109,12 +120,12 @@ class PartyConnectorImplTest {
     }
 
     @Test
-    void onboardingOrganization_emptyGeographicTaxonomies() {
+    void onboardingOrganization_nullGeographicTaxonomies() {
         // given
         OnboardingData onboardingData = mockInstance(new OnboardingData());
         Billing billing = mockInstance(new Billing());
         InstitutionUpdate institutionUpdate = mockInstance(new InstitutionUpdate());
-        institutionUpdate.setGeographicTaxonomies(List.of());
+        institutionUpdate.setGeographicTaxonomies(null);
         onboardingData.setBilling(billing);
         onboardingData.setUsers(List.of(mockInstance(new User())));
         onboardingData.setInstitutionUpdate(institutionUpdate);
@@ -125,8 +136,7 @@ class PartyConnectorImplTest {
                 .onboardingOrganization(onboardingRequestCaptor.capture());
         OnboardingInstitutionRequest request = onboardingRequestCaptor.getValue();
         assertEquals(onboardingData.getInstitutionExternalId(), request.getInstitutionExternalId());
-        assertNotNull(request.getInstitutionUpdate().getGeographicTaxonomyCodes());
-        assertTrue(request.getInstitutionUpdate().getGeographicTaxonomyCodes().isEmpty());
+        assertNull(request.getInstitutionUpdate().getGeographicTaxonomyCodes());
         verifyNoMoreInteractions(restClientMock);
     }
 
@@ -830,19 +840,7 @@ class PartyConnectorImplTest {
     }
 
     @Test
-    void createInstitutionRaw_nullInput() {
-        //given
-        final OnboardingData onboardingData = null;
-        //when
-        Executable executable = () -> partyConnector.createInstitutionRaw(onboardingData);
-        //then
-        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, executable);
-        assertEquals("An OnboardingData is required", e.getMessage());
-        verifyNoInteractions(restClientMock);
-    }
-
-    @Test
-    void createInstitutionRaw() {
+    void createInstitution() {
         //given
         final OnboardingData onboardingData = mockInstance(new OnboardingData());
         InstitutionResponse institutionResponse = mockInstance(new InstitutionResponse());
@@ -850,10 +848,10 @@ class PartyConnectorImplTest {
         InstitutionUpdate institutionUpdate = mockInstance(new InstitutionUpdate());
         institutionUpdate.setGeographicTaxonomies(geographicTaxonomyList);
         institutionResponse.setGeographicTaxonomies(geographicTaxonomyList);
-        when(restClientMock.createInstitutionRaw(anyString(), any()))
+        when(restClientMock.createInstitution(any()))
                 .thenReturn(institutionResponse);
         //when
-        Institution result = partyConnector.createInstitutionRaw(onboardingData);
+        Institution result = partyConnector.createInstitution(onboardingData);
         //then
         assertNotNull(result);
         reflectionEqualsByName(institutionResponse, result);
@@ -864,8 +862,7 @@ class PartyConnectorImplTest {
         assertEquals(institutionResponse.getSupportPhone(), result.getAssistanceContacts().getSupportPhone());
         final ArgumentCaptor<InstitutionSeed> argumentCaptor = ArgumentCaptor.forClass(InstitutionSeed.class);
         verify(restClientMock, times(1))
-                .createInstitutionRaw(eq(onboardingData.getInstitutionExternalId()),
-                        argumentCaptor.capture());
+                .createInstitution( argumentCaptor.capture());
         final InstitutionSeed institutionSeed = argumentCaptor.getValue();
         assertEquals(onboardingData.getInstitutionUpdate().getDescription(), institutionSeed.getDescription());
         assertEquals(onboardingData.getInstitutionUpdate().getDigitalAddress(), institutionSeed.getDigitalAddress());
@@ -1015,6 +1012,115 @@ class PartyConnectorImplTest {
         assertDoesNotThrow(executable);
         verify(restClientMock, times(1))
                 .verifyOnboarding(externalInstitutionId, productId);
+        verifyNoMoreInteractions(restClientMock);
+    }
+    @Test
+    void verifyOnboardingSubunitCode() {
+        // given
+        final String taxCode = "taxCode";
+        final String subunitCode = "subunitCode";
+        final String productId = "productId";
+        doNothing().when(restClientMock).verifyOnboarding(anyString(), anyString(), anyString());
+
+        // when
+        final Executable executable = () -> partyConnector.verifyOnboarding(taxCode, subunitCode, productId);
+        // then
+        assertDoesNotThrow(executable);
+        verify(restClientMock, times(1))
+                .verifyOnboarding(taxCode, subunitCode, productId);
+        verifyNoMoreInteractions(restClientMock);
+    }
+    @Test
+    void getInstitutionsByTaxCodeAndSubunitCode_nullTaxCode() {
+        // given
+        final String taxCode = null;
+        // when
+        final Executable executable = () -> partyConnector.getInstitutionsByTaxCodeAndSubunitCode(taxCode, null);
+        // then
+        final Exception e = assertThrows(IllegalArgumentException.class, executable);
+        assertEquals(REQUIRED_INSTITUTION_TAXCODE_MESSAGE, e.getMessage());
+        verifyNoInteractions(restClientMock);
+    }
+    @Test
+    void getInstitutionsByTaxCodeAndSubunitCode() {
+        // given
+        final String taxCode = "taxCode";
+        final String subunitCode = "subunitCode";
+        InstitutionsResponse institutionsResponse = new InstitutionsResponse();
+        institutionsResponse.setInstitutions(List.of());
+        when(restClientMock.getInstitutions(anyString(), anyString())).thenReturn(institutionsResponse);
+        // when
+        final Executable executable = () -> partyConnector.getInstitutionsByTaxCodeAndSubunitCode(taxCode, subunitCode);
+        // then
+        assertDoesNotThrow(executable);
+        verify(restClientMock, times(1))
+                .getInstitutions(taxCode, subunitCode);
+        verifyNoMoreInteractions(restClientMock);
+    }
+    @Test
+    void createInstitutionFromIpa_nullTaxCode() {
+        // given
+        final String taxCode = null;
+        // when
+        final Executable executable = () -> partyConnector.createInstitutionFromIpa(taxCode, null, null);
+        // then
+        final Exception e = assertThrows(IllegalArgumentException.class, executable);
+        assertEquals(REQUIRED_INSTITUTION_TAXCODE_MESSAGE, e.getMessage());
+        verifyNoInteractions(restClientMock);
+    }
+
+
+    @Test
+    void tokensVerify_nullProductId() {
+        // given
+        final String tokenId = null;
+        // when
+        final Executable executable = () -> partyConnector.tokensVerify(tokenId);
+        // then
+        final Exception e = assertThrows(IllegalArgumentException.class, executable);
+        assertEquals("A token Id is required", e.getMessage());
+        verifyNoInteractions(restClientMock);
+    }
+
+
+    @Test
+    void tokensVerify() {
+        // given
+        final String tokenId = "tokenId";
+        // when
+        final Executable executable = () -> msCoreTokenApiClient._verifyTokenUsingPOST(tokenId);
+        // then
+        assertDoesNotThrow(executable);
+        verify(msCoreTokenApiClient, times(1))
+                ._verifyTokenUsingPOST(tokenId);
+        verifyNoMoreInteractions(restClientMock);
+    }
+
+    @Test
+    void onboardingComplete() throws IOException {
+        // given
+        final String tokenId = "tokenId";
+        final MockMultipartFile mockMultipartFile =
+                new MockMultipartFile("example", new ByteArrayInputStream("example".getBytes(StandardCharsets.UTF_8)));
+
+        // when
+        final Executable executable = () -> msCoreOnboardingApiClient._completeOnboardingUsingPOST(tokenId, mockMultipartFile);
+        // then
+        assertDoesNotThrow(executable);
+        verify(msCoreOnboardingApiClient, times(1))
+                ._completeOnboardingUsingPOST(tokenId, mockMultipartFile);
+        verifyNoMoreInteractions(restClientMock);
+    }
+    @Test
+    void deleteOnboardingToken() {
+        // given
+        final String tokenId = "tokenId";
+        // when
+        final Executable executable = () -> msCoreOnboardingApiClient._invalidateOnboardingUsingDELETE(tokenId);
+        // then
+        assertDoesNotThrow(executable);
+        verify(msCoreOnboardingApiClient, times(1))
+                ._invalidateOnboardingUsingDELETE(tokenId);
         verifyNoMoreInteractions(restClientMock);
     }
 
