@@ -3,6 +3,7 @@ package it.pagopa.selfcare.onboarding.connector.rest.decoder;
 import feign.Request;
 import feign.Response;
 import it.pagopa.selfcare.onboarding.connector.exceptions.InternalGatewayErrorException;
+import it.pagopa.selfcare.onboarding.connector.exceptions.InvalidRequestException;
 import it.pagopa.selfcare.onboarding.connector.exceptions.ResourceNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
@@ -21,6 +22,22 @@ class FeignErrorDecoderTest {
     FeignErrorDecoder feignDecoder = new FeignErrorDecoder();
 
     private Map<String, Collection<String>> headers = new LinkedHashMap<>();
+
+    @Test
+    void testDecodeInvalidRequest() throws Throwable {
+        //given
+        Response response = Response.builder()
+                .status(400)
+                .reason("InvalidRequest")
+                .request(Request.create(Request.HttpMethod.GET, "/api", Collections.emptyMap(), null, UTF_8))
+                .headers(headers)
+                .body("hello world", UTF_8)
+                .build();
+        //when
+        Executable executable = () -> feignDecoder.decode("", response);
+        //then
+        assertThrows(InvalidRequestException.class, executable);
+    }
 
     @Test
     void testDecodeToResourceNotFound() throws Throwable {
