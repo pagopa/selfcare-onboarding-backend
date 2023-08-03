@@ -110,76 +110,6 @@
         "security" : [ {
           "bearerAuth" : [ "global" ]
         } ]
-      },
-      "post" : {
-        "tags" : [ "institutions" ],
-        "summary" : "getInstitutionsByUser",
-        "description" : "Get Legal Representative's PN PG institution List",
-        "operationId" : "getInstitutionsByUserUsingPOST",
-        "parameters" : [ {
-          "name" : "name",
-          "in" : "query",
-          "required" : false,
-          "style" : "form",
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/UserDto"
-              }
-            }
-          }
-        },
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/InstitutionResourceIC"
-                }
-              }
-            }
-          },
-          "400" : {
-            "description" : "Bad Request",
-            "content" : {
-              "application/problem+json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Problem"
-                }
-              }
-            }
-          },
-          "401" : {
-            "description" : "Unauthorized",
-            "content" : {
-              "application/problem+json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Problem"
-                }
-              }
-            }
-          },
-          "500" : {
-            "description" : "Internal Server Error",
-            "content" : {
-              "application/problem+json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Problem"
-                }
-              }
-            }
-          }
-        },
-        "deprecated" : true,
-        "security" : [ {
-          "bearerAuth" : [ "global" ]
-        } ]
       }
     },
     "/institutions/from-infocamere/" : {
@@ -502,6 +432,130 @@
         } ]
       }
     },
+    "/institutions/verification/legal-address" : {
+      "post" : {
+        "tags" : [ "institutions" ],
+        "summary" : "postVerificationLegalAddress",
+        "description" : "Get legal address by business tax id",
+        "operationId" : "postVerificationLegalAddressUsingPOST",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/VerificationLegalAddressRequest"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/InstitutionLegalAddressResource"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad Request",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Unauthorized",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "Internal Server Error",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ "global" ]
+        } ]
+      }
+    },
+    "/institutions/verification/match" : {
+      "post" : {
+        "tags" : [ "institutions" ],
+        "summary" : "postVerificationMatch",
+        "description" : "MatchLegal Representative and inserted Institution by querying on Agenzia delle Entrate",
+        "operationId" : "postVerificationMatchUsingPOST",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/VerificationMatchRequest"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/MatchInfoResultResource"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad Request",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Unauthorized",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "Internal Server Error",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ "global" ]
+        } ]
+      }
+    },
     "/institutions/{externalInstitutionId}/geographicTaxonomy" : {
       "get" : {
         "tags" : [ "institutions" ],
@@ -646,6 +700,7 @@
             }
           }
         },
+        "deprecated" : true,
         "security" : [ {
           "bearerAuth" : [ "global" ]
         } ]
@@ -718,6 +773,7 @@
             }
           }
         },
+        "deprecated" : true,
         "security" : [ {
           "bearerAuth" : [ "global" ]
         } ]
@@ -2234,6 +2290,29 @@
           "taxCode" : {
             "type" : "string",
             "description" : "User's fiscal code"
+          }
+        }
+      },
+      "VerificationLegalAddressRequest" : {
+        "title" : "VerificationLegalAddressRequest",
+        "required" : [ "taxCode" ],
+        "type" : "object",
+        "properties" : {
+          "taxCode" : {
+            "type" : "string"
+          }
+        }
+      },
+      "VerificationMatchRequest" : {
+        "title" : "VerificationMatchRequest",
+        "required" : [ "taxCode", "userDto" ],
+        "type" : "object",
+        "properties" : {
+          "taxCode" : {
+            "type" : "string"
+          },
+          "userDto" : {
+            "$ref" : "#/components/schemas/UserDto"
           }
         }
       }

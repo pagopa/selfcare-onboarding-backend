@@ -70,7 +70,13 @@ public class InstitutionController {
         log.trace("onboarding end");
     }
 
-    @Deprecated
+
+    /**
+     * @deprecated [reference SELC-2815]
+     * @param externalInstitutionId
+     * @return
+     */
+    @Deprecated(forRemoval = true)
     @ApiResponses(value = {
             @ApiResponse(responseCode = "403",
                     description = "Forbidden",
@@ -106,7 +112,13 @@ public class InstitutionController {
         log.trace("onboarding end");
     }
 
-    @Deprecated
+
+    /**
+     * @deprecated [reference SELC-2815]
+     * @param externalInstitutionId
+     * @return
+     */
+    @Deprecated(forRemoval = true)
     @GetMapping(value = "/{externalInstitutionId}/products/{productId}/onboarded-institution-info")
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "", notes = "${swagger.onboarding.institutions.api.getInstitutionOnboardingInfo}")
@@ -225,25 +237,6 @@ public class InstitutionController {
         log.trace("verifyOnboarding end");
     }
 
-    @Deprecated
-    @PostMapping(value = "")
-    @ResponseStatus(HttpStatus.OK)
-    @ApiOperation(value = "", notes = "${swagger.onboarding.institutions.api.getInstitutionsByUser}")
-    public InstitutionResourceIC getInstitutionsByUser(@RequestBody
-                                                           @Valid
-                                                           UserDto userDto, Principal principal) {
-        log.trace("getInstitutionsByUser start");
-
-        JwtAuthenticationToken jwtAuthenticationToken = (JwtAuthenticationToken) principal;
-        SelfCareUser selfCareUser = (SelfCareUser) jwtAuthenticationToken.getPrincipal();
-
-        InstitutionInfoIC institutionInfoIC = institutionService.getInstitutionsByUser(selfCareUser.getFiscalCode());
-        InstitutionResourceIC institutionResourceIC = InstitutionMapper.toResource(institutionInfoIC);
-        log.debug(LogUtils.CONFIDENTIAL_MARKER, "getInstitutionsByUser result = {}", institutionResourceIC);
-        log.trace("getInstitutionsByUser end");
-        return institutionResourceIC;
-    }
-
     @GetMapping(value = "/from-infocamere/")
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "", notes = "${swagger.onboarding.institutions.api.getInstitutionsByUser}")
@@ -260,6 +253,13 @@ public class InstitutionController {
         return institutionResourceIC;
     }
 
+
+    /**
+     * @deprecated [reference SELC-2815]
+     * @param externalInstitutionId
+     * @return
+     */
+    @Deprecated(forRemoval = true)
     @PostMapping(value = "/{externalInstitutionId}/match")
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "", notes = "${swagger.onboarding.institutions.api.matchInstitutionAndUser}")
@@ -278,6 +278,28 @@ public class InstitutionController {
         return result;
     }
 
+    @PostMapping(value = "/verification/match")
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "", notes = "${swagger.onboarding.institutions.api.matchInstitutionAndUser}")
+    public MatchInfoResultResource postVerificationMatch(@RequestBody
+                                                           @Valid
+                                                           VerificationMatchRequest verificationMatchRequest) {
+        log.trace("matchInstitutionAndUser start");
+        log.debug(LogUtils.CONFIDENTIAL_MARKER, "matchInstitutionAndUser userDto = {}", verificationMatchRequest);
+        MatchInfoResult matchInfoResult = institutionService.matchInstitutionAndUser(verificationMatchRequest.getTaxCode(),
+                UserMapper.toUser(verificationMatchRequest.getUserDto()));
+        MatchInfoResultResource result = InstitutionMapper.toResource(matchInfoResult);
+        log.debug("matchInstitutionAndUser result = {}", result);
+        log.trace("matchInstitutionAndUser end");
+        return result;
+    }
+
+    /**
+     * @deprecated [reference SELC-2815]
+     * @param externalInstitutionId
+     * @return
+     */
+    @Deprecated(forRemoval = true)
     @GetMapping(value = "/{externalInstitutionId}/legal-address")
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "", notes = "${swagger.onboarding.institutions.api.getInstitutionLegalAddress}")
@@ -287,6 +309,19 @@ public class InstitutionController {
         log.trace("getInstitutionLegalAddress start");
         log.debug("getInstitutionLegalAddress institutionId = {}", externalInstitutionId);
         InstitutionLegalAddressData institutionLegalAddressData = institutionService.getInstitutionLegalAddress(externalInstitutionId);
+        InstitutionLegalAddressResource result = OnboardingMapper.toResource(institutionLegalAddressData);
+        log.debug("getInstitutionLegalAddress result = {}", result);
+        log.trace("getInstitutionLegalAddress end");
+        return result;
+    }
+
+    @PostMapping(value = "/verification/legal-address")
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "", notes = "${swagger.onboarding.institutions.api.getInstitutionLegalAddress}")
+    public InstitutionLegalAddressResource postVerificationLegalAddress(@RequestBody @Valid VerificationLegalAddressRequest verificationLegalAddressRequest) {
+        log.trace("getInstitutionLegalAddress start");
+        log.debug(LogUtils.CONFIDENTIAL_MARKER, "getInstitutionLegalAddress institutionId = {}", verificationLegalAddressRequest.getTaxCode());
+        InstitutionLegalAddressData institutionLegalAddressData = institutionService.getInstitutionLegalAddress(verificationLegalAddressRequest.getTaxCode());
         InstitutionLegalAddressResource result = OnboardingMapper.toResource(institutionLegalAddressData);
         log.debug("getInstitutionLegalAddress result = {}", result);
         log.trace("getInstitutionLegalAddress end");
