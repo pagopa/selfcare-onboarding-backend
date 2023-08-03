@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
  * @deprecated [reference SELC-2815]
  * It's better using sdk such as https://reflectoring.io/java-mapping-with-mapstruct/, look at @classes OnboardingResourceMapper
  * */
-@Deprecated
+@Deprecated(forRemoval = true)
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class OnboardingMapper {
 

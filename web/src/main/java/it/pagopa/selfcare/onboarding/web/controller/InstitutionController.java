@@ -76,7 +76,7 @@ public class InstitutionController {
      * @param externalInstitutionId
      * @return
      */
-    @Deprecated
+    @Deprecated(forRemoval = true)
     @ApiResponses(value = {
             @ApiResponse(responseCode = "403",
                     description = "Forbidden",
@@ -118,7 +118,7 @@ public class InstitutionController {
      * @param externalInstitutionId
      * @return
      */
-    @Deprecated
+    @Deprecated(forRemoval = true)
     @GetMapping(value = "/{externalInstitutionId}/products/{productId}/onboarded-institution-info")
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "", notes = "${swagger.onboarding.institutions.api.getInstitutionOnboardingInfo}")
