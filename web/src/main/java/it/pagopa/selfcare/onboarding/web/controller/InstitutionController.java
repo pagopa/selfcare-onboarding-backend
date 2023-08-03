@@ -260,6 +260,13 @@ public class InstitutionController {
         return institutionResourceIC;
     }
 
+
+    /**
+     * @deprecated [reference SELC-2815]
+     * @param externalInstitutionId
+     * @return
+     */
+    @Deprecated(forRemoval = true)
     @PostMapping(value = "/{externalInstitutionId}/match")
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "", notes = "${swagger.onboarding.institutions.api.matchInstitutionAndUser}")
@@ -278,6 +285,27 @@ public class InstitutionController {
         return result;
     }
 
+    @PostMapping(value = "/verification/match")
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "", notes = "${swagger.onboarding.institutions.api.matchInstitutionAndUser}")
+    public MatchInfoResultResource postVerificationMatch(@RequestBody
+                                                           @Valid
+                                                           VerificationMatchRequest verificationMatchRequest) {
+        log.trace("matchInstitutionAndUser start");
+        log.debug(LogUtils.CONFIDENTIAL_MARKER, "matchInstitutionAndUser userDto = {}", verificationMatchRequest);
+        MatchInfoResult matchInfoResult = institutionService.matchInstitutionAndUser(verificationMatchRequest.getTaxCode(),
+                UserMapper.toUser(verificationMatchRequest.getUserDto()));
+        MatchInfoResultResource result = InstitutionMapper.toResource(matchInfoResult);
+        log.debug("matchInstitutionAndUser result = {}", result);
+        log.trace("matchInstitutionAndUser end");
+        return result;
+    }
+
+    /**
+     * @deprecated [reference SELC-2815]
+     * @param externalInstitutionId
+     * @return
+     */
     @Deprecated(forRemoval = true)
     @GetMapping(value = "/{externalInstitutionId}/legal-address")
     @ResponseStatus(HttpStatus.OK)

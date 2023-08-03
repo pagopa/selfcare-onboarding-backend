@@ -564,6 +564,68 @@
         } ]
       }
     },
+    "/institutions/verification/match" : {
+      "post" : {
+        "tags" : [ "institutions" ],
+        "summary" : "postVerificationMatch",
+        "description" : "MatchLegal Representative and inserted Institution by querying on Agenzia delle Entrate",
+        "operationId" : "postVerificationMatchUsingPOST",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/VerificationMatchRequest"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/MatchInfoResultResource"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad Request",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Unauthorized",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "Internal Server Error",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ "global" ]
+        } ]
+      }
+    },
     "/institutions/{externalInstitutionId}/geographicTaxonomy" : {
       "get" : {
         "tags" : [ "institutions" ],
@@ -781,6 +843,7 @@
             }
           }
         },
+        "deprecated" : true,
         "security" : [ {
           "bearerAuth" : [ "global" ]
         } ]
@@ -2307,6 +2370,19 @@
         "properties" : {
           "taxCode" : {
             "type" : "string"
+          }
+        }
+      },
+      "VerificationMatchRequest" : {
+        "title" : "VerificationMatchRequest",
+        "required" : [ "taxCode", "userDto" ],
+        "type" : "object",
+        "properties" : {
+          "taxCode" : {
+            "type" : "string"
+          },
+          "userDto" : {
+            "$ref" : "#/components/schemas/UserDto"
           }
         }
       }

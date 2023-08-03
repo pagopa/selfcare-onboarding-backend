@@ -18,6 +18,7 @@ import it.pagopa.selfcare.onboarding.core.InstitutionService;
 import it.pagopa.selfcare.onboarding.web.config.WebTestConfig;
 import it.pagopa.selfcare.onboarding.web.model.*;
 import it.pagopa.selfcare.onboarding.web.model.mapper.OnboardingResourceMapperImpl;
+import it.pagopa.selfcare.onboarding.web.model.mapper.UserMapper;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -343,33 +344,48 @@ class InstitutionControllerTest {
     }
 
     @Test
+    void matchInstitutionAndUser_badRequest() throws Exception {
+        //given
+        String taxCode = "taxCode";
+        VerificationMatchRequest verificationMatchRequest = new VerificationMatchRequest();
+        verificationMatchRequest.setTaxCode(taxCode);
+        String jsonBody = objectMapper.writeValueAsString(verificationMatchRequest);
+        //when
+        mvc.perform(MockMvcRequestBuilders
+                        .post(BASE_URL + "/verification/match")
+                        .content(jsonBody)
+                        .contentType(APPLICATION_JSON_VALUE)
+                        .accept(APPLICATION_JSON_VALUE))
+                .andExpect(status().is4xxClientError());
+    }
+
+    @Test
     void matchInstitutionAndUser_ok(@Value("classpath:stubs/userDto.json") Resource userDto) throws Exception {
         //given
-        String externalInstitutionId = "externalId";
+        String taxCode = "taxCode";
+        VerificationMatchRequest verificationMatchRequest = new VerificationMatchRequest();
+        verificationMatchRequest.setTaxCode(taxCode);
+        verificationMatchRequest.setUserDto(objectMapper.readValue(userDto.getInputStream(), UserDto.class));
+        String jsonBody = objectMapper.writeValueAsString(verificationMatchRequest);
+
         MatchInfoResult matchInfo = mockInstance(new MatchInfoResult(), "setVerificationResult");
         matchInfo.setVerificationResult(true);
-        User user = mockInstance(new User(), "setEmail", "setId");
-        user.setEmail("n.surname@email.com");
-        when(institutionServiceMock.matchInstitutionAndUser(Mockito.anyString(), Mockito.any()))
+        User expectedUser = UserMapper.toUser(verificationMatchRequest.getUserDto());
+
+        when(institutionServiceMock.matchInstitutionAndUser(taxCode, expectedUser))
                 .thenReturn(matchInfo);
         //when
         MvcResult result = mvc.perform(MockMvcRequestBuilders
-                        .post(BASE_URL + "/{externalInstitutionId}/match", externalInstitutionId)
-                        .content(userDto.getInputStream().readAllBytes())
+                        .post(BASE_URL + "/verification/match")
+                        .content(jsonBody)
                         .contentType(APPLICATION_JSON_VALUE)
                         .accept(APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk())
                 .andReturn();
         // then
-        MatchInfoResultResource response = objectMapper.readValue(
-                result.getResponse().getContentAsString(),
-                new TypeReference<>() {
-                });
+        MatchInfoResultResource response = objectMapper.readValue(result.getResponse().getContentAsString(), MatchInfoResultResource.class);
         assertNotNull(response);
         assertEquals(response.isVerificationResult(), matchInfo.isVerificationResult());
-        verify(institutionServiceMock, times(1))
-                .matchInstitutionAndUser(externalInstitutionId, user);
-        verifyNoMoreInteractions(institutionServiceMock);
     }
 
     @Test
