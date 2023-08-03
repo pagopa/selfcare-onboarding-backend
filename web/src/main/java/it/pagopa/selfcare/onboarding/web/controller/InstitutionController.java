@@ -278,6 +278,7 @@ public class InstitutionController {
         return result;
     }
 
+    @Deprecated(forRemoval = true)
     @GetMapping(value = "/{externalInstitutionId}/legal-address")
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "", notes = "${swagger.onboarding.institutions.api.getInstitutionLegalAddress}")
@@ -287,6 +288,19 @@ public class InstitutionController {
         log.trace("getInstitutionLegalAddress start");
         log.debug("getInstitutionLegalAddress institutionId = {}", externalInstitutionId);
         InstitutionLegalAddressData institutionLegalAddressData = institutionService.getInstitutionLegalAddress(externalInstitutionId);
+        InstitutionLegalAddressResource result = OnboardingMapper.toResource(institutionLegalAddressData);
+        log.debug("getInstitutionLegalAddress result = {}", result);
+        log.trace("getInstitutionLegalAddress end");
+        return result;
+    }
+
+    @PostMapping(value = "/verification/legal-address")
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "", notes = "${swagger.onboarding.institutions.api.getInstitutionLegalAddress}")
+    public InstitutionLegalAddressResource postVerificationLegalAddress(@RequestBody @Valid VerificationLegalAddressRequest verificationLegalAddressRequest) {
+        log.trace("getInstitutionLegalAddress start");
+        log.debug(LogUtils.CONFIDENTIAL_MARKER, "getInstitutionLegalAddress institutionId = {}", verificationLegalAddressRequest.getTaxCode());
+        InstitutionLegalAddressData institutionLegalAddressData = institutionService.getInstitutionLegalAddress(verificationLegalAddressRequest.getTaxCode());
         InstitutionLegalAddressResource result = OnboardingMapper.toResource(institutionLegalAddressData);
         log.debug("getInstitutionLegalAddress result = {}", result);
         log.trace("getInstitutionLegalAddress end");

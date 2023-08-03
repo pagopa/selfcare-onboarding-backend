@@ -502,6 +502,68 @@
         } ]
       }
     },
+    "/institutions/verification/legal-address" : {
+      "post" : {
+        "tags" : [ "institutions" ],
+        "summary" : "postVerificationLegalAddress",
+        "description" : "Get legal address by business tax id",
+        "operationId" : "postVerificationLegalAddressUsingPOST",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/VerificationLegalAddressRequest"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/InstitutionLegalAddressResource"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad Request",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Unauthorized",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "Internal Server Error",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ "global" ]
+        } ]
+      }
+    },
     "/institutions/{externalInstitutionId}/geographicTaxonomy" : {
       "get" : {
         "tags" : [ "institutions" ],
@@ -646,6 +708,7 @@
             }
           }
         },
+        "deprecated" : true,
         "security" : [ {
           "bearerAuth" : [ "global" ]
         } ]
@@ -2234,6 +2297,16 @@
           "taxCode" : {
             "type" : "string",
             "description" : "User's fiscal code"
+          }
+        }
+      },
+      "VerificationLegalAddressRequest" : {
+        "title" : "VerificationLegalAddressRequest",
+        "required" : [ "taxCode" ],
+        "type" : "object",
+        "properties" : {
+          "taxCode" : {
+            "type" : "string"
           }
         }
       }

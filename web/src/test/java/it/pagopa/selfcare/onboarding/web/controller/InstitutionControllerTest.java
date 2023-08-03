@@ -373,30 +373,33 @@ class InstitutionControllerTest {
     }
 
     @Test
-    void getInstitutionLegalAddress() throws Exception {
+    void postVerificationLegalAddress() throws Exception {
         //given
-        String externalInstitutionId = "externalId";
+
+        String taxCode = "externalId";
+        VerificationLegalAddressRequest verificationLegalAddressRequest = new VerificationLegalAddressRequest();
+        verificationLegalAddressRequest.setTaxCode(taxCode);
+        String jsonBody = objectMapper.writeValueAsString(verificationLegalAddressRequest);
+
         InstitutionLegalAddressData data = mockInstance(new InstitutionLegalAddressData());
-        when(institutionServiceMock.getInstitutionLegalAddress(Mockito.anyString()))
+
+        when(institutionServiceMock.getInstitutionLegalAddress(taxCode))
                 .thenReturn(data);
         //when
         MvcResult result = mvc.perform(MockMvcRequestBuilders
-                        .get(BASE_URL + "/{externalInstitutionId}/legal-address", externalInstitutionId)
+                        .post(BASE_URL + "/verification/legal-address")
+                        .content(jsonBody)
                         .contentType(APPLICATION_JSON_VALUE)
                         .accept(APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk())
                 .andReturn();
         // then
-        InstitutionLegalAddressResource response = objectMapper.readValue(
-                result.getResponse().getContentAsString(),
-                new TypeReference<>() {
-                });
+        InstitutionLegalAddressResource response = objectMapper
+                .readValue(result.getResponse().getContentAsString(), InstitutionLegalAddressResource.class);
+
         assertNotNull(response);
         assertEquals(response.getAddress(), data.getAddress());
         assertEquals(response.getZipCode(), data.getZipCode());
-        verify(institutionServiceMock, times(1))
-                .getInstitutionLegalAddress(externalInstitutionId);
-        verifyNoMoreInteractions(institutionServiceMock);
     }
 
 }
