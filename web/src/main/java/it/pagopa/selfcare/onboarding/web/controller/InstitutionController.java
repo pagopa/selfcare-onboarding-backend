@@ -70,6 +70,12 @@ public class InstitutionController {
         log.trace("onboarding end");
     }
 
+
+    /**
+     * @deprecated [reference SELC-2815]
+     * @param externalInstitutionId
+     * @return
+     */
     @Deprecated
     @ApiResponses(value = {
             @ApiResponse(responseCode = "403",
@@ -106,6 +112,12 @@ public class InstitutionController {
         log.trace("onboarding end");
     }
 
+
+    /**
+     * @deprecated [reference SELC-2815]
+     * @param externalInstitutionId
+     * @return
+     */
     @Deprecated
     @GetMapping(value = "/{externalInstitutionId}/products/{productId}/onboarded-institution-info")
     @ResponseStatus(HttpStatus.OK)
