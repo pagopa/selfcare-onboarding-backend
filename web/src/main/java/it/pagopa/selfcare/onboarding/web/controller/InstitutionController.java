@@ -225,25 +225,6 @@ public class InstitutionController {
         log.trace("verifyOnboarding end");
     }
 
-    @Deprecated
-    @PostMapping(value = "")
-    @ResponseStatus(HttpStatus.OK)
-    @ApiOperation(value = "", notes = "${swagger.onboarding.institutions.api.getInstitutionsByUser}")
-    public InstitutionResourceIC getInstitutionsByUser(@RequestBody
-                                                           @Valid
-                                                           UserDto userDto, Principal principal) {
-        log.trace("getInstitutionsByUser start");
-
-        JwtAuthenticationToken jwtAuthenticationToken = (JwtAuthenticationToken) principal;
-        SelfCareUser selfCareUser = (SelfCareUser) jwtAuthenticationToken.getPrincipal();
-
-        InstitutionInfoIC institutionInfoIC = institutionService.getInstitutionsByUser(selfCareUser.getFiscalCode());
-        InstitutionResourceIC institutionResourceIC = InstitutionMapper.toResource(institutionInfoIC);
-        log.debug(LogUtils.CONFIDENTIAL_MARKER, "getInstitutionsByUser result = {}", institutionResourceIC);
-        log.trace("getInstitutionsByUser end");
-        return institutionResourceIC;
-    }
-
     @GetMapping(value = "/from-infocamere/")
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "", notes = "${swagger.onboarding.institutions.api.getInstitutionsByUser}")

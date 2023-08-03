@@ -304,7 +304,7 @@ class InstitutionControllerTest {
                 .andExpect(status().isNoContent());
     }
     @Test
-    void getInstitutionsByUserId(@Value("classpath:stubs/userDto.json") Resource userDto) throws Exception {
+    void getInstitutionsByUserId() throws Exception {
         //given
         JwtAuthenticationToken mockPrincipal = Mockito.mock(JwtAuthenticationToken.class);
         SelfCareUser selfCareUser = SelfCareUser.builder("example")
@@ -317,30 +317,24 @@ class InstitutionControllerTest {
         institutionInfoICmock.setBusinesses(businessInfoICSmock);
 
 
-        when(institutionServiceMock.getInstitutionsByUser(Mockito.any()))
+        when(institutionServiceMock.getInstitutionsByUser(selfCareUser.getFiscalCode()))
                 .thenReturn(institutionInfoICmock);
         //when
         MvcResult result = mvc.perform(MockMvcRequestBuilders
-                        .post(BASE_URL)
+                        .get(BASE_URL + "/from-infocamere/")
                         .principal(mockPrincipal)
-                        .content(userDto.getInputStream().readAllBytes())
                         .contentType(APPLICATION_JSON_VALUE)
                         .accept(APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk())
                 .andReturn();
         // then
         InstitutionResourceIC response = objectMapper.readValue(
-                result.getResponse().getContentAsString(),
-                new TypeReference<>() {
-                });
+                result.getResponse().getContentAsString(), InstitutionResourceIC.class);
         assertNotNull(response);
         assertEquals(institutionInfoICmock.getBusinesses().get(0).getBusinessName(), response.getBusinesses().get(0).getBusinessName());
         assertEquals(institutionInfoICmock.getBusinesses().get(0).getBusinessTaxId(), response.getBusinesses().get(0).getBusinessTaxId());
         assertEquals(institutionInfoICmock.getLegalTaxId(), response.getLegalTaxId());
         assertEquals(institutionInfoICmock.getRequestDateTime(), response.getRequestDateTime());
-        verify(institutionServiceMock, times(1))
-                .getInstitutionsByUser(selfCareUser.getFiscalCode());
-        verifyNoMoreInteractions(institutionServiceMock);
     }
 
     @Test
