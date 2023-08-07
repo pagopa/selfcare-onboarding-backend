@@ -103,6 +103,23 @@ class InstitutionControllerTest {
 
 
     @Test
+    void onboardingCompany(@Value("classpath:stubs/onboardingCompanyDto.json") Resource onboardingDto) throws Exception {
+        // when
+        mvc.perform(MockMvcRequestBuilders
+                        .post(BASE_URL + "/company/onboarding")
+                        .content(onboardingDto.getInputStream().readAllBytes())
+                        .contentType(APPLICATION_JSON_VALUE)
+                        .accept(APPLICATION_JSON_VALUE))
+                .andExpect(status().isCreated())
+                .andExpect(content().string(emptyString()));
+        // then
+        verify(institutionServiceMock, times(1))
+                .onboardingProduct(any(OnboardingData.class));
+        verifyNoMoreInteractions(institutionServiceMock);
+    }
+
+
+    @Test
     void shouldOnboardingWithoutGeotax(@Value("classpath:stubs/onboardingDtoWithoutGeo.json") Resource onboardingDto) throws Exception {
         // given
         String institutionId = "institutionId";

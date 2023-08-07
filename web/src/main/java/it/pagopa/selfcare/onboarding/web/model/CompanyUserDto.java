@@ -8,7 +8,7 @@ import lombok.Data;
 import javax.validation.constraints.NotBlank;
 
 @Data
-public class PnPGUserDto {
+public class CompanyUserDto {
 
 
     @ApiModelProperty(value = "${swagger.onboarding.user.model.name}", required = true)

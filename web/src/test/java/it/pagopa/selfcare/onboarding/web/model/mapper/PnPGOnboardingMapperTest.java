@@ -2,8 +2,8 @@ package it.pagopa.selfcare.onboarding.web.model.mapper;
 
 import it.pagopa.selfcare.onboarding.connector.model.InstitutionLegalAddressData;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.PnPGOnboardingData;
+import it.pagopa.selfcare.onboarding.web.model.CompanyOnboardingDto;
 import it.pagopa.selfcare.onboarding.web.model.InstitutionLegalAddressResource;
-import it.pagopa.selfcare.onboarding.web.model.PnPGOnboardingDto;
 import org.junit.jupiter.api.Test;
 
 import static it.pagopa.selfcare.commons.utils.TestUtils.mockInstance;
@@ -69,7 +69,7 @@ class PnPGOnboardingMapperTest {
         //given
         String institutionId = "institutionId";
         String productId = "productId";
-        PnPGOnboardingDto onboardingDto = null;
+        CompanyOnboardingDto onboardingDto = null;
         //when
         PnPGOnboardingData resource = PnPGOnboardingMapper.toOnboardingData(institutionId, productId, onboardingDto);
         //then

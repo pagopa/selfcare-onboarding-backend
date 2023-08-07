@@ -5,8 +5,8 @@ import it.pagopa.selfcare.onboarding.connector.model.onboarding.Billing;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.InstitutionType;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.InstitutionUpdate;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.PnPGOnboardingData;
+import it.pagopa.selfcare.onboarding.web.model.CompanyOnboardingDto;
 import it.pagopa.selfcare.onboarding.web.model.InstitutionLegalAddressResource;
-import it.pagopa.selfcare.onboarding.web.model.PnPGOnboardingDto;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class PnPGOnboardingMapper {
 
-    public static PnPGOnboardingData toOnboardingData(String externalId, String productId, PnPGOnboardingDto model) {
+    public static PnPGOnboardingData toOnboardingData(String externalId, String productId, CompanyOnboardingDto model) {
         PnPGOnboardingData resource = null;
         if (model != null) {
             resource = new PnPGOnboardingData();
@@ -37,7 +37,7 @@ public class PnPGOnboardingMapper {
         return resource;
     }
 
-    private static InstitutionUpdate fillInstitutionUpdate(PnPGOnboardingDto model) {
+    private static InstitutionUpdate fillInstitutionUpdate(CompanyOnboardingDto model) {
         InstitutionUpdate institutionUpdate = new InstitutionUpdate();
         institutionUpdate.setInstitutionType(InstitutionType.PG);
         institutionUpdate.setTaxCode(model.getBillingData().getTaxCode());
