@@ -43,6 +43,8 @@ public class InstitutionController {
     private final InstitutionService institutionService;
     private final OnboardingResourceMapper onboardingResourceMapper;
 
+    private static final String ONBOARDING_START = "onboarding start";
+    private static final String ONBOARDING_END = "onboarding end";
 
     @Autowired
     public InstitutionController(InstitutionService institutionService, OnboardingResourceMapper onboardingResourceMapper) {
@@ -61,13 +63,29 @@ public class InstitutionController {
     @ResponseStatus(HttpStatus.CREATED)
     @ApiOperation(value = "", notes = "${swagger.onboarding.institutions.api.onboarding.subunit}")
     public void onboarding(@RequestBody @Valid OnboardingProductDto request) {
-        log.trace("onboarding start");
+        log.trace(ONBOARDING_START);
         log.debug("onboarding request = {}", request);
         if (InstitutionType.PSP.equals(request.getInstitutionType()) && request.getPspData() == null) {
             throw new ValidationException("Field 'pspData' is required for PSP institution onboarding");
         }
         institutionService.onboardingProduct(onboardingResourceMapper.toEntity(request));
-        log.trace("onboarding end");
+        log.trace(ONBOARDING_END);
+    }
+
+    @ApiResponse(responseCode = "403",
+            description = "Forbidden",
+            content = {
+                    @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE,
+                            schema = @Schema(implementation = Problem.class))
+            })
+    @PostMapping(value = "/company/onboarding")
+    @ResponseStatus(HttpStatus.CREATED)
+    @ApiOperation(value = "", notes = "${swagger.onboarding.institutions.api.onboarding.subunit}")
+    public void onboarding(@RequestBody @Valid CompanyOnboardingDto request) {
+        log.trace(ONBOARDING_START);
+        log.debug("onboarding request = {}", request);
+        institutionService.onboardingProduct(onboardingResourceMapper.toEntity(request));
+        log.trace(ONBOARDING_END);
     }
 
 
@@ -103,13 +121,13 @@ public class InstitutionController {
                            @RequestBody
                            @Valid
                                    OnboardingDto request) {
-        log.trace("onboarding start");
+        log.trace(ONBOARDING_START);
         log.debug("onboarding institutionId = {}, productId = {}, request = {}", externalInstitutionId, productId, request);
         if (InstitutionType.PSP.equals(request.getInstitutionType()) && request.getPspData() == null) {
             throw new ValidationException("Field 'pspData' is required for PSP institution onboarding");
         }
         institutionService.onboarding(OnboardingMapper.toOnboardingData(externalInstitutionId, productId, request));
-        log.trace("onboarding end");
+        log.trace(ONBOARDING_END);
     }
 
 

@@ -8,7 +8,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 @Data
-public class PnPGBillingDataDto {
+public class CompanyBillingDataDto {
 
     @ApiModelProperty(value = "${swagger.onboarding.institutions.model.name}", required = true)
     @JsonProperty(required = true)
