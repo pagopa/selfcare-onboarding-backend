@@ -2,8 +2,11 @@ package it.pagopa.selfcare.onboarding.web.model.mapper;
 
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
 import it.pagopa.selfcare.onboarding.web.model.OnboardingProductDto;
+import it.pagopa.selfcare.onboarding.web.model.CompanyOnboardingDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.Named;
+
 
 @Mapper(componentModel = "spring")
 public interface OnboardingResourceMapper {
@@ -21,5 +24,16 @@ public interface OnboardingResourceMapper {
     @Mapping(source = "assistanceContacts.supportPhone", target = "institutionUpdate.supportPhone")
     OnboardingData toEntity(OnboardingProductDto dto);
 
+    @Mapping(source = "billingData", target = "billing")
+    @Mapping(source = "billingData.businessName", target = "institutionUpdate.description")
+    @Mapping(source = "billingData.taxCode", target = "institutionUpdate.taxCode")
+    @Mapping(source = "billingData.digitalAddress", target = "institutionUpdate.digitalAddress")
+    @Mapping(target = "origin", expression = "java(getOrigin(dto.getBillingData().isCertified()))")
+    OnboardingData toEntity(CompanyOnboardingDto dto);
+
+    @Named("getOrigin")
+    default String getOrigin(Boolean certified) {
+        return Boolean.TRUE.equals(certified) ? "INFOCAMERE" : "ADE";
+    }
 
 }

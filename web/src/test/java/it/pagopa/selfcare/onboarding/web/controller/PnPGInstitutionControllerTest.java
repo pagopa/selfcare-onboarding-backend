@@ -48,7 +48,7 @@ class PnPGInstitutionControllerTest {
     private PnPGInstitutionService pnPGInstitutionServiceMock;
 
     @Test
-    void onboarding(@Value("classpath:stubs/onboardingDto.json") Resource onboardingDto) throws Exception {
+    void onboarding(@Value("classpath:stubs/onboardingCompanyDto.json") Resource onboardingDto) throws Exception {
         // given
         String institutionId = "institutionId";
         String productId = "productId";

@@ -2,7 +2,7 @@ package it.pagopa.selfcare.onboarding.web.model.mapper;
 
 import it.pagopa.selfcare.commons.base.security.PartyRole;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.User;
-import it.pagopa.selfcare.onboarding.web.model.PnPGUserDto;
+import it.pagopa.selfcare.onboarding.web.model.CompanyUserDto;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 public class PnPGUserMapper {
 
 
-    public static User toUser(PnPGUserDto model) {
+    public static User toUser(CompanyUserDto model) {
         User resource = null;
         if (model != null) {
             resource = new User();

@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class PnPGBillingDataDtoTest {
+class CompanyBillingDataDtoTest {
 
     private Validator validator;
 
@@ -36,7 +36,7 @@ class PnPGBillingDataDtoTest {
         toCheckMap.put("certified", NotNull.class);
         toCheckMap.put("digitalAddress", NotBlank.class);
 
-        PnPGBillingDataDto billingDataDto = new PnPGBillingDataDto();
+        CompanyBillingDataDto billingDataDto = new CompanyBillingDataDto();
         //when
         Set<ConstraintViolation<Object>> violations = validator.validate(billingDataDto);
         // then
@@ -52,7 +52,7 @@ class PnPGBillingDataDtoTest {
     @Test
     void validateNotNullFields() {
         // given
-        PnPGBillingDataDto billingDataDto = TestUtils.mockInstance(new PnPGBillingDataDto());
+        CompanyBillingDataDto billingDataDto = TestUtils.mockInstance(new CompanyBillingDataDto());
         // when
         Set<ConstraintViolation<Object>> violations = validator.validate(billingDataDto);
         // then
