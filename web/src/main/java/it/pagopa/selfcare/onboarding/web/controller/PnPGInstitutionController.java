@@ -29,8 +29,11 @@ import javax.validation.Valid;
 
 import static org.springframework.http.MediaType.APPLICATION_PROBLEM_JSON_VALUE;
 
+/**
+ * @deprecated [reference SELC-2815]
+ */
 @Slf4j
-@Deprecated
+@Deprecated(forRemoval = true)
 @RestController
 @RequestMapping(value = "/pnPGInstitutions", produces = MediaType.APPLICATION_JSON_VALUE)
 @Api(tags = "pnPGInstitutions")
