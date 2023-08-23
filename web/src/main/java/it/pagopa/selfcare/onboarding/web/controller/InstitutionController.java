@@ -193,6 +193,26 @@ public class InstitutionController {
         return geographicTaxonomies;
     }
 
+    @GetMapping(value = "/geographicTaxonomies")
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "", notes = "${swagger.onboarding.institutions.api.getInstitutionGeographicTaxonomy}")
+    public List<GeographicTaxonomyResource> getGeographicTaxonomiesByTaxCodeAndSubunitCode(@ApiParam("${swagger.onboarding.institutions.model.taxCode}")
+                                                                             @RequestParam("taxCode")
+                                                                             String taxCode,
+                                                                                           @ApiParam("${swagger.onboarding.institutions.model.subunitCode}")
+                                                                            @RequestParam(value = "subunitCode", required = false)
+                                                                            String subunitCode) {
+        log.trace("getGeographicTaxonomiesByTaxCodeAndSubunitCode start");
+        log.debug("getGeographicTaxonomiesByTaxCodeAndSubunitCode taxCode = {}, subunitCode = {}", taxCode, subunitCode);
+        List<GeographicTaxonomyResource> geographicTaxonomies = institutionService.getGeographicTaxonomyList(taxCode, subunitCode)
+                .stream()
+                .map(GeographicTaxonomyMapper::toResource)
+                .collect(Collectors.toList());
+        log.debug("getGeographicTaxonomiesByTaxCodeAndSubunitCode result = {}", geographicTaxonomies);
+        log.trace("getGeographicTaxonomiesByTaxCodeAndSubunitCode end");
+        return geographicTaxonomies;
+    }
+
     @GetMapping("")
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "", notes = "${swagger.onboarding.institutions.api.getInstitutions}")
