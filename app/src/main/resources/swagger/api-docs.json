@@ -269,6 +269,91 @@
         } ]
       }
     },
+    "/institutions/geographicTaxonomy" : {
+      "get" : {
+        "tags" : [ "institutions" ],
+        "summary" : "getGeographicTaxonomyByTaxCodeAndSubunitCode",
+        "description" : "The service retrieve the institution's geographic taxonomy",
+        "operationId" : "getGeographicTaxonomyByTaxCodeAndSubunitCodeUsingGET",
+        "parameters" : [ {
+          "name" : "taxCode",
+          "in" : "query",
+          "description" : "Institution's taxCode",
+          "required" : true,
+          "style" : "form",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "subunitCode",
+          "in" : "query",
+          "description" : "Institution's subunitCode",
+          "required" : false,
+          "style" : "form",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/GeographicTaxonomyResource"
+                  }
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad Request",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Unauthorized",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "Not Found",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "Internal Server Error",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ "global" ]
+        } ]
+      }
+    },
     "/institutions/onboarding" : {
       "post" : {
         "tags" : [ "institutions" ],

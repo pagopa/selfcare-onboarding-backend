@@ -43,6 +43,8 @@ import static it.pagopa.selfcare.onboarding.connector.model.user.User.Fields.*;
 class InstitutionServiceImpl implements InstitutionService {
 
     protected static final String REQUIRED_INSTITUTION_ID_MESSAGE = "An Institution id is required";
+
+    protected static final String REQUIRED_TAX_CODE_MESSAGE = "A taxCode id is required";
     protected static final String REQUIRED_INSTITUTION_BILLING_DATA_MESSAGE = "Institution's billing data are required";
     protected static final String REQUIRED_INSTITUTION_TYPE_MESSAGE = "An institution type is required";
     protected static final String REQUIRED_ONBOARDING_DATA_MESSAGE = "Onboarding data is required";
@@ -425,6 +427,17 @@ class InstitutionServiceImpl implements InstitutionService {
         log.debug("geographicTaxonomyList result = {}", result);
         log.trace("geographicTaxonomyList end");
         return result;
+    }
+
+    @Override
+    public List<GeographicTaxonomy> getGeographicTaxonomyList(String taxCode, String subunitCode) {
+
+        Assert.hasText(taxCode, REQUIRED_TAX_CODE_MESSAGE);
+        List<Institution> institutions = partyConnector.getInstitutionsByTaxCodeAndSubunitCode(taxCode, subunitCode);
+        if(Objects.isNull(institutions) || institutions.isEmpty()) return Collections.emptyList();
+
+        return Optional.ofNullable(institutions.get(0).getGeographicTaxonomies())
+                .orElse(Collections.emptyList());
     }
 
 
