@@ -264,6 +264,56 @@ class InstitutionControllerTest {
 
     }
 
+
+    @Test
+    void getGeographicTaxonomyByTaxCodeAndSubunitCode_withTaxCode() throws Exception {
+        // given
+        String taxCode = "taxCode";
+        List<GeographicTaxonomy> geographicTaxonomyListMock = List.of(mockInstance(new GeographicTaxonomy()));
+        when(institutionServiceMock.getGeographicTaxonomyList(taxCode, null))
+                .thenReturn(geographicTaxonomyListMock);
+        // when
+        MvcResult result = mvc.perform(MockMvcRequestBuilders
+                        .get(BASE_URL + "/geographicTaxonomies?taxCode={taxCode}", taxCode)
+                        .contentType(APPLICATION_JSON_VALUE)
+                        .accept(APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk())
+                .andReturn();
+        // then
+        List<GeographicTaxonomyResource> response = objectMapper.readValue(
+                result.getResponse().getContentAsString(),
+                new TypeReference<>() {
+                });
+        assertNotNull(response);
+        assertEquals(geographicTaxonomyListMock.get(0).getCode(), response.get(0).getCode());
+        assertEquals(geographicTaxonomyListMock.get(0).getDesc(), response.get(0).getDesc());
+    }
+
+    @Test
+    void getGeographicTaxonomyByTaxCodeAndSubunitCode_withTaxCodeAndSubunitCode() throws Exception {
+        // given
+        String taxCode = "taxCode";
+        String subunitCode = "subunitCode";
+        List<GeographicTaxonomy> geographicTaxonomyListMock = List.of(mockInstance(new GeographicTaxonomy()));
+        when(institutionServiceMock.getGeographicTaxonomyList(taxCode, subunitCode))
+                .thenReturn(geographicTaxonomyListMock);
+        // when
+        MvcResult result = mvc.perform(MockMvcRequestBuilders
+                        .get(BASE_URL + "/geographicTaxonomies?taxCode={taxCode}&subunitCode={subunitCode}", taxCode, subunitCode)
+                        .contentType(APPLICATION_JSON_VALUE)
+                        .accept(APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk())
+                .andReturn();
+        // then
+        List<GeographicTaxonomyResource> response = objectMapper.readValue(
+                result.getResponse().getContentAsString(),
+                new TypeReference<>() {
+                });
+        assertNotNull(response);
+        assertEquals(geographicTaxonomyListMock.get(0).getCode(), response.get(0).getCode());
+        assertEquals(geographicTaxonomyListMock.get(0).getDesc(), response.get(0).getDesc());
+    }
+
     @Test
     void getInstitutions() throws Exception {
         //given
