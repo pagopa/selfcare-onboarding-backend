@@ -193,23 +193,23 @@ public class InstitutionController {
         return geographicTaxonomies;
     }
 
-    @GetMapping(value = "/geographicTaxonomy")
+    @GetMapping(value = "/geographicTaxonomies")
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "", notes = "${swagger.onboarding.institutions.api.getInstitutionGeographicTaxonomy}")
-    public List<GeographicTaxonomyResource> getGeographicTaxonomyByTaxCodeAndSubunitCode(@ApiParam("${swagger.onboarding.institutions.model.taxCode}")
+    public List<GeographicTaxonomyResource> getGeographicTaxonomiesByTaxCodeAndSubunitCode(@ApiParam("${swagger.onboarding.institutions.model.taxCode}")
                                                                              @RequestParam("taxCode")
                                                                              String taxCode,
-                                                                             @ApiParam("${swagger.onboarding.institutions.model.subunitCode}")
+                                                                                           @ApiParam("${swagger.onboarding.institutions.model.subunitCode}")
                                                                             @RequestParam(value = "subunitCode", required = false)
                                                                             String subunitCode) {
-        log.trace("getGeographicTaxonomyByTaxCodeAndSubunitCode start");
-        log.debug("getGeographicTaxonomyByTaxCodeAndSubunitCode taxCode = {}, subunitCode = {}", taxCode, subunitCode);
+        log.trace("getGeographicTaxonomiesByTaxCodeAndSubunitCode start");
+        log.debug("getGeographicTaxonomiesByTaxCodeAndSubunitCode taxCode = {}, subunitCode = {}", taxCode, subunitCode);
         List<GeographicTaxonomyResource> geographicTaxonomies = institutionService.getGeographicTaxonomyList(taxCode, subunitCode)
                 .stream()
                 .map(GeographicTaxonomyMapper::toResource)
                 .collect(Collectors.toList());
-        log.debug("getGeographicTaxonomyByTaxCodeAndSubunitCode result = {}", geographicTaxonomies);
-        log.trace("getGeographicTaxonomyByTaxCodeAndSubunitCode end");
+        log.debug("getGeographicTaxonomiesByTaxCodeAndSubunitCode result = {}", geographicTaxonomies);
+        log.trace("getGeographicTaxonomiesByTaxCodeAndSubunitCode end");
         return geographicTaxonomies;
     }
 

@@ -269,12 +269,12 @@
         } ]
       }
     },
-    "/institutions/geographicTaxonomy" : {
+    "/institutions/geographicTaxonomies" : {
       "get" : {
         "tags" : [ "institutions" ],
-        "summary" : "getGeographicTaxonomyByTaxCodeAndSubunitCode",
+        "summary" : "getGeographicTaxonomiesByTaxCodeAndSubunitCode",
         "description" : "The service retrieve the institution's geographic taxonomy",
-        "operationId" : "getGeographicTaxonomyByTaxCodeAndSubunitCodeUsingGET",
+        "operationId" : "getGeographicTaxonomiesByTaxCodeAndSubunitCodeUsingGET",
         "parameters" : [ {
           "name" : "taxCode",
           "in" : "query",

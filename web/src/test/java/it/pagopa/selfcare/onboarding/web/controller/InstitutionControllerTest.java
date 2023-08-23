@@ -274,7 +274,7 @@ class InstitutionControllerTest {
                 .thenReturn(geographicTaxonomyListMock);
         // when
         MvcResult result = mvc.perform(MockMvcRequestBuilders
-                        .get(BASE_URL + "/geographicTaxonomy?taxCode={taxCode}", taxCode)
+                        .get(BASE_URL + "/geographicTaxonomies?taxCode={taxCode}", taxCode)
                         .contentType(APPLICATION_JSON_VALUE)
                         .accept(APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk())
@@ -299,7 +299,7 @@ class InstitutionControllerTest {
                 .thenReturn(geographicTaxonomyListMock);
         // when
         MvcResult result = mvc.perform(MockMvcRequestBuilders
-                        .get(BASE_URL + "/geographicTaxonomy?taxCode={taxCode}&subunitCode={subunitCode}", taxCode, subunitCode)
+                        .get(BASE_URL + "/geographicTaxonomies?taxCode={taxCode}&subunitCode={subunitCode}", taxCode, subunitCode)
                         .contentType(APPLICATION_JSON_VALUE)
                         .accept(APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk())
