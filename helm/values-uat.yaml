@@ -18,4 +18,4 @@ configEnvSpecific:
   APPLICATIONINSIGHTS_INSTRUMENTATION_LOGGING_LEVEL: "OFF"
   B4F_ONBOARDING_LOG_LEVEL: "DEBUG"
   REST_CLIENT_LOGGER_LEVEL: "FULL"
-  ONBOARDING_ALLOWED_INSTITUTIONS_PRODUCTS: "{'prod-interop':{'*'},'prod-pn':{'*'},'prod-io':{'*'},'prod-io-premium':{'*'},'prod-pagopa':{'*'},'prod-pn-coll':{'*'}}"
+  ONBOARDING_ALLOWED_INSTITUTIONS_PRODUCTS: "{'prod-interop':{'*'},'prod-pn':{'*'},'prod-io':{'*'},'prod-io-premium':{'*'},'prod-pagopa':{'*'},'prod-pn-coll':{'*'},'prod-fd':{'*'}}"
