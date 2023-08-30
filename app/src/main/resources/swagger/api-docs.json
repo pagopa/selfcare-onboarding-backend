@@ -112,6 +112,90 @@
         } ]
       }
     },
+    "/institutions/checkOrganization/{productId}" : {
+      "head" : {
+        "tags" : [ "institutions" ],
+        "summary" : "checkOrganization",
+        "description" : "Checks if an institution has been already registered on the products backoffice",
+        "operationId" : "checkOrganizationUsingHEAD",
+        "parameters" : [ {
+          "name" : "productId",
+          "in" : "path",
+          "description" : "Product's unique identifier",
+          "required" : true,
+          "style" : "simple",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "taxCode",
+          "in" : "query",
+          "description" : "Institution's taxCode",
+          "required" : true,
+          "style" : "form",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "vatNumber",
+          "in" : "query",
+          "description" : "Institution's VAT number",
+          "required" : true,
+          "style" : "form",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK"
+          },
+          "400" : {
+            "description" : "Bad Request",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Unauthorized",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "NotFound",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "Internal Server Error",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ "global" ]
+        } ]
+      }
+    },
     "/institutions/company/onboarding" : {
       "post" : {
         "tags" : [ "institutions" ],
