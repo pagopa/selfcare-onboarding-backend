@@ -358,6 +358,25 @@ class InstitutionControllerTest {
                 .andExpect(status().isNoContent());
     }
 
+    @Test
+    void checkOrganization() throws Exception {
+        //given
+        final String productId = "productId";
+        final String fiscalCode = "fiscalCode";
+        final String vatNumber = "vatNumber";
+
+        //when
+        mvc.perform(MockMvcRequestBuilders
+                .head(BASE_URL+"/checkOrganization/{productId}", productId)
+                .param("taxCode", fiscalCode)
+                .param("vatNumber", vatNumber)
+                .contentType(APPLICATION_JSON_VALUE)
+                .accept(APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk());
+        //then
+        verify(institutionServiceMock, times(1)).checkOrganization(productId, fiscalCode, vatNumber);
+    }
+
 
     @Test
     void shouldOnboardingVerification() throws Exception {
