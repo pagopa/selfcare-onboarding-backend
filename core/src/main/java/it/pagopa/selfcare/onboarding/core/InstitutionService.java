@@ -15,7 +15,7 @@ import java.util.List;
 
 public interface InstitutionService {
 
-    void onboardingProduct(OnboardingData onboardingData);
+    Institution onboardingProduct(OnboardingData onboardingData);
 
     void onboarding(OnboardingData onboardingData);
 
