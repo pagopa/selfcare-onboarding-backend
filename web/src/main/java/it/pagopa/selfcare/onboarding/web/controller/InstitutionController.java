@@ -32,6 +32,7 @@ import javax.validation.ValidationException;
 import java.security.Principal;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.springframework.http.MediaType.APPLICATION_PROBLEM_JSON_VALUE;
@@ -207,7 +208,7 @@ public class InstitutionController {
                                                                                            String subunitCode) {
         log.trace("getGeographicTaxonomiesByTaxCodeAndSubunitCode start");
         log.debug("getGeographicTaxonomiesByTaxCodeAndSubunitCode taxCode = {}, subunitCode = {}", taxCode, subunitCode);
-        if(StringUtils.isBlank(taxCode) || (Objects.nonNull(subunitCode) && StringUtils.isBlank(subunitCode)))
+        if (StringUtils.isBlank(taxCode) || (Objects.nonNull(subunitCode) && StringUtils.isBlank(subunitCode)))
             throw new InvalidRequestException("taxCode and/or subunitCode must not be blank! ");
 
         List<GeographicTaxonomyResource> geographicTaxonomies = institutionService.getGeographicTaxonomyList(taxCode, subunitCode)
@@ -274,30 +275,21 @@ public class InstitutionController {
                                  String subunitCode,
                                  @ApiParam("${swagger.onboarding.product.model.id}")
                                  @RequestParam("productId")
-                                 String productId) {
+                                 String productId,
+                                 @ApiParam("${swagger.onboarding.institutions.model.vatNumber}")
+                                 @RequestParam(value = "vatNumber", required = false)
+                                 Optional<String> vatNumber,
+                                 @ApiParam("${swagger.onboarding.institutions.model.verifyType}")
+                                 @RequestParam(value = "verifyType", required = false) VerifyType type) {
         log.trace("verifyOnboarding start");
         log.debug("verifyOnboarding taxCode = {}, subunitCode = {}, productId = {}", taxCode, subunitCode, productId);
-        institutionService.verifyOnboarding(taxCode, subunitCode, productId);
+        if (type.equals(VerifyType.EXTERNAL) && vatNumber.isPresent() && productId.equals("prod-fd")) {
+            institutionService.checkOrganization(productId, taxCode, vatNumber.get());
+        } else
+            institutionService.verifyOnboarding(taxCode, subunitCode, productId);
         log.trace("verifyOnboarding end");
     }
 
-    @ApiResponse(responseCode = "404",
-            description = "NotFound",
-            content = {
-                    @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE,
-                            schema = @Schema(implementation = Problem.class))
-            })
-    @RequestMapping(method = HEAD, value = "/checkOrganization/{productId}")
-    @ResponseStatus(HttpStatus.OK)
-    @ApiOperation(value = "", notes = "${swagger.onboarding.institutions.api.checkOrganization}")
-    public void checkOrganization(@ApiParam("${swagger.onboarding.product.model.id}")@PathVariable("productId") String productId,
-                                  @ApiParam("${swagger.onboarding.institutions.model.taxCode}")@RequestParam("taxCode") String fiscalCode,
-                                  @ApiParam("${swagger.onboarding.institutions.model.vatNumber}")@RequestParam("vatNumber") String vatNumber) {
-        log.trace("checkOrganization start");
-        log.debug("checkOrganization productId = {}, fiscalCode = {}, vatNumber = {}", productId, fiscalCode, vatNumber );
-        institutionService.checkOrganization(productId, fiscalCode, vatNumber);
-        log.trace("checkOrganization end");
-    }
 
 
     @GetMapping(value = "/from-infocamere/")
