@@ -653,7 +653,7 @@ class InstitutionServiceImplTest {
         when(onboardingValidationStrategyMock.validate(any(), any()))
                 .thenReturn(true);
         // when
-        institutionService.onboardingProduct(onboardingData);
+        Institution actual = institutionService.onboardingProduct(onboardingData);
         // then
         verify(partyConnectorMock, times(1))
                 .getInstitutionsByTaxCodeAndSubunitCode(onboardingData.getTaxCode(), onboardingData.getSubunitCode());
@@ -680,7 +680,7 @@ class InstitutionServiceImplTest {
             assertEquals(productRole, userInfo.getProductRole());
             assertNotNull(userInfo.getId());
         });
-        verifyNoMoreInteractions(productsConnectorMock, partyConnectorMock, userConnectorMock, onboardingValidationStrategyMock);
+        assertEquals(institution, actual);
     }
 
     @Test

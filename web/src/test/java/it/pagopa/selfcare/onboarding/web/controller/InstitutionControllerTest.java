@@ -6,14 +6,12 @@ import it.pagopa.selfcare.commons.base.security.SelfCareUser;
 import it.pagopa.selfcare.commons.web.security.JwtAuthenticationToken;
 import it.pagopa.selfcare.onboarding.connector.model.InstitutionLegalAddressData;
 import it.pagopa.selfcare.onboarding.connector.model.InstitutionOnboardingData;
+import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionInfo;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.MatchInfoResult;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.infocamere.BusinessInfoIC;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.infocamere.InstitutionInfoIC;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.Billing;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.GeographicTaxonomy;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.User;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.*;
 import it.pagopa.selfcare.onboarding.core.InstitutionService;
 import it.pagopa.selfcare.onboarding.web.config.WebTestConfig;
 import it.pagopa.selfcare.onboarding.web.model.*;
@@ -34,11 +32,11 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 import static it.pagopa.selfcare.commons.utils.TestUtils.mockInstance;
 import static java.util.UUID.randomUUID;
-import static org.hamcrest.Matchers.emptyString;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
@@ -60,6 +58,8 @@ class InstitutionControllerTest {
 
     @MockBean
     private InstitutionService institutionServiceMock;
+
+
 
 
     @Test
@@ -104,18 +104,31 @@ class InstitutionControllerTest {
 
     @Test
     void onboardingCompany(@Value("classpath:stubs/onboardingCompanyDto.json") Resource onboardingDto) throws Exception {
+
+        Institution institution = new Institution();
+        institution.setId(UUID.randomUUID().toString());
+        institution.setInstitutionType(InstitutionType.PA);
+        when(institutionServiceMock.onboardingProduct(any())).thenReturn(institution);
+
         // when
-        mvc.perform(MockMvcRequestBuilders
+       MvcResult result = mvc.perform(MockMvcRequestBuilders
                         .post(BASE_URL + "/company/onboarding")
                         .content(onboardingDto.getInputStream().readAllBytes())
                         .contentType(APPLICATION_JSON_VALUE)
                         .accept(APPLICATION_JSON_VALUE))
                 .andExpect(status().isCreated())
-                .andExpect(content().string(emptyString()));
+               .andReturn();
         // then
+
+        InstitutionResource actual = objectMapper.readValue(
+                result.getResponse().getContentAsString(),
+                InstitutionResource.class);
+
         verify(institutionServiceMock, times(1))
                 .onboardingProduct(any(OnboardingData.class));
         verifyNoMoreInteractions(institutionServiceMock);
+        assertEquals(institution.getId(), actual.getId().toString());
+        assertEquals(institution.getInstitutionType(), actual.getInstitutionType());
     }
 
 
