@@ -129,7 +129,14 @@
         },
         "responses" : {
           "201" : {
-            "description" : "Created"
+            "description" : "Created",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/InstitutionResource"
+                }
+              }
+            }
           },
           "400" : {
             "description" : "Bad Request",
