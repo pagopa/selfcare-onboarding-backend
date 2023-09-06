@@ -66,6 +66,9 @@ class InstitutionServiceImplTest {
     private MsCoreConnector msCoreConnectorMock;
 
     @Mock
+    private MsExternalInterceptorConnector msExternalInterceptorConnector;
+
+    @Mock
     private PartyRegistryProxyConnector partyRegistryProxyConnectorMock;
 
     @Mock
@@ -1983,6 +1986,21 @@ class InstitutionServiceImplTest {
                 .getInstitutionLegalAddress(externalId);
         verifyNoMoreInteractions(partyRegistryProxyConnectorMock);
 
+    }
+
+    @Test
+    void checkOrganization(){
+        //given
+        final String productId = "productId";
+        final String fiscalCode = "fiscalCode";
+        final String vatNumber = "vatNumber";
+
+        //when
+        Executable executable = () -> institutionService.checkOrganization(productId, fiscalCode, vatNumber);
+        //then
+        assertDoesNotThrow(executable);
+        verify(msExternalInterceptorConnector, times(1)).checkOrganization(productId, fiscalCode, vatNumber);
+        verifyNoMoreInteractions(msExternalInterceptorConnector);
     }
 
 }

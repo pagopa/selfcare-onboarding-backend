@@ -379,9 +379,30 @@ class InstitutionControllerTest {
                         .head(BASE_URL + "/onboarding")
                         .queryParam("taxCode", "taxCode")
                         .queryParam("productId", "productId")
+                        .queryParam("verifyType", VerifyType.INTERNAL.name())
                         .contentType(APPLICATION_JSON_VALUE)
                         .accept(APPLICATION_JSON_VALUE))
                 .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void verifyOnboardingExternal() throws Exception{
+        //given
+        String productId = "prod-fd";
+        String vatNumber  ="vatNumber";
+        String taxCode = "taxCode";
+        //when
+        mvc.perform(MockMvcRequestBuilders
+                        .head(BASE_URL + "/onboarding")
+                        .queryParam("taxCode", taxCode)
+                        .queryParam("productId", productId)
+                        .queryParam("verifyType", VerifyType.EXTERNAL.name())
+                        .queryParam("vatNumber", vatNumber)
+                        .contentType(APPLICATION_JSON_VALUE)
+                        .accept(APPLICATION_JSON_VALUE))
+                .andExpect(status().isNoContent());
+        //then
+        verify(institutionServiceMock, times(1)).checkOrganization(productId, taxCode, vatNumber);
     }
     @Test
     void getInstitutionsByUserId() throws Exception {

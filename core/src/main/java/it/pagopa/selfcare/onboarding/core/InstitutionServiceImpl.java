@@ -9,8 +9,8 @@ import it.pagopa.selfcare.onboarding.connector.model.InstitutionOnboardingData;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionInfo;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.MatchInfoResult;
-import it.pagopa.selfcare.onboarding.connector.model.institutions.infocamere.InstitutionInfoIC;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.OnboardingResource;
+import it.pagopa.selfcare.onboarding.connector.model.institutions.infocamere.InstitutionInfoIC;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.*;
 import it.pagopa.selfcare.onboarding.connector.model.product.Product;
 import it.pagopa.selfcare.onboarding.connector.model.product.ProductRoleInfo;
@@ -57,22 +57,23 @@ class InstitutionServiceImpl implements InstitutionService {
     private final PartyConnector partyConnector;
     private final ProductsConnector productsConnector;
     private final UserRegistryConnector userConnector;
+    private final MsExternalInterceptorConnector externalInterceptorConnector;
     private final MsCoreConnector msCoreConnector;
     private final OnboardingValidationStrategy onboardingValidationStrategy;
     private final PartyRegistryProxyConnector partyRegistryProxyConnector;
     private final InstitutionInfoMapper institutionMapper;
 
 
-
     @Autowired
     InstitutionServiceImpl(PartyConnector partyConnector,
                            ProductsConnector productsConnector,
                            UserRegistryConnector userConnector,
-                           MsCoreConnector msCoreConnector,
+                           MsExternalInterceptorConnector externalInterceptorConnector, MsCoreConnector msCoreConnector,
                            PartyRegistryProxyConnector partyRegistryProxyConnector,
                            OnboardingValidationStrategy onboardingValidationStrategy,
                            InstitutionInfoMapper institutionMapper) {
         this.partyConnector = partyConnector;
+        this.externalInterceptorConnector = externalInterceptorConnector;
         this.partyRegistryProxyConnector = partyRegistryProxyConnector;
         this.productsConnector = productsConnector;
         this.userConnector = userConnector;
@@ -462,6 +463,14 @@ class InstitutionServiceImpl implements InstitutionService {
         validateOnboarding(taxCode, productId);
         partyConnector.verifyOnboarding(taxCode, subunitCode, productId);
         log.trace("verifyOnboardingSubunit end");
+    }
+
+    @Override
+    public void checkOrganization(String productId, String fiscalCode, String vatNumber) {
+        log.trace("checkOrganization start");
+        log.debug("checkOrganization productId = {}, fiscalCode = {}, vatNumber = {}", productId, fiscalCode, vatNumber );
+        externalInterceptorConnector.checkOrganization(productId, fiscalCode, vatNumber);
+        log.trace("checkOrganization end");
     }
 
     private void validateOnboarding(String externalInstitutionId, String productId) {
