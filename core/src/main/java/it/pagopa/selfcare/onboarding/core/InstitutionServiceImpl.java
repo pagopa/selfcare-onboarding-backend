@@ -358,10 +358,6 @@ class InstitutionServiceImpl implements InstitutionService {
                 .findFirst()
                 .orElseThrow(() -> new ResourceNotFoundException(String.format("Institution with taxCode %s and subunitCode %s not found", taxCode, subunitCode)));
 
-        if (institution.getGeographicTaxonomies() == null) {
-            throw new ValidationException(String.format("Institution with taxCode %s does not have geographic taxonomies.", taxCode));
-        }
-
         InstitutionOnboardingData result = new InstitutionOnboardingData();
         InstitutionInfo institutionInfo = institutionMapper.toInstitutionInfo(institution);
         institutionInfo.setPricingPlan(onboardingResource.getPricingPlan());
