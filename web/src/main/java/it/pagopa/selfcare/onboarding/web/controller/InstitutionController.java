@@ -85,13 +85,11 @@ public class InstitutionController {
     @PostMapping(value = "/company/onboarding")
     @ResponseStatus(HttpStatus.CREATED)
     @ApiOperation(value = "", notes = "${swagger.onboarding.institutions.api.onboarding.subunit}")
-    public InstitutionResource onboarding(@RequestBody @Valid CompanyOnboardingDto request) {
+    public void onboarding(@RequestBody @Valid CompanyOnboardingDto request) {
         log.trace(ONBOARDING_START);
         log.debug("onboarding request = {}", request);
-        InstitutionResource institution = InstitutionMapper.toResource(institutionService
-                .onboardingProduct(onboardingResourceMapper.toEntity(request)));
+        institutionService.onboardingProduct(onboardingResourceMapper.toEntity(request));
         log.trace(ONBOARDING_END);
-        return institution;
     }
 
 

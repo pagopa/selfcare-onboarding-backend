@@ -129,14 +129,7 @@
         },
         "responses" : {
           "201" : {
-            "description" : "Created",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/InstitutionResource"
-                }
-              }
-            }
+            "description" : "Created"
           },
           "400" : {
             "description" : "Bad Request",
@@ -2266,6 +2259,10 @@
           "companyInformations" : {
             "description" : "GPS, SCP, PT optional data",
             "$ref" : "#/components/schemas/CompanyInformationsResource"
+          },
+          "id" : {
+            "type" : "string",
+            "description" : "Institution's unique internal Id"
           },
           "institutionType" : {
             "type" : "string",
