@@ -318,6 +318,40 @@ class InstitutionControllerTest {
         assertEquals(geographicTaxonomyListMock.get(0).getDesc(), response.get(0).getDesc());
     }
 
+
+    @Test
+    void getInstitutionOnboardingInfo_shouldGetInstitutions() throws Exception {
+        //given
+        InstitutionInfo institutionInfo = mockInstance(new InstitutionInfo());
+        institutionInfo.setId(randomUUID().toString());
+        String productId = "prod-io";
+
+        InstitutionOnboardingData institutionOnboardingData = new InstitutionOnboardingData();
+        institutionOnboardingData.setInstitution(institutionInfo);
+        when(institutionServiceMock.getInstitutionOnboardingData(institutionInfo.getTaxCode(),null,productId))
+                .thenReturn(institutionOnboardingData);
+        //when
+        MvcResult result = mvc.perform(MockMvcRequestBuilders
+                        .get(BASE_URL + "/onboarding/")
+                        .queryParam("taxCode", institutionInfo.getTaxCode())
+                        .queryParam("productId", productId)
+                        .contentType(APPLICATION_JSON_VALUE)
+                        .accept(APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk())
+                .andReturn();
+        //then
+        InstitutionOnboardingInfoResource actual = objectMapper.readValue(
+                result.getResponse().getContentAsString(),
+                new TypeReference<>() {
+                });
+        assertNotNull(actual);
+        assertNotNull(actual.getInstitution());
+
+        assertEquals(institutionInfo.getId(), actual.getInstitution().getId());
+        assertEquals(institutionInfo.getInstitutionType(), actual.getInstitution().getInstitutionType());
+        assertEquals(institutionInfo.getOrigin(), actual.getInstitution().getOrigin());
+    }
+
     @Test
     void getInstitutions() throws Exception {
         //given

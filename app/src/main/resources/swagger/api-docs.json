@@ -2260,6 +2260,10 @@
             "description" : "GPS, SCP, PT optional data",
             "$ref" : "#/components/schemas/CompanyInformationsResource"
           },
+          "id" : {
+            "type" : "string",
+            "description" : "Institution's unique internal Id"
+          },
           "institutionType" : {
             "type" : "string",
             "description" : "Institution's type",
