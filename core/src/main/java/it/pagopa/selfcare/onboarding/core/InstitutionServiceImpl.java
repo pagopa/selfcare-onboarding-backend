@@ -84,7 +84,7 @@ class InstitutionServiceImpl implements InstitutionService {
 
 
     @Override
-    public Institution onboardingProduct(OnboardingData onboardingData) {
+    public void onboardingProduct(OnboardingData onboardingData) {
         log.trace("onboarding start");
         log.debug("onboarding onboardingData = {}", onboardingData);
         Assert.notNull(onboardingData, REQUIRED_ONBOARDING_DATA_MESSAGE);
@@ -139,8 +139,6 @@ class InstitutionServiceImpl implements InstitutionService {
 
         partyConnector.onboardingOrganization(onboardingData);
         log.trace("onboarding end");
-
-        return institution;
     }
 
     private void checkIfProductIsActiveAndSetUserProductRole(Product product, OnboardingData onboardingData) {
