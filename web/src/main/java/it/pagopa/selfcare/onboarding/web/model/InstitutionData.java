@@ -9,6 +9,10 @@ import javax.validation.Valid;
 @Data
 public class InstitutionData {
 
+
+    @ApiModelProperty(value = "${swagger.onboarding.institutions.model.id}")
+    private String id;
+
     @ApiModelProperty(value = "${swagger.onboarding.institutions.model.institutionType}")
     private InstitutionType institutionType;
 

@@ -45,7 +45,7 @@
         "parameters" : [ {
           "name" : "productFilter",
           "in" : "query",
-          "description" : "A product to filter the institutions based on whether the institution has an ACTIVE onboarding on the specified product. ",
+          "description" : "A product to filter the institutions based on whether the institution has an ACTIVE onboarding on the specified product.",
           "required" : false,
           "style" : "form",
           "schema" : {
@@ -469,6 +469,25 @@
           "style" : "form",
           "schema" : {
             "type" : "string"
+          }
+        }, {
+          "name" : "vatNumber",
+          "in" : "query",
+          "description" : "Institution's VAT number",
+          "required" : false,
+          "style" : "form",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "verifyType",
+          "in" : "query",
+          "description" : "Onboarding verification method type",
+          "required" : false,
+          "style" : "form",
+          "schema" : {
+            "type" : "string",
+            "enum" : [ "EXTERNAL", "INTERNAL" ]
           }
         } ],
         "responses" : {
@@ -2240,6 +2259,10 @@
           "companyInformations" : {
             "description" : "GPS, SCP, PT optional data",
             "$ref" : "#/components/schemas/CompanyInformationsResource"
+          },
+          "id" : {
+            "type" : "string",
+            "description" : "Institution's unique internal Id"
           },
           "institutionType" : {
             "type" : "string",
