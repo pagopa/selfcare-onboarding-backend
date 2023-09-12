@@ -225,7 +225,7 @@ class InstitutionControllerTest {
         assertNotNull(response);
         assertNotNull(response.getInstitution());
 
-        BillingDataDto responseBillings = response.getInstitution().getBillingData();
+        BillingDataResponseDto responseBillings = response.getInstitution().getBillingData();
         assertEquals(onBoardingDataMock.getInstitution().getBilling().getRecipientCode(), responseBillings.getRecipientCode());
         assertEquals(onBoardingDataMock.getInstitution().getBilling().getPublicServices(), responseBillings.getPublicServices());
         assertEquals(onBoardingDataMock.getInstitution().getBilling().getVatNumber(), responseBillings.getVatNumber());
