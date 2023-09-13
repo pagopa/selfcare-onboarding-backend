@@ -283,7 +283,7 @@ public class InstitutionController {
                                  @RequestParam(value = "verifyType", required = false) VerifyType type) {
         log.trace("verifyOnboarding start");
         log.debug("verifyOnboarding taxCode = {}, subunitCode = {}, productId = {}", taxCode, subunitCode, productId);
-        if (type.equals(VerifyType.EXTERNAL) && vatNumber.isPresent() && productId.equals("prod-fd")) {
+        if (type.equals(VerifyType.EXTERNAL) && vatNumber.isPresent() && productId.equals("prod-fd") || productId.equals("prod-fd-garantito")) {
             institutionService.checkOrganization(productId, taxCode, vatNumber.get());
         } else
             institutionService.verifyOnboarding(taxCode, subunitCode, productId);
