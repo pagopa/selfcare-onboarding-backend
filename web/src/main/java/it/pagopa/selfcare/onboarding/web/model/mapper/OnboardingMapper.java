@@ -162,7 +162,7 @@ public class OnboardingMapper {
         InstitutionData resource = null;
         if (model != null) {
             resource = new InstitutionData();
-            BillingDataDto billing = new BillingDataDto();
+            BillingDataResponseDto billing = new BillingDataResponseDto();
             billing.setDigitalAddress(model.getDigitalAddress());
             billing.setTaxCode(model.getTaxCode());
             billing.setBusinessName(model.getDescription());
