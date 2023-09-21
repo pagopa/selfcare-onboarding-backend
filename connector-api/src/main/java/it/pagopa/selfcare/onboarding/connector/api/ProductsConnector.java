@@ -7,4 +7,6 @@ public interface ProductsConnector {
 
     Product getProduct(String id, InstitutionType institutionType);
 
+    Product getProductValid(String id);
+
 }

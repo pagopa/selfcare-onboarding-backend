@@ -29,4 +29,15 @@ public class ProductServiceImpl implements ProductService {
         log.trace("getProduct end");
         return product;
     }
+
+    @Override
+    public Product getProductValid(String id) {
+        log.trace("getProductValid start");
+        log.debug("getProductValid id = {}", id);
+        Assert.notNull(id, "ProductId is required");
+        Product product = productsConnector.getProductValid(id);
+        log.debug("getProductValid result = {}", product);
+        log.trace("getProductValid end");
+        return product;
+    }
 }
