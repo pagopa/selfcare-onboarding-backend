@@ -9,8 +9,8 @@ import it.pagopa.selfcare.onboarding.connector.model.InstitutionOnboardingData;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionInfo;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.MatchInfoResult;
-import it.pagopa.selfcare.onboarding.connector.model.institutions.infocamere.InstitutionInfoIC;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.OnboardingResource;
+import it.pagopa.selfcare.onboarding.connector.model.institutions.infocamere.InstitutionInfoIC;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.*;
 import it.pagopa.selfcare.onboarding.connector.model.product.Product;
 import it.pagopa.selfcare.onboarding.connector.model.product.ProductRoleInfo;
@@ -43,36 +43,37 @@ import static it.pagopa.selfcare.onboarding.connector.model.user.User.Fields.*;
 class InstitutionServiceImpl implements InstitutionService {
 
     protected static final String REQUIRED_INSTITUTION_ID_MESSAGE = "An Institution id is required";
+
+    protected static final String REQUIRED_TAX_CODE_MESSAGE = "A taxCode id is required";
     protected static final String REQUIRED_INSTITUTION_BILLING_DATA_MESSAGE = "Institution's billing data are required";
     protected static final String REQUIRED_INSTITUTION_TYPE_MESSAGE = "An institution type is required";
     protected static final String REQUIRED_ONBOARDING_DATA_MESSAGE = "Onboarding data is required";
     protected static final String ATLEAST_ONE_PRODUCT_ROLE_REQUIRED = "At least one Product role related to %s Party role is required";
     protected static final String MORE_THAN_ONE_PRODUCT_ROLE_AVAILABLE = "More than one Product role related to %s Party role is available. Cannot automatically set the Product role";
     protected static final String A_PRODUCT_ID_IS_REQUIRED = "A Product Id is required";
-
-    private static final EnumSet<it.pagopa.selfcare.onboarding.connector.model.user.User.Fields> USER_FIELD_LIST_ENHANCED = EnumSet.of(fiscalCode, name, familyName, workContacts);
     private static final EnumSet<it.pagopa.selfcare.onboarding.connector.model.user.User.Fields> USER_FIELD_LIST = EnumSet.of(name, familyName, workContacts);
     private static final String ONBOARDING_NOT_ALLOWED_ERROR_MESSAGE_TEMPLATE = "Institution with external id '%s' is not allowed to onboard '%s' product";
 
     private final PartyConnector partyConnector;
     private final ProductsConnector productsConnector;
     private final UserRegistryConnector userConnector;
+    private final MsExternalInterceptorConnector externalInterceptorConnector;
     private final MsCoreConnector msCoreConnector;
     private final OnboardingValidationStrategy onboardingValidationStrategy;
     private final PartyRegistryProxyConnector partyRegistryProxyConnector;
     private final InstitutionInfoMapper institutionMapper;
 
 
-
     @Autowired
     InstitutionServiceImpl(PartyConnector partyConnector,
                            ProductsConnector productsConnector,
                            UserRegistryConnector userConnector,
-                           MsCoreConnector msCoreConnector,
+                           MsExternalInterceptorConnector externalInterceptorConnector, MsCoreConnector msCoreConnector,
                            PartyRegistryProxyConnector partyRegistryProxyConnector,
                            OnboardingValidationStrategy onboardingValidationStrategy,
                            InstitutionInfoMapper institutionMapper) {
         this.partyConnector = partyConnector;
+        this.externalInterceptorConnector = externalInterceptorConnector;
         this.partyRegistryProxyConnector = partyRegistryProxyConnector;
         this.productsConnector = productsConnector;
         this.userConnector = userConnector;
@@ -184,7 +185,11 @@ class InstitutionServiceImpl implements InstitutionService {
         }
     }
 
-    @Deprecated
+    /**
+     * @deprecated [reference SELC-2815]
+     * @param onboardingData
+     */
+    @Deprecated(forRemoval = true)
     @Override
     public void onboarding(OnboardingData onboardingData) {
         log.trace("onboarding start");
@@ -353,10 +358,6 @@ class InstitutionServiceImpl implements InstitutionService {
                 .findFirst()
                 .orElseThrow(() -> new ResourceNotFoundException(String.format("Institution with taxCode %s and subunitCode %s not found", taxCode, subunitCode)));
 
-        if (institution.getGeographicTaxonomies() == null) {
-            throw new ValidationException(String.format("Institution with taxCode %s does not have geographic taxonomies.", taxCode));
-        }
-
         InstitutionOnboardingData result = new InstitutionOnboardingData();
         InstitutionInfo institutionInfo = institutionMapper.toInstitutionInfo(institution);
         institutionInfo.setPricingPlan(onboardingResource.getPricingPlan());
@@ -427,6 +428,17 @@ class InstitutionServiceImpl implements InstitutionService {
         return result;
     }
 
+    @Override
+    public List<GeographicTaxonomy> getGeographicTaxonomyList(String taxCode, String subunitCode) {
+
+        Assert.hasText(taxCode, REQUIRED_TAX_CODE_MESSAGE);
+        List<Institution> institutions = partyConnector.getInstitutionsByTaxCodeAndSubunitCode(taxCode, subunitCode);
+        if(Objects.isNull(institutions) || institutions.isEmpty()) return Collections.emptyList();
+
+        return Optional.ofNullable(institutions.get(0).getGeographicTaxonomies())
+                .orElse(Collections.emptyList());
+    }
+
 
     @Override
     public void verifyOnboarding(String externalInstitutionId, String productId) {
@@ -445,6 +457,14 @@ class InstitutionServiceImpl implements InstitutionService {
         validateOnboarding(taxCode, productId);
         partyConnector.verifyOnboarding(taxCode, subunitCode, productId);
         log.trace("verifyOnboardingSubunit end");
+    }
+
+    @Override
+    public void checkOrganization(String productId, String fiscalCode, String vatNumber) {
+        log.trace("checkOrganization start");
+        log.debug("checkOrganization productId = {}, fiscalCode = {}, vatNumber = {}", productId, fiscalCode, vatNumber );
+        externalInterceptorConnector.checkOrganization(productId, fiscalCode, vatNumber);
+        log.trace("checkOrganization end");
     }
 
     private void validateOnboarding(String externalInstitutionId, String productId) {

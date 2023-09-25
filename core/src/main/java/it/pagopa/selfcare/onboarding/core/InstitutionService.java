@@ -29,9 +29,12 @@ public interface InstitutionService {
 
     Institution getInstitutionByExternalId(String externalInstitutionId);
 
+    List<GeographicTaxonomy> getGeographicTaxonomyList(String taxCode, String subunitCode);
+
     void verifyOnboarding(String externalInstitutionId, String productId);
 
     void verifyOnboarding(String taxCode, String subunitCode, String productId);
+    void checkOrganization(String productId, String fiscalCode, String vatNumber);
     MatchInfoResult matchInstitutionAndUser(String externalInstitutionId, User user);
 
     InstitutionLegalAddressData getInstitutionLegalAddress(String externalInstitutionId);

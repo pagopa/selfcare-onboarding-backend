@@ -66,6 +66,9 @@ class InstitutionServiceImplTest {
     private MsCoreConnector msCoreConnectorMock;
 
     @Mock
+    private MsExternalInterceptorConnector msExternalInterceptorConnector;
+
+    @Mock
     private PartyRegistryProxyConnector partyRegistryProxyConnectorMock;
 
     @Mock
@@ -680,7 +683,6 @@ class InstitutionServiceImplTest {
             assertEquals(productRole, userInfo.getProductRole());
             assertNotNull(userInfo.getId());
         });
-        verifyNoMoreInteractions(productsConnectorMock, partyConnectorMock, userConnectorMock, onboardingValidationStrategyMock);
     }
 
     @Test
@@ -1812,6 +1814,55 @@ class InstitutionServiceImplTest {
     }
 
     @Test
+    void getGeographicTaxonomyListByTaxCode_shouldEmptyListIfInstitutionNotFound() {
+        // given
+        String taxCode = "taxCode";
+        when(partyConnectorMock.getInstitutionsByTaxCodeAndSubunitCode(taxCode, null))
+                .thenReturn(List.of());
+        // when
+        List<GeographicTaxonomy> result = institutionService.getGeographicTaxonomyList(taxCode, null);
+
+        // then
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void getGeographicTaxonomyListByTaxCode_shouldEmptyListIfGeoNotPresent() {
+        // given
+        String taxCode = "taxCode";
+        String subunitCode = "subunitCode";
+        Institution institutionMock = mockInstance(new Institution());
+        when(partyConnectorMock.getInstitutionsByTaxCodeAndSubunitCode(taxCode, subunitCode))
+                .thenReturn(List.of(institutionMock));
+        // when
+        List<GeographicTaxonomy> result = institutionService.getGeographicTaxonomyList(taxCode, subunitCode);
+
+        // then
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void getGeographicTaxonomyListByTaxCode() {
+        // given
+        String taxCode = "taxCode";
+        String subunitCode = "subunitCode";
+        Institution institutionMock = mockInstance(new Institution());
+        institutionMock.setGeographicTaxonomies(List.of(mockInstance(new GeographicTaxonomy())));
+        when(partyConnectorMock.getInstitutionsByTaxCodeAndSubunitCode(taxCode, subunitCode))
+                .thenReturn(List.of(institutionMock));
+        // when
+        List<GeographicTaxonomy> result = institutionService.getGeographicTaxonomyList(taxCode, subunitCode);
+
+        GeographicTaxonomy expected = institutionMock.getGeographicTaxonomies().get(0);
+        // then
+        assertNotNull(result);
+        assertEquals(expected.getCode(), result.get(0).getCode());
+        assertEquals(expected.getDesc(), result.get(0).getDesc());
+    }
+
+    @Test
     void shouldGeographicTaxonomyListEmptyWhenInstitutionGeoListIsNull() {
         // given
         String institutionId = "institutionId";
@@ -1934,6 +1985,21 @@ class InstitutionServiceImplTest {
                 .getInstitutionLegalAddress(externalId);
         verifyNoMoreInteractions(partyRegistryProxyConnectorMock);
 
+    }
+
+    @Test
+    void checkOrganization(){
+        //given
+        final String productId = "productId";
+        final String fiscalCode = "fiscalCode";
+        final String vatNumber = "vatNumber";
+
+        //when
+        Executable executable = () -> institutionService.checkOrganization(productId, fiscalCode, vatNumber);
+        //then
+        assertDoesNotThrow(executable);
+        verify(msExternalInterceptorConnector, times(1)).checkOrganization(productId, fiscalCode, vatNumber);
+        verifyNoMoreInteractions(msExternalInterceptorConnector);
     }
 
 }

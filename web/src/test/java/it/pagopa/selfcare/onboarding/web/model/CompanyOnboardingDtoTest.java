@@ -1,5 +1,6 @@
 package it.pagopa.selfcare.onboarding.web.model;
 
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.InstitutionType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -18,7 +19,7 @@ import java.util.stream.Collectors;
 import static it.pagopa.selfcare.commons.utils.TestUtils.mockInstance;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class PnPGOnboardingDtoTest {
+class CompanyOnboardingDtoTest {
 
     private Validator validator;
 
@@ -36,7 +37,11 @@ class PnPGOnboardingDtoTest {
         HashMap<String, Class<? extends Annotation>> toCheckMap = new HashMap<>();
         toCheckMap.put("users", NotEmpty.class);
         toCheckMap.put("billingData", NotNull.class);
-        PnPGOnboardingDto model = new PnPGOnboardingDto();
+        CompanyOnboardingDto model = new CompanyOnboardingDto();
+        model.setTaxCode("taxCode");
+        model.setProductId("productId");
+        model.setInstitutionType(InstitutionType.PG);
+
         // when
         Set<ConstraintViolation<Object>> violations = validator.validate(model);
         // then
@@ -52,10 +57,10 @@ class PnPGOnboardingDtoTest {
     @Test
     void validateNotNullFields() {
         // given
-        PnPGOnboardingDto model = mockInstance(new PnPGOnboardingDto());
-        PnPGUserDto userDto = mockInstance(new PnPGUserDto());
+        CompanyOnboardingDto model = mockInstance(new CompanyOnboardingDto());
+        CompanyUserDto userDto = mockInstance(new CompanyUserDto());
         model.setUsers(List.of(userDto));
-        model.setBillingData(mockInstance(new PnPGBillingDataDto()));
+        model.setBillingData(mockInstance(new CompanyBillingDataDto()));
         // when
         Set<ConstraintViolation<Object>> violations = validator.validate(model);
         // then

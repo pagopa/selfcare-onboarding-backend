@@ -11,6 +11,7 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -124,9 +125,12 @@ public class OnboardingMapper {
         if (model != null) {
             resource = new InstitutionOnboardingInfoResource();
             resource.setInstitution(toData(model.getInstitution()));
-            resource.setGeographicTaxonomies(model.getGeographicTaxonomies().stream()
-                    .map(GeographicTaxonomyMapper::toResource)
-                    .collect(Collectors.toList()));
+            resource.setGeographicTaxonomies(Optional.ofNullable(model.getGeographicTaxonomies())
+                            .map(geotaxes -> geotaxes.stream()
+                                .map(GeographicTaxonomyMapper::toResource)
+                                .collect(Collectors.toList()))
+                            .orElse(null)
+            );
             resource.getInstitution().setCompanyInformations(toResource(model.getCompanyInformations()));
             resource.getInstitution().setAssistanceContacts(toResource(model.getAssistanceContacts()));
         }
@@ -158,7 +162,7 @@ public class OnboardingMapper {
         InstitutionData resource = null;
         if (model != null) {
             resource = new InstitutionData();
-            BillingDataDto billing = new BillingDataDto();
+            BillingDataResponseDto billing = new BillingDataResponseDto();
             billing.setDigitalAddress(model.getDigitalAddress());
             billing.setTaxCode(model.getTaxCode());
             billing.setBusinessName(model.getDescription());
@@ -172,6 +176,7 @@ public class OnboardingMapper {
             resource.setBillingData(billing);
             resource.setOrigin(model.getOrigin());
             resource.setInstitutionType(model.getInstitutionType());
+            resource.setId(model.getId());
         }
         return resource;
     }

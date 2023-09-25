@@ -62,6 +62,8 @@ class InstitutionControllerTest {
     private InstitutionService institutionServiceMock;
 
 
+
+
     @Test
     void onboarding(@Value("classpath:stubs/onboardingDto.json") Resource onboardingDto) throws Exception {
         // given
@@ -96,6 +98,25 @@ class InstitutionControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(content().string(emptyString()));
         // then
+        verify(institutionServiceMock, times(1))
+                .onboardingProduct(any(OnboardingData.class));
+        verifyNoMoreInteractions(institutionServiceMock);
+    }
+
+
+    @Test
+    void onboardingCompany(@Value("classpath:stubs/onboardingCompanyDto.json") Resource onboardingDto) throws Exception {
+
+        // when
+       mvc.perform(MockMvcRequestBuilders
+                        .post(BASE_URL + "/company/onboarding")
+                        .content(onboardingDto.getInputStream().readAllBytes())
+                        .contentType(APPLICATION_JSON_VALUE)
+                        .accept(APPLICATION_JSON_VALUE))
+                .andExpect(status().isCreated())
+               .andExpect(content().string(emptyString()));
+        // then
+
         verify(institutionServiceMock, times(1))
                 .onboardingProduct(any(OnboardingData.class));
         verifyNoMoreInteractions(institutionServiceMock);
@@ -204,7 +225,7 @@ class InstitutionControllerTest {
         assertNotNull(response);
         assertNotNull(response.getInstitution());
 
-        BillingDataDto responseBillings = response.getInstitution().getBillingData();
+        BillingDataResponseDto responseBillings = response.getInstitution().getBillingData();
         assertEquals(onBoardingDataMock.getInstitution().getBilling().getRecipientCode(), responseBillings.getRecipientCode());
         assertEquals(onBoardingDataMock.getInstitution().getBilling().getPublicServices(), responseBillings.getPublicServices());
         assertEquals(onBoardingDataMock.getInstitution().getBilling().getVatNumber(), responseBillings.getVatNumber());
@@ -245,6 +266,90 @@ class InstitutionControllerTest {
                 .getGeographicTaxonomyList(institutionId);
         verifyNoMoreInteractions(institutionServiceMock);
 
+    }
+
+
+    @Test
+    void getGeographicTaxonomyByTaxCodeAndSubunitCode_withTaxCode() throws Exception {
+        // given
+        String taxCode = "taxCode";
+        List<GeographicTaxonomy> geographicTaxonomyListMock = List.of(mockInstance(new GeographicTaxonomy()));
+        when(institutionServiceMock.getGeographicTaxonomyList(taxCode, null))
+                .thenReturn(geographicTaxonomyListMock);
+        // when
+        MvcResult result = mvc.perform(MockMvcRequestBuilders
+                        .get(BASE_URL + "/geographicTaxonomies?taxCode={taxCode}", taxCode)
+                        .contentType(APPLICATION_JSON_VALUE)
+                        .accept(APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk())
+                .andReturn();
+        // then
+        List<GeographicTaxonomyResource> response = objectMapper.readValue(
+                result.getResponse().getContentAsString(),
+                new TypeReference<>() {
+                });
+        assertNotNull(response);
+        assertEquals(geographicTaxonomyListMock.get(0).getCode(), response.get(0).getCode());
+        assertEquals(geographicTaxonomyListMock.get(0).getDesc(), response.get(0).getDesc());
+    }
+
+    @Test
+    void getGeographicTaxonomyByTaxCodeAndSubunitCode_withTaxCodeAndSubunitCode() throws Exception {
+        // given
+        String taxCode = "taxCode";
+        String subunitCode = "subunitCode";
+        List<GeographicTaxonomy> geographicTaxonomyListMock = List.of(mockInstance(new GeographicTaxonomy()));
+        when(institutionServiceMock.getGeographicTaxonomyList(taxCode, subunitCode))
+                .thenReturn(geographicTaxonomyListMock);
+        // when
+        MvcResult result = mvc.perform(MockMvcRequestBuilders
+                        .get(BASE_URL + "/geographicTaxonomies?taxCode={taxCode}&subunitCode={subunitCode}", taxCode, subunitCode)
+                        .contentType(APPLICATION_JSON_VALUE)
+                        .accept(APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk())
+                .andReturn();
+        // then
+        List<GeographicTaxonomyResource> response = objectMapper.readValue(
+                result.getResponse().getContentAsString(),
+                new TypeReference<>() {
+                });
+        assertNotNull(response);
+        assertEquals(geographicTaxonomyListMock.get(0).getCode(), response.get(0).getCode());
+        assertEquals(geographicTaxonomyListMock.get(0).getDesc(), response.get(0).getDesc());
+    }
+
+
+    @Test
+    void getInstitutionOnboardingInfo_shouldGetInstitutions() throws Exception {
+        //given
+        InstitutionInfo institutionInfo = mockInstance(new InstitutionInfo());
+        institutionInfo.setId(randomUUID().toString());
+        String productId = "prod-io";
+
+        InstitutionOnboardingData institutionOnboardingData = new InstitutionOnboardingData();
+        institutionOnboardingData.setInstitution(institutionInfo);
+        when(institutionServiceMock.getInstitutionOnboardingData(institutionInfo.getTaxCode(),null,productId))
+                .thenReturn(institutionOnboardingData);
+        //when
+        MvcResult result = mvc.perform(MockMvcRequestBuilders
+                        .get(BASE_URL + "/onboarding/")
+                        .queryParam("taxCode", institutionInfo.getTaxCode())
+                        .queryParam("productId", productId)
+                        .contentType(APPLICATION_JSON_VALUE)
+                        .accept(APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk())
+                .andReturn();
+        //then
+        InstitutionOnboardingInfoResource actual = objectMapper.readValue(
+                result.getResponse().getContentAsString(),
+                new TypeReference<>() {
+                });
+        assertNotNull(actual);
+        assertNotNull(actual.getInstitution());
+
+        assertEquals(institutionInfo.getId(), actual.getInstitution().getId());
+        assertEquals(institutionInfo.getInstitutionType(), actual.getInstitution().getInstitutionType());
+        assertEquals(institutionInfo.getOrigin(), actual.getInstitution().getOrigin());
     }
 
     @Test
@@ -299,9 +404,30 @@ class InstitutionControllerTest {
                         .head(BASE_URL + "/onboarding")
                         .queryParam("taxCode", "taxCode")
                         .queryParam("productId", "productId")
+                        .queryParam("verifyType", VerifyType.INTERNAL.name())
                         .contentType(APPLICATION_JSON_VALUE)
                         .accept(APPLICATION_JSON_VALUE))
                 .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void verifyOnboardingExternal() throws Exception{
+        //given
+        String productId = "prod-fd";
+        String vatNumber  ="vatNumber";
+        String taxCode = "taxCode";
+        //when
+        mvc.perform(MockMvcRequestBuilders
+                        .head(BASE_URL + "/onboarding")
+                        .queryParam("taxCode", taxCode)
+                        .queryParam("productId", productId)
+                        .queryParam("verifyType", VerifyType.EXTERNAL.name())
+                        .queryParam("vatNumber", vatNumber)
+                        .contentType(APPLICATION_JSON_VALUE)
+                        .accept(APPLICATION_JSON_VALUE))
+                .andExpect(status().isNoContent());
+        //then
+        verify(institutionServiceMock, times(1)).checkOrganization(productId, taxCode, vatNumber);
     }
     @Test
     void getInstitutionsByUserId() throws Exception {
