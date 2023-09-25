@@ -113,9 +113,12 @@ class InstitutionServiceImpl implements InstitutionService {
                     .findFirst()
                     .orElseThrow(ResourceNotFoundException::new);
         } catch (ResourceNotFoundException e) {
-            if (InstitutionType.PA.equals(onboardingData.getInstitutionType()) ||
+            if (InstitutionType.SA.equals(onboardingData.getInstitutionType()) && onboardingData.getOrigin().equalsIgnoreCase("ANAC")) {
+                institution = partyConnector.createInstitutionFromANAC(onboardingData);
+            } else if (InstitutionType.PA.equals(onboardingData.getInstitutionType()) ||
+                    InstitutionType.SA.equals(onboardingData.getInstitutionType()) ||
                     (GSP.equals(onboardingData.getInstitutionType()) && onboardingData.getProductId().equals(PROD_INTEROP.getValue())
-                    && onboardingData.getOrigin().equals("IPA"))) {
+                            && onboardingData.getOrigin().equals("IPA"))) {
                 institution = partyConnector.createInstitutionFromIpa(onboardingData.getTaxCode(), onboardingData.getSubunitCode(), onboardingData.getSubunitType());
             } else {
                 institution = partyConnector.createInstitution(onboardingData);
