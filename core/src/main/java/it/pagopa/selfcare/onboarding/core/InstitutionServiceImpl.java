@@ -53,6 +53,7 @@ class InstitutionServiceImpl implements InstitutionService {
     protected static final String A_PRODUCT_ID_IS_REQUIRED = "A Product Id is required";
     private static final EnumSet<it.pagopa.selfcare.onboarding.connector.model.user.User.Fields> USER_FIELD_LIST = EnumSet.of(name, familyName, workContacts);
     private static final String ONBOARDING_NOT_ALLOWED_ERROR_MESSAGE_TEMPLATE = "Institution with external id '%s' is not allowed to onboard '%s' product";
+    public static final String UNABLE_TO_COMPLETE_THE_ONBOARDING_FOR_INSTITUTION_FOR_PRODUCT_DISMISSED = "Unable to complete the onboarding for institution with taxCode '%s' to product '%s', the product is dismissed.";
 
     private final PartyConnector partyConnector;
     private final ProductsConnector productsConnector;
@@ -84,9 +85,37 @@ class InstitutionServiceImpl implements InstitutionService {
 
 
     @Override
+    public void onboardingProductAsync(OnboardingData onboardingData) {
+        log.trace("onboardingProductAsync start");
+        log.debug("onboardingProductAsync onboardingData = {}", onboardingData);
+
+        /* check if Product is valid and retrieve */
+        Product product = productsConnector.getProductValid(onboardingData.getProductId());
+        if(Objects.isNull(product)){
+            throw new ValidationException(String.format(UNABLE_TO_COMPLETE_THE_ONBOARDING_FOR_INSTITUTION_FOR_PRODUCT_DISMISSED,
+                    onboardingData.getTaxCode(),
+                    onboardingData.getProductId()));
+        }
+
+        validateOnboarding(onboardingData.getTaxCode(), product.getId());
+        if(Objects.nonNull(product.getProductOperations())) {
+            validateOnboarding(onboardingData.getTaxCode(), product.getProductOperations().getId());
+        }
+
+        partyConnector.onboarding(onboardingData);
+        log.trace("onboarding end");
+    }
+
+    @Override
     public void onboardingProduct(OnboardingData onboardingData) {
         log.trace("onboarding start");
         log.debug("onboarding onboardingData = {}", onboardingData);
+
+        if (InstitutionType.PSP.equals(onboardingData.getInstitutionType())
+                && onboardingData.getInstitutionUpdate().getPaymentServiceProvider() == null) {
+            throw new ValidationException("Field 'pspData' is required for PSP institution onboarding");
+        }
+
         Assert.notNull(onboardingData, REQUIRED_ONBOARDING_DATA_MESSAGE);
         Assert.notNull(onboardingData.getBilling(), REQUIRED_INSTITUTION_BILLING_DATA_MESSAGE);
         Assert.notNull(onboardingData.getInstitutionType(), REQUIRED_INSTITUTION_TYPE_MESSAGE);
@@ -95,7 +124,7 @@ class InstitutionServiceImpl implements InstitutionService {
         checkIfProductIsDelegable(onboardingData, product.isDelegable());
 
         if(product.getStatus() == ProductStatus.PHASE_OUT){
-            throw new ValidationException(String.format("Unable to complete the onboarding for institution with taxCode '%s' to product '%s', the product is dismissed.",
+            throw new ValidationException(String.format(UNABLE_TO_COMPLETE_THE_ONBOARDING_FOR_INSTITUTION_FOR_PRODUCT_DISMISSED,
                     onboardingData.getTaxCode(),
                     product.getId()));
         }

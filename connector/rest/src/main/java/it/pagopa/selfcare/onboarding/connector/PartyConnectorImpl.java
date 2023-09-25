@@ -10,8 +10,10 @@ import it.pagopa.selfcare.onboarding.connector.model.institutions.OnboardingReso
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.*;
 import it.pagopa.selfcare.onboarding.connector.rest.client.MsCoreOnboardingApiClient;
 import it.pagopa.selfcare.onboarding.connector.rest.client.MsCoreTokenApiClient;
+import it.pagopa.selfcare.onboarding.connector.rest.client.MsOnboardingApiClient;
 import it.pagopa.selfcare.onboarding.connector.rest.client.PartyProcessRestClient;
 import it.pagopa.selfcare.onboarding.connector.rest.mapper.InstitutionMapper;
+import it.pagopa.selfcare.onboarding.connector.rest.mapper.OnboardingMapper;
 import it.pagopa.selfcare.onboarding.connector.rest.model.InstitutionUpdate;
 import it.pagopa.selfcare.onboarding.connector.rest.model.*;
 import lombok.extern.slf4j.Slf4j;
@@ -43,6 +45,10 @@ class PartyConnectorImpl implements PartyConnector {
 
     private final PartyProcessRestClient restClient;
     private final InstitutionMapper institutionMapper;
+
+    private final MsOnboardingApiClient msOnboardingApiClient;
+
+    private final OnboardingMapper onboardingMapper;
 
     private static final BinaryOperator<InstitutionInfo> MERGE_FUNCTION =
             (inst1, inst2) -> inst1.getUserRole().compareTo(inst2.getUserRole()) < 0 ? inst1 : inst2;
@@ -89,13 +95,26 @@ class PartyConnectorImpl implements PartyConnector {
     };
 
     @Autowired
-    public PartyConnectorImpl(MsCoreTokenApiClient msCoreTokenApiClient, MsCoreOnboardingApiClient msCoreOnboardingApiClient, PartyProcessRestClient restClient, InstitutionMapper institutionMapper) {
+    public PartyConnectorImpl(MsCoreTokenApiClient msCoreTokenApiClient, MsCoreOnboardingApiClient msCoreOnboardingApiClient, PartyProcessRestClient restClient, InstitutionMapper institutionMapper, MsOnboardingApiClient msOnboardingApiClient, OnboardingMapper onboardingMapper) {
         this.msCoreTokenApiClient = msCoreTokenApiClient;
         this.msCoreOnboardingApiClient = msCoreOnboardingApiClient;
         this.restClient = restClient;
         this.institutionMapper = institutionMapper;
+        this.msOnboardingApiClient = msOnboardingApiClient;
+        this.onboardingMapper = onboardingMapper;
     }
 
+
+    @Override
+    public void onboarding(OnboardingData onboardingData) {
+        if(onboardingData.getInstitutionType() == InstitutionType.PA) {
+            msOnboardingApiClient._onboardingPaPost(onboardingMapper.toOnboardingPaRequest(onboardingData));
+        } else if(onboardingData.getInstitutionType() == InstitutionType.PSP) {
+            msOnboardingApiClient._onboardingPspPost(onboardingMapper.toOnboardingPspRequest(onboardingData));
+        } else {
+            msOnboardingApiClient._onboardingPost(onboardingMapper.toOnboardingDefaultRequest(onboardingData));
+        }
+    }
 
     @Override
     public void onboardingOrganization(OnboardingData onboardingData) {

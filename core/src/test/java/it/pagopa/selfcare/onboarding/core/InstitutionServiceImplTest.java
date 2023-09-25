@@ -433,6 +433,47 @@ class InstitutionServiceImplTest {
         verifyNoMoreInteractions(productsConnectorMock, partyConnectorMock, userConnectorMock, onboardingValidationStrategyMock);
     }
 
+
+    @Test
+    void onboardingProductAsync_ShouldThrowErrorWhenParentProductHasNotValidState() {
+        // given
+
+        OnboardingData onboardingData = mockInstance(new OnboardingData(), "setInstitutionType", "setUsers");
+
+        when(productsConnectorMock.getProductValid(onboardingData.getProductId()))
+                .thenReturn(null);
+
+        Assertions.assertThrows(ValidationException.class, () -> institutionService.onboardingProductAsync(onboardingData));
+        verify(productsConnectorMock, times(1)).getProductValid(any());
+    }
+
+
+    @Test
+    void onboardingProductAsync() {
+        // given
+        OnboardingData onboardingData = mockInstance(new OnboardingData(), "setInstitutionType", "setUsers");
+        onboardingData.setInstitutionType(InstitutionType.PA);
+        onboardingData.setUsers(List.of(dummyManager, dummyDelegate));
+
+        Product productMock = new Product();
+        productMock.setId(onboardingData.getProductId());
+        productMock.setParentId("test");
+
+        when(productsConnectorMock.getProductValid(onboardingData.getProductId()))
+                .thenReturn(productMock);
+
+        when(onboardingValidationStrategyMock.validate(onboardingData.getProductId(), onboardingData.getTaxCode()))
+                .thenReturn(true);
+        // when
+        institutionService.onboardingProductAsync(onboardingData);
+        // then
+
+        verify(productsConnectorMock, times(1))
+                .getProductValid(onboardingData.getProductId());
+        verify(onboardingValidationStrategyMock, times(1))
+                .validate(onboardingData.getProductId(), onboardingData.getTaxCode());
+    }
+
     @Test
     void shouldOnboardingProductInstitutionNotPa() {
         // given

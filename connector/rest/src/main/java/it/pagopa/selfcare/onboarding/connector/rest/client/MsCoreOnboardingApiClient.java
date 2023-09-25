@@ -6,6 +6,6 @@ import org.springframework.cloud.openfeign.FeignClient;
 /**
  * Ms Core Rest Client
  */
-@FeignClient(name = "${rest-client.ms-core-onboarding-api.serviceCode}", url = "${rest-client.ms-core.base-url}")
+@FeignClient(name = "${rest-client.ms-core-onboarding-api.serviceCode}", url = "${rest-client.ms-onboarding.base-url}")
 public interface MsCoreOnboardingApiClient extends OnboardingApi {
 }
