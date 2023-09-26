@@ -1,6 +1,7 @@
 package it.pagopa.selfcare.onboarding.core;
 
 import it.pagopa.selfcare.commons.base.security.PartyRole;
+import it.pagopa.selfcare.commons.base.utils.InstitutionType;
 import it.pagopa.selfcare.onboarding.connector.api.*;
 import it.pagopa.selfcare.onboarding.connector.exceptions.ResourceNotFoundException;
 import it.pagopa.selfcare.onboarding.connector.model.InstitutionLegalAddressData;
@@ -692,6 +693,7 @@ class InstitutionServiceImplTest {
 
         OnboardingData onboardingData = mockInstance(new OnboardingData(), "setInstitutionType", "setUsers");
         onboardingData.setInstitutionType(InstitutionType.SA);
+        onboardingData.setOrigin("ANAC");
         onboardingData.setUsers(List.of(dummyManager, dummyDelegate));
         Product productMock = mockInstance(new Product(), "setRoleMappings", "setParentId", "setId");
         productMock.setId(onboardingData.getProductId());

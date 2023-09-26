@@ -33,7 +33,7 @@ import org.springframework.util.Assert;
 import javax.validation.ValidationException;
 import java.util.*;
 
-import static it.pagopa.selfcare.onboarding.connector.model.onboarding.InstitutionType.GSP;
+import it.pagopa.selfcare.commons.base.utils.InstitutionType;
 import static it.pagopa.selfcare.onboarding.connector.model.product.ProductId.PROD_INTEROP;
 import static it.pagopa.selfcare.onboarding.connector.model.product.ProductId.PROD_PN_PG;
 import static it.pagopa.selfcare.onboarding.connector.model.user.User.Fields.*;
@@ -117,7 +117,7 @@ class InstitutionServiceImpl implements InstitutionService {
                 institution = partyConnector.createInstitutionFromANAC(onboardingData);
             } else if (InstitutionType.PA.equals(onboardingData.getInstitutionType()) ||
                     InstitutionType.SA.equals(onboardingData.getInstitutionType()) ||
-                    (GSP.equals(onboardingData.getInstitutionType()) && onboardingData.getProductId().equals(PROD_INTEROP.getValue())
+                    (InstitutionType.GSP.equals(onboardingData.getInstitutionType()) && onboardingData.getProductId().equals(PROD_INTEROP.getValue())
                             && onboardingData.getOrigin().equals("IPA"))) {
                 institution = partyConnector.createInstitutionFromIpa(onboardingData.getTaxCode(), onboardingData.getSubunitCode(), onboardingData.getSubunitType());
             } else {
