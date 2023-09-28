@@ -194,8 +194,12 @@ class InstitutionServiceImpl implements InstitutionService {
             roleMappings = product.getRoleMappings();
         }
 
+        validateProductRole(onboardingData.getUsers(), roleMappings);
+    }
+
+    private void validateProductRole(List<User> users, EnumMap<PartyRole, ProductRoleInfo> roleMappings) {
         Assert.notNull(roleMappings, "Role mappings is required");
-        onboardingData.getUsers().forEach(userInfo -> {
+        users.forEach(userInfo -> {
             Assert.notNull(roleMappings.get(userInfo.getRole()),
                     String.format(ATLEAST_ONE_PRODUCT_ROLE_REQUIRED, userInfo.getRole()));
             Assert.notEmpty(roleMappings.get(userInfo.getRole()).getRoles(),
@@ -262,16 +266,8 @@ class InstitutionServiceImpl implements InstitutionService {
             roleMappings = product.getRoleMappings();
         }
         onboardingData.setProductName(product.getTitle());
-        Assert.notNull(roleMappings, "Role mappings is required");
-        onboardingData.getUsers().forEach(userInfo -> {
-            Assert.notNull(roleMappings.get(userInfo.getRole()),
-                    String.format(ATLEAST_ONE_PRODUCT_ROLE_REQUIRED, userInfo.getRole()));
-            Assert.notEmpty(roleMappings.get(userInfo.getRole()).getRoles(),
-                    String.format(ATLEAST_ONE_PRODUCT_ROLE_REQUIRED, userInfo.getRole()));
-            Assert.state(roleMappings.get(userInfo.getRole()).getRoles().size() == 1,
-                    String.format(MORE_THAN_ONE_PRODUCT_ROLE_AVAILABLE, userInfo.getRole()));
-            userInfo.setProductRole(roleMappings.get(userInfo.getRole()).getRoles().get(0).getCode());
-        });
+
+        validateProductRole(onboardingData.getUsers(), roleMappings);
 
         Institution institution;
         try {
