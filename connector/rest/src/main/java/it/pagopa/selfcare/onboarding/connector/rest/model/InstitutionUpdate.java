@@ -1,7 +1,7 @@
 package it.pagopa.selfcare.onboarding.connector.rest.model;
 
+import it.pagopa.selfcare.commons.base.utils.InstitutionType;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.DataProtectionOfficer;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.InstitutionType;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.PaymentServiceProvider;
 import lombok.Data;
 

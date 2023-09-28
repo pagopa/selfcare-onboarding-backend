@@ -1069,6 +1069,21 @@ class PartyConnectorImplTest {
         verifyNoInteractions(restClientMock);
     }
 
+    @Test
+    void createInstitutionFromAnac() {
+        // given
+        OnboardingData onboardingData = new OnboardingData();
+        onboardingData.setInstitutionUpdate(new InstitutionUpdate());
+        onboardingData.setTaxCode("taxCode");
+        // when
+        final Executable executable = () -> partyConnector.createInstitutionFromANAC(onboardingData);
+        assertDoesNotThrow(executable);
+        verify(restClientMock, times(1))
+                .createInstitutionFromANAC(any());
+        verifyNoMoreInteractions(restClientMock);
+
+    }
+
 
     @Test
     void tokensVerify_nullProductId() {

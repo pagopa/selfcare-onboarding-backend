@@ -1,8 +1,8 @@
 package it.pagopa.selfcare.onboarding.web.model.mapper;
 
+import it.pagopa.selfcare.commons.base.utils.InstitutionType;
 import it.pagopa.selfcare.onboarding.connector.model.InstitutionLegalAddressData;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.Billing;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.InstitutionType;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.InstitutionUpdate;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.PnPGOnboardingData;
 import it.pagopa.selfcare.onboarding.web.model.CompanyOnboardingDto;

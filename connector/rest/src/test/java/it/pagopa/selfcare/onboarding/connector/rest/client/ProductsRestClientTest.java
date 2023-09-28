@@ -1,9 +1,9 @@
 package it.pagopa.selfcare.onboarding.connector.rest.client;
 
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
+import it.pagopa.selfcare.commons.base.utils.InstitutionType;
 import it.pagopa.selfcare.commons.connector.rest.BaseFeignRestClientTest;
 import it.pagopa.selfcare.commons.connector.rest.RestTestUtils;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.InstitutionType;
 import it.pagopa.selfcare.onboarding.connector.model.product.Product;
 import it.pagopa.selfcare.onboarding.connector.rest.config.ProductsRestClientTestConfig;
 import lombok.SneakyThrows;
