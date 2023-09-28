@@ -537,5 +537,33 @@ class InstitutionControllerTest {
         assertEquals(response.getAddress(), data.getAddress());
         assertEquals(response.getZipCode(), data.getZipCode());
     }
+    @Test
+    void onboardingInvalidSaOnboardingRequest(@Value("classpath:stubs/invalidSaOnboardingProductDto.json") Resource onboardingDto) throws Exception {
+        // when
+        mvc.perform(MockMvcRequestBuilders
+                        .post(BASE_URL + "/onboarding")
+                        .content(onboardingDto.getInputStream().readAllBytes())
+                        .contentType(APPLICATION_JSON_VALUE)
+                        .accept(APPLICATION_JSON_VALUE))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.detail", is("Field 'recipientCode' is required")));
 
+        // then
+        verifyNoInteractions(institutionServiceMock);
+    }
+
+    @Test
+    void onboardingInvalidPsp(@Value("classpath:stubs/invalidPspOnboardingProductDto.json") Resource onboardingDto) throws Exception {
+        // when
+        mvc.perform(MockMvcRequestBuilders
+                        .post(BASE_URL + "/onboarding")
+                        .content(onboardingDto.getInputStream().readAllBytes())
+                        .contentType(APPLICATION_JSON_VALUE)
+                        .accept(APPLICATION_JSON_VALUE))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.detail", is("Field 'pspData' is required for PSP institution onboarding")));
+
+        // then
+        verifyNoInteractions(institutionServiceMock);
+    }
 }
