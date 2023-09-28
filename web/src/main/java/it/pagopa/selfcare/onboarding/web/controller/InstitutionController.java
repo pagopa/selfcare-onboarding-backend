@@ -71,6 +71,8 @@ public class InstitutionController {
         log.debug("onboarding request = {}", request);
         if (InstitutionType.PSP.equals(request.getInstitutionType()) && request.getPspData() == null) {
             throw new ValidationException("Field 'pspData' is required for PSP institution onboarding");
+        } else if(!InstitutionType.SA.equals(request.getInstitutionType()) && Objects.isNull(request.getBillingData().getRecipientCode())){
+            throw new ValidationException("Field 'recipientCode' is required");
         }
         institutionService.onboardingProduct(onboardingResourceMapper.toEntity(request));
         log.trace(ONBOARDING_END);
