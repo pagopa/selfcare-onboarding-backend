@@ -2039,7 +2039,7 @@
           },
           "recipientCode" : {
             "type" : "string",
-            "description" : "Billing recipient code"
+            "description" : "Billing recipient code, not required only for institutionType SA"
           },
           "registeredOffice" : {
             "type" : "string",
@@ -2083,7 +2083,7 @@
           },
           "recipientCode" : {
             "type" : "string",
-            "description" : "Billing recipient code"
+            "description" : "Billing recipient code, not required only for institutionType SA"
           },
           "registeredOffice" : {
             "type" : "string",
