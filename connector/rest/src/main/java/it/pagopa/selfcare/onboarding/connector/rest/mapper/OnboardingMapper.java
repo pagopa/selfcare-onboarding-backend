@@ -53,34 +53,34 @@ public interface OnboardingMapper {
 
     @Named("toInstitutionPsp")
     default InstitutionPspRequest toInstitutionPsp(OnboardingData onboardingData) {
-        InstitutionPspRequest institution = new InstitutionPspRequest();
-        institution.institutionType(InstitutionType.valueOf(onboardingData.getInstitutionType().name()));
-        institution.taxCode(onboardingData.getTaxCode());
-        institution.subunitCode(onboardingData.getSubunitCode());
-        institution.subunitType(Optional.ofNullable(onboardingData.getSubunitType())
+        InstitutionPspRequest institutionPsp = new InstitutionPspRequest();
+        institutionPsp.institutionType(InstitutionType.valueOf(onboardingData.getInstitutionType().name()));
+        institutionPsp.taxCode(onboardingData.getTaxCode());
+        institutionPsp.subunitCode(onboardingData.getSubunitCode());
+        institutionPsp.subunitType(Optional.ofNullable(onboardingData.getSubunitType())
                 .map(InstitutionPaSubunitType::valueOf)
                 .orElse(null));
 
-        institution.setDescription(onboardingData.getInstitutionUpdate().getDescription());
-        institution.digitalAddress(onboardingData.getInstitutionUpdate().getDigitalAddress());
-        institution.address(onboardingData.getInstitutionUpdate().getAddress());
-        institution.zipCode(onboardingData.getInstitutionUpdate().getZipCode());
-        institution.geographicTaxonomyCodes(Optional.ofNullable(onboardingData.getInstitutionUpdate().getGeographicTaxonomies())
+        institutionPsp.setDescription(onboardingData.getInstitutionUpdate().getDescription());
+        institutionPsp.digitalAddress(onboardingData.getInstitutionUpdate().getDigitalAddress());
+        institutionPsp.address(onboardingData.getInstitutionUpdate().getAddress());
+        institutionPsp.zipCode(onboardingData.getInstitutionUpdate().getZipCode());
+        institutionPsp.geographicTaxonomyCodes(Optional.ofNullable(onboardingData.getInstitutionUpdate().getGeographicTaxonomies())
                 .map(geotaxes -> geotaxes.stream()
                     .map(GeographicTaxonomy::getCode)
                     .collect(Collectors.toList()))
                 .orElse(null));
-        institution.rea(onboardingData.getInstitutionUpdate().getRea());
-        institution.shareCapital(onboardingData.getInstitutionUpdate().getShareCapital());
-        institution.businessRegisterPlace(onboardingData.getInstitutionUpdate().getBusinessRegisterPlace());
-        institution.supportEmail(onboardingData.getInstitutionUpdate().getSupportEmail());
-        institution.supportPhone(onboardingData.getInstitutionUpdate().getSupportPhone());
-        institution.imported(onboardingData.getInstitutionUpdate().getImported());
+        institutionPsp.rea(onboardingData.getInstitutionUpdate().getRea());
+        institutionPsp.shareCapital(onboardingData.getInstitutionUpdate().getShareCapital());
+        institutionPsp.businessRegisterPlace(onboardingData.getInstitutionUpdate().getBusinessRegisterPlace());
+        institutionPsp.supportEmail(onboardingData.getInstitutionUpdate().getSupportEmail());
+        institutionPsp.supportPhone(onboardingData.getInstitutionUpdate().getSupportPhone());
+        institutionPsp.imported(onboardingData.getInstitutionUpdate().getImported());
 
 
-        institution.setPaymentServiceProvider(toPaymentServiceProviderRequest(onboardingData.getInstitutionUpdate().getPaymentServiceProvider()));
-        institution.setDataProtectionOfficer(toDataProtectionOfficerRequest(onboardingData.getInstitutionUpdate().getDataProtectionOfficer()));
-        return institution;
+        institutionPsp.setPaymentServiceProvider(toPaymentServiceProviderRequest(onboardingData.getInstitutionUpdate().getPaymentServiceProvider()));
+        institutionPsp.setDataProtectionOfficer(toDataProtectionOfficerRequest(onboardingData.getInstitutionUpdate().getDataProtectionOfficer()));
+        return institutionPsp;
     }
 
     PaymentServiceProviderRequest toPaymentServiceProviderRequest(PaymentServiceProvider paymentServiceProvider);
