@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import it.pagopa.selfcare.commons.base.logging.LogUtils;
 import it.pagopa.selfcare.commons.base.security.SelfCareUser;
+import it.pagopa.selfcare.commons.base.utils.InstitutionType;
 import it.pagopa.selfcare.commons.web.model.Problem;
 import it.pagopa.selfcare.commons.web.security.JwtAuthenticationToken;
 import it.pagopa.selfcare.onboarding.connector.exceptions.InvalidRequestException;
@@ -16,7 +17,6 @@ import it.pagopa.selfcare.onboarding.connector.model.InstitutionLegalAddressData
 import it.pagopa.selfcare.onboarding.connector.model.InstitutionOnboardingData;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.MatchInfoResult;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.infocamere.InstitutionInfoIC;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.InstitutionType;
 import it.pagopa.selfcare.onboarding.core.InstitutionService;
 import it.pagopa.selfcare.onboarding.web.model.*;
 import it.pagopa.selfcare.onboarding.web.model.mapper.*;
@@ -69,9 +69,17 @@ public class InstitutionController {
     public void onboarding(@RequestBody @Valid OnboardingProductDto request, @RequestParam(value = "mode", required = false) OnboardingMode mode) {
         log.trace(ONBOARDING_START);
         log.debug("onboarding request = {}", request);
-        if(Objects.isNull(mode) || mode.equals(OnboardingMode.SYNC))
+
+        if (InstitutionType.PSP.equals(request.getInstitutionType()) && request.getPspData() == null) {
+            throw new ValidationException("Field 'pspData' is required for PSP institution onboarding");
+        } else if(!InstitutionType.SA.equals(request.getInstitutionType()) && Objects.isNull(request.getBillingData().getRecipientCode())){
+            throw new ValidationException("Field 'recipientCode' is required");
+        }
+      
+       if(Objects.isNull(mode) || mode.equals(OnboardingMode.SYNC))
             institutionService.onboardingProduct(onboardingResourceMapper.toEntity(request));
         else institutionService.onboardingProductAsync(onboardingResourceMapper.toEntity(request));
+
         log.trace(ONBOARDING_END);
     }
 

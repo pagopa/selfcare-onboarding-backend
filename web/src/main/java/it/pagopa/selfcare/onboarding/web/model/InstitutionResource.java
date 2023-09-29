@@ -2,7 +2,7 @@ package it.pagopa.selfcare.onboarding.web.model;
 
 import io.swagger.annotations.ApiModelProperty;
 import it.pagopa.selfcare.commons.base.security.SelfCareAuthority;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.InstitutionType;
+import it.pagopa.selfcare.commons.base.utils.InstitutionType;
 import lombok.Data;
 
 import java.util.UUID;

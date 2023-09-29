@@ -1,5 +1,6 @@
 package it.pagopa.selfcare.onboarding.connector.rest.model;
 
+import it.pagopa.selfcare.commons.base.utils.InstitutionType;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Attribute;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.*;
 import lombok.Data;

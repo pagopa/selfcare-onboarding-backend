@@ -1,7 +1,7 @@
 package it.pagopa.selfcare.onboarding.connector.rest.client;
 
+import it.pagopa.selfcare.commons.base.utils.InstitutionType;
 import it.pagopa.selfcare.onboarding.connector.api.ProductsConnector;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.InstitutionType;
 import it.pagopa.selfcare.onboarding.connector.model.product.Product;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;

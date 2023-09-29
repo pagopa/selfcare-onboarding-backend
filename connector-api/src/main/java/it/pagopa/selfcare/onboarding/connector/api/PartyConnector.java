@@ -31,6 +31,8 @@ public interface PartyConnector {
 
     Institution createInstitutionFromIpa(String taxCode, String subunitCode, String subunitType);
 
+    Institution createInstitutionFromANAC(OnboardingData onboardingData);
+
     Institution createInstitutionUsingExternalId(String institutionExternalId);
 
     Institution createInstitution(OnboardingData onboardingData);
