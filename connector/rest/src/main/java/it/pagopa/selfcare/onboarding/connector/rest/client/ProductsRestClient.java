@@ -18,4 +18,8 @@ public interface ProductsRestClient extends ProductsConnector {
     Product getProduct(@PathVariable("id") String id,
                        @RequestParam(value = "institutionType", required = false) InstitutionType institutionType);
 
+    @GetMapping(value = "${rest-client.products.getProductValid.path}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    Product getProductValid(@PathVariable("id") String id);
+
 }
