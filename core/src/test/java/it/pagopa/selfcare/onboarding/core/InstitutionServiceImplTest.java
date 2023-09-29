@@ -436,43 +436,16 @@ class InstitutionServiceImplTest {
 
 
     @Test
-    void onboardingProductAsync_ShouldThrowErrorWhenParentProductHasNotValidState() {
-        // given
-
-        OnboardingData onboardingData = mockInstance(new OnboardingData(), "setInstitutionType", "setUsers");
-
-        when(productsConnectorMock.getProductValid(onboardingData.getProductId()))
-                .thenReturn(null);
-
-        Assertions.assertThrows(ValidationException.class, () -> institutionService.onboardingProductAsync(onboardingData));
-        verify(productsConnectorMock, times(1)).getProductValid(any());
-    }
-
-
-    @Test
     void onboardingProductAsync() {
         // given
         OnboardingData onboardingData = mockInstance(new OnboardingData(), "setInstitutionType", "setUsers");
         onboardingData.setInstitutionType(InstitutionType.PA);
         onboardingData.setUsers(List.of(dummyManager, dummyDelegate));
-
-        Product productMock = new Product();
-        productMock.setId(onboardingData.getProductId());
-        productMock.setParentId("test");
-
-        when(productsConnectorMock.getProductValid(onboardingData.getProductId()))
-                .thenReturn(productMock);
-
-        when(onboardingValidationStrategyMock.validate(onboardingData.getProductId(), onboardingData.getTaxCode()))
-                .thenReturn(true);
         // when
         institutionService.onboardingProductAsync(onboardingData);
         // then
-
-        verify(productsConnectorMock, times(1))
-                .getProductValid(onboardingData.getProductId());
-        verify(onboardingValidationStrategyMock, times(1))
-                .validate(onboardingData.getProductId(), onboardingData.getTaxCode());
+        verify(partyConnectorMock, times(1))
+                .onboarding(any());
     }
 
     @Test
@@ -659,6 +632,17 @@ class InstitutionServiceImplTest {
     }
 
     @Test
+    void shouldOnboardingProductInstitutionNotSAInvalidRecipientCode() {
+
+        OnboardingData onboardingData = mockInstance(new OnboardingData(), "setInstitutionType", "setUsers");
+        onboardingData.setInstitutionType(InstitutionType.PA);
+        onboardingData.setProductId(PROD_INTEROP.getValue());
+        onboardingData.setBilling(new Billing());
+
+        Assertions.assertThrows(ValidationException.class, () -> institutionService.onboardingProduct(onboardingData));
+    }
+
+    @Test
     void shouldOnboardingProductInstitutionPa() {
         // given
         String productRole = "role";
@@ -736,7 +720,7 @@ class InstitutionServiceImplTest {
         onboardingData.setInstitutionType(InstitutionType.SA);
         onboardingData.setOrigin("ANAC");
         onboardingData.setUsers(List.of(dummyManager, dummyDelegate));
-        Product productMock = mockInstance(new Product(), "setRoleMappings", "setParentId", "setId");
+        Product productMock = mockInstance(new Product(), "setRoleMappings", "setParentId", "setId", "setProductOperations");
         productMock.setId(onboardingData.getProductId());
         ProductRoleInfo productRoleInfo1 = mockInstance(new ProductRoleInfo(), 1, "setRoles");
         ProductRoleInfo.ProductRole productRole1 = mockInstance(new ProductRoleInfo.ProductRole(), 1);
@@ -806,7 +790,7 @@ class InstitutionServiceImplTest {
         onboardingData.setInstitutionType(InstitutionType.SA);
         onboardingData.setOrigin("IPA");
         onboardingData.setUsers(List.of(dummyManager, dummyDelegate));
-        Product productMock = mockInstance(new Product(), "setRoleMappings", "setParentId", "setId");
+        Product productMock = mockInstance(new Product(), "setRoleMappings", "setParentId", "setId", "setProductOperations");
         productMock.setId(onboardingData.getProductId());
         ProductRoleInfo productRoleInfo1 = mockInstance(new ProductRoleInfo(), 1, "setRoles");
         ProductRoleInfo.ProductRole productRole1 = mockInstance(new ProductRoleInfo.ProductRole(), 1);

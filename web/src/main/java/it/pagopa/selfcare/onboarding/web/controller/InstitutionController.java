@@ -69,14 +69,7 @@ public class InstitutionController {
     public void onboarding(@RequestBody @Valid OnboardingProductDto request, @RequestParam(value = "mode", required = false) OnboardingMode mode) {
         log.trace(ONBOARDING_START);
         log.debug("onboarding request = {}", request);
-
-        if (InstitutionType.PSP.equals(request.getInstitutionType()) && request.getPspData() == null) {
-            throw new ValidationException("Field 'pspData' is required for PSP institution onboarding");
-        } else if(!InstitutionType.SA.equals(request.getInstitutionType()) && Objects.isNull(request.getBillingData().getRecipientCode())){
-            throw new ValidationException("Field 'recipientCode' is required");
-        }
-      
-       if(Objects.isNull(mode) || mode.equals(OnboardingMode.SYNC))
+        if(Objects.isNull(mode) || mode.equals(OnboardingMode.SYNC))
             institutionService.onboardingProduct(onboardingResourceMapper.toEntity(request));
         else institutionService.onboardingProductAsync(onboardingResourceMapper.toEntity(request));
 

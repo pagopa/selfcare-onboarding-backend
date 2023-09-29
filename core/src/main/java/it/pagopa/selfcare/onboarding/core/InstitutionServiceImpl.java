@@ -2,6 +2,7 @@ package it.pagopa.selfcare.onboarding.core;
 
 import it.pagopa.selfcare.commons.base.logging.LogUtils;
 import it.pagopa.selfcare.commons.base.security.PartyRole;
+import it.pagopa.selfcare.commons.base.utils.InstitutionType;
 import it.pagopa.selfcare.onboarding.connector.api.*;
 import it.pagopa.selfcare.onboarding.connector.exceptions.ResourceNotFoundException;
 import it.pagopa.selfcare.onboarding.connector.model.InstitutionLegalAddressData;
@@ -11,7 +12,10 @@ import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionInf
 import it.pagopa.selfcare.onboarding.connector.model.institutions.MatchInfoResult;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.OnboardingResource;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.infocamere.InstitutionInfoIC;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.*;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.CreateInstitutionData;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.GeographicTaxonomy;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.User;
 import it.pagopa.selfcare.onboarding.connector.model.product.Product;
 import it.pagopa.selfcare.onboarding.connector.model.product.ProductRoleInfo;
 import it.pagopa.selfcare.onboarding.connector.model.product.ProductStatus;
@@ -33,7 +37,6 @@ import org.springframework.util.Assert;
 import javax.validation.ValidationException;
 import java.util.*;
 
-import it.pagopa.selfcare.commons.base.utils.InstitutionType;
 import static it.pagopa.selfcare.onboarding.connector.model.product.ProductId.PROD_INTEROP;
 import static it.pagopa.selfcare.onboarding.connector.model.product.ProductId.PROD_PN_PG;
 import static it.pagopa.selfcare.onboarding.connector.model.user.User.Fields.*;
@@ -97,9 +100,10 @@ class InstitutionServiceImpl implements InstitutionService {
         log.trace("onboarding start");
         log.debug("onboarding onboardingData = {}", onboardingData);
 
-        if (InstitutionType.PSP.equals(onboardingData.getInstitutionType())
-                && onboardingData.getInstitutionUpdate().getPaymentServiceProvider() == null) {
+        if (InstitutionType.PSP.equals(onboardingData.getInstitutionType()) && onboardingData.getInstitutionUpdate().getPaymentServiceProvider() == null) {
             throw new ValidationException("Field 'pspData' is required for PSP institution onboarding");
+        } else if(!InstitutionType.SA.equals(onboardingData.getInstitutionType()) && Objects.isNull(onboardingData.getBilling().getRecipientCode())){
+            throw new ValidationException("Field 'recipientCode' is required");
         }
 
         Assert.notNull(onboardingData, REQUIRED_ONBOARDING_DATA_MESSAGE);

@@ -1,6 +1,7 @@
 package it.pagopa.selfcare.onboarding.connector;
 
 import it.pagopa.selfcare.commons.base.logging.LogUtils;
+import it.pagopa.selfcare.commons.base.utils.InstitutionType;
 import it.pagopa.selfcare.onboarding.connector.api.PartyConnector;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipInfo;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipsResponse;
