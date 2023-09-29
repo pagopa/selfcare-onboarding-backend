@@ -84,6 +84,7 @@ class InstitutionControllerTest {
     }
 
 
+
     @Test
     void shouldOnboardingProductWithoutGeotax(@Value("classpath:stubs/onboardingProductsDtoWithoutGeo.json") Resource onboardingDto) throws Exception {
         // given
