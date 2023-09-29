@@ -88,20 +88,6 @@ class InstitutionServiceImpl implements InstitutionService {
     public void onboardingProductAsync(OnboardingData onboardingData) {
         log.trace("onboardingProductAsync start");
         log.debug("onboardingProductAsync onboardingData = {}", onboardingData);
-
-        /* check if Product is valid and retrieve */
-        Product product = productsConnector.getProductValid(onboardingData.getProductId());
-        if(Objects.isNull(product)){
-            throw new ValidationException(String.format(UNABLE_TO_COMPLETE_THE_ONBOARDING_FOR_INSTITUTION_FOR_PRODUCT_DISMISSED,
-                    onboardingData.getTaxCode(),
-                    onboardingData.getProductId()));
-        }
-
-        validateOnboarding(onboardingData.getTaxCode(), product.getId());
-        if(Objects.nonNull(product.getProductOperations())) {
-            validateOnboarding(onboardingData.getTaxCode(), product.getProductOperations().getId());
-        }
-
         partyConnector.onboarding(onboardingData);
         log.trace("onboarding end");
     }

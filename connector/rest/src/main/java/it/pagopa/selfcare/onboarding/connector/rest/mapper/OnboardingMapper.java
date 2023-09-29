@@ -30,13 +30,17 @@ public interface OnboardingMapper {
         institution.institutionType(InstitutionType.valueOf(onboardingData.getInstitutionType().name()));
         institution.taxCode(onboardingData.getTaxCode());
         institution.subunitCode(onboardingData.getSubunitCode());
-        institution.subunitType(InstitutionPaSubunitType.fromValue(onboardingData.getSubunitType()));
+        institution.subunitType(Optional.ofNullable(onboardingData.getSubunitType())
+                .map(InstitutionPaSubunitType::valueOf)
+                .orElse(null));
         institution.digitalAddress(onboardingData.getInstitutionUpdate().getDigitalAddress());
         institution.address(onboardingData.getInstitutionUpdate().getAddress());
         institution.zipCode(onboardingData.getInstitutionUpdate().getZipCode());
-        institution.geographicTaxonomyCodes(onboardingData.getInstitutionUpdate().getGeographicTaxonomies().stream()
+        institution.geographicTaxonomyCodes(Optional.ofNullable(onboardingData.getInstitutionUpdate().getGeographicTaxonomies())
+                .map(geotaxes -> geotaxes.stream()
                         .map(GeographicTaxonomy::getCode)
-                        .collect(Collectors.toList()));
+                        .collect(Collectors.toList()))
+                .orElse(null));
         institution.rea(onboardingData.getInstitutionUpdate().getRea());
         institution.shareCapital(onboardingData.getInstitutionUpdate().getShareCapital());
         institution.businessRegisterPlace(onboardingData.getInstitutionUpdate().getBusinessRegisterPlace());
