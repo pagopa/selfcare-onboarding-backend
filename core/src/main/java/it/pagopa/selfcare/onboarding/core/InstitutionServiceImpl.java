@@ -102,8 +102,6 @@ class InstitutionServiceImpl implements InstitutionService {
 
         if (InstitutionType.PSP.equals(onboardingData.getInstitutionType()) && onboardingData.getInstitutionUpdate().getPaymentServiceProvider() == null) {
             throw new ValidationException("Field 'pspData' is required for PSP institution onboarding");
-        } else if(!InstitutionType.SA.equals(onboardingData.getInstitutionType()) && Objects.isNull(onboardingData.getBilling().getRecipientCode())){
-            throw new ValidationException("Field 'recipientCode' is required");
         }
 
         Assert.notNull(onboardingData, REQUIRED_ONBOARDING_DATA_MESSAGE);
