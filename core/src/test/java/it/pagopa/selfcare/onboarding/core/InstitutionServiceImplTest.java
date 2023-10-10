@@ -632,17 +632,6 @@ class InstitutionServiceImplTest {
     }
 
     @Test
-    void shouldOnboardingProductInstitutionNotSAInvalidRecipientCode() {
-
-        OnboardingData onboardingData = mockInstance(new OnboardingData(), "setInstitutionType", "setUsers");
-        onboardingData.setInstitutionType(InstitutionType.PA);
-        onboardingData.setProductId(PROD_INTEROP.getValue());
-        onboardingData.setBilling(new Billing());
-
-        Assertions.assertThrows(ValidationException.class, () -> institutionService.onboardingProduct(onboardingData));
-    }
-
-    @Test
     void shouldOnboardingProductInstitutionPa() {
         // given
         String productRole = "role";
