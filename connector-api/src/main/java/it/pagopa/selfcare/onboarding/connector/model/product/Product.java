@@ -16,4 +16,5 @@ public class Product {
     private String parentId;
     private ProductStatus status;
     private boolean delegable;
+    private Product productOperations;
 }

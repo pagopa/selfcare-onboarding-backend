@@ -360,6 +360,17 @@
         "summary" : "onboarding",
         "description" : "The service allows the onboarding of Users to a subunit of an Institution",
         "operationId" : "onboardingUsingPOST_1",
+        "parameters" : [ {
+          "name" : "mode",
+          "in" : "query",
+          "description" : "mode",
+          "required" : false,
+          "style" : "form",
+          "schema" : {
+            "type" : "string",
+            "enum" : [ "ASYNC", "SYNC" ]
+          }
+        } ],
         "requestBody" : {
           "content" : {
             "application/json" : {

@@ -124,7 +124,7 @@ class InstitutionServiceImplTest {
     void onboarding_nullRoleMapping() {
         // given
         OnboardingData onboardingData = mockInstance(new OnboardingData());
-        Product product = mockInstance(new Product(), "setId", "setParentId");
+        Product product = mockInstance(new Product(), "setId", "setParentId", "setProductOperations");
         product.setId(onboardingData.getProductId());
         when(productsConnectorMock.getProduct(onboardingData.getProductId(), onboardingData.getInstitutionType()))
                 .thenReturn(product);
@@ -147,7 +147,7 @@ class InstitutionServiceImplTest {
     void onboarding_subProductPhaseOutException(){
         // given
         OnboardingData onboardingData = mockInstance(new OnboardingData());
-        Product product = mockInstance(new Product(), "setId", "setParentId");
+        Product product = mockInstance(new Product(), "setId", "setParentId", "setProductOperations");
         product.setId(onboardingData.getProductId());
         product.setStatus(ProductStatus.PHASE_OUT);
         when(productsConnectorMock.getProduct(onboardingData.getProductId(), onboardingData.getInstitutionType()))
@@ -170,8 +170,8 @@ class InstitutionServiceImplTest {
     void onboarding_baseProductPhaseOutException() {
         // given
         OnboardingData onboardingData = mockInstance(new OnboardingData());
-        Product product = mockInstance(new Product(), "setId", "setParentId");
-        Product product2 = mockInstance(new Product(), "setId", "setParentId");
+        Product product = mockInstance(new Product(), "setId", "setParentId", "setProductOperations");
+        Product product2 = mockInstance(new Product(), "setId", "setParentId", "setProductOperations");
         String parentId = "parentId";
         product2.setId(parentId);
         product2.setStatus(ProductStatus.PHASE_OUT);
@@ -234,7 +234,7 @@ class InstitutionServiceImplTest {
         Billing billing = mockInstance(new Billing());
         onboardingData.setUsers(List.of(userInfo));
         onboardingData.setBilling(billing);
-        Product product = mockInstance(new Product(), "setId", "setParentId");
+        Product product = mockInstance(new Product(), "setId", "setParentId", "setProductOperations");
         product.setId(onboardingData.getProductId());
         product.setRoleMappings(new EnumMap<>(PartyRole.class) {{
             put(PartyRole.MANAGER, null);
@@ -267,7 +267,7 @@ class InstitutionServiceImplTest {
         Billing billing = mockInstance(new Billing());
         onboardingData.setUsers(List.of(userInfo));
         onboardingData.setBilling(billing);
-        Product product = mockInstance(new Product(), "setParentId", "setId");
+        Product product = mockInstance(new Product(), "setParentId", "setId", "setProductOperations");
         product.setId(onboardingData.getProductId());
         product.setRoleMappings(new EnumMap<>(PartyRole.class) {{
             put(PartyRole.MANAGER, null);
@@ -299,7 +299,7 @@ class InstitutionServiceImplTest {
         Billing billing = mockInstance(new Billing());
         onboardingData.setBilling(billing);
         onboardingData.setUsers(List.of(userInfo));
-        Product productMock = mockInstance(new Product(), "setRoleMappings", "setParentId", "setId");
+        Product productMock = mockInstance(new Product(), "setRoleMappings", "setParentId", "setId", "setProductOperations");
         productMock.setId(onboardingData.getProductId());
         ProductRoleInfo productRoleInfo1 = mockInstance(new ProductRoleInfo(), 1, "setRoles");
         productRoleInfo1.setRoles(List.of(mockInstance(new ProductRoleInfo.ProductRole(), 1)));
@@ -336,7 +336,7 @@ class InstitutionServiceImplTest {
         Billing billing = mockInstance(new Billing());
         onboardingData.setBilling(billing);
         onboardingData.setUsers(List.of(userInfo));
-        Product productMock = mockInstance(new Product(), "setRoleMappings", "setParentId", "setId");
+        Product productMock = mockInstance(new Product(), "setRoleMappings", "setParentId", "setId", "setProductOperations");
         productMock.setId(onboardingData.getProductId());
         ProductRoleInfo productRoleInfo1 = mockInstance(new ProductRoleInfo(), 1, "setRoles");
         productRoleInfo1.setRoles(List.of(mockInstance(new ProductRoleInfo.ProductRole(), 1)));
@@ -376,7 +376,7 @@ class InstitutionServiceImplTest {
         userInfo2.setRole(PartyRole.DELEGATE);
         OnboardingData onboardingData = mockInstance(new OnboardingData(), "setUsers");
         onboardingData.setUsers(List.of(userInfo1, userInfo2));
-        Product productMock = mockInstance(new Product(), "setRoleMappings", "setParentId", "setId");
+        Product productMock = mockInstance(new Product(), "setRoleMappings", "setParentId", "setId", "setProductOperations");
         productMock.setId(onboardingData.getProductId());
         ProductRoleInfo productRoleInfo1 = mockInstance(new ProductRoleInfo(), 1, "setRoles");
         ProductRoleInfo.ProductRole productRole1 = mockInstance(new ProductRoleInfo.ProductRole(), 1);
@@ -432,6 +432,20 @@ class InstitutionServiceImplTest {
             assertNotNull(userInfo.getId());
         });
         verifyNoMoreInteractions(productsConnectorMock, partyConnectorMock, userConnectorMock, onboardingValidationStrategyMock);
+    }
+
+
+    @Test
+    void onboardingProductAsync() {
+        // given
+        OnboardingData onboardingData = mockInstance(new OnboardingData(), "setInstitutionType", "setUsers");
+        onboardingData.setInstitutionType(InstitutionType.PA);
+        onboardingData.setUsers(List.of(dummyManager, dummyDelegate));
+        // when
+        institutionService.onboardingProductAsync(onboardingData);
+        // then
+        verify(partyConnectorMock, times(1))
+                .onboarding(any());
     }
 
     @Test
@@ -625,7 +639,7 @@ class InstitutionServiceImplTest {
         OnboardingData onboardingData = mockInstance(new OnboardingData(), "setInstitutionType", "setUsers");
         onboardingData.setInstitutionType(InstitutionType.PA);
         onboardingData.setUsers(List.of(dummyManager, dummyDelegate));
-        Product productMock = mockInstance(new Product(), "setRoleMappings", "setParentId", "setId");
+        Product productMock = mockInstance(new Product(), "setRoleMappings", "setParentId", "setId", "setProductOperations");
         productMock.setId(onboardingData.getProductId());
         ProductRoleInfo productRoleInfo1 = mockInstance(new ProductRoleInfo(), 1, "setRoles");
         ProductRoleInfo.ProductRole productRole1 = mockInstance(new ProductRoleInfo.ProductRole(), 1);
@@ -695,7 +709,7 @@ class InstitutionServiceImplTest {
         onboardingData.setInstitutionType(InstitutionType.SA);
         onboardingData.setOrigin("ANAC");
         onboardingData.setUsers(List.of(dummyManager, dummyDelegate));
-        Product productMock = mockInstance(new Product(), "setRoleMappings", "setParentId", "setId");
+        Product productMock = mockInstance(new Product(), "setRoleMappings", "setParentId", "setId", "setProductOperations");
         productMock.setId(onboardingData.getProductId());
         ProductRoleInfo productRoleInfo1 = mockInstance(new ProductRoleInfo(), 1, "setRoles");
         ProductRoleInfo.ProductRole productRole1 = mockInstance(new ProductRoleInfo.ProductRole(), 1);
@@ -765,7 +779,7 @@ class InstitutionServiceImplTest {
         onboardingData.setInstitutionType(InstitutionType.SA);
         onboardingData.setOrigin("IPA");
         onboardingData.setUsers(List.of(dummyManager, dummyDelegate));
-        Product productMock = mockInstance(new Product(), "setRoleMappings", "setParentId", "setId");
+        Product productMock = mockInstance(new Product(), "setRoleMappings", "setParentId", "setId", "setProductOperations");
         productMock.setId(onboardingData.getProductId());
         ProductRoleInfo productRoleInfo1 = mockInstance(new ProductRoleInfo(), 1, "setRoles");
         ProductRoleInfo.ProductRole productRole1 = mockInstance(new ProductRoleInfo.ProductRole(), 1);
@@ -832,7 +846,7 @@ class InstitutionServiceImplTest {
         OnboardingData onboardingData = mockInstance(new OnboardingData(), "setInstitutionType", "setUsers");
         onboardingData.setInstitutionType(InstitutionType.PA);
         onboardingData.setUsers(List.of(dummyManager, dummyDelegate));
-        Product productMock = mockInstance(new Product(), "setRoleMappings", "setParentId", "setId");
+        Product productMock = mockInstance(new Product(), "setRoleMappings", "setParentId", "setId", "setProductOperations");
         productMock.setId(onboardingData.getProductId());
         ProductRoleInfo productRoleInfo1 = mockInstance(new ProductRoleInfo(), 1, "setRoles");
         ProductRoleInfo.ProductRole productRole1 = mockInstance(new ProductRoleInfo.ProductRole(), 1);
@@ -902,7 +916,7 @@ class InstitutionServiceImplTest {
         OnboardingData onboardingData = mockInstance(new OnboardingData(), "setInstitutionType", "setUsers");
         onboardingData.setInstitutionType(InstitutionType.PSP);
         onboardingData.setUsers(List.of(dummyManager, dummyDelegate));
-        Product productMock = mockInstance(new Product(), "setRoleMappings", "setParentId", "setId");
+        Product productMock = mockInstance(new Product(), "setRoleMappings", "setParentId", "setId","setProductOperations");
         productMock.setId(onboardingData.getProductId());
         ProductRoleInfo productRoleInfo1 = mockInstance(new ProductRoleInfo(), 1, "setRoles");
         ProductRoleInfo.ProductRole productRole1 = mockInstance(new ProductRoleInfo.ProductRole(), 1);
@@ -976,7 +990,7 @@ class InstitutionServiceImplTest {
         OnboardingData onboardingData = mockInstance(new OnboardingData(), "setInstitutionType", "setUsers");
         onboardingData.setInstitutionType(InstitutionType.PA);
         onboardingData.setUsers(List.of(userInfo1, userInfo2));
-        Product productMock = mockInstance(new Product(), "setRoleMappings", "setParentId", "setId");
+        Product productMock = mockInstance(new Product(), "setRoleMappings", "setParentId", "setId", "setProductOperations");
         productMock.setId(onboardingData.getProductId());
         ProductRoleInfo productRoleInfo1 = mockInstance(new ProductRoleInfo(), 1, "setRoles");
         ProductRoleInfo.ProductRole productRole1 = mockInstance(new ProductRoleInfo.ProductRole(), 1);
@@ -1061,7 +1075,7 @@ class InstitutionServiceImplTest {
         onboardingData.setInstitutionType(InstitutionType.PA);
         onboardingData.setUsers(List.of(userInfo1, userInfo2));
 
-        Product productMock = mockInstance(new Product(), "setRoleMappings", "setParentId", "setId");
+        Product productMock = mockInstance(new Product(), "setRoleMappings", "setParentId", "setId", "setProductOperations");
         productMock.setId(onboardingData.getProductId());
         ProductRoleInfo productRoleInfo1 = mockInstance(new ProductRoleInfo(), 1, "setRoles");
         ProductRoleInfo.ProductRole productRole1 = mockInstance(new ProductRoleInfo.ProductRole(), 1);
@@ -1156,7 +1170,7 @@ class InstitutionServiceImplTest {
         onboardingData.setInstitutionType(InstitutionType.PA);
         onboardingData.setUsers(List.of(userInfo1, userInfo2));
 
-        Product productMock = mockInstance(new Product(), "setRoleMappings", "setParentId", "setId");
+        Product productMock = mockInstance(new Product(), "setRoleMappings", "setParentId", "setId", "setProductOperations");
         productMock.setId(onboardingData.getProductId());
         ProductRoleInfo productRoleInfo1 = mockInstance(new ProductRoleInfo(), 1, "setRoles");
         ProductRoleInfo.ProductRole productRole1 = mockInstance(new ProductRoleInfo.ProductRole(), 1);
@@ -1245,7 +1259,7 @@ class InstitutionServiceImplTest {
         onboardingData.setInstitutionType(InstitutionType.PA);
         onboardingData.setUsers(List.of(userInfo1, userInfo2));
 
-        Product productMock = mockInstance(new Product(), "setRoleMappings", "setParentId", "setId");
+        Product productMock = mockInstance(new Product(), "setRoleMappings", "setParentId", "setId", "setProductOperations");
         productMock.setId(onboardingData.getProductId());
         ProductRoleInfo productRoleInfo1 = mockInstance(new ProductRoleInfo(), 1, "setRoles");
         ProductRoleInfo.ProductRole productRole1 = mockInstance(new ProductRoleInfo.ProductRole(), 1);
@@ -1339,7 +1353,7 @@ class InstitutionServiceImplTest {
         onboardingData.setInstitutionType(InstitutionType.PA);
         onboardingData.setUsers(List.of(userInfo1, userInfo2));
 
-        Product productMock = mockInstance(new Product(), "setRoleMappings", "setParentId", "setId");
+        Product productMock = mockInstance(new Product(), "setRoleMappings", "setParentId", "setId", "setProductOperations");
         productMock.setId(onboardingData.getProductId());
         ProductRoleInfo productRoleInfo1 = mockInstance(new ProductRoleInfo(), 1, "setRoles");
         ProductRoleInfo.ProductRole productRole1 = mockInstance(new ProductRoleInfo.ProductRole(), 1);
@@ -1425,8 +1439,8 @@ class InstitutionServiceImplTest {
     void onboarding_subProduct_notAllowed() {
         //given
         OnboardingData onboardingData = mockInstance(new OnboardingData(), "setUsers");
-        Product baseProductMock = mockInstance(new Product(), 1, "setParentId");
-        Product subProductMock = mockInstance(new Product(), 2, "setId", "setParentId", "setRoleMappings");
+        Product baseProductMock = mockInstance(new Product(), 1, "setParentId", "setProductOperations");
+        Product subProductMock = mockInstance(new Product(), 2, "setId", "setParentId", "setRoleMappings", "setProductOperations");
         subProductMock.setId(onboardingData.getProductId());
         subProductMock.setParentId(baseProductMock.getId());
         when(productsConnectorMock.getProduct(onboardingData.getProductId(), onboardingData.getInstitutionType()))
@@ -1455,8 +1469,8 @@ class InstitutionServiceImplTest {
     void onboarding_noManagaerFoundForSubProduct() {
         //given
         OnboardingData onboardingData = mockInstance(new OnboardingData(), "setUsers");
-        Product baseProductMock = mockInstance(new Product(), 1, "setParentId");
-        Product subProductMock = mockInstance(new Product(), 2, "setParentId", "setRoleMappings");
+        Product baseProductMock = mockInstance(new Product(), 1, "setParentId", "setProductOperations");
+        Product subProductMock = mockInstance(new Product(), 2, "setParentId", "setRoleMappings", "setProductOperations");
         subProductMock.setParentId(baseProductMock.getId());
         when(productsConnectorMock.getProduct(onboardingData.getProductId(), onboardingData.getInstitutionType()))
                 .thenReturn(subProductMock);
@@ -1494,7 +1508,7 @@ class InstitutionServiceImplTest {
         userInfo2.setRole(PartyRole.DELEGATE);
         OnboardingData onboardingData = mockInstance(new OnboardingData(), "setUsers");
         onboardingData.setUsers(List.of(userInfo1, userInfo2));
-        Product baseProductMock = mockInstance(new Product(), "setRoleMappings", "setParentId");
+        Product baseProductMock = mockInstance(new Product(), "setRoleMappings", "setParentId", "setProductOperations");
         ProductRoleInfo productRoleInfo1 = mockInstance(new ProductRoleInfo(), 1, "setRoles");
         ProductRoleInfo.ProductRole productRole1 = mockInstance(new ProductRoleInfo.ProductRole(), 1);
         productRole1.setCode(productRole);
@@ -1508,7 +1522,7 @@ class InstitutionServiceImplTest {
             put(PartyRole.DELEGATE, productRoleInfo2);
         }};
         baseProductMock.setRoleMappings(roleMappings);
-        Product subProductMock = mockInstance(new Product(), "setId");
+        Product subProductMock = mockInstance(new Product(), "setId", "setProductOperations");
         subProductMock.setId(onboardingData.getProductId());
         subProductMock.setParentId(baseProductMock.getId());
         when(productsConnectorMock.getProduct(onboardingData.getProductId(), onboardingData.getInstitutionType()))
@@ -1576,7 +1590,7 @@ class InstitutionServiceImplTest {
         onboardingData.setOrigin("IPA");
         onboardingData.setProductId("prod-interop");
         onboardingData.setUsers(List.of(userInfo1, userInfo2));
-        Product productMock = mockInstance(new Product(), "setRoleMappings", "setParentId", "setId");
+        Product productMock = mockInstance(new Product(), "setRoleMappings", "setParentId", "setId", "setProductOperations");
         productMock.setId(onboardingData.getProductId());
         ProductRoleInfo productRoleInfo1 = mockInstance(new ProductRoleInfo(), 1, "setRoles");
         ProductRoleInfo.ProductRole productRole1 = mockInstance(new ProductRoleInfo.ProductRole(), 1);
@@ -1660,7 +1674,7 @@ class InstitutionServiceImplTest {
         onboardingData.setOrigin(origin);
         onboardingData.setProductId(productId);
         onboardingData.setUsers(List.of(userInfo1, userInfo2));
-        Product productMock = mockInstance(new Product(), "setRoleMappings", "setParentId", "setId");
+        Product productMock = mockInstance(new Product(), "setRoleMappings", "setParentId", "setId", "setProductOperations");
         productMock.setId(onboardingData.getProductId());
         ProductRoleInfo productRoleInfo1 = mockInstance(new ProductRoleInfo(), 1, "setRoles");
         ProductRoleInfo.ProductRole productRole1 = mockInstance(new ProductRoleInfo.ProductRole(), 1);

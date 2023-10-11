@@ -44,7 +44,7 @@ class ProductControllerTest {
         //given
         String productId = "productId";
         Mockito.when(productServiceMock.getProduct(Mockito.anyString(), any()))
-                .thenReturn(TestUtils.mockInstance(new Product()));
+                .thenReturn(TestUtils.mockInstance(new Product(), "setProductOperations"));
         //when
         MvcResult result = mvc.perform(MockMvcRequestBuilders
                         .get(BASE_URL + "/{id}", productId)

@@ -2,6 +2,7 @@ package it.pagopa.selfcare.onboarding.core;
 
 import it.pagopa.selfcare.commons.base.logging.LogUtils;
 import it.pagopa.selfcare.commons.base.security.PartyRole;
+import it.pagopa.selfcare.commons.base.utils.InstitutionType;
 import it.pagopa.selfcare.onboarding.connector.api.*;
 import it.pagopa.selfcare.onboarding.connector.exceptions.ResourceNotFoundException;
 import it.pagopa.selfcare.onboarding.connector.model.InstitutionLegalAddressData;
@@ -11,7 +12,10 @@ import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionInf
 import it.pagopa.selfcare.onboarding.connector.model.institutions.MatchInfoResult;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.OnboardingResource;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.infocamere.InstitutionInfoIC;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.*;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.CreateInstitutionData;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.GeographicTaxonomy;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.User;
 import it.pagopa.selfcare.onboarding.connector.model.product.Product;
 import it.pagopa.selfcare.onboarding.connector.model.product.ProductRoleInfo;
 import it.pagopa.selfcare.onboarding.connector.model.product.ProductStatus;
@@ -33,7 +37,6 @@ import org.springframework.util.Assert;
 import javax.validation.ValidationException;
 import java.util.*;
 
-import it.pagopa.selfcare.commons.base.utils.InstitutionType;
 import static it.pagopa.selfcare.onboarding.connector.model.product.ProductId.PROD_INTEROP;
 import static it.pagopa.selfcare.onboarding.connector.model.product.ProductId.PROD_PN_PG;
 import static it.pagopa.selfcare.onboarding.connector.model.user.User.Fields.*;
@@ -53,6 +56,7 @@ class InstitutionServiceImpl implements InstitutionService {
     protected static final String A_PRODUCT_ID_IS_REQUIRED = "A Product Id is required";
     private static final EnumSet<it.pagopa.selfcare.onboarding.connector.model.user.User.Fields> USER_FIELD_LIST = EnumSet.of(name, familyName, workContacts);
     private static final String ONBOARDING_NOT_ALLOWED_ERROR_MESSAGE_TEMPLATE = "Institution with external id '%s' is not allowed to onboard '%s' product";
+    public static final String UNABLE_TO_COMPLETE_THE_ONBOARDING_FOR_INSTITUTION_FOR_PRODUCT_DISMISSED = "Unable to complete the onboarding for institution with taxCode '%s' to product '%s', the product is dismissed.";
 
     private final PartyConnector partyConnector;
     private final ProductsConnector productsConnector;
@@ -84,9 +88,22 @@ class InstitutionServiceImpl implements InstitutionService {
 
 
     @Override
+    public void onboardingProductAsync(OnboardingData onboardingData) {
+        log.trace("onboardingProductAsync start");
+        log.debug("onboardingProductAsync onboardingData = {}", onboardingData);
+        partyConnector.onboarding(onboardingData);
+        log.trace("onboarding end");
+    }
+
+    @Override
     public void onboardingProduct(OnboardingData onboardingData) {
         log.trace("onboarding start");
         log.debug("onboarding onboardingData = {}", onboardingData);
+
+        if (InstitutionType.PSP.equals(onboardingData.getInstitutionType()) && onboardingData.getInstitutionUpdate().getPaymentServiceProvider() == null) {
+            throw new ValidationException("Field 'pspData' is required for PSP institution onboarding");
+        }
+
         Assert.notNull(onboardingData, REQUIRED_ONBOARDING_DATA_MESSAGE);
         Assert.notNull(onboardingData.getBilling(), REQUIRED_INSTITUTION_BILLING_DATA_MESSAGE);
         Assert.notNull(onboardingData.getInstitutionType(), REQUIRED_INSTITUTION_TYPE_MESSAGE);
@@ -95,7 +112,7 @@ class InstitutionServiceImpl implements InstitutionService {
         checkIfProductIsDelegable(onboardingData, product.isDelegable());
 
         if(product.getStatus() == ProductStatus.PHASE_OUT){
-            throw new ValidationException(String.format("Unable to complete the onboarding for institution with taxCode '%s' to product '%s', the product is dismissed.",
+            throw new ValidationException(String.format(UNABLE_TO_COMPLETE_THE_ONBOARDING_FOR_INSTITUTION_FOR_PRODUCT_DISMISSED,
                     onboardingData.getTaxCode(),
                     product.getId()));
         }
@@ -168,8 +185,12 @@ class InstitutionServiceImpl implements InstitutionService {
             roleMappings = product.getRoleMappings();
         }
 
+        validateProductRole(onboardingData.getUsers(), roleMappings);
+    }
+
+    private void validateProductRole(List<User> users, EnumMap<PartyRole, ProductRoleInfo> roleMappings) {
         Assert.notNull(roleMappings, "Role mappings is required");
-        onboardingData.getUsers().forEach(userInfo -> {
+        users.forEach(userInfo -> {
             Assert.notNull(roleMappings.get(userInfo.getRole()),
                     String.format(ATLEAST_ONE_PRODUCT_ROLE_REQUIRED, userInfo.getRole()));
             Assert.notEmpty(roleMappings.get(userInfo.getRole()).getRoles(),
@@ -236,16 +257,8 @@ class InstitutionServiceImpl implements InstitutionService {
             roleMappings = product.getRoleMappings();
         }
         onboardingData.setProductName(product.getTitle());
-        Assert.notNull(roleMappings, "Role mappings is required");
-        onboardingData.getUsers().forEach(userInfo -> {
-            Assert.notNull(roleMappings.get(userInfo.getRole()),
-                    String.format(ATLEAST_ONE_PRODUCT_ROLE_REQUIRED, userInfo.getRole()));
-            Assert.notEmpty(roleMappings.get(userInfo.getRole()).getRoles(),
-                    String.format(ATLEAST_ONE_PRODUCT_ROLE_REQUIRED, userInfo.getRole()));
-            Assert.state(roleMappings.get(userInfo.getRole()).getRoles().size() == 1,
-                    String.format(MORE_THAN_ONE_PRODUCT_ROLE_AVAILABLE, userInfo.getRole()));
-            userInfo.setProductRole(roleMappings.get(userInfo.getRole()).getRoles().get(0).getCode());
-        });
+
+        validateProductRole(onboardingData.getUsers(), roleMappings);
 
         Institution institution;
         try {
