@@ -13,6 +13,8 @@ import java.util.List;
 
 public interface PartyConnector {
 
+    void onboarding(OnboardingData onboardingData);
+
     void onboardingOrganization(OnboardingData onboardingData);
 
     Collection<InstitutionInfo> getOnBoardedInstitutions(String productFilter);
@@ -28,6 +30,8 @@ public interface PartyConnector {
     List<OnboardingResource> getOnboardings(String institutionId, String productId);
 
     Institution createInstitutionFromIpa(String taxCode, String subunitCode, String subunitType);
+
+    Institution createInstitutionFromANAC(OnboardingData onboardingData);
 
     Institution createInstitutionUsingExternalId(String institutionExternalId);
 

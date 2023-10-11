@@ -1,7 +1,7 @@
 package it.pagopa.selfcare.onboarding.connector.rest.client;
 
+import it.pagopa.selfcare.commons.base.utils.InstitutionType;
 import it.pagopa.selfcare.onboarding.connector.api.ProductsConnector;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.InstitutionType;
 import it.pagopa.selfcare.onboarding.connector.model.product.Product;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;
@@ -17,5 +17,9 @@ public interface ProductsRestClient extends ProductsConnector {
     @ResponseBody
     Product getProduct(@PathVariable("id") String id,
                        @RequestParam(value = "institutionType", required = false) InstitutionType institutionType);
+
+    @GetMapping(value = "${rest-client.products.getProductValid.path}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    Product getProductValid(@PathVariable("id") String id);
 
 }

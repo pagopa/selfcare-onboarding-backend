@@ -13,7 +13,7 @@ class ProductMapperTest {
     @Test
     void toResource_notNull() {
         //given
-        Product product = TestUtils.mockInstance(new Product());
+        Product product = TestUtils.mockInstance(new Product(), "setProductOperations");
         // when
         ProductResource productResource = ProductMapper.toResource(product);
         // then

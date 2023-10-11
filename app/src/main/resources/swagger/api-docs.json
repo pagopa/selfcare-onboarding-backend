@@ -360,6 +360,17 @@
         "summary" : "onboarding",
         "description" : "The service allows the onboarding of Users to a subunit of an Institution",
         "operationId" : "onboardingUsingPOST_1",
+        "parameters" : [ {
+          "name" : "mode",
+          "in" : "query",
+          "description" : "mode",
+          "required" : false,
+          "style" : "form",
+          "schema" : {
+            "type" : "string",
+            "enum" : [ "ASYNC", "SYNC" ]
+          }
+        } ],
         "requestBody" : {
           "content" : {
             "application/json" : {
@@ -1616,7 +1627,7 @@
           "style" : "form",
           "schema" : {
             "type" : "string",
-            "enum" : [ "GSP", "PA", "PG", "PSP", "PT", "SCP" ]
+            "enum" : [ "GSP", "PA", "PG", "PSP", "PT", "SA", "SCP" ]
           }
         } ],
         "responses" : {
@@ -2039,7 +2050,7 @@
           },
           "recipientCode" : {
             "type" : "string",
-            "description" : "Billing recipient code"
+            "description" : "Billing recipient code, not required only for institutionType SA"
           },
           "registeredOffice" : {
             "type" : "string",
@@ -2083,7 +2094,7 @@
           },
           "recipientCode" : {
             "type" : "string",
-            "description" : "Billing recipient code"
+            "description" : "Billing recipient code, not required only for institutionType SA"
           },
           "registeredOffice" : {
             "type" : "string",
@@ -2189,7 +2200,7 @@
           "institutionType" : {
             "type" : "string",
             "description" : "Institution's type",
-            "enum" : [ "GSP", "PA", "PG", "PSP", "PT", "SCP" ]
+            "enum" : [ "GSP", "PA", "PG", "PSP", "PT", "SA", "SCP" ]
           },
           "productId" : {
             "type" : "string",
@@ -2311,7 +2322,7 @@
           "institutionType" : {
             "type" : "string",
             "description" : "Institution's type",
-            "enum" : [ "GSP", "PA", "PG", "PSP", "PT", "SCP" ]
+            "enum" : [ "GSP", "PA", "PG", "PSP", "PT", "SA", "SCP" ]
           },
           "origin" : {
             "type" : "string"
@@ -2377,7 +2388,7 @@
           "institutionType" : {
             "type" : "string",
             "description" : "Institution's type",
-            "enum" : [ "GSP", "PA", "PG", "PSP", "PT", "SCP" ]
+            "enum" : [ "GSP", "PA", "PG", "PSP", "PT", "SA", "SCP" ]
           },
           "origin" : {
             "type" : "string",
@@ -2476,7 +2487,7 @@
           "institutionType" : {
             "type" : "string",
             "description" : "Institution's type",
-            "enum" : [ "GSP", "PA", "PG", "PSP", "PT", "SCP" ]
+            "enum" : [ "GSP", "PA", "PG", "PSP", "PT", "SA", "SCP" ]
           },
           "origin" : {
             "type" : "string",
@@ -2526,7 +2537,7 @@
           "institutionType" : {
             "type" : "string",
             "description" : "Institution's type",
-            "enum" : [ "GSP", "PA", "PG", "PSP", "PT", "SCP" ]
+            "enum" : [ "GSP", "PA", "PG", "PSP", "PT", "SA", "SCP" ]
           },
           "origin" : {
             "type" : "string",

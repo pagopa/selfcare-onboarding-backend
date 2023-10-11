@@ -1,5 +1,6 @@
 package it.pagopa.selfcare.onboarding.connector.model.onboarding;
 
+import it.pagopa.selfcare.commons.base.utils.InstitutionType;
 import lombok.Data;
 
 import java.util.List;
