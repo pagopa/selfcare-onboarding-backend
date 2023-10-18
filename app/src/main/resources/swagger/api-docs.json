@@ -2539,6 +2539,10 @@
             "description" : "Institution's type",
             "enum" : [ "GSP", "PA", "PG", "PSP", "PT", "SA", "SCP" ]
           },
+          "ivassCode" : {
+            "type" : "string",
+            "description" : "Institution's details ivass code for AS"
+          },
           "origin" : {
             "type" : "string",
             "description" : "Institution data origin"
