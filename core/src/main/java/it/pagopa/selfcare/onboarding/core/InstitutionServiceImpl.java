@@ -132,7 +132,11 @@ class InstitutionServiceImpl implements InstitutionService {
         } catch (ResourceNotFoundException e) {
             if (InstitutionType.SA.equals(onboardingData.getInstitutionType()) && onboardingData.getOrigin().equalsIgnoreCase("ANAC")) {
                 institution = partyConnector.createInstitutionFromANAC(onboardingData);
-            } else if (InstitutionType.PA.equals(onboardingData.getInstitutionType()) ||
+            }
+            else if (InstitutionType.AS.equals(onboardingData.getInstitutionType()) && onboardingData.getOrigin().equalsIgnoreCase("IVASS")) {
+                institution = partyConnector.createInstitutionFromIVASS(onboardingData);
+            }
+            else if (InstitutionType.PA.equals(onboardingData.getInstitutionType()) ||
                     InstitutionType.SA.equals(onboardingData.getInstitutionType()) ||
                     (InstitutionType.GSP.equals(onboardingData.getInstitutionType()) && onboardingData.getProductId().equals(PROD_INTEROP.getValue())
                             && onboardingData.getOrigin().equals("IPA"))) {
