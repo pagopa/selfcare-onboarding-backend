@@ -3,6 +3,7 @@ package it.pagopa.selfcare.onboarding.core;
 import it.pagopa.selfcare.commons.base.logging.LogUtils;
 import it.pagopa.selfcare.commons.base.security.PartyRole;
 import it.pagopa.selfcare.commons.base.utils.InstitutionType;
+import it.pagopa.selfcare.commons.base.utils.Origin;
 import it.pagopa.selfcare.onboarding.connector.api.*;
 import it.pagopa.selfcare.onboarding.connector.exceptions.ResourceNotFoundException;
 import it.pagopa.selfcare.onboarding.connector.model.InstitutionLegalAddressData;
@@ -130,7 +131,7 @@ class InstitutionServiceImpl implements InstitutionService {
                     .findFirst()
                     .orElseThrow(ResourceNotFoundException::new);
         } catch (ResourceNotFoundException e) {
-            if (InstitutionType.SA.equals(onboardingData.getInstitutionType()) && onboardingData.getOrigin().equalsIgnoreCase("ANAC")) {
+            if (InstitutionType.SA.equals(onboardingData.getInstitutionType()) && onboardingData.getOrigin().equalsIgnoreCase(Origin.ANAC.getValue())) {
                 institution = partyConnector.createInstitutionFromANAC(onboardingData);
             }
             else if (InstitutionType.AS.equals(onboardingData.getInstitutionType()) && onboardingData.getOrigin().equalsIgnoreCase("IVASS")) {
@@ -139,7 +140,7 @@ class InstitutionServiceImpl implements InstitutionService {
             else if (InstitutionType.PA.equals(onboardingData.getInstitutionType()) ||
                     InstitutionType.SA.equals(onboardingData.getInstitutionType()) ||
                     (InstitutionType.GSP.equals(onboardingData.getInstitutionType()) && onboardingData.getProductId().equals(PROD_INTEROP.getValue())
-                            && onboardingData.getOrigin().equals("IPA"))) {
+                            && onboardingData.getOrigin().equals(Origin.IPA.getValue()))) {
                 institution = partyConnector.createInstitutionFromIpa(onboardingData.getTaxCode(), onboardingData.getSubunitCode(), onboardingData.getSubunitType());
             } else {
                 institution = partyConnector.createInstitution(onboardingData);
