@@ -2543,6 +2543,10 @@
             "type" : "string",
             "description" : "Institution's details ivass code for AS"
           },
+          "ivassCode" : {
+            "type" : "string",
+            "description" : "Institution's details ivass code for AS"
+          },
           "origin" : {
             "type" : "string",
             "description" : "Institution data origin"
