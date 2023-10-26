@@ -64,6 +64,10 @@ public interface PartyProcessRestClient {
     @ResponseBody
     InstitutionResponse createInstitutionFromANAC(@RequestBody InstitutionSeed institutionSeed);
 
+    @PostMapping(value = "${rest-client.party-process.createInstitutionFromIvass.path}", produces = APPLICATION_JSON_VALUE)
+    @ResponseBody
+    InstitutionResponse createInstitutionFromIVASS(@RequestBody InstitutionSeed institutionSeed);
+
     @PostMapping(value = "${rest-client.party-process.createInstitutionUsingExternalId.path}", produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     InstitutionResponse createInstitutionUsingExternalId(@PathVariable("externalId") String externalId);

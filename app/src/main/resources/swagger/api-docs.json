@@ -1627,7 +1627,7 @@
           "style" : "form",
           "schema" : {
             "type" : "string",
-            "enum" : [ "GSP", "PA", "PG", "PSP", "PT", "SA", "SCP" ]
+            "enum" : [ "AS", "GSP", "PA", "PG", "PSP", "PT", "SA", "SCP" ]
           }
         } ],
         "responses" : {
@@ -2200,7 +2200,7 @@
           "institutionType" : {
             "type" : "string",
             "description" : "Institution's type",
-            "enum" : [ "GSP", "PA", "PG", "PSP", "PT", "SA", "SCP" ]
+            "enum" : [ "AS", "GSP", "PA", "PG", "PSP", "PT", "SA", "SCP" ]
           },
           "productId" : {
             "type" : "string",
@@ -2322,7 +2322,7 @@
           "institutionType" : {
             "type" : "string",
             "description" : "Institution's type",
-            "enum" : [ "GSP", "PA", "PG", "PSP", "PT", "SA", "SCP" ]
+            "enum" : [ "AS", "GSP", "PA", "PG", "PSP", "PT", "SA", "SCP" ]
           },
           "origin" : {
             "type" : "string"
@@ -2388,7 +2388,7 @@
           "institutionType" : {
             "type" : "string",
             "description" : "Institution's type",
-            "enum" : [ "GSP", "PA", "PG", "PSP", "PT", "SA", "SCP" ]
+            "enum" : [ "AS", "GSP", "PA", "PG", "PSP", "PT", "SA", "SCP" ]
           },
           "origin" : {
             "type" : "string",
@@ -2487,7 +2487,7 @@
           "institutionType" : {
             "type" : "string",
             "description" : "Institution's type",
-            "enum" : [ "GSP", "PA", "PG", "PSP", "PT", "SA", "SCP" ]
+            "enum" : [ "AS", "GSP", "PA", "PG", "PSP", "PT", "SA", "SCP" ]
           },
           "origin" : {
             "type" : "string",
@@ -2537,7 +2537,7 @@
           "institutionType" : {
             "type" : "string",
             "description" : "Institution's type",
-            "enum" : [ "GSP", "PA", "PG", "PSP", "PT", "SA", "SCP" ]
+            "enum" : [ "AS", "GSP", "PA", "PG", "PSP", "PT", "SA", "SCP" ]
           },
           "ivassCode" : {
             "type" : "string",

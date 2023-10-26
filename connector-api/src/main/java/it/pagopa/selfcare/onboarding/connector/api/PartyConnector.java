@@ -33,6 +33,8 @@ public interface PartyConnector {
 
     Institution createInstitutionFromANAC(OnboardingData onboardingData);
 
+    Institution createInstitutionFromIVASS(OnboardingData onboardingData);
+
     Institution createInstitutionUsingExternalId(String institutionExternalId);
 
     Institution createInstitution(OnboardingData onboardingData);
