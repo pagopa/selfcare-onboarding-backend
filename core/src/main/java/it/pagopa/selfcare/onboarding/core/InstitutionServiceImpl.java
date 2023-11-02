@@ -106,6 +106,9 @@ class InstitutionServiceImpl implements InstitutionService {
         if (InstitutionType.PSP.equals(onboardingData.getInstitutionType()) && onboardingData.getInstitutionUpdate().getPaymentServiceProvider() == null) {
             throw new ValidationException(FIELD_PSP_DATA_IS_REQUIRED_FOR_PSP_INSTITUTION_ONBOARDING);
         }
+        if (!Origin.IPA.equals(Origin.fromValue(onboardingData.getOrigin())) && onboardingData.getLocation() == null){
+            throw new ValidationException(LOCATION_INFO_IS_REQUIRED);
+        }
 
         Assert.notNull(onboardingData, REQUIRED_ONBOARDING_DATA_MESSAGE);
         Assert.notNull(onboardingData.getBilling(), REQUIRED_INSTITUTION_BILLING_DATA_MESSAGE);
@@ -113,9 +116,6 @@ class InstitutionServiceImpl implements InstitutionService {
         Product product = productsConnector.getProduct(onboardingData.getProductId(), onboardingData.getInstitutionType());
         Assert.notNull(product, "Product is required");
         checkIfProductIsDelegable(onboardingData, product.isDelegable());
-        if (!Origin.IPA.equals(Origin.fromValue(onboardingData.getOrigin())) && onboardingData.getLocation() == null){
-            throw new ValidationException(LOCATION_INFO_IS_REQUIRED);
-        }
         if(product.getStatus() == ProductStatus.PHASE_OUT){
             throw new ValidationException(String.format(UNABLE_TO_COMPLETE_THE_ONBOARDING_FOR_INSTITUTION_FOR_PRODUCT_DISMISSED,
                     onboardingData.getTaxCode(),

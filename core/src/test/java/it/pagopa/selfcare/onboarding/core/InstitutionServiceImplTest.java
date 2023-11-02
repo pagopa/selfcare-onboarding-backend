@@ -226,6 +226,22 @@ class InstitutionServiceImplTest {
     }
 
     @Test
+    void onboarding_nullLocationInfo(){
+        //given
+        OnboardingData onboardingData = mockInstance(new OnboardingData(), "location");
+        onboardingData.setLocation(null);
+        onboardingData.setOrigin("ANAC");
+        Billing billing = mockInstance(new Billing());
+        onboardingData.setBilling(billing);
+        //when
+        Executable executable = () -> institutionService.onboardingProduct(onboardingData);
+        //then
+        ValidationException e = assertThrows(ValidationException.class, executable);
+        assertEquals(LOCATION_INFO_IS_REQUIRED, e.getMessage());
+        verifyNoInteractions(productsConnectorMock, partyConnectorMock, userConnectorMock, onboardingValidationStrategyMock);
+    }
+
+    @Test
     void onboarding_notAllowed() {
         // given
         User userInfo = mockInstance(new User(), "setRole");
@@ -456,6 +472,7 @@ class InstitutionServiceImplTest {
         OnboardingData onboardingData = mockInstance(new OnboardingData(), "setInstitutionType", "setUsers");
         onboardingData.setInstitutionType(InstitutionType.PSP);
         onboardingData.setUsers(List.of(dummyManager, dummyDelegate));
+        onboardingData.setOrigin("IPA");
 
         ProductRoleInfo productRoleInfo1 = mockInstance(new ProductRoleInfo(), 1, "setRoles");
         ProductRoleInfo.ProductRole productRole1 = mockInstance(new ProductRoleInfo.ProductRole(), 1);
@@ -532,6 +549,7 @@ class InstitutionServiceImplTest {
         OnboardingData onboardingData = mockInstance(new OnboardingData(), "setInstitutionType", "setUsers");
         onboardingData.setInstitutionType(InstitutionType.PSP);
         onboardingData.setUsers(List.of(dummyManager, dummyDelegate));
+        onboardingData.setOrigin("IPA");
 
         ProductRoleInfo productRoleInfo1 = mockInstance(new ProductRoleInfo(), 1, "setRoles");
         ProductRoleInfo.ProductRole productRole1 = mockInstance(new ProductRoleInfo.ProductRole(), 1);
@@ -574,6 +592,7 @@ class InstitutionServiceImplTest {
 
         OnboardingData onboardingData = mockInstance(new OnboardingData(), "setInstitutionType", "setUsers");
         onboardingData.setInstitutionType(InstitutionType.PSP);
+        onboardingData.setOrigin("IPA");
         onboardingData.setUsers(List.of(dummyManager, dummyDelegate));
 
         ProductRoleInfo productRoleInfo1 = mockInstance(new ProductRoleInfo(), 1, "setRoles");
@@ -620,6 +639,7 @@ class InstitutionServiceImplTest {
         onboardingData.setInstitutionType(InstitutionType.PT);
         onboardingData.setProductId(PROD_INTEROP.getValue());
         onboardingData.setUsers(List.of(dummyManager, dummyDelegate));
+        onboardingData.setOrigin("IPA");
 
         Product product = new Product();
         product.setId("prod-id");
@@ -639,6 +659,7 @@ class InstitutionServiceImplTest {
         OnboardingData onboardingData = mockInstance(new OnboardingData(), "setInstitutionType", "setUsers");
         onboardingData.setInstitutionType(InstitutionType.PA);
         onboardingData.setUsers(List.of(dummyManager, dummyDelegate));
+        onboardingData.setOrigin("IPA");
         Product productMock = mockInstance(new Product(), "setRoleMappings", "setParentId", "setId", "setProductOperations");
         productMock.setId(onboardingData.getProductId());
         ProductRoleInfo productRoleInfo1 = mockInstance(new ProductRoleInfo(), 1, "setRoles");
