@@ -1045,13 +1045,14 @@ class PartyConnectorImplTest {
         BillingDataResponse billingDataResponseMock = mockInstance(new BillingDataResponse());
         Billing billingMock = mockInstance(new Billing());
         billingDataResponseMock.setBilling(billingMock);
+
         when(restClientMock.getInstitutionBillingData(anyString(), anyString()))
                 .thenReturn(billingDataResponseMock);
         //when
         InstitutionInfo institutionInfo = partyConnector.getInstitutionBillingData(externalId, productId);
         //then
         assertNotNull(institutionInfo);
-        checkNotNullFields(institutionInfo, "status", "category", "userRole");
+        checkNotNullFields(institutionInfo, "status", "category", "userRole", "institutionLocation");
         reflectionEqualsByName(billingDataResponseMock, institutionInfo);
         verify(restClientMock, times(1))
                 .getInstitutionBillingData(externalId, productId);
