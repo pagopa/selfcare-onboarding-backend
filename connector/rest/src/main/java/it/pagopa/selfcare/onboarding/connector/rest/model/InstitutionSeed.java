@@ -23,9 +23,11 @@ public class InstitutionSeed {
         taxCode = onboardingData.getInstitutionUpdate().getTaxCode();
         institutionType = onboardingData.getInstitutionType();
         attributes = List.of();
-        city = onboardingData.getLocation().getCity();
-        county= onboardingData.getLocation().getCounty();
-        country = onboardingData.getLocation().getCountry();
+        if(onboardingData.getLocation() != null) {
+            city = onboardingData.getLocation().getCity();
+            county = onboardingData.getLocation().getCounty();
+            country = onboardingData.getLocation().getCountry();
+        }
         paymentServiceProvider = onboardingData.getInstitutionUpdate().getPaymentServiceProvider();
         dataProtectionOfficer = onboardingData.getInstitutionUpdate().getDataProtectionOfficer();
         geographicTaxonomies = onboardingData.getInstitutionUpdate().getGeographicTaxonomies();
