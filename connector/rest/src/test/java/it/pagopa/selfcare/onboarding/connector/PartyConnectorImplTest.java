@@ -1161,6 +1161,7 @@ class PartyConnectorImplTest {
         // given
         OnboardingData onboardingData = new OnboardingData();
         onboardingData.setInstitutionUpdate(new InstitutionUpdate());
+        onboardingData.setLocation(new InstitutionLocation());
         onboardingData.setTaxCode("taxCode");
         // when
         final Executable executable = () -> partyConnector.createInstitutionFromANAC(onboardingData);
@@ -1176,6 +1177,7 @@ class PartyConnectorImplTest {
         // given
         OnboardingData onboardingData = new OnboardingData();
         onboardingData.setInstitutionUpdate(new InstitutionUpdate());
+        onboardingData.setLocation(new InstitutionLocation());
         onboardingData.setTaxCode("taxCode");
         // when
         final Executable executable = () -> partyConnector.createInstitutionFromIVASS(onboardingData);
