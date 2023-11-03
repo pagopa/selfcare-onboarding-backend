@@ -135,7 +135,9 @@ class PartyConnectorImpl implements PartyConnector {
         institutionUpdate.setZipCode(onboardingData.getInstitutionUpdate().getZipCode());
         institutionUpdate.setPaymentServiceProvider(onboardingData.getInstitutionUpdate().getPaymentServiceProvider());
         institutionUpdate.setDataProtectionOfficer(onboardingData.getInstitutionUpdate().getDataProtectionOfficer());
-
+        institutionUpdate.setCity(onboardingData.getLocation().getCity());
+        institutionUpdate.setCounty(onboardingData.getLocation().getCounty());
+        institutionUpdate.setCountry(onboardingData.getLocation().getCountry());
         if(Objects.nonNull(onboardingData.getInstitutionUpdate()) && Objects.nonNull(onboardingData.getInstitutionUpdate().getGeographicTaxonomies())) {
             institutionUpdate.setGeographicTaxonomyCodes(onboardingData.getInstitutionUpdate().getGeographicTaxonomies().stream()
                     .map(GeographicTaxonomy::getCode).collect(Collectors.toList()));
