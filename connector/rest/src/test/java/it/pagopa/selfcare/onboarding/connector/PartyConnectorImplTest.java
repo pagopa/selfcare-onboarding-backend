@@ -261,6 +261,27 @@ class PartyConnectorImplTest {
     }
 
     @Test
+    void onboardOrganization_nullLocation(){
+        // given
+        OnboardingData onboardingData = mockInstance(new OnboardingData(), "setLocation");
+        Billing billing = mockInstance(new Billing());
+        InstitutionUpdate institutionUpdate = mockInstance(new InstitutionUpdate());
+        institutionUpdate.setGeographicTaxonomies(List.of(mockInstance(new GeographicTaxonomy())));
+        onboardingData.setInstitutionUpdate(institutionUpdate);
+        onboardingData.setBilling(billing);
+        onboardingData.setUsers(List.of(mockInstance(new User())));
+        // when
+        partyConnector.onboardingOrganization(onboardingData);
+        // then
+        verify(restClientMock, times(1))
+                .onboardingOrganization(onboardingRequestCaptor.capture());
+        OnboardingInstitutionRequest request = onboardingRequestCaptor.getValue();
+        assertEquals(onboardingData.getInstitutionExternalId(), request.getInstitutionExternalId());
+        assertNull(request.getInstitutionUpdate().getCity());
+        verifyNoMoreInteractions(restClientMock);
+    }
+
+    @Test
     void getOnboardedInstitutions() {
         // given
         OnBoardingInfo onBoardingInfo = new OnBoardingInfo();
