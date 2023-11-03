@@ -141,6 +141,10 @@ class InstitutionServiceImpl implements InstitutionService {
             else if (InstitutionType.AS.equals(onboardingData.getInstitutionType()) && onboardingData.getOrigin().equalsIgnoreCase("IVASS")) {
                 institution = partyConnector.createInstitutionFromIVASS(onboardingData);
             }
+            else if (InstitutionType.PG.equals(onboardingData.getInstitutionType()) &&
+                    (onboardingData.getOrigin().equalsIgnoreCase(Origin.INFOCAMERE.getValue()) || onboardingData.getOrigin().equalsIgnoreCase(Origin.ADE.getValue()))) {
+                institution = partyConnector.createInstitutionFromInfocamere(onboardingData);
+            }
             else if (InstitutionType.PA.equals(onboardingData.getInstitutionType()) ||
                     InstitutionType.SA.equals(onboardingData.getInstitutionType()) ||
                     (InstitutionType.GSP.equals(onboardingData.getInstitutionType()) && onboardingData.getProductId().equals(PROD_INTEROP.getValue())
