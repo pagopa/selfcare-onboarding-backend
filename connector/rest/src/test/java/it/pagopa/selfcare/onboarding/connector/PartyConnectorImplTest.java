@@ -261,6 +261,27 @@ class PartyConnectorImplTest {
     }
 
     @Test
+    void onboardOrganization_nullLocation(){
+        // given
+        OnboardingData onboardingData = mockInstance(new OnboardingData(), "setLocation");
+        Billing billing = mockInstance(new Billing());
+        InstitutionUpdate institutionUpdate = mockInstance(new InstitutionUpdate());
+        institutionUpdate.setGeographicTaxonomies(List.of(mockInstance(new GeographicTaxonomy())));
+        onboardingData.setInstitutionUpdate(institutionUpdate);
+        onboardingData.setBilling(billing);
+        onboardingData.setUsers(List.of(mockInstance(new User())));
+        // when
+        partyConnector.onboardingOrganization(onboardingData);
+        // then
+        verify(restClientMock, times(1))
+                .onboardingOrganization(onboardingRequestCaptor.capture());
+        OnboardingInstitutionRequest request = onboardingRequestCaptor.getValue();
+        assertEquals(onboardingData.getInstitutionExternalId(), request.getInstitutionExternalId());
+        assertNull(request.getInstitutionUpdate().getCity());
+        verifyNoMoreInteractions(restClientMock);
+    }
+
+    @Test
     void getOnboardedInstitutions() {
         // given
         OnBoardingInfo onBoardingInfo = new OnBoardingInfo();
@@ -969,6 +990,50 @@ class PartyConnectorImplTest {
     }
 
     @Test
+    void createInstitution_nullLocation(){
+        //given
+        final OnboardingData onboardingData = mockInstance(new OnboardingData());
+        onboardingData.setLocation(null);
+        InstitutionResponse institutionResponse = mockInstance(new InstitutionResponse());
+        List<GeographicTaxonomy> geographicTaxonomyList = List.of(mockInstance(new GeographicTaxonomy()));
+        InstitutionUpdate institutionUpdate = mockInstance(new InstitutionUpdate());
+        institutionUpdate.setGeographicTaxonomies(geographicTaxonomyList);
+        institutionResponse.setGeographicTaxonomies(geographicTaxonomyList);
+        when(restClientMock.createInstitution(any()))
+                .thenReturn(institutionResponse);
+        //when
+        Institution result = partyConnector.createInstitution(onboardingData);
+        //then
+        assertNotNull(result);
+        reflectionEqualsByName(institutionResponse, result);
+        assertEquals(institutionResponse.getRea(), result.getCompanyInformations().getRea());
+        assertEquals(institutionResponse.getShareCapital(), result.getCompanyInformations().getShareCapital());
+        assertEquals(institutionResponse.getBusinessRegisterPlace(), result.getCompanyInformations().getBusinessRegisterPlace());
+        assertEquals(institutionResponse.getSupportEmail(), result.getAssistanceContacts().getSupportEmail());
+        assertEquals(institutionResponse.getSupportPhone(), result.getAssistanceContacts().getSupportPhone());
+        final ArgumentCaptor<InstitutionSeed> argumentCaptor = ArgumentCaptor.forClass(InstitutionSeed.class);
+        verify(restClientMock, times(1))
+                .createInstitution( argumentCaptor.capture());
+        final InstitutionSeed institutionSeed = argumentCaptor.getValue();
+        assertEquals(onboardingData.getInstitutionUpdate().getDescription(), institutionSeed.getDescription());
+        assertEquals(onboardingData.getInstitutionUpdate().getDigitalAddress(), institutionSeed.getDigitalAddress());
+        assertEquals(onboardingData.getInstitutionUpdate().getAddress(), institutionSeed.getAddress());
+        assertEquals(onboardingData.getInstitutionUpdate().getZipCode(), institutionSeed.getZipCode());
+        assertEquals(onboardingData.getInstitutionUpdate().getTaxCode(), institutionSeed.getTaxCode());
+        assertEquals(onboardingData.getInstitutionType(), institutionSeed.getInstitutionType());
+        assertTrue(institutionSeed.getAttributes().isEmpty());
+        assertEquals(onboardingData.getInstitutionUpdate().getPaymentServiceProvider(), institutionSeed.getPaymentServiceProvider());
+        assertEquals(onboardingData.getInstitutionUpdate().getDataProtectionOfficer(), institutionSeed.getDataProtectionOfficer());
+        assertEquals(onboardingData.getInstitutionUpdate().getGeographicTaxonomies(), institutionSeed.getGeographicTaxonomies());
+        assertEquals(onboardingData.getInstitutionUpdate().getRea(), institutionSeed.getRea());
+        assertEquals(onboardingData.getInstitutionUpdate().getShareCapital(), institutionSeed.getShareCapital());
+        assertEquals(onboardingData.getInstitutionUpdate().getBusinessRegisterPlace(), institutionSeed.getBusinessRegisterPlace());
+        assertEquals(onboardingData.getInstitutionUpdate().getSupportEmail(), institutionSeed.getSupportEmail());
+        assertEquals(onboardingData.getInstitutionUpdate().getSupportPhone(), institutionSeed.getSupportPhone());
+        verifyNoMoreInteractions(restClientMock);
+    }
+
+    @Test
     void getInstitutionManager_nullInstitutionId() {
         //given
         String institutionId = null;
@@ -1045,13 +1110,14 @@ class PartyConnectorImplTest {
         BillingDataResponse billingDataResponseMock = mockInstance(new BillingDataResponse());
         Billing billingMock = mockInstance(new Billing());
         billingDataResponseMock.setBilling(billingMock);
+
         when(restClientMock.getInstitutionBillingData(anyString(), anyString()))
                 .thenReturn(billingDataResponseMock);
         //when
         InstitutionInfo institutionInfo = partyConnector.getInstitutionBillingData(externalId, productId);
         //then
         assertNotNull(institutionInfo);
-        checkNotNullFields(institutionInfo, "status", "category", "userRole");
+        checkNotNullFields(institutionInfo, "status", "category", "userRole", "institutionLocation");
         reflectionEqualsByName(billingDataResponseMock, institutionInfo);
         verify(restClientMock, times(1))
                 .getInstitutionBillingData(externalId, productId);
@@ -1160,6 +1226,7 @@ class PartyConnectorImplTest {
         // given
         OnboardingData onboardingData = new OnboardingData();
         onboardingData.setInstitutionUpdate(new InstitutionUpdate());
+        onboardingData.setLocation(new InstitutionLocation());
         onboardingData.setTaxCode("taxCode");
         // when
         final Executable executable = () -> partyConnector.createInstitutionFromANAC(onboardingData);
@@ -1175,6 +1242,7 @@ class PartyConnectorImplTest {
         // given
         OnboardingData onboardingData = new OnboardingData();
         onboardingData.setInstitutionUpdate(new InstitutionUpdate());
+        onboardingData.setLocation(new InstitutionLocation());
         onboardingData.setTaxCode("taxCode");
         // when
         final Executable executable = () -> partyConnector.createInstitutionFromIVASS(onboardingData);

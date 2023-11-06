@@ -1,8 +1,8 @@
 package it.pagopa.selfcare.onboarding.web.model.mapper;
 
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
-import it.pagopa.selfcare.onboarding.web.model.OnboardingProductDto;
 import it.pagopa.selfcare.onboarding.web.model.CompanyOnboardingDto;
+import it.pagopa.selfcare.onboarding.web.model.OnboardingProductDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
@@ -12,6 +12,7 @@ import org.mapstruct.Named;
 public interface OnboardingResourceMapper {
 
     @Mapping(source = "billingData", target = "billing")
+    @Mapping(source = "institutionLocationData", target = "location")
     @Mapping(source = "billingData.businessName", target = "institutionUpdate.description")
     @Mapping(source = "billingData.registeredOffice", target = "institutionUpdate.address")
     @Mapping(source = "pspData", target = "institutionUpdate.paymentServiceProvider")

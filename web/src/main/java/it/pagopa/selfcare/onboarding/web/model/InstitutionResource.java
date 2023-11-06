@@ -34,6 +34,15 @@ public class InstitutionResource {
     @ApiModelProperty(value = "${swagger.onboarding.institutions.model.zipCode}")
     private String zipCode;
 
+    @ApiModelProperty(value = "${swagger.onboarding.institutions.model.city}")
+    private String city;
+
+    @ApiModelProperty(value = "${swagger.onboarding.institutions.model.county}")
+    private String county;
+
+    @ApiModelProperty(value = "${swagger.onboarding.institutions.model.country}")
+    private String country;
+
     @ApiModelProperty(value = "${swagger.onboarding.institutions.model.taxCode}")
     private String taxCode;
 
