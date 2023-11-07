@@ -3,6 +3,7 @@ package it.pagopa.selfcare.onboarding.connector.model.institutions;
 import it.pagopa.selfcare.commons.base.security.PartyRole;
 import it.pagopa.selfcare.commons.base.utils.InstitutionType;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.Billing;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.InstitutionLocation;
 import lombok.Data;
 
 import java.util.Objects;
@@ -21,6 +22,7 @@ public class InstitutionInfo {
     private String zipCode;
     private String category;
     private Billing billing;
+    private InstitutionLocation institutionLocation;
     private String origin;
     private String originId;
     private InstitutionType institutionType;

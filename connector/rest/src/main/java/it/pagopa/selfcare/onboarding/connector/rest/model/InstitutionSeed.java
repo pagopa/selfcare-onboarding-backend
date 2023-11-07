@@ -2,7 +2,10 @@ package it.pagopa.selfcare.onboarding.connector.rest.model;
 
 import it.pagopa.selfcare.commons.base.utils.InstitutionType;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Attribute;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.*;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.DataProtectionOfficer;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.GeographicTaxonomy;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.PaymentServiceProvider;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -20,6 +23,11 @@ public class InstitutionSeed {
         taxCode = onboardingData.getInstitutionUpdate().getTaxCode();
         institutionType = onboardingData.getInstitutionType();
         attributes = List.of();
+        if(onboardingData.getLocation() != null) {
+            city = onboardingData.getLocation().getCity();
+            county = onboardingData.getLocation().getCounty();
+            country = onboardingData.getLocation().getCountry();
+        }
         paymentServiceProvider = onboardingData.getInstitutionUpdate().getPaymentServiceProvider();
         dataProtectionOfficer = onboardingData.getInstitutionUpdate().getDataProtectionOfficer();
         geographicTaxonomies = onboardingData.getInstitutionUpdate().getGeographicTaxonomies();
@@ -36,6 +44,9 @@ public class InstitutionSeed {
     private String address;
     private String zipCode;
     private String taxCode;
+    private String city;
+    private String county;
+    private String country;
     private InstitutionType institutionType;
     private List<Attribute> attributes;
     private PaymentServiceProvider paymentServiceProvider;

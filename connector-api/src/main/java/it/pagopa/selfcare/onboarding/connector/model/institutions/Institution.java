@@ -20,6 +20,9 @@ public class Institution {
     private String zipCode;
     private String taxCode;
     private String origin;
+    private String city;
+    private String county;
+    private String country;
     private InstitutionType institutionType;
     private List<Attribute> attributes;
     private PaymentServiceProvider paymentServiceProvider;

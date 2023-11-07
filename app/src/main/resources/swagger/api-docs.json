@@ -2343,6 +2343,25 @@
           }
         }
       },
+      "InstitutionLocationDataDto" : {
+        "title" : "InstitutionLocationDataDto",
+        "required" : [ "city", "country", "county" ],
+        "type" : "object",
+        "properties" : {
+          "city" : {
+            "type" : "string",
+            "description" : "Institution's city"
+          },
+          "country" : {
+            "type" : "string",
+            "description" : "Institution's country"
+          },
+          "county" : {
+            "type" : "string",
+            "description" : "Institution's county"
+          }
+        }
+      },
       "InstitutionOnboardingInfoResource" : {
         "title" : "InstitutionOnboardingInfoResource",
         "type" : "object",
@@ -2367,6 +2386,18 @@
           "address" : {
             "type" : "string",
             "description" : "Institution's physical address"
+          },
+          "city" : {
+            "type" : "string",
+            "description" : "Institution's city"
+          },
+          "country" : {
+            "type" : "string",
+            "description" : "Institution's country"
+          },
+          "county" : {
+            "type" : "string",
+            "description" : "Institution's county"
           },
           "description" : {
             "type" : "string",
@@ -2534,14 +2565,14 @@
               "$ref" : "#/components/schemas/GeographicTaxonomyDto"
             }
           },
+          "institutionLocationData" : {
+            "description" : "Institution's location data, city, county, country information",
+            "$ref" : "#/components/schemas/InstitutionLocationDataDto"
+          },
           "institutionType" : {
             "type" : "string",
             "description" : "Institution's type",
             "enum" : [ "AS", "GSP", "PA", "PG", "PSP", "PT", "SA", "SCP" ]
-          },
-          "ivassCode" : {
-            "type" : "string",
-            "description" : "Institution's details ivass code for AS"
           },
           "ivassCode" : {
             "type" : "string",
