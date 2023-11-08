@@ -13,10 +13,7 @@ import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionInf
 import it.pagopa.selfcare.onboarding.connector.model.institutions.MatchInfoResult;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.OnboardingResource;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.infocamere.InstitutionInfoIC;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.CreateInstitutionData;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.GeographicTaxonomy;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.User;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.*;
 import it.pagopa.selfcare.onboarding.connector.model.product.Product;
 import it.pagopa.selfcare.onboarding.connector.model.product.ProductRoleInfo;
 import it.pagopa.selfcare.onboarding.connector.model.product.ProductStatus;
@@ -106,7 +103,7 @@ class InstitutionServiceImpl implements InstitutionService {
         if (InstitutionType.PSP.equals(onboardingData.getInstitutionType()) && onboardingData.getInstitutionUpdate().getPaymentServiceProvider() == null) {
             throw new ValidationException(FIELD_PSP_DATA_IS_REQUIRED_FOR_PSP_INSTITUTION_ONBOARDING);
         }
-        if (!Origin.IPA.equals(Origin.fromValue(onboardingData.getOrigin())) && onboardingData.getLocation() == null){
+        if (isLocationInfoRequired(onboardingData.getOrigin()) && onboardingData.getLocation() == null){
             throw new ValidationException(LOCATION_INFO_IS_REQUIRED);
         }
 
@@ -172,6 +169,12 @@ class InstitutionServiceImpl implements InstitutionService {
 
         partyConnector.onboardingOrganization(onboardingData);
         log.trace("onboarding end");
+    }
+
+    private boolean isLocationInfoRequired(String origin) {
+        return !Origin.IPA.equals(Origin.fromValue(origin)) &&
+                !Origin.ADE.equals(Origin.fromValue(origin)) &&
+                !Origin.INFOCAMERE.equals(Origin.fromValue(origin));
     }
 
     private void checkIfProductIsActiveAndSetUserProductRole(Product product, OnboardingData onboardingData) {
