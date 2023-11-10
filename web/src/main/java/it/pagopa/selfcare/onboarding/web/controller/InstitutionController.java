@@ -35,6 +35,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static it.pagopa.selfcare.commons.base.utils.ProductId.PROD_FD;
+import static it.pagopa.selfcare.commons.base.utils.ProductId.PROD_FD_GARANTITO;
 import static org.springframework.http.MediaType.APPLICATION_PROBLEM_JSON_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.HEAD;
 
@@ -283,7 +285,7 @@ public class InstitutionController {
                                  @RequestParam(value = "verifyType", required = false) VerifyType type) {
         log.trace("verifyOnboarding start");
         log.debug("verifyOnboarding taxCode = {}, subunitCode = {}, productId = {}", taxCode, subunitCode, productId);
-        if (VerifyType.EXTERNAL.equals(type) && vatNumber.isPresent() && productId.equals("prod-fd") || productId.equals("prod-fd-garantito")) {
+        if (VerifyType.EXTERNAL.equals(type) && vatNumber.isPresent() && (PROD_FD.getValue().equals(productId) || PROD_FD_GARANTITO.getValue().equals(productId))) {
             institutionService.checkOrganization(productId, taxCode, vatNumber.get());
         } else
             institutionService.verifyOnboarding(taxCode, subunitCode, productId);
