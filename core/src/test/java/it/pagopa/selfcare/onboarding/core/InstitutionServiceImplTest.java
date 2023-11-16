@@ -2,6 +2,7 @@ package it.pagopa.selfcare.onboarding.core;
 
 import it.pagopa.selfcare.commons.base.security.PartyRole;
 import it.pagopa.selfcare.commons.base.utils.InstitutionType;
+import it.pagopa.selfcare.commons.base.utils.Origin;
 import it.pagopa.selfcare.onboarding.connector.api.*;
 import it.pagopa.selfcare.onboarding.connector.exceptions.ResourceNotFoundException;
 import it.pagopa.selfcare.onboarding.connector.model.InstitutionLegalAddressData;
@@ -222,6 +223,22 @@ class InstitutionServiceImplTest {
         //then
         IllegalArgumentException e = assertThrows(IllegalArgumentException.class, executable);
         assertEquals(REQUIRED_INSTITUTION_TYPE_MESSAGE, e.getMessage());
+        verifyNoInteractions(productsConnectorMock, partyConnectorMock, userConnectorMock, onboardingValidationStrategyMock);
+    }
+
+    @Test
+    void onboarding_nullLocationInfo(){
+        //given
+        OnboardingData onboardingData = mockInstance(new OnboardingData(), "location");
+        onboardingData.setLocation(null);
+        onboardingData.setOrigin("ANAC");
+        Billing billing = mockInstance(new Billing());
+        onboardingData.setBilling(billing);
+        //when
+        Executable executable = () -> institutionService.onboardingProduct(onboardingData);
+        //then
+        ValidationException e = assertThrows(ValidationException.class, executable);
+        assertEquals(LOCATION_INFO_IS_REQUIRED, e.getMessage());
         verifyNoInteractions(productsConnectorMock, partyConnectorMock, userConnectorMock, onboardingValidationStrategyMock);
     }
 
@@ -456,6 +473,7 @@ class InstitutionServiceImplTest {
         OnboardingData onboardingData = mockInstance(new OnboardingData(), "setInstitutionType", "setUsers");
         onboardingData.setInstitutionType(InstitutionType.PSP);
         onboardingData.setUsers(List.of(dummyManager, dummyDelegate));
+        onboardingData.setOrigin("IPA");
 
         ProductRoleInfo productRoleInfo1 = mockInstance(new ProductRoleInfo(), 1, "setRoles");
         ProductRoleInfo.ProductRole productRole1 = mockInstance(new ProductRoleInfo.ProductRole(), 1);
@@ -525,6 +543,84 @@ class InstitutionServiceImplTest {
     }
 
     @Test
+    void shouldOnboardingProductInstitutionFromInfocamere() {
+        // given
+        String productRole = "role";
+
+        OnboardingData onboardingData = mockInstance(new OnboardingData(), "setInstitutionType", "setUsers");
+        onboardingData.setInstitutionType(InstitutionType.PG);
+        onboardingData.setOrigin(Origin.INFOCAMERE.getValue());
+        onboardingData.setUsers(List.of(dummyManager, dummyDelegate));
+
+        ProductRoleInfo productRoleInfo1 = mockInstance(new ProductRoleInfo(), 1, "setRoles");
+        ProductRoleInfo.ProductRole productRole1 = mockInstance(new ProductRoleInfo.ProductRole(), 1);
+        productRole1.setCode(productRole);
+        productRoleInfo1.setRoles(List.of(productRole1));
+        ProductRoleInfo productRoleInfo2 = mockInstance(new ProductRoleInfo(), 2, "setRoles");
+        ProductRoleInfo.ProductRole productRole2 = mockInstance(new ProductRoleInfo.ProductRole(), 2);
+        productRole2.setCode(productRole);
+        productRoleInfo2.setRoles(List.of(productRole2));
+        EnumMap<PartyRole, ProductRoleInfo> roleMappings = new EnumMap<>(PartyRole.class) {{
+            put(PartyRole.MANAGER, productRoleInfo1);
+            put(PartyRole.DELEGATE, productRoleInfo2);
+        }};
+
+        Product productMock = new Product();
+        productMock.setId(onboardingData.getProductId());
+        productMock.setRoleMappings(roleMappings);
+        productMock.setParentId("test");
+
+        Institution institution = mockInstance(new Institution());
+        institution.setId(UUID.randomUUID().toString());
+
+        when(partyConnectorMock.getInstitutionsByTaxCodeAndSubunitCode(anyString(),anyString()))
+                .thenThrow(ResourceNotFoundException.class);
+        when(partyConnectorMock.createInstitutionFromInfocamere(any())).thenReturn(institution);
+
+        when(productsConnectorMock.getProduct(any(), any()))
+                .thenReturn(productMock);
+        when(userConnectorMock.saveUser(any()))
+                .thenAnswer(invocation -> {
+                    UserId userId = new UserId();
+                    userId.setId(UUID.randomUUID());
+                    return userId;
+                });
+        when(onboardingValidationStrategyMock.validate(any(), any()))
+                .thenReturn(true);
+        // when
+        institutionService.onboardingProduct(onboardingData);
+        // then
+        verify(partyConnectorMock, times(1))
+                .getInstitutionsByTaxCodeAndSubunitCode(onboardingData.getTaxCode(), onboardingData.getSubunitCode());
+        verify(partyConnectorMock, times(1))
+                .createInstitutionFromInfocamere(onboardingData);
+        verify(productsConnectorMock, times(1))
+                .getProduct(onboardingData.getProductId(), onboardingData.getInstitutionType());
+        verify(onboardingValidationStrategyMock, times(1))
+                .validate(onboardingData.getProductId(), onboardingData.getTaxCode());
+        verify(partyConnectorMock, times(1))
+                .onboardingOrganization(onboardingDataCaptor.capture());
+        ArgumentCaptor<SaveUserDto> saveUserCaptor = ArgumentCaptor.forClass(SaveUserDto.class);
+        onboardingData.getUsers().forEach(user ->
+                verify(userConnectorMock, times(1))
+                        .search(user.getTaxCode(), EnumSet.of(name, familyName, workContacts)));
+        verify(userConnectorMock, times(2))
+                .saveUser(saveUserCaptor.capture());
+        List<SaveUserDto> savedUsers = saveUserCaptor.getAllValues();
+        savedUsers.forEach(saveUserDto -> assertTrue(saveUserDto.getWorkContacts().containsKey(institution.getId())));
+        OnboardingData captured = onboardingDataCaptor.getValue();
+        assertNotNull(captured.getUsers());
+        assertEquals(2, captured.getUsers().size());
+        captured.getUsers().forEach(userInfo -> {
+            assertEquals(productRole, userInfo.getProductRole());
+            assertNotNull(userInfo.getId());
+        });
+        verify(productsConnectorMock, times(2)).getProduct(any(), any());
+        verifyNoMoreInteractions(userConnectorMock, onboardingValidationStrategyMock);
+    }
+
+
+    @Test
     void onboardingProductShouldThrowErrorWhenParentProductHasNotValidState() {
         // given
         String productRole = "role";
@@ -532,6 +628,7 @@ class InstitutionServiceImplTest {
         OnboardingData onboardingData = mockInstance(new OnboardingData(), "setInstitutionType", "setUsers");
         onboardingData.setInstitutionType(InstitutionType.PSP);
         onboardingData.setUsers(List.of(dummyManager, dummyDelegate));
+        onboardingData.setOrigin("IPA");
 
         ProductRoleInfo productRoleInfo1 = mockInstance(new ProductRoleInfo(), 1, "setRoles");
         ProductRoleInfo.ProductRole productRole1 = mockInstance(new ProductRoleInfo.ProductRole(), 1);
@@ -574,6 +671,7 @@ class InstitutionServiceImplTest {
 
         OnboardingData onboardingData = mockInstance(new OnboardingData(), "setInstitutionType", "setUsers");
         onboardingData.setInstitutionType(InstitutionType.PSP);
+        onboardingData.setOrigin("IPA");
         onboardingData.setUsers(List.of(dummyManager, dummyDelegate));
 
         ProductRoleInfo productRoleInfo1 = mockInstance(new ProductRoleInfo(), 1, "setRoles");
@@ -620,6 +718,7 @@ class InstitutionServiceImplTest {
         onboardingData.setInstitutionType(InstitutionType.PT);
         onboardingData.setProductId(PROD_INTEROP.getValue());
         onboardingData.setUsers(List.of(dummyManager, dummyDelegate));
+        onboardingData.setOrigin("IPA");
 
         Product product = new Product();
         product.setId("prod-id");
@@ -639,6 +738,7 @@ class InstitutionServiceImplTest {
         OnboardingData onboardingData = mockInstance(new OnboardingData(), "setInstitutionType", "setUsers");
         onboardingData.setInstitutionType(InstitutionType.PA);
         onboardingData.setUsers(List.of(dummyManager, dummyDelegate));
+        onboardingData.setOrigin("IPA");
         Product productMock = mockInstance(new Product(), "setRoleMappings", "setParentId", "setId", "setProductOperations");
         productMock.setId(onboardingData.getProductId());
         ProductRoleInfo productRoleInfo1 = mockInstance(new ProductRoleInfo(), 1, "setRoles");

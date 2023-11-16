@@ -108,9 +108,9 @@ class PartyConnectorImpl implements PartyConnector {
 
     @Override
     public void onboarding(OnboardingData onboardingData) {
-        if(onboardingData.getInstitutionType() == InstitutionType.PA) {
+        if (onboardingData.getInstitutionType() == InstitutionType.PA) {
             msOnboardingApiClient._onboardingPaPost(onboardingMapper.toOnboardingPaRequest(onboardingData));
-        } else if(onboardingData.getInstitutionType() == InstitutionType.PSP) {
+        } else if (onboardingData.getInstitutionType() == InstitutionType.PSP) {
             msOnboardingApiClient._onboardingPspPost(onboardingMapper.toOnboardingPspRequest(onboardingData));
         } else {
             msOnboardingApiClient._onboardingPost(onboardingMapper.toOnboardingDefaultRequest(onboardingData));
@@ -135,8 +135,12 @@ class PartyConnectorImpl implements PartyConnector {
         institutionUpdate.setZipCode(onboardingData.getInstitutionUpdate().getZipCode());
         institutionUpdate.setPaymentServiceProvider(onboardingData.getInstitutionUpdate().getPaymentServiceProvider());
         institutionUpdate.setDataProtectionOfficer(onboardingData.getInstitutionUpdate().getDataProtectionOfficer());
-
-        if(Objects.nonNull(onboardingData.getInstitutionUpdate()) && Objects.nonNull(onboardingData.getInstitutionUpdate().getGeographicTaxonomies())) {
+        if (onboardingData.getLocation() != null) {
+            institutionUpdate.setCity(onboardingData.getLocation().getCity());
+            institutionUpdate.setCounty(onboardingData.getLocation().getCounty());
+            institutionUpdate.setCountry(onboardingData.getLocation().getCountry());
+        }
+        if (Objects.nonNull(onboardingData.getInstitutionUpdate()) && Objects.nonNull(onboardingData.getInstitutionUpdate().getGeographicTaxonomies())) {
             institutionUpdate.setGeographicTaxonomyCodes(onboardingData.getInstitutionUpdate().getGeographicTaxonomies().stream()
                     .map(GeographicTaxonomy::getCode).collect(Collectors.toList()));
         }
@@ -273,8 +277,8 @@ class PartyConnectorImpl implements PartyConnector {
         Assert.hasText(taxCode, REQUIRED_INSTITUTION_TAXCODE_MESSAGE);
         InstitutionsResponse partyInstitutionResponse = restClient.getInstitutions(taxCode, subunitCode);
         List<Institution> result = partyInstitutionResponse.getInstitutions().stream()
-                    .map(institutionMapper::toEntity)
-                    .collect(Collectors.toList());
+                .map(institutionMapper::toEntity)
+                .collect(Collectors.toList());
         log.debug("getInstitution result = {}", result);
         log.trace("getInstitution end");
         return result;
@@ -353,6 +357,17 @@ class PartyConnectorImpl implements PartyConnector {
         Institution result = institutionMapper.toEntity(partyInstitutionResponse);
         log.debug("createInstitutionUsingExternalId result = {}", result);
         log.trace("createInstitutionUsingExternalId end");
+        return result;
+    }
+
+    @Override
+    public Institution createInstitutionFromInfocamere(OnboardingData onboardingData) {
+        log.trace("createInstitutionFromInfocamere start");
+        Assert.notNull(onboardingData, "An OnboardingData is required");
+        InstitutionResponse partyInstitutionResponse = restClient.createInstitutionFromInfocamere(new InstitutionSeed(onboardingData));
+        Institution result = institutionMapper.toEntity(partyInstitutionResponse);
+        log.debug("createInstitutionFromInfocamere result = {}", result);
+        log.trace("createInstitutionFromInfocamere end");
         return result;
     }
 

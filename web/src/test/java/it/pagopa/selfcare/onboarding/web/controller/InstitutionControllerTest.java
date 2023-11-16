@@ -452,6 +452,43 @@ class InstitutionControllerTest {
         verify(institutionServiceMock, times(1)).checkOrganization(productId, taxCode, vatNumber);
     }
     @Test
+    void verifyOnboardingExternal_garantito() throws Exception{
+        //given
+        String productId = "prod-fd-garantito";
+        String vatNumber  ="vatNumber";
+        String taxCode = "taxCode";
+        //when
+        mvc.perform(MockMvcRequestBuilders
+                        .head(BASE_URL + "/onboarding")
+                        .queryParam("taxCode", taxCode)
+                        .queryParam("productId", productId)
+                        .queryParam("verifyType", VerifyType.EXTERNAL.name())
+                        .queryParam("vatNumber", vatNumber)
+                        .contentType(APPLICATION_JSON_VALUE)
+                        .accept(APPLICATION_JSON_VALUE))
+                .andExpect(status().isNoContent());
+        //then
+        verify(institutionServiceMock, times(1)).checkOrganization(productId, taxCode, vatNumber);
+    }
+
+    @Test
+    void verifyOnboarding2() throws Exception {
+        //given
+        String productId = "prod-fd";
+        String taxCode = "taxCode";
+        //when
+        mvc.perform(MockMvcRequestBuilders
+                        .head(BASE_URL + "/onboarding")
+                        .queryParam("taxCode", taxCode)
+                        .queryParam("productId", productId)
+                        .queryParam("verifyType", VerifyType.EXTERNAL.name())
+                        .contentType(APPLICATION_JSON_VALUE)
+                        .accept(APPLICATION_JSON_VALUE))
+                .andExpect(status().isNoContent());
+        //then
+        verify(institutionServiceMock, times(1)).verifyOnboarding(taxCode, null, productId);
+    }
+    @Test
     void getInstitutionsByUserId() throws Exception {
         //given
         JwtAuthenticationToken mockPrincipal = Mockito.mock(JwtAuthenticationToken.class);

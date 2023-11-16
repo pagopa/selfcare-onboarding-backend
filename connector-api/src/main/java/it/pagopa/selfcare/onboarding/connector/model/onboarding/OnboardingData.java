@@ -34,6 +34,7 @@ public class OnboardingData {
     private String contractPath;
     private String contractVersion;
     private Billing billing;
+    private InstitutionLocation location;
     private InstitutionUpdate institutionUpdate;
     private InstitutionType institutionType;
     private String origin;

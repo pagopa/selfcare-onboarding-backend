@@ -20,6 +20,9 @@
       "zipCode": "20100",
       "taxCode": "string",
       "origin": "IPA",
+      "city": "city",
+      "county": "county",
+      "country": "country",
       "institutionType": "PA",
       "attributes": [
         {
