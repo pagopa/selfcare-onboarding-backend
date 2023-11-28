@@ -14,6 +14,14 @@ ingress:
         - path: /onboarding/v1/(.*)
           pathType: ImplementationSpecific
 
+resources:
+  requests:
+    cpu: 200m
+    memory: 700M
+  limits:
+    cpu: 500m
+    memory: 1Gi
+
 autoscaling:
   enabled: false
   minReplicas: 1
