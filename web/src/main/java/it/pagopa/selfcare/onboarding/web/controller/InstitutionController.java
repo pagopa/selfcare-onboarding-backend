@@ -49,13 +49,16 @@ public class InstitutionController {
     private final InstitutionService institutionService;
     private final OnboardingResourceMapper onboardingResourceMapper;
 
+    private final OnboardingInstitutionInfoMapper onboardingInstitutionInfoMapper;
+
     private static final String ONBOARDING_START = "onboarding start";
     private static final String ONBOARDING_END = "onboarding end";
 
     @Autowired
-    public InstitutionController(InstitutionService institutionService, OnboardingResourceMapper onboardingResourceMapper) {
+    public InstitutionController(InstitutionService institutionService, OnboardingResourceMapper onboardingResourceMapper, OnboardingInstitutionInfoMapper onboardingInstitutionInfoMapper) {
         this.institutionService = institutionService;
         this.onboardingResourceMapper = onboardingResourceMapper;
+        this.onboardingInstitutionInfoMapper = onboardingInstitutionInfoMapper;
     }
 
 
@@ -155,7 +158,7 @@ public class InstitutionController {
         log.trace("getInstitutionOnBoardingInfo start");
         log.debug("getInstitutionOnBoardingInfo institutionId = {}, productId = {}", externalInstitutionId, productId);
         InstitutionOnboardingData institutionOnboardingData = institutionService.getInstitutionOnboardingData(externalInstitutionId, productId);
-        InstitutionOnboardingInfoResource result = OnboardingMapper.toResource(institutionOnboardingData);
+        InstitutionOnboardingInfoResource result = onboardingInstitutionInfoMapper.toResource(institutionOnboardingData);
         log.debug("getInstitutionOnBoardingInfo result = {}", result);
         log.trace("getInstitutionOnBoardingInfo end");
         return result;
