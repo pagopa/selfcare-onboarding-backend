@@ -5,7 +5,16 @@ import it.pagopa.selfcare.onboarding.connector.api.PartyRegistryProxyConnector;
 import it.pagopa.selfcare.onboarding.connector.model.InstitutionLegalAddressData;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.MatchInfoResult;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.infocamere.InstitutionInfoIC;
+import it.pagopa.selfcare.onboarding.connector.model.registry_proxy.GeographicTaxonomies;
+import it.pagopa.selfcare.onboarding.connector.model.registry_proxy.HomogeneousOrganizationalArea;
+import it.pagopa.selfcare.onboarding.connector.model.registry_proxy.InstitutionProxyInfo;
+import it.pagopa.selfcare.onboarding.connector.model.registry_proxy.OrganizationUnit;
 import it.pagopa.selfcare.onboarding.connector.rest.client.PartyRegistryProxyRestClient;
+import it.pagopa.selfcare.onboarding.connector.rest.mapper.RegistryProxyMapper;
+import it.pagopa.selfcare.onboarding.connector.rest.model.AooResponse;
+import it.pagopa.selfcare.onboarding.connector.rest.model.GeographicTaxonomiesResponse;
+import it.pagopa.selfcare.onboarding.connector.rest.model.ProxyInstitutionResponse;
+import it.pagopa.selfcare.onboarding.connector.rest.model.UoResponse;
 import it.pagopa.selfcare.onboarding.connector.rest.model.institution_pnpg.InstitutionByLegalTaxIdRequest;
 import it.pagopa.selfcare.onboarding.connector.rest.model.institution_pnpg.InstitutionByLegalTaxIdRequestDto;
 import lombok.extern.slf4j.Slf4j;
@@ -22,10 +31,13 @@ class PartyRegistryProxyConnectorImpl implements PartyRegistryProxyConnector {
 
     private final PartyRegistryProxyRestClient restClient;
 
+    private final RegistryProxyMapper proxyMapper;
+
 
     @Autowired
-    public PartyRegistryProxyConnectorImpl(PartyRegistryProxyRestClient restClient) {
+    public PartyRegistryProxyConnectorImpl(PartyRegistryProxyRestClient restClient, RegistryProxyMapper proxyMapper) {
         this.restClient = restClient;
+        this.proxyMapper = proxyMapper;
     }
 
 
@@ -66,6 +78,50 @@ class PartyRegistryProxyConnectorImpl implements PartyRegistryProxyConnector {
         log.debug("getInstitutionLegalAddress result = {}", result);
         log.trace("getInstitutionLegalAddress end");
         return result;
+    }
+
+    @Override
+    public HomogeneousOrganizationalArea getAooById(String aooCode) {
+        log.trace("getAooById start");
+        log.debug("getAooById aooCode = {}", aooCode);
+        AooResponse aooResponse = restClient.getAooById(aooCode);
+        HomogeneousOrganizationalArea result = proxyMapper.toAOO(aooResponse);
+        log.debug("getAooById result = {}", result);
+        log.trace("getAooById end");
+        return result;
+    }
+
+    @Override
+    public OrganizationUnit getUoById(String uoCode) {
+        log.trace("getUoById start");
+        log.debug("getUoById uoCode = {}", uoCode);
+        UoResponse uoResponse = restClient.getUoById(uoCode);
+        OrganizationUnit result = proxyMapper.toUO(uoResponse);
+        log.debug("getUoById result = {}", result);
+        log.trace("getUoById end");
+        return result;
+    }
+
+    @Override
+    public GeographicTaxonomies getExtById(String code){
+        log.trace("getExtById start");
+        log.debug("getExtById code = {}", code);
+        GeographicTaxonomiesResponse geographicTaxonomiesResponse = restClient.getExtByCode(code);
+        GeographicTaxonomies result = proxyMapper.toGeographicTaxonomies(geographicTaxonomiesResponse);
+        log.debug("getExtById result = {}", result);
+        log.trace("getExtById end");
+        return result;
+    }
+
+    @Override
+    public InstitutionProxyInfo getInstitutionProxyById(String externalId) {
+        log.trace("getInstitutionProxyById start");
+        log.debug("getInstitutionProxyById externalId = {}", externalId);
+        ProxyInstitutionResponse proxyInstitutionResponse = restClient.getInstitutionById(externalId);
+        InstitutionProxyInfo institutionProxyInfo = proxyMapper.toInstitutionProxyInfo(proxyInstitutionResponse);
+        log.debug("getInstitutionProxyById result = {}", institutionProxyInfo);
+        log.trace("getInstitutionProxyById end");
+        return institutionProxyInfo;
     }
 
 }
