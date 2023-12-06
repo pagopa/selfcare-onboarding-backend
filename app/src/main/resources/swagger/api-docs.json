@@ -2311,9 +2311,21 @@
             "description" : "Institution's billing information",
             "$ref" : "#/components/schemas/BillingDataResponseDto"
           },
+          "city" : {
+            "type" : "string",
+            "description" : "Institution's city"
+          },
           "companyInformations" : {
             "description" : "GPS, SCP, PT optional data",
             "$ref" : "#/components/schemas/CompanyInformationsResource"
+          },
+          "country" : {
+            "type" : "string",
+            "description" : "Institution's country"
+          },
+          "county" : {
+            "type" : "string",
+            "description" : "Institution's county"
           },
           "id" : {
             "type" : "string",
