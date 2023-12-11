@@ -422,8 +422,8 @@ class InstitutionServiceImpl implements InstitutionService {
         if (institutionInfo == null) {
             throw new ResourceNotFoundException(String.format("Institution %s not found", externalInstitutionId));
         }
-        result.setInstitution(institutionInfo);
         setLocationInfo(institutionInfo);
+        result.setInstitution(institutionInfo);
 
         Institution institution = partyConnector.getInstitutionByExternalId(externalInstitutionId);
         if (institution == null) {
