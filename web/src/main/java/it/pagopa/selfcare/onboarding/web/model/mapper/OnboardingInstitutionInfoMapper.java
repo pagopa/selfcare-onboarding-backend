@@ -23,8 +23,6 @@ public interface OnboardingInstitutionInfoMapper {
     @Mappings({
             @Mapping(target = "institution", expression = "java(toDataImpl(model.getInstitution()))"),
             @Mapping(target = "geographicTaxonomies", expression = "java(mapGeographicTaxonomies(model.getGeographicTaxonomies()))")
-//            @Mapping(target = "institution.companyInformations", source = "companyInformations"),
-//            @Mapping(target = "institution.assistanceContacts", source = "assistanceContacts")
     })
     InstitutionOnboardingInfoResource toResource(InstitutionOnboardingData model);
 
