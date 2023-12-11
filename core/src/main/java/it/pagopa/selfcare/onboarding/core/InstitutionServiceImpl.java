@@ -18,7 +18,9 @@ import it.pagopa.selfcare.onboarding.connector.model.product.Product;
 import it.pagopa.selfcare.onboarding.connector.model.product.ProductRoleInfo;
 import it.pagopa.selfcare.onboarding.connector.model.product.ProductStatus;
 import it.pagopa.selfcare.onboarding.connector.model.registry_proxy.GeographicTaxonomies;
+import it.pagopa.selfcare.onboarding.connector.model.registry_proxy.HomogeneousOrganizationalArea;
 import it.pagopa.selfcare.onboarding.connector.model.registry_proxy.InstitutionProxyInfo;
+import it.pagopa.selfcare.onboarding.connector.model.registry_proxy.OrganizationUnit;
 import it.pagopa.selfcare.onboarding.connector.model.user.Certification;
 import it.pagopa.selfcare.onboarding.connector.model.user.CertifiedField;
 import it.pagopa.selfcare.onboarding.connector.model.user.MutableUserFieldsDto;
@@ -59,6 +61,7 @@ class InstitutionServiceImpl implements InstitutionService {
     private static final String ONBOARDING_NOT_ALLOWED_ERROR_MESSAGE_TEMPLATE = "Institution with external id '%s' is not allowed to onboard '%s' product";
     public static final String UNABLE_TO_COMPLETE_THE_ONBOARDING_FOR_INSTITUTION_FOR_PRODUCT_DISMISSED = "Unable to complete the onboarding for institution with taxCode '%s' to product '%s', the product is dismissed.";
     public static final String FIELD_PSP_DATA_IS_REQUIRED_FOR_PSP_INSTITUTION_ONBOARDING = "Field 'pspData' is required for PSP institution onboarding";
+    static final String DESCRIPTION_TO_REPLACE_REGEX = " - COMUNE";
 
     private final PartyConnector partyConnector;
     private final ProductsConnector productsConnector;
@@ -420,15 +423,7 @@ class InstitutionServiceImpl implements InstitutionService {
             throw new ResourceNotFoundException(String.format("Institution %s not found", externalInstitutionId));
         }
         result.setInstitution(institutionInfo);
-        if (institutionInfo.getInstitutionLocation() == null && Origin.IPA.getValue().equals(institutionInfo.getOrigin())){
-            InstitutionProxyInfo institutionProxy = partyRegistryProxyConnector.getInstitutionProxyById(institutionInfo.getExternalId());
-            GeographicTaxonomies geotax = partyRegistryProxyConnector.getExtById(institutionProxy.getIstatCode());
-            InstitutionLocation institutionLocation = new InstitutionLocation();
-            institutionLocation.setCity(geotax.getDescription());
-            institutionLocation.setCounty(geotax.getProvinceAbbreviation());
-            institutionLocation.setCountry(geotax.getCountry());
-            result.getInstitution().setInstitutionLocation(institutionLocation);
-        }
+        setLocationInfo(institutionInfo);
 
         Institution institution = partyConnector.getInstitutionByExternalId(externalInstitutionId);
         if (institution == null) {
@@ -444,6 +439,37 @@ class InstitutionServiceImpl implements InstitutionService {
         log.debug(LogUtils.CONFIDENTIAL_MARKER, "getInstitutionOnboardingData result = {}", result);
         log.trace("getInstitutionOnboardingData end");
         return result;
+    }
+
+    private void setLocationInfo(InstitutionInfo institutionInfo){
+        if (institutionInfo.getInstitutionLocation() == null && Origin.IPA.getValue().equals(institutionInfo.getOrigin())){
+            institutionInfo.setInstitutionLocation(new InstitutionLocation());
+            try {
+                GeographicTaxonomies geographicTaxonomies = null;
+                if (institutionInfo.getInstitutionType() != null) {
+                    switch (Objects.requireNonNull(institutionInfo.getSubunitType())) {
+                        case "UO":
+                            OrganizationUnit organizationUnit = partyRegistryProxyConnector.getUoById(institutionInfo.getSubunitCode());
+                            geographicTaxonomies = partyRegistryProxyConnector.getExtById(organizationUnit.getMunicipalIstatCode());
+                            break;
+                        case "AOO":
+                            HomogeneousOrganizationalArea homogeneousOrganizationalArea = partyRegistryProxyConnector.getAooById(institutionInfo.getSubunitCode());
+                            geographicTaxonomies = partyRegistryProxyConnector.getExtById(homogeneousOrganizationalArea.getMunicipalIstatCode());
+                            break;
+                        default:
+                            InstitutionProxyInfo proxyInfo = partyRegistryProxyConnector.getInstitutionProxyById(institutionInfo.getTaxCode());
+                            geographicTaxonomies = partyRegistryProxyConnector.getExtById(proxyInfo.getIstatCode());
+                    }
+                }
+                if (geographicTaxonomies != null) {
+                    institutionInfo.getInstitutionLocation().setCountry(geographicTaxonomies.getProvinceAbbreviation());
+                    institutionInfo.getInstitutionLocation().setCountry(geographicTaxonomies.getCountryAbbreviation());
+                    institutionInfo.getInstitutionLocation().setCity(geographicTaxonomies.getDescription().replace(DESCRIPTION_TO_REPLACE_REGEX, ""));
+                }
+            } catch (ResourceNotFoundException e) {
+                log.warn("Error while searching institution {} on IPA, {} ", institutionInfo.getDescription(), e.getMessage());
+            }
+        }
     }
 
 
