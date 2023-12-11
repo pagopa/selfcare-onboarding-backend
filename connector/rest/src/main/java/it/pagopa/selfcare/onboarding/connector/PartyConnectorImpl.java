@@ -402,7 +402,7 @@ class PartyConnectorImpl implements PartyConnector {
         Assert.hasText(externalId, REQUIRED_INSTITUTION_EXTERNAL_ID_MESSAGE);
         Assert.hasText(productId, REQUIRED_PRODUCT_ID_MESSAGE);
         BillingDataResponse billingDataResponse = restClient.getInstitutionBillingData(externalId, productId);
-        InstitutionInfo result = BILLING_DATA_RESPONSE_TO_INSTITUTION_INFO_FUNCTION.apply(billingDataResponse);
+        InstitutionInfo result = institutionMapper.toInstitutionInfo(billingDataResponse);
         log.debug("getInstitutionBillingData result = {}", result);
         log.trace("getInstitutionBillingData end");
         return result;

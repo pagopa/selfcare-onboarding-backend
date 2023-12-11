@@ -17,6 +17,8 @@ import it.pagopa.selfcare.onboarding.connector.model.onboarding.*;
 import it.pagopa.selfcare.onboarding.connector.model.product.Product;
 import it.pagopa.selfcare.onboarding.connector.model.product.ProductRoleInfo;
 import it.pagopa.selfcare.onboarding.connector.model.product.ProductStatus;
+import it.pagopa.selfcare.onboarding.connector.model.registry_proxy.GeographicTaxonomies;
+import it.pagopa.selfcare.onboarding.connector.model.registry_proxy.InstitutionProxyInfo;
 import it.pagopa.selfcare.onboarding.connector.model.user.Certification;
 import it.pagopa.selfcare.onboarding.connector.model.user.CertifiedField;
 import it.pagopa.selfcare.onboarding.connector.model.user.MutableUserFieldsDto;
@@ -418,6 +420,15 @@ class InstitutionServiceImpl implements InstitutionService {
             throw new ResourceNotFoundException(String.format("Institution %s not found", externalInstitutionId));
         }
         result.setInstitution(institutionInfo);
+        if (institutionInfo.getInstitutionLocation() == null && Origin.IPA.getValue().equals(institutionInfo.getOrigin())){
+            InstitutionProxyInfo institutionProxy = partyRegistryProxyConnector.getInstitutionProxyById(institutionInfo.getExternalId());
+            GeographicTaxonomies geotax = partyRegistryProxyConnector.getExtById(institutionProxy.getIstatCode());
+            InstitutionLocation institutionLocation = new InstitutionLocation();
+            institutionLocation.setCity(geotax.getDescription());
+            institutionLocation.setCounty(geotax.getProvinceAbbreviation());
+            institutionLocation.setCountry(geotax.getCountry());
+            result.getInstitution().setInstitutionLocation(institutionLocation);
+        }
 
         Institution institution = partyConnector.getInstitutionByExternalId(externalInstitutionId);
         if (institution == null) {

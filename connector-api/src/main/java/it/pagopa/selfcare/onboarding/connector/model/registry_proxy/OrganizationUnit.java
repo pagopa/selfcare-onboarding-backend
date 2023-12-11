@@ -1,5 +1,6 @@
 package it.pagopa.selfcare.onboarding.connector.model.registry_proxy;
 
+import it.pagopa.selfcare.commons.base.utils.Origin;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

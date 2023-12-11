@@ -27,7 +27,9 @@ public class InstitutionInfo {
     private String originId;
     private InstitutionType institutionType;
     private PartyRole userRole;
-
+    private String subunitCode;
+    private String subunitType;
+    private String aooParentCode;
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
