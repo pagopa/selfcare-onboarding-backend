@@ -2,6 +2,7 @@ package it.pagopa.selfcare.onboarding.connector.rest.mapper;
 
 
 import it.pagopa.selfcare.onboarding.connector.model.institutions.*;
+import it.pagopa.selfcare.onboarding.connector.rest.model.BillingDataResponse;
 import it.pagopa.selfcare.onboarding.connector.rest.model.InstitutionResponse;
 import it.pagopa.selfcare.onboarding.connector.rest.model.OnboardingResponse;
 import org.mapstruct.Mapper;
@@ -24,6 +25,9 @@ public interface InstitutionMapper {
         companyInformations.setBusinessRegisterPlace(dto.getBusinessRegisterPlace());
         return companyInformations;
     }
+
+    @Mapping(target = "id", source = "institutionId")
+    InstitutionInfo toInstitutionInfo(BillingDataResponse model);
 
     @Named("toAssistanceContacts")
     static AssistanceContacts toAssistanceContacts(InstitutionResponse dto) {
