@@ -8,26 +8,35 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import it.pagopa.selfcare.commons.base.utils.Origin;
 import it.pagopa.selfcare.onboarding.connector.model.InstitutionLegalAddressData;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.MatchInfoResult;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.infocamere.BusinessInfoIC;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.infocamere.InstitutionInfoIC;
+import it.pagopa.selfcare.onboarding.connector.model.registry_proxy.GeographicTaxonomies;
+import it.pagopa.selfcare.onboarding.connector.model.registry_proxy.HomogeneousOrganizationalArea;
+import it.pagopa.selfcare.onboarding.connector.model.registry_proxy.InstitutionProxyInfo;
+import it.pagopa.selfcare.onboarding.connector.model.registry_proxy.OrganizationUnit;
 import it.pagopa.selfcare.onboarding.connector.rest.client.PartyRegistryProxyRestClient;
+import it.pagopa.selfcare.onboarding.connector.rest.mapper.RegistryProxyMapper;
+import it.pagopa.selfcare.onboarding.connector.rest.mapper.RegistryProxyMapperImpl;
+import it.pagopa.selfcare.onboarding.connector.rest.model.AooResponse;
+import it.pagopa.selfcare.onboarding.connector.rest.model.GeographicTaxonomiesResponse;
+import it.pagopa.selfcare.onboarding.connector.rest.model.ProxyInstitutionResponse;
+import it.pagopa.selfcare.onboarding.connector.rest.model.UoResponse;
 import it.pagopa.selfcare.onboarding.connector.rest.model.institution_pnpg.InstitutionByLegalTaxIdRequest;
 import it.pagopa.selfcare.onboarding.connector.rest.model.institution_pnpg.InstitutionByLegalTaxIdRequestDto;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
+import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 import java.util.TimeZone;
 
 import static it.pagopa.selfcare.commons.utils.TestUtils.mockInstance;
+import static it.pagopa.selfcare.commons.utils.TestUtils.reflectionEqualsByName;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -46,6 +55,9 @@ class PartyRegistryProxyImplTest {
 
     private final ObjectMapper mapper;
 
+    @Spy
+    private RegistryProxyMapper proxyMapper = new RegistryProxyMapperImpl();
+
     public PartyRegistryProxyImplTest() {
         mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
@@ -59,6 +71,109 @@ class PartyRegistryProxyImplTest {
         mapper.setTimeZone(TimeZone.getDefault());
     }
 
+    private final static AooResponse aooResponse;
+    private final static UoResponse uoResponse;
+
+    static {
+        aooResponse = new AooResponse();
+        aooResponse.setCodAoo("codAoo");
+        aooResponse.setId("id");
+        aooResponse.setOrigin(Origin.IPA);
+
+        uoResponse = new UoResponse();
+        uoResponse.setUniUoCode("codiceUniUo");
+        uoResponse.setId("id");
+        uoResponse.setOrigin(Origin.IPA);
+
+    }
+
+
+    @Test
+    void getInstitutionProxyInfo(){
+        //given
+        ProxyInstitutionResponse proxyInstitutionResponse = new ProxyInstitutionResponse();
+        proxyInstitutionResponse.setAddress("42 Main St");
+        proxyInstitutionResponse.setAoo("Aoo");
+        proxyInstitutionResponse.setCategory("Category");
+        proxyInstitutionResponse.setDescription("The characteristics of someone or something");
+        proxyInstitutionResponse.setDigitalAddress("42 Main St");
+        proxyInstitutionResponse.setId("42");
+        proxyInstitutionResponse.setO("foo");
+        proxyInstitutionResponse.setOrigin("Origin");
+        proxyInstitutionResponse.setOriginId("42");
+        proxyInstitutionResponse.setOu("Ou");
+        proxyInstitutionResponse.setTaxCode("Tax Code");
+        proxyInstitutionResponse.setZipCode("21654");
+        when(restClientMock.getInstitutionById(any())).thenReturn(proxyInstitutionResponse);
+        //when
+        InstitutionProxyInfo actualInstitutionById = partyConnector.getInstitutionProxyById("42");
+        //then
+        reflectionEqualsByName(proxyInstitutionResponse, actualInstitutionById);
+        verify(restClientMock).getInstitutionById("42");
+    }
+
+
+    @Test
+    void testGetExtByCode() {
+        GeographicTaxonomiesResponse geographicTaxonomiesResponse = new GeographicTaxonomiesResponse();
+        geographicTaxonomiesResponse.setGeotaxId("Code");
+        geographicTaxonomiesResponse.setCountry("GB");
+        geographicTaxonomiesResponse.setCountryAbbreviation("GB");
+        geographicTaxonomiesResponse.setDescription("The characteristics of someone or something");
+        geographicTaxonomiesResponse.setEnable(true);
+        geographicTaxonomiesResponse.setIstatCode("");
+        geographicTaxonomiesResponse.setProvinceId("Province");
+        geographicTaxonomiesResponse.setProvinceAbbreviation("Province Abbreviation");
+        geographicTaxonomiesResponse.setRegionId("us-east-2");
+        when(restClientMock.getExtByCode(any())).thenReturn(geographicTaxonomiesResponse);
+        GeographicTaxonomies actualExtByCode = partyConnector.getExtById("Code");
+        assertEquals("Code", actualExtByCode.getGeotaxId());
+        assertTrue(actualExtByCode.isEnable());
+        assertEquals("The characteristics of someone or something", actualExtByCode.getDescription());
+        verify(restClientMock).getExtByCode(any());
+    }
+
+    @Test
+    void testGetExtByCode2() {
+        GeographicTaxonomiesResponse geographicTaxonomiesResponse = new GeographicTaxonomiesResponse();
+        geographicTaxonomiesResponse.setGeotaxId("Code");
+        geographicTaxonomiesResponse.setCountry("GB");
+        geographicTaxonomiesResponse.setCountryAbbreviation("GB");
+        geographicTaxonomiesResponse.setDescription("The characteristics of someone or something");
+        geographicTaxonomiesResponse.setEnable(false);
+        geographicTaxonomiesResponse.setIstatCode("");
+        geographicTaxonomiesResponse.setProvinceId("Province");
+        geographicTaxonomiesResponse.setProvinceAbbreviation("Province Abbreviation");
+        geographicTaxonomiesResponse.setRegionId("us-east-2");
+        when(restClientMock.getExtByCode(any())).thenReturn(geographicTaxonomiesResponse);
+        GeographicTaxonomies actualExtByCode = partyConnector.getExtById("Code");
+        assertEquals("Code", actualExtByCode.getGeotaxId());
+        assertFalse(actualExtByCode.isEnable());
+        assertEquals("The characteristics of someone or something", actualExtByCode.getDescription());
+        verify(restClientMock).getExtByCode(any());
+    }
+
+    @Test
+    void shouldGetAoo() {
+        when(restClientMock.getAooById(anyString()))
+                .thenReturn(aooResponse);
+
+        HomogeneousOrganizationalArea aoo = partyConnector.getAooById("example");
+        assertEquals(aoo.getCodAoo(), aooResponse.getCodAoo());
+        assertEquals(aoo.getId(), aooResponse.getId());
+        assertEquals(aoo.getOrigin(), aooResponse.getOrigin());
+    }
+
+    @Test
+    void shouldGetUo() {
+        when(restClientMock.getUoById(anyString()))
+                .thenReturn(uoResponse);
+
+        OrganizationUnit uo = partyConnector.getUoById("example");
+        assertEquals(uo.getUniUoCode(), uoResponse.getUniUoCode());
+        assertEquals(uo.getId(), uoResponse.getId());
+        assertEquals(uo.getOrigin(), uoResponse.getOrigin());
+    }
 
     @Test
     void getInstitutionsByUserFiscalCode() {
