@@ -70,22 +70,6 @@ class PartyConnectorImpl implements PartyConnector {
         institutionInfo.setUserRole(onboardingData.getRole());
         return institutionInfo;
     };
-    private static final Function<BillingDataResponse, InstitutionInfo> BILLING_DATA_RESPONSE_TO_INSTITUTION_INFO_FUNCTION = billingDataResponse -> {
-        InstitutionInfo institutionInfo = new InstitutionInfo();
-        institutionInfo.setId(billingDataResponse.getInstitutionId());
-        institutionInfo.setExternalId(billingDataResponse.getExternalId());
-        institutionInfo.setOrigin(billingDataResponse.getOrigin());
-        institutionInfo.setOriginId(billingDataResponse.getOriginId());
-        institutionInfo.setDescription(billingDataResponse.getDescription());
-        institutionInfo.setTaxCode(billingDataResponse.getTaxCode());
-        institutionInfo.setDigitalAddress(billingDataResponse.getDigitalAddress());
-        institutionInfo.setAddress(billingDataResponse.getAddress());
-        institutionInfo.setZipCode(billingDataResponse.getZipCode());
-        institutionInfo.setInstitutionType(billingDataResponse.getInstitutionType());
-        institutionInfo.setPricingPlan(billingDataResponse.getPricingPlan());
-        institutionInfo.setBilling(billingDataResponse.getBilling());
-        return institutionInfo;
-    };
     static final Function<RelationshipInfo, UserInfo> RELATIONSHIP_INFO_TO_USER_INFO_FUNCTION = relationshipInfo -> {
         UserInfo userInfo = new UserInfo();
         userInfo.setId(relationshipInfo.getFrom());
