@@ -20,4 +20,8 @@ public class BillingDataResponse {
     private String pricingPlan;
     private Billing billing;
 
+    private String subunitCode;
+    private String subunitType;
+    private String aooParentCode;
+
 }

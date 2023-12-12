@@ -178,6 +178,9 @@ public class OnboardingMapper {
             resource.setOrigin(model.getOrigin());
             resource.setInstitutionType(model.getInstitutionType());
             resource.setId(model.getId());
+            resource.setCity(model.getInstitutionLocation().getCity());
+            resource.setCountry(model.getInstitutionLocation().getCountry());
+            resource.setCounty(model.getInstitutionLocation().getCounty());
         }
         return resource;
     }

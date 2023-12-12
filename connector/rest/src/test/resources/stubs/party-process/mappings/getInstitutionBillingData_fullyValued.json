@@ -17,6 +17,9 @@
       "zipCode": "string",
       "institutionType": "PA",
       "pricingPlan": "string",
+      "subunitCode": "string",
+      "subunitType": "string",
+      "aooParentCode": "string",
       "billing": {
         "vatNumber": "string",
         "recipientCode": "string",
