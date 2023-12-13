@@ -2053,7 +2053,7 @@ class InstitutionServiceImplTest {
         institutionInfoMock.setBilling(billingMock);
         when(partyConnectorMock.getInstitutionBillingData(anyString(), anyString()))
                 .thenReturn(institutionInfoMock);
-        Institution institutionMock = mockInstance(new Institution());
+        Institution institutionMock = mockInstance(new Institution(), "setCity");
         institutionMock.setSubunitType(null);
         institutionMock.setOrigin("IPA");
         institutionMock.setGeographicTaxonomies(List.of(new GeographicTaxonomy()));
@@ -2085,7 +2085,7 @@ class InstitutionServiceImplTest {
         institutionInfoMock.setBilling(billingMock);
         when(partyConnectorMock.getInstitutionBillingData(anyString(), anyString()))
                 .thenReturn(institutionInfoMock);
-        Institution institutionMock = mockInstance(new Institution());
+        Institution institutionMock = mockInstance(new Institution(), "setCity");
         institutionMock.setSubunitType("EC");
         institutionMock.setOrigin("IPA");
         institutionMock.setGeographicTaxonomies(List.of(new GeographicTaxonomy()));
@@ -2117,7 +2117,7 @@ class InstitutionServiceImplTest {
         institutionInfoMock.setBilling(billingMock);
         when(partyConnectorMock.getInstitutionBillingData(anyString(), anyString()))
                 .thenReturn(institutionInfoMock);
-        Institution institutionMock = mockInstance(new Institution());
+        Institution institutionMock = mockInstance(new Institution(), "setCity");
         institutionMock.setSubunitType("AOO");
         institutionMock.setOrigin("IPA");
         institutionMock.setGeographicTaxonomies(List.of(new GeographicTaxonomy()));
@@ -2146,7 +2146,7 @@ class InstitutionServiceImplTest {
         institutionInfoMock.setBilling(billingMock);
         when(partyConnectorMock.getInstitutionBillingData(anyString(), anyString()))
                 .thenReturn(institutionInfoMock);
-        Institution institutionMock = mockInstance(new Institution());
+        Institution institutionMock = mockInstance(new Institution(), "setCity");
         institutionMock.setSubunitType("UO");
         institutionMock.setOrigin("IPA");
         institutionMock.setGeographicTaxonomies(List.of(new GeographicTaxonomy()));
@@ -2177,7 +2177,7 @@ class InstitutionServiceImplTest {
         institutionInfoMock.setBilling(billingMock);
         when(partyConnectorMock.getInstitutionBillingData(anyString(), anyString()))
                 .thenReturn(institutionInfoMock);
-        Institution institutionMock = mockInstance(new Institution());
+        Institution institutionMock = mockInstance(new Institution(), "setCity");
         institutionMock.setSubunitType("EC");
         institutionMock.setOrigin("IPA");
         institutionMock.setGeographicTaxonomies(List.of(new GeographicTaxonomy()));
