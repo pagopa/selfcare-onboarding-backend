@@ -442,14 +442,18 @@ class InstitutionServiceImpl implements InstitutionService {
         return result;
     }
     private void setInstitutionInfo(Institution institution, InstitutionInfo institutionInfo){
+        InstitutionLocation institutionLocation = new InstitutionLocation();
+        institutionLocation.setCountry(institution.getCountry());
+        institutionLocation.setCity(institution.getCity());
+        institutionLocation.setCounty(institution.getCounty());
+        institutionInfo.setInstitutionLocation(institutionLocation);
         institutionInfo.setSubunitCode(institution.getSubunitCode());
         institutionInfo.setSubunitType(institution.getSubunitType());
         institutionInfo.setOrigin(institution.getOrigin());
     }
 
     private void setLocationInfo(InstitutionInfo institutionInfo){
-        if (institutionInfo.getInstitutionLocation() == null && Origin.IPA.getValue().equals(institutionInfo.getOrigin())){
-            institutionInfo.setInstitutionLocation(new InstitutionLocation());
+        if (institutionInfo.getInstitutionLocation().getCity()==null && Origin.IPA.getValue().equals(institutionInfo.getOrigin())){
             try {
                 GeographicTaxonomies geographicTaxonomies = null;
                 if (institutionInfo.getSubunitType() != null) {
