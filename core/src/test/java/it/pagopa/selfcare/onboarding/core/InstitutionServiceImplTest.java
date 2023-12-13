@@ -18,6 +18,10 @@ import it.pagopa.selfcare.onboarding.connector.model.onboarding.*;
 import it.pagopa.selfcare.onboarding.connector.model.product.Product;
 import it.pagopa.selfcare.onboarding.connector.model.product.ProductRoleInfo;
 import it.pagopa.selfcare.onboarding.connector.model.product.ProductStatus;
+import it.pagopa.selfcare.onboarding.connector.model.registry_proxy.GeographicTaxonomies;
+import it.pagopa.selfcare.onboarding.connector.model.registry_proxy.HomogeneousOrganizationalArea;
+import it.pagopa.selfcare.onboarding.connector.model.registry_proxy.InstitutionProxyInfo;
+import it.pagopa.selfcare.onboarding.connector.model.registry_proxy.OrganizationUnit;
 import it.pagopa.selfcare.onboarding.connector.model.user.*;
 import it.pagopa.selfcare.onboarding.core.exception.OnboardingNotAllowedException;
 import it.pagopa.selfcare.onboarding.core.exception.UpdateNotAllowedException;
@@ -145,7 +149,7 @@ class InstitutionServiceImplTest {
     }
 
     @Test
-    void onboarding_subProductPhaseOutException(){
+    void onboarding_subProductPhaseOutException() {
         // given
         OnboardingData onboardingData = mockInstance(new OnboardingData());
         Product product = mockInstance(new Product(), "setId", "setParentId", "setProductOperations");
@@ -227,7 +231,7 @@ class InstitutionServiceImplTest {
     }
 
     @Test
-    void onboarding_nullLocationInfo(){
+    void onboarding_nullLocationInfo() {
         //given
         OnboardingData onboardingData = mockInstance(new OnboardingData(), "location");
         onboardingData.setLocation(null);
@@ -496,7 +500,7 @@ class InstitutionServiceImplTest {
         Institution institution = mockInstance(new Institution());
         institution.setId(UUID.randomUUID().toString());
 
-        when(partyConnectorMock.getInstitutionsByTaxCodeAndSubunitCode(anyString(),anyString()))
+        when(partyConnectorMock.getInstitutionsByTaxCodeAndSubunitCode(anyString(), anyString()))
                 .thenThrow(ResourceNotFoundException.class);
         when(partyConnectorMock.createInstitution(any())).thenReturn(institution);
 
@@ -573,7 +577,7 @@ class InstitutionServiceImplTest {
         Institution institution = mockInstance(new Institution());
         institution.setId(UUID.randomUUID().toString());
 
-        when(partyConnectorMock.getInstitutionsByTaxCodeAndSubunitCode(anyString(),anyString()))
+        when(partyConnectorMock.getInstitutionsByTaxCodeAndSubunitCode(anyString(), anyString()))
                 .thenThrow(ResourceNotFoundException.class);
         when(partyConnectorMock.createInstitutionFromInfocamere(any())).thenReturn(institution);
 
@@ -755,9 +759,9 @@ class InstitutionServiceImplTest {
         }};
         Institution institution = mockInstance(new Institution());
         institution.setId(UUID.randomUUID().toString());
-        when(partyConnectorMock.getInstitutionsByTaxCodeAndSubunitCode(anyString(),anyString()))
+        when(partyConnectorMock.getInstitutionsByTaxCodeAndSubunitCode(anyString(), anyString()))
                 .thenThrow(ResourceNotFoundException.class);
-        when(partyConnectorMock.createInstitutionFromIpa(anyString(),anyString(),anyString()))
+        when(partyConnectorMock.createInstitutionFromIpa(anyString(), anyString(), anyString()))
                 .thenReturn(institution);
         productMock.setRoleMappings(roleMappings);
         when(productsConnectorMock.getProduct(onboardingData.getProductId(), onboardingData.getInstitutionType()))
@@ -825,7 +829,7 @@ class InstitutionServiceImplTest {
         }};
         Institution institution = mockInstance(new Institution());
         institution.setId(UUID.randomUUID().toString());
-        when(partyConnectorMock.getInstitutionsByTaxCodeAndSubunitCode(anyString(),anyString()))
+        when(partyConnectorMock.getInstitutionsByTaxCodeAndSubunitCode(anyString(), anyString()))
                 .thenThrow(ResourceNotFoundException.class);
         when(partyConnectorMock.createInstitutionFromANAC(any()))
                 .thenReturn(institution);
@@ -895,7 +899,7 @@ class InstitutionServiceImplTest {
         }};
         Institution institution = mockInstance(new Institution());
         institution.setId(UUID.randomUUID().toString());
-        when(partyConnectorMock.getInstitutionsByTaxCodeAndSubunitCode(anyString(),anyString()))
+        when(partyConnectorMock.getInstitutionsByTaxCodeAndSubunitCode(anyString(), anyString()))
                 .thenThrow(ResourceNotFoundException.class);
         when(partyConnectorMock.createInstitutionFromIVASS(any()))
                 .thenReturn(institution);
@@ -965,7 +969,7 @@ class InstitutionServiceImplTest {
         }};
         Institution institution = mockInstance(new Institution());
         institution.setId(UUID.randomUUID().toString());
-        when(partyConnectorMock.getInstitutionsByTaxCodeAndSubunitCode(anyString(),anyString()))
+        when(partyConnectorMock.getInstitutionsByTaxCodeAndSubunitCode(anyString(), anyString()))
                 .thenThrow(ResourceNotFoundException.class);
         when(partyConnectorMock.createInstitutionFromIpa(any(), any(), any()))
                 .thenReturn(institution);
@@ -1086,7 +1090,7 @@ class InstitutionServiceImplTest {
         OnboardingData onboardingData = mockInstance(new OnboardingData(), "setInstitutionType", "setUsers");
         onboardingData.setInstitutionType(InstitutionType.PSP);
         onboardingData.setUsers(List.of(dummyManager, dummyDelegate));
-        Product productMock = mockInstance(new Product(), "setRoleMappings", "setParentId", "setId","setProductOperations");
+        Product productMock = mockInstance(new Product(), "setRoleMappings", "setParentId", "setId", "setProductOperations");
         productMock.setId(onboardingData.getProductId());
         ProductRoleInfo productRoleInfo1 = mockInstance(new ProductRoleInfo(), 1, "setRoles");
         ProductRoleInfo.ProductRole productRole1 = mockInstance(new ProductRoleInfo.ProductRole(), 1);
@@ -2036,7 +2040,159 @@ class InstitutionServiceImplTest {
         verifyNoInteractions(productsConnectorMock);
     }
 
+    @Test
+    void getInstitutionOnboardingData_NoLocation() {
+        //given
+        String institutionId = "institutionId";
+        String productId = "productId";
+        String loggedUser = "loggedUser";
+        UserInfo userInfoMock = mockInstance(new UserInfo(), "setId", "setRole");
+        userInfoMock.setId(loggedUser);
+        final InstitutionInfo institutionInfoMock = createInstitutionInfoMock(false);
+        Billing billingMock = mockInstance(new Billing());
+        institutionInfoMock.setBilling(billingMock);
+        when(partyConnectorMock.getInstitutionBillingData(anyString(), anyString()))
+                .thenReturn(institutionInfoMock);
+        Institution institutionMock = mockInstance(new Institution());
+        institutionMock.setSubunitType(null);
+        institutionMock.setOrigin("IPA");
+        institutionMock.setGeographicTaxonomies(List.of(new GeographicTaxonomy()));
+        when(partyConnectorMock.getInstitutionByExternalId(anyString()))
+                .thenReturn(institutionMock);
+        InstitutionProxyInfo proxyInstitution = new InstitutionProxyInfo();
+        proxyInstitution.setIstatCode("istatCode");
+        when(partyRegistryProxyConnectorMock.getInstitutionProxyById(anyString())).thenReturn(proxyInstitution);
+        GeographicTaxonomies geographicTaxonomies = mockInstance(new GeographicTaxonomies());
+        when(partyRegistryProxyConnectorMock.getExtById(anyString())).thenReturn(geographicTaxonomies);
+        //when
+        InstitutionOnboardingData institutionOnboardingData = institutionService.getInstitutionOnboardingData(institutionId, productId);
+        //then
+        assertNotNull(institutionOnboardingData);
+        assertNotNull(institutionOnboardingData.getInstitution().getInstitutionLocation());
+        assertNotNull(institutionOnboardingData.getInstitution().getInstitutionLocation().getCity());
 
+    }
+    @Test
+    void getInstitutionOnboardingData_NoLocationEC() {
+        //given
+        String institutionId = "institutionId";
+        String productId = "productId";
+        String loggedUser = "loggedUser";
+        UserInfo userInfoMock = mockInstance(new UserInfo(), "setId", "setRole");
+        userInfoMock.setId(loggedUser);
+        final InstitutionInfo institutionInfoMock = createInstitutionInfoMock(false);
+        Billing billingMock = mockInstance(new Billing());
+        institutionInfoMock.setBilling(billingMock);
+        when(partyConnectorMock.getInstitutionBillingData(anyString(), anyString()))
+                .thenReturn(institutionInfoMock);
+        Institution institutionMock = mockInstance(new Institution());
+        institutionMock.setSubunitType("EC");
+        institutionMock.setOrigin("IPA");
+        institutionMock.setGeographicTaxonomies(List.of(new GeographicTaxonomy()));
+        when(partyConnectorMock.getInstitutionByExternalId(anyString()))
+                .thenReturn(institutionMock);
+        InstitutionProxyInfo proxyInstitution = new InstitutionProxyInfo();
+        proxyInstitution.setIstatCode("istatCode");
+        when(partyRegistryProxyConnectorMock.getInstitutionProxyById(anyString())).thenReturn(proxyInstitution);
+        GeographicTaxonomies geographicTaxonomies = mockInstance(new GeographicTaxonomies());
+        when(partyRegistryProxyConnectorMock.getExtById(anyString())).thenReturn(geographicTaxonomies);
+        //when
+        InstitutionOnboardingData institutionOnboardingData = institutionService.getInstitutionOnboardingData(institutionId, productId);
+        //then
+        assertNotNull(institutionOnboardingData);
+        assertNotNull(institutionOnboardingData.getInstitution().getInstitutionLocation());
+        assertNotNull(institutionOnboardingData.getInstitution().getInstitutionLocation().getCity());
+
+    }
+    @Test
+    void getInstitutionOnboardingData_NoLocationAOO() {
+        //given
+        String institutionId = "institutionId";
+        String productId = "productId";
+        String loggedUser = "loggedUser";
+        UserInfo userInfoMock = mockInstance(new UserInfo(), "setId", "setRole");
+        userInfoMock.setId(loggedUser);
+        final InstitutionInfo institutionInfoMock = createInstitutionInfoMock(false);
+        Billing billingMock = mockInstance(new Billing());
+        institutionInfoMock.setBilling(billingMock);
+        when(partyConnectorMock.getInstitutionBillingData(anyString(), anyString()))
+                .thenReturn(institutionInfoMock);
+        Institution institutionMock = mockInstance(new Institution());
+        institutionMock.setSubunitType("AOO");
+        institutionMock.setOrigin("IPA");
+        institutionMock.setGeographicTaxonomies(List.of(new GeographicTaxonomy()));
+        when(partyConnectorMock.getInstitutionByExternalId(anyString()))
+                .thenReturn(institutionMock);
+        when(partyRegistryProxyConnectorMock.getAooById(anyString())).thenReturn(mockInstance(new HomogeneousOrganizationalArea()));
+        GeographicTaxonomies geographicTaxonomies = mockInstance(new GeographicTaxonomies());
+        when(partyRegistryProxyConnectorMock.getExtById(anyString())).thenReturn(geographicTaxonomies);
+        //when
+        InstitutionOnboardingData institutionOnboardingData = institutionService.getInstitutionOnboardingData(institutionId, productId);
+        //then
+        assertNotNull(institutionOnboardingData);
+        assertNotNull(institutionOnboardingData.getInstitution().getInstitutionLocation());
+        assertNotNull(institutionOnboardingData.getInstitution().getInstitutionLocation().getCity());
+    }
+    @Test
+    void getInstitutionOnboardingData_NoLocationUO() {
+        //given
+        String institutionId = "institutionId";
+        String productId = "productId";
+        String loggedUser = "loggedUser";
+        UserInfo userInfoMock = mockInstance(new UserInfo(), "setId", "setRole");
+        userInfoMock.setId(loggedUser);
+        final InstitutionInfo institutionInfoMock = createInstitutionInfoMock(false);
+        Billing billingMock = mockInstance(new Billing());
+        institutionInfoMock.setBilling(billingMock);
+        when(partyConnectorMock.getInstitutionBillingData(anyString(), anyString()))
+                .thenReturn(institutionInfoMock);
+        Institution institutionMock = mockInstance(new Institution());
+        institutionMock.setSubunitType("UO");
+        institutionMock.setOrigin("IPA");
+        institutionMock.setGeographicTaxonomies(List.of(new GeographicTaxonomy()));
+        when(partyConnectorMock.getInstitutionByExternalId(anyString()))
+                .thenReturn(institutionMock);
+        when(partyRegistryProxyConnectorMock.getUoById(anyString())).thenReturn(mockInstance(new OrganizationUnit()));
+        GeographicTaxonomies geographicTaxonomies = mockInstance(new GeographicTaxonomies());
+        when(partyRegistryProxyConnectorMock.getExtById(anyString())).thenReturn(geographicTaxonomies);
+        //when
+        InstitutionOnboardingData institutionOnboardingData = institutionService.getInstitutionOnboardingData(institutionId, productId);
+        //then
+        assertNotNull(institutionOnboardingData);
+        assertNotNull(institutionOnboardingData.getInstitution().getInstitutionLocation());
+        assertNotNull(institutionOnboardingData.getInstitution().getInstitutionLocation().getCity());
+
+    }
+
+    @Test
+    void getOnboardingData_locationNotFound(){
+        //given
+        String institutionId = "institutionId";
+        String productId = "productId";
+        String loggedUser = "loggedUser";
+        UserInfo userInfoMock = mockInstance(new UserInfo(), "setId", "setRole");
+        userInfoMock.setId(loggedUser);
+        final InstitutionInfo institutionInfoMock = createInstitutionInfoMock(false);
+        Billing billingMock = mockInstance(new Billing());
+        institutionInfoMock.setBilling(billingMock);
+        when(partyConnectorMock.getInstitutionBillingData(anyString(), anyString()))
+                .thenReturn(institutionInfoMock);
+        Institution institutionMock = mockInstance(new Institution());
+        institutionMock.setSubunitType("EC");
+        institutionMock.setOrigin("IPA");
+        institutionMock.setGeographicTaxonomies(List.of(new GeographicTaxonomy()));
+        when(partyConnectorMock.getInstitutionByExternalId(anyString()))
+                .thenReturn(institutionMock);
+        InstitutionProxyInfo proxyInstitution = new InstitutionProxyInfo();
+        proxyInstitution.setIstatCode("istatCode");
+        when(partyRegistryProxyConnectorMock.getInstitutionProxyById(anyString())).thenThrow(ResourceNotFoundException.class);
+        //when
+        InstitutionOnboardingData institutionOnboardingData = institutionService.getInstitutionOnboardingData(institutionId, productId);
+        //then
+        assertNotNull(institutionOnboardingData);
+        assertNotNull(institutionOnboardingData.getInstitution().getInstitutionLocation());
+        assertNull(institutionOnboardingData.getInstitution().getInstitutionLocation().getCity());
+    }
     @Test
     void getInstitutionOnboardingData() {
         //given
@@ -2311,7 +2467,7 @@ class InstitutionServiceImplTest {
     }
 
     @Test
-    void checkOrganization(){
+    void checkOrganization() {
         //given
         final String productId = "productId";
         final String fiscalCode = "fiscalCode";
@@ -2325,4 +2481,8 @@ class InstitutionServiceImplTest {
         verifyNoMoreInteractions(msExternalInterceptorConnector);
     }
 
+
+    private static InstitutionInfo createInstitutionInfoMock(boolean withLocation) {
+        return withLocation ? mockInstance(new InstitutionInfo()) : mockInstance(new InstitutionInfo(), "setInstitutionLocation");
+    }
 }

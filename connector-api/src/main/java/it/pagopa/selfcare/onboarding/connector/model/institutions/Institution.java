@@ -23,6 +23,9 @@ public class Institution {
     private String city;
     private String county;
     private String country;
+    private String subunitCode;
+    private String subunitType;
+    private String aooParentCode;
     private InstitutionType institutionType;
     private List<Attribute> attributes;
     private PaymentServiceProvider paymentServiceProvider;

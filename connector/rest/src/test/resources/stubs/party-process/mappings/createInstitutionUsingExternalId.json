@@ -19,6 +19,9 @@
       "country": "country",
       "origin": "IPA",
       "institutionType": "PA",
+      "subunitCode": "string",
+      "subunitType": "string",
+      "aooParentCode": "string",
       "attributes": [
         {
           "origin": "string",
