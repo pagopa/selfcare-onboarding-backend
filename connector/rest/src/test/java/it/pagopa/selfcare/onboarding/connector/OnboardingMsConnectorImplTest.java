@@ -10,17 +10,21 @@ import it.pagopa.selfcare.onboarding.generated.openapi.v1.dto.OnboardingPaReques
 import it.pagopa.selfcare.onboarding.generated.openapi.v1.dto.OnboardingPspRequest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.function.Executable;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.mock.web.MockMultipartFile;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import static it.pagopa.selfcare.commons.utils.TestUtils.mockInstance;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -105,6 +109,21 @@ public class OnboardingMsConnectorImplTest {
         assertEquals(actual.getInstitution().getTaxCode(), institutionUpdate.getTaxCode());
         assertNotNull(actual.getInstitution().getPaymentServiceProvider());
         assertNotNull(actual.getInstitution().getDataProtectionOfficer());
+        verifyNoMoreInteractions(msOnboardingApiClient);
+    }
+
+    @Test
+    void onboardingComplete() throws IOException {
+        // given
+        final String tokenId = "tokenId";
+        final MockMultipartFile mockMultipartFile =
+                new MockMultipartFile("example", new ByteArrayInputStream("example".getBytes(StandardCharsets.UTF_8)));
+        // when
+        final Executable executable = () -> msOnboardingApiClient._v1OnboardingOnboardingIdCompletePut(tokenId, mockMultipartFile);
+        // then
+        assertDoesNotThrow(executable);
+        verify(msOnboardingApiClient, times(1))
+                ._v1OnboardingOnboardingIdCompletePut(tokenId, mockMultipartFile);
         verifyNoMoreInteractions(msOnboardingApiClient);
     }
 }
