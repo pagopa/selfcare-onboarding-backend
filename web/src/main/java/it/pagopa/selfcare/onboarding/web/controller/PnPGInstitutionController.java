@@ -35,7 +35,7 @@ import static org.springframework.http.MediaType.APPLICATION_PROBLEM_JSON_VALUE;
 @Slf4j
 @Deprecated(forRemoval = true)
 @RestController
-@RequestMapping(value = "/pnPGInstitutions", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/v1/pnPGInstitutions", produces = MediaType.APPLICATION_JSON_VALUE)
 @Api(tags = "pnPGInstitutions")
 public class PnPGInstitutionController {
 
