@@ -42,7 +42,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.HEAD;
 
 @Slf4j
 @RestController
-@RequestMapping(value = "/institutions", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/v1/institutions", produces = MediaType.APPLICATION_JSON_VALUE)
 @Api(tags = "institutions")
 public class InstitutionController {
 

@@ -11,7 +11,7 @@ ingress:
   hosts:
     - host: selc.internal.dev.selfcare.pagopa.it
       paths:
-        - path: /onboarding/v1/(.*)
+        - path: /onboarding/(.*)
           pathType: ImplementationSpecific
 
 resources:

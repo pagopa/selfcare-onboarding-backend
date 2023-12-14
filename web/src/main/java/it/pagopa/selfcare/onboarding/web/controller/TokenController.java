@@ -19,7 +19,7 @@ import java.util.Objects;
 
 @Slf4j
 @RestController
-@RequestMapping(value = "/tokens", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/v1/tokens", produces = MediaType.APPLICATION_JSON_VALUE)
 @Api(tags = "tokens")
 public class TokenController {
 
