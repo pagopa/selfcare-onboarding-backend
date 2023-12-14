@@ -63,6 +63,9 @@ class InstitutionServiceImpl implements InstitutionService {
     public static final String FIELD_PSP_DATA_IS_REQUIRED_FOR_PSP_INSTITUTION_ONBOARDING = "Field 'pspData' is required for PSP institution onboarding";
     static final String DESCRIPTION_TO_REPLACE_REGEX = " - COMUNE";
 
+
+
+    private final OnboardingMsConnector onboardingMsConnector;
     private final PartyConnector partyConnector;
     private final ProductsConnector productsConnector;
     private final UserRegistryConnector userConnector;
@@ -74,13 +77,14 @@ class InstitutionServiceImpl implements InstitutionService {
 
 
     @Autowired
-    InstitutionServiceImpl(PartyConnector partyConnector,
+    InstitutionServiceImpl(OnboardingMsConnector onboardingMsConnector, PartyConnector partyConnector,
                            ProductsConnector productsConnector,
                            UserRegistryConnector userConnector,
                            MsExternalInterceptorConnector externalInterceptorConnector, MsCoreConnector msCoreConnector,
                            PartyRegistryProxyConnector partyRegistryProxyConnector,
                            OnboardingValidationStrategy onboardingValidationStrategy,
                            InstitutionInfoMapper institutionMapper) {
+        this.onboardingMsConnector = onboardingMsConnector;
         this.partyConnector = partyConnector;
         this.externalInterceptorConnector = externalInterceptorConnector;
         this.partyRegistryProxyConnector = partyRegistryProxyConnector;
@@ -96,7 +100,7 @@ class InstitutionServiceImpl implements InstitutionService {
     public void onboardingProductAsync(OnboardingData onboardingData) {
         log.trace("onboardingProductAsync start");
         log.debug("onboardingProductAsync onboardingData = {}", onboardingData);
-        partyConnector.onboarding(onboardingData);
+        onboardingMsConnector.onboarding(onboardingData);
         log.trace("onboarding end");
     }
 

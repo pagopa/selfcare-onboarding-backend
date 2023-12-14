@@ -1702,6 +1702,16 @@
           "schema" : {
             "type" : "string"
           }
+        }, {
+          "name" : "mode",
+          "in" : "query",
+          "description" : "mode",
+          "required" : false,
+          "style" : "form",
+          "schema" : {
+            "type" : "string",
+            "enum" : [ "ASYNC", "SYNC" ]
+          }
         } ],
         "requestBody" : {
           "content" : {

@@ -1,13 +1,14 @@
 {
   "openapi" : "3.0.3",
   "info" : {
-    "title" : "onboarding-ms API",
-    "version" : "1.0.0-SNAPSHOT"
+    "title" : "Onboarding API (development)",
+    "version" : "1.0.0"
   },
   "paths" : {
-    "/onboarding" : {
+    "/v1/onboarding" : {
       "post" : {
         "tags" : [ "Onboarding Controller" ],
+        "summary" : "Perform default onboarding request, it is used for GSP/SA/AS institution type.Users data will be saved on personal data vault if it doesn't already exist.At the end, function triggers async activities related to onboarding based on institution type.",
         "requestBody" : {
           "content" : {
             "application/json" : {
@@ -27,13 +28,23 @@
                 }
               }
             }
+          },
+          "401" : {
+            "description" : "Not Authorized"
+          },
+          "403" : {
+            "description" : "Not Allowed"
           }
-        }
+        },
+        "security" : [ {
+          "SecurityScheme" : [ ]
+        } ]
       }
     },
-    "/onboarding/pa" : {
+    "/v1/onboarding/pa" : {
       "post" : {
         "tags" : [ "Onboarding Controller" ],
+        "summary" : "Perform onboarding request for PA institution type, it require billing.recipientCode in additition to default requestUsers data will be saved on personal data vault if it doesn't already exist.At the end, function triggers async activities related to onboarding that consist of create contract and sending mail to institution's digital address.",
         "requestBody" : {
           "content" : {
             "application/json" : {
@@ -53,13 +64,23 @@
                 }
               }
             }
+          },
+          "401" : {
+            "description" : "Not Authorized"
+          },
+          "403" : {
+            "description" : "Not Allowed"
           }
-        }
+        },
+        "security" : [ {
+          "SecurityScheme" : [ ]
+        } ]
       }
     },
-    "/onboarding/psp" : {
+    "/v1/onboarding/psp" : {
       "post" : {
         "tags" : [ "Onboarding Controller" ],
+        "summary" : "Perform onboarding request for PSP institution type.Users data will be saved on personal data vault if it doesn't already exist.At the end, function triggers async activities related to onboarding that consist of sending mail to Selfcare admin for approve request.",
         "requestBody" : {
           "content" : {
             "application/json" : {
@@ -79,14 +100,64 @@
                 }
               }
             }
+          },
+          "401" : {
+            "description" : "Not Authorized"
+          },
+          "403" : {
+            "description" : "Not Allowed"
           }
-        }
+        },
+        "security" : [ {
+          "SecurityScheme" : [ ]
+        } ]
+      }
+    },
+    "/v1/onboarding/{onboardingId}/complete" : {
+      "put" : {
+        "tags" : [ "Onboarding Controller" ],
+        "summary" : "Perform complete operation of an onboarding request receiving onboarding id and contract signed by hte institution.It checks the contract's signature and upload the contract on an azure storageAt the end, function triggers async activities related to complete onboarding that consist of create the institution, activate the onboarding and sending data to notification queue.",
+        "parameters" : [ {
+          "name" : "onboardingId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "multipart/form-data" : {
+              "schema" : {
+                "format" : "binary",
+                "type" : "string"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : { }
+            }
+          },
+          "401" : {
+            "description" : "Not Authorized"
+          },
+          "403" : {
+            "description" : "Not Allowed"
+          }
+        },
+        "security" : [ {
+          "SecurityScheme" : [ ]
+        } ]
       }
     }
   },
   "components" : {
     "schemas" : {
-      "BillingRequest" : {
+      "BillingPaRequest" : {
         "required" : [ "vatNumber", "recipientCode" ],
         "type" : "object",
         "properties" : {
@@ -96,6 +167,22 @@
           },
           "recipientCode" : {
             "minLength" : 1,
+            "type" : "string"
+          },
+          "publicServices" : {
+            "type" : "boolean"
+          }
+        }
+      },
+      "BillingRequest" : {
+        "required" : [ "vatNumber" ],
+        "type" : "object",
+        "properties" : {
+          "vatNumber" : {
+            "minLength" : 1,
+            "type" : "string"
+          },
+          "recipientCode" : {
             "type" : "string"
           },
           "publicServices" : {
@@ -145,7 +232,7 @@
         }
       },
       "InstitutionBaseRequest" : {
-        "required" : [ "institutionType", "taxCode" ],
+        "required" : [ "institutionType", "taxCode", "digitalAddress" ],
         "type" : "object",
         "properties" : {
           "institutionType" : {
@@ -161,10 +248,23 @@
           "subunitType" : {
             "$ref" : "#/components/schemas/InstitutionPaSubunitType"
           },
+          "origin" : {
+            "$ref" : "#/components/schemas/Origin"
+          },
+          "city" : {
+            "type" : "string"
+          },
+          "country" : {
+            "type" : "string"
+          },
+          "county" : {
+            "type" : "string"
+          },
           "description" : {
             "type" : "string"
           },
           "digitalAddress" : {
+            "minLength" : 1,
             "type" : "string"
           },
           "address" : {
@@ -204,7 +304,7 @@
         "type" : "string"
       },
       "InstitutionPspRequest" : {
-        "required" : [ "institutionType", "taxCode", "paymentServiceProvider" ],
+        "required" : [ "institutionType", "taxCode", "digitalAddress", "paymentServiceProvider" ],
         "type" : "object",
         "properties" : {
           "institutionType" : {
@@ -220,10 +320,23 @@
           "subunitType" : {
             "$ref" : "#/components/schemas/InstitutionPaSubunitType"
           },
+          "origin" : {
+            "$ref" : "#/components/schemas/Origin"
+          },
+          "city" : {
+            "type" : "string"
+          },
+          "country" : {
+            "type" : "string"
+          },
+          "county" : {
+            "type" : "string"
+          },
           "description" : {
             "type" : "string"
           },
           "digitalAddress" : {
+            "minLength" : 1,
             "type" : "string"
           },
           "address" : {
@@ -279,6 +392,18 @@
           "subunitType" : {
             "$ref" : "#/components/schemas/InstitutionPaSubunitType"
           },
+          "origin" : {
+            "$ref" : "#/components/schemas/Origin"
+          },
+          "city" : {
+            "type" : "string"
+          },
+          "country" : {
+            "type" : "string"
+          },
+          "county" : {
+            "type" : "string"
+          },
           "description" : {
             "type" : "string"
           },
@@ -321,7 +446,7 @@
         }
       },
       "InstitutionType" : {
-        "enum" : [ "PA", "PG", "GSP", "SA", "PT", "SCP", "PSP" ],
+        "enum" : [ "PA", "PG", "GSP", "SA", "PT", "SCP", "PSP", "AS" ],
         "type" : "string"
       },
       "OffsetDateTime" : {
@@ -330,7 +455,7 @@
         "example" : "2022-03-10T12:15:50-04:00"
       },
       "OnboardingDefaultRequest" : {
-        "required" : [ "productId", "users", "institution" ],
+        "required" : [ "productId", "users", "institution", "billing" ],
         "type" : "object",
         "properties" : {
           "productId" : {
@@ -355,6 +480,9 @@
           },
           "signContract" : {
             "type" : "boolean"
+          },
+          "userRequestUid" : {
+            "type" : "string"
           },
           "institution" : {
             "$ref" : "#/components/schemas/InstitutionBaseRequest"
@@ -408,11 +536,14 @@
           "signContract" : {
             "type" : "boolean"
           },
+          "userRequestUid" : {
+            "type" : "string"
+          },
           "institution" : {
             "$ref" : "#/components/schemas/InstitutionBaseRequest"
           },
           "billing" : {
-            "$ref" : "#/components/schemas/BillingRequest"
+            "$ref" : "#/components/schemas/BillingPaRequest"
           }
         }
       },
@@ -443,6 +574,9 @@
           "signContract" : {
             "type" : "boolean"
           },
+          "userRequestUid" : {
+            "type" : "string"
+          },
           "institution" : {
             "$ref" : "#/components/schemas/InstitutionPspRequest"
           },
@@ -471,8 +605,15 @@
           },
           "billing" : {
             "$ref" : "#/components/schemas/BillingResponse"
+          },
+          "userRequestUid" : {
+            "type" : "string"
           }
         }
+      },
+      "Origin" : {
+        "enum" : [ "MOCK", "IPA", "SELC", "ANAC", "UNKNOWN", "ADE", "INFOCAMERE", "IVASS" ],
+        "type" : "string"
       },
       "PartyRole" : {
         "enum" : [ "MANAGER", "DELEGATE", "SUB_DELEGATE", "OPERATOR" ],

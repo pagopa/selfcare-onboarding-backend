@@ -1,5 +1,6 @@
 package it.pagopa.selfcare.onboarding.core;
 
+import it.pagopa.selfcare.onboarding.connector.api.OnboardingMsConnector;
 import it.pagopa.selfcare.onboarding.connector.api.PartyConnector;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -12,8 +13,11 @@ public class TokenServiceImpl implements TokenService {
 
     private final PartyConnector partyConnector;
 
-    public TokenServiceImpl(PartyConnector partyConnector) {
+    private final OnboardingMsConnector onboardingMsConnector;
+
+    public TokenServiceImpl(PartyConnector partyConnector, OnboardingMsConnector onboardingMsConnector) {
         this.partyConnector = partyConnector;
+        this.onboardingMsConnector = onboardingMsConnector;
     }
 
     @Override
@@ -34,6 +38,16 @@ public class TokenServiceImpl implements TokenService {
         partyConnector.onboardingTokenComplete(tokenId, contract);
         log.debug("completeToken result = success");
         log.trace("completeToken end");
+    }
+
+    @Override
+    public void completeTokenAsync(String onboardingId, MultipartFile contract) {
+        log.trace("completeTokenAsync start");
+        log.debug("completeTokenAsync id = {}", onboardingId);
+        Assert.notNull(onboardingId, "TokenId is required");
+        onboardingMsConnector.onboardingTokenComplete(onboardingId, contract);
+        log.debug("completeTokenAsync result = success");
+        log.trace("completeTokenAsync end");
     }
 
     @Override

@@ -10,7 +10,6 @@ import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import feign.FeignException;
 import it.pagopa.selfcare.commons.base.security.PartyRole;
-import it.pagopa.selfcare.commons.base.utils.InstitutionType;
 import it.pagopa.selfcare.commons.utils.TestUtils;
 import it.pagopa.selfcare.onboarding.connector.exceptions.ResourceNotFoundException;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipInfo;
@@ -23,16 +22,10 @@ import it.pagopa.selfcare.onboarding.connector.model.onboarding.InstitutionUpdat
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.*;
 import it.pagopa.selfcare.onboarding.connector.rest.client.MsCoreOnboardingApiClient;
 import it.pagopa.selfcare.onboarding.connector.rest.client.MsCoreTokenApiClient;
-import it.pagopa.selfcare.onboarding.connector.rest.client.MsOnboardingApiClient;
 import it.pagopa.selfcare.onboarding.connector.rest.client.PartyProcessRestClient;
 import it.pagopa.selfcare.onboarding.connector.rest.mapper.InstitutionMapper;
 import it.pagopa.selfcare.onboarding.connector.rest.mapper.InstitutionMapperImpl;
-import it.pagopa.selfcare.onboarding.connector.rest.mapper.OnboardingMapper;
-import it.pagopa.selfcare.onboarding.connector.rest.mapper.OnboardingMapperImpl;
 import it.pagopa.selfcare.onboarding.connector.rest.model.*;
-import it.pagopa.selfcare.onboarding.generated.openapi.v1.dto.OnboardingDefaultRequest;
-import it.pagopa.selfcare.onboarding.generated.openapi.v1.dto.OnboardingPaRequest;
-import it.pagopa.selfcare.onboarding.generated.openapi.v1.dto.OnboardingPspRequest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -71,14 +64,8 @@ class PartyConnectorImplTest {
     @Mock
     private MsCoreOnboardingApiClient msCoreOnboardingApiClient;
 
-    @Mock
-    private MsOnboardingApiClient msOnboardingApiClient;
-
     @Spy
     private InstitutionMapper institutionMapper = new InstitutionMapperImpl();
-
-    @Spy
-    private OnboardingMapper onboardingMapper = new OnboardingMapperImpl();
 
     @Captor
     ArgumentCaptor<OnboardingInstitutionRequest> onboardingRequestCaptor;
@@ -151,80 +138,6 @@ class PartyConnectorImplTest {
         assertEquals(onboardingData.getInstitutionExternalId(), request.getInstitutionExternalId());
         assertNull(request.getInstitutionUpdate().getGeographicTaxonomyCodes());
         verifyNoMoreInteractions(restClientMock);
-    }
-
-    @Test
-    void onboarding_institutionDefault() {
-        // given
-        OnboardingData onboardingData = new OnboardingData();
-        onboardingData.setTaxCode("taxCode");
-        onboardingData.setInstitutionType(InstitutionType.GSP);
-        Billing billing = mockInstance(new Billing());
-        InstitutionUpdate institutionUpdate = new InstitutionUpdate();
-        institutionUpdate.setTaxCode("taxCode");
-        onboardingData.setBilling(billing);
-        onboardingData.setUsers(List.of(mockInstance(new User())));
-        onboardingData.setInstitutionUpdate(institutionUpdate);
-        // when
-        partyConnector.onboarding(onboardingData);
-        // then
-
-        ArgumentCaptor<OnboardingDefaultRequest> onboardingRequestCaptor = ArgumentCaptor.forClass(OnboardingDefaultRequest.class);
-        verify(msOnboardingApiClient, times(1))
-                ._onboardingPost(onboardingRequestCaptor.capture());
-        OnboardingDefaultRequest actual = onboardingRequestCaptor.getValue();
-        assertEquals(actual.getInstitution().getTaxCode(), institutionUpdate.getTaxCode());
-        verifyNoMoreInteractions(msOnboardingApiClient);
-    }
-
-    @Test
-    void onboarding_institutionPa() {
-        // given
-        OnboardingData onboardingData = new OnboardingData();
-        onboardingData.setTaxCode("taxCode");
-        onboardingData.setInstitutionType(InstitutionType.PA);
-        Billing billing = mockInstance(new Billing());
-        InstitutionUpdate institutionUpdate = new InstitutionUpdate();
-        institutionUpdate.setTaxCode("taxCode");
-        onboardingData.setBilling(billing);
-        onboardingData.setUsers(List.of(mockInstance(new User())));
-        onboardingData.setInstitutionUpdate(institutionUpdate);
-        // when
-        partyConnector.onboarding(onboardingData);
-        // then
-
-        ArgumentCaptor<OnboardingPaRequest> onboardingRequestCaptor = ArgumentCaptor.forClass(OnboardingPaRequest.class);
-        verify(msOnboardingApiClient, times(1))
-                ._onboardingPaPost(onboardingRequestCaptor.capture());
-        OnboardingPaRequest actual = onboardingRequestCaptor.getValue();
-        assertEquals(actual.getInstitution().getTaxCode(), institutionUpdate.getTaxCode());
-        verifyNoMoreInteractions(msOnboardingApiClient);
-    }
-    @Test
-    void onboarding_institutionPsp() {
-        // given
-        OnboardingData onboardingData = new OnboardingData();
-        onboardingData.setTaxCode("taxCode");
-        onboardingData.setInstitutionType(InstitutionType.PSP);
-        Billing billing = mockInstance(new Billing());
-        InstitutionUpdate institutionUpdate = new InstitutionUpdate();
-        institutionUpdate.setTaxCode("taxCode");
-        institutionUpdate.setPaymentServiceProvider(new PaymentServiceProvider());
-        institutionUpdate.setDataProtectionOfficer(new DataProtectionOfficer());
-        onboardingData.setBilling(billing);
-        onboardingData.setUsers(List.of(mockInstance(new User())));
-        onboardingData.setInstitutionUpdate(institutionUpdate);
-        // when
-        partyConnector.onboarding(onboardingData);
-        // then
-        ArgumentCaptor<OnboardingPspRequest> onboardingRequestCaptor = ArgumentCaptor.forClass(OnboardingPspRequest.class);
-        verify(msOnboardingApiClient, times(1))
-                ._onboardingPspPost(onboardingRequestCaptor.capture());
-        OnboardingPspRequest actual = onboardingRequestCaptor.getValue();
-        assertEquals(actual.getInstitution().getTaxCode(), institutionUpdate.getTaxCode());
-        assertNotNull(actual.getInstitution().getPaymentServiceProvider());
-        assertNotNull(actual.getInstitution().getDataProtectionOfficer());
-        verifyNoMoreInteractions(msOnboardingApiClient);
     }
 
     @Test
