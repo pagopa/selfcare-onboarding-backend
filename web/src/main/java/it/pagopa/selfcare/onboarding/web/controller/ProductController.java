@@ -19,7 +19,7 @@ import java.util.Optional;
 
 @Slf4j
 @RestController
-@RequestMapping(value = "/product", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/v1/product", produces = MediaType.APPLICATION_JSON_VALUE)
 @Api(tags = "product")
 public class ProductController {
 
