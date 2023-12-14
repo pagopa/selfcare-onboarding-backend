@@ -15,7 +15,7 @@ import java.util.List;
 
 public interface InstitutionService {
 
-    void onboardingProductAsync(OnboardingData onboardingData);
+    void onboardingProductV2(OnboardingData onboardingData);
 
     void onboardingProduct(OnboardingData onboardingData);
 

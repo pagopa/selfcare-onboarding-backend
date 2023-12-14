@@ -466,7 +466,7 @@ class InstitutionServiceImplTest {
         onboardingData.setInstitutionType(InstitutionType.PA);
         onboardingData.setUsers(List.of(dummyManager, dummyDelegate));
         // when
-        institutionService.onboardingProductAsync(onboardingData);
+        institutionService.onboardingProductV2(onboardingData);
         // then
         verify(onboardingMsConnector, times(1))
                 .onboarding(any());

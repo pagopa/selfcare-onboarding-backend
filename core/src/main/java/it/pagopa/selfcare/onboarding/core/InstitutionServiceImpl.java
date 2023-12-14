@@ -97,7 +97,7 @@ class InstitutionServiceImpl implements InstitutionService {
 
 
     @Override
-    public void onboardingProductAsync(OnboardingData onboardingData) {
+    public void onboardingProductV2(OnboardingData onboardingData) {
         log.trace("onboardingProductAsync start");
         log.debug("onboardingProductAsync onboardingData = {}", onboardingData);
         onboardingMsConnector.onboarding(onboardingData);

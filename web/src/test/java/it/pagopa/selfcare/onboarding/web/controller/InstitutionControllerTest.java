@@ -109,27 +109,6 @@ class InstitutionControllerTest {
 
 
     @Test
-    void onboardingProductAsync(@Value("classpath:stubs/onboardingProductsDtoWithoutGeo.json") Resource onboardingDto) throws Exception {
-        // given
-        String institutionId = "institutionId";
-        String productId = "productId";
-        // when
-        mvc.perform(MockMvcRequestBuilders
-                        .post(BASE_URL + "/onboarding", institutionId, productId)
-                        .param("mode", OnboardingMode.ASYNC.toString())
-                        .content(onboardingDto.getInputStream().readAllBytes())
-                        .contentType(APPLICATION_JSON_VALUE)
-                        .accept(APPLICATION_JSON_VALUE))
-                .andExpect(status().isCreated())
-                .andExpect(content().string(emptyString()));
-        // then
-        verify(institutionServiceMock, times(1))
-                .onboardingProductAsync(any(OnboardingData.class));
-        verifyNoMoreInteractions(institutionServiceMock);
-    }
-
-
-    @Test
     void onboardingCompany(@Value("classpath:stubs/onboardingCompanyDto.json") Resource onboardingDto) throws Exception {
 
         // when

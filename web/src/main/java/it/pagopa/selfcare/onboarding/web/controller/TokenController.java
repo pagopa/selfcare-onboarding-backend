@@ -6,7 +6,6 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import it.pagopa.selfcare.commons.base.logging.LogUtils;
 import it.pagopa.selfcare.onboarding.core.TokenService;
-import it.pagopa.selfcare.onboarding.web.model.OnboardingMode;
 import it.pagopa.selfcare.onboarding.web.model.TokenVerifyResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -14,8 +13,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.util.Objects;
 
 @Slf4j
 @RestController
@@ -65,13 +62,10 @@ public class TokenController {
     @PostMapping(value = "/{tokenId}/complete")
     public ResponseEntity<Void> complete(@ApiParam("${swagger.tokens.tokenId}")
                                                    @PathVariable(value = "tokenId") String tokenId,
-                                                   @RequestPart MultipartFile contract,
-                                                    @RequestParam(value = "mode", required = false) OnboardingMode mode) {
+                                                   @RequestPart MultipartFile contract) {
         log.trace("complete Token start");
         log.debug(LogUtils.CONFIDENTIAL_MARKER, "complete Token tokenId = {}, contract = {}", tokenId, contract);
-        if(Objects.isNull(mode) || mode.equals(OnboardingMode.SYNC))
-            tokenService.completeToken(tokenId, contract);
-        else tokenService.completeTokenAsync(tokenId, contract);
+        tokenService.completeToken(tokenId, contract);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 

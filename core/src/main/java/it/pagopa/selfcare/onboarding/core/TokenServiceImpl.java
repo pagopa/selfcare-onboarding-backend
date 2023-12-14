@@ -41,7 +41,7 @@ public class TokenServiceImpl implements TokenService {
     }
 
     @Override
-    public void completeTokenAsync(String onboardingId, MultipartFile contract) {
+    public void completeTokenV2(String onboardingId, MultipartFile contract) {
         log.trace("completeTokenAsync start");
         log.debug("completeTokenAsync id = {}", onboardingId);
         Assert.notNull(onboardingId, "TokenId is required");
