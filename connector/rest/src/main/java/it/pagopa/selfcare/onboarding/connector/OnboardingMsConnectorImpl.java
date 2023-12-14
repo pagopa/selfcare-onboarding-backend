@@ -37,6 +37,6 @@ public class OnboardingMsConnectorImpl implements OnboardingMsConnector {
 
     @Override
     public void onboardingTokenComplete(String onboardingId, MultipartFile contract) {
-        msOnboardingApiClient._v1OnboardingOnboardingIdCompletePut(onboardingId);
+        msOnboardingApiClient._v1OnboardingOnboardingIdCompletePut(onboardingId, contract);
     }
 }

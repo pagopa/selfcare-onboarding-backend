@@ -129,8 +129,15 @@
           "content" : {
             "multipart/form-data" : {
               "schema" : {
-                "format" : "binary",
-                "type" : "string"
+                "required" : [ "contract" ],
+                "type" : "object",
+                "properties" : {
+                  "contract" : {
+                    "type" : "string",
+                    "description" : "contract",
+                    "format" : "binary"
+                  }
+                }
               }
             }
           }
