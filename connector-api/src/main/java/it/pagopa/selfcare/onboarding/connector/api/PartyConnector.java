@@ -13,8 +13,6 @@ import java.util.List;
 
 public interface PartyConnector {
 
-    void onboarding(OnboardingData onboardingData);
-
     void onboardingOrganization(OnboardingData onboardingData);
 
     Collection<InstitutionInfo> getOnBoardedInstitutions(String productFilter);
