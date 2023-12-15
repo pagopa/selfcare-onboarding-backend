@@ -34,5 +34,5 @@ configEnvSpecific:
   APPLICATIONINSIGHTS_INSTRUMENTATION_LOGGING_LEVEL: "OFF"
   B4F_ONBOARDING_LOG_LEVEL: "DEBUG"
   REST_CLIENT_LOGGER_LEVEL: "FULL"
-  MS_ONBOARDING_URL: "https://selc-onboarding-ms--vu6nz6h.orangecoast-e7702c22.westeurope.azurecontainerapps.io"
+  MS_ONBOARDING_URL: "https://selc-d-onboarding-ms-ca.gentleflower-c63e62fe.westeurope.azurecontainerapps.io"
   ONBOARDING_ALLOWED_INSTITUTIONS_PRODUCTS: "{'prod-interop':{'*'},'prod-pn':{'*'},'prod-io':{'*'},'prod-io-premium':{'*'},'prod-pagopa':{'*'},'prod-fd':{'*'},'prod-fd-garantito':{'*'},'prod-io-sign':{'*'}}"
