@@ -47,6 +47,7 @@ public class OnboardingMsConnectorImplTest {
         Billing billing = mockInstance(new Billing());
         InstitutionUpdate institutionUpdate = new InstitutionUpdate();
         institutionUpdate.setTaxCode("taxCode");
+        institutionUpdate.setDescription("description");
         onboardingData.setBilling(billing);
         onboardingData.setUsers(List.of(mockInstance(new User())));
         onboardingData.setInstitutionUpdate(institutionUpdate);
@@ -59,6 +60,7 @@ public class OnboardingMsConnectorImplTest {
                 ._v1OnboardingPost(onboardingRequestCaptor.capture());
         OnboardingDefaultRequest actual = onboardingRequestCaptor.getValue();
         assertEquals(actual.getInstitution().getTaxCode(), institutionUpdate.getTaxCode());
+        assertEquals(actual.getInstitution().getDescription(), institutionUpdate.getDescription());
         verifyNoMoreInteractions(msOnboardingApiClient);
     }
 
