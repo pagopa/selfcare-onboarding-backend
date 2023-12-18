@@ -42,7 +42,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.HEAD;
 
 @Slf4j
 @RestController
-@RequestMapping(value = "/institutions", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/v1/institutions", produces = MediaType.APPLICATION_JSON_VALUE)
 @Api(tags = "institutions")
 public class InstitutionController {
 
@@ -71,13 +71,10 @@ public class InstitutionController {
     @PostMapping(value = "/onboarding")
     @ResponseStatus(HttpStatus.CREATED)
     @ApiOperation(value = "", notes = "${swagger.onboarding.institutions.api.onboarding.subunit}")
-    public void onboarding(@RequestBody @Valid OnboardingProductDto request, @RequestParam(value = "mode", required = false) OnboardingMode mode) {
+    public void onboarding(@RequestBody @Valid OnboardingProductDto request) {
         log.trace(ONBOARDING_START);
         log.debug("onboarding request = {}", request);
-        if(Objects.isNull(mode) || mode.equals(OnboardingMode.SYNC))
-            institutionService.onboardingProduct(onboardingResourceMapper.toEntity(request));
-        else institutionService.onboardingProductAsync(onboardingResourceMapper.toEntity(request));
-
+        institutionService.onboardingProduct(onboardingResourceMapper.toEntity(request));
         log.trace(ONBOARDING_END);
     }
 

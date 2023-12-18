@@ -63,6 +63,9 @@ class InstitutionServiceImplTest {
     private PartyConnector partyConnectorMock;
 
     @Mock
+    private OnboardingMsConnector onboardingMsConnector;
+
+    @Mock
     private ProductsConnector productsConnectorMock;
 
     @Mock
@@ -463,9 +466,9 @@ class InstitutionServiceImplTest {
         onboardingData.setInstitutionType(InstitutionType.PA);
         onboardingData.setUsers(List.of(dummyManager, dummyDelegate));
         // when
-        institutionService.onboardingProductAsync(onboardingData);
+        institutionService.onboardingProductV2(onboardingData);
         // then
-        verify(partyConnectorMock, times(1))
+        verify(onboardingMsConnector, times(1))
                 .onboarding(any());
     }
 

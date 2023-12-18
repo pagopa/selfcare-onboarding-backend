@@ -36,7 +36,7 @@
     "description" : "User Controller"
   } ],
   "paths" : {
-    "/institutions" : {
+    "/v1/institutions" : {
       "get" : {
         "tags" : [ "institutions" ],
         "summary" : "getInstitutions",
@@ -112,7 +112,7 @@
         } ]
       }
     },
-    "/institutions/company/onboarding" : {
+    "/v1/institutions/company/onboarding" : {
       "post" : {
         "tags" : [ "institutions" ],
         "summary" : "onboarding",
@@ -197,7 +197,7 @@
         } ]
       }
     },
-    "/institutions/from-infocamere/" : {
+    "/v1/institutions/from-infocamere/" : {
       "get" : {
         "tags" : [ "institutions" ],
         "summary" : "getInstitutionsFromInfocamere",
@@ -269,7 +269,7 @@
         } ]
       }
     },
-    "/institutions/geographicTaxonomies" : {
+    "/v1/institutions/geographicTaxonomies" : {
       "get" : {
         "tags" : [ "institutions" ],
         "summary" : "getGeographicTaxonomiesByTaxCodeAndSubunitCode",
@@ -354,23 +354,12 @@
         } ]
       }
     },
-    "/institutions/onboarding" : {
+    "/v1/institutions/onboarding" : {
       "post" : {
         "tags" : [ "institutions" ],
         "summary" : "onboarding",
         "description" : "The service allows the onboarding of Users to a subunit of an Institution",
         "operationId" : "onboardingUsingPOST_1",
-        "parameters" : [ {
-          "name" : "mode",
-          "in" : "query",
-          "description" : "mode",
-          "required" : false,
-          "style" : "form",
-          "schema" : {
-            "type" : "string",
-            "enum" : [ "ASYNC", "SYNC" ]
-          }
-        } ],
         "requestBody" : {
           "content" : {
             "application/json" : {
@@ -561,7 +550,7 @@
         } ]
       }
     },
-    "/institutions/onboarding/" : {
+    "/v1/institutions/onboarding/" : {
       "get" : {
         "tags" : [ "institutions" ],
         "summary" : "getInstitutionOnboardingInfo",
@@ -652,7 +641,7 @@
         } ]
       }
     },
-    "/institutions/verification/legal-address" : {
+    "/v1/institutions/verification/legal-address" : {
       "post" : {
         "tags" : [ "institutions" ],
         "summary" : "postVerificationLegalAddress",
@@ -734,7 +723,7 @@
         } ]
       }
     },
-    "/institutions/verification/match" : {
+    "/v1/institutions/verification/match" : {
       "post" : {
         "tags" : [ "institutions" ],
         "summary" : "postVerificationMatch",
@@ -816,7 +805,7 @@
         } ]
       }
     },
-    "/institutions/{externalInstitutionId}/geographicTaxonomy" : {
+    "/v1/institutions/{externalInstitutionId}/geographicTaxonomy" : {
       "get" : {
         "tags" : [ "institutions" ],
         "summary" : "getInstitutionGeographicTaxonomy",
@@ -892,7 +881,7 @@
         } ]
       }
     },
-    "/institutions/{externalInstitutionId}/legal-address" : {
+    "/v1/institutions/{externalInstitutionId}/legal-address" : {
       "get" : {
         "tags" : [ "institutions" ],
         "summary" : "getInstitutionLegalAddress",
@@ -966,7 +955,7 @@
         } ]
       }
     },
-    "/institutions/{externalInstitutionId}/match" : {
+    "/v1/institutions/{externalInstitutionId}/match" : {
       "post" : {
         "tags" : [ "institutions" ],
         "summary" : "matchInstitutionAndUser",
@@ -1059,7 +1048,7 @@
         } ]
       }
     },
-    "/institutions/{externalInstitutionId}/products/{productId}" : {
+    "/v1/institutions/{externalInstitutionId}/products/{productId}" : {
       "head" : {
         "tags" : [ "institutions" ],
         "summary" : "verifyOnboarding",
@@ -1144,7 +1133,7 @@
         } ]
       }
     },
-    "/institutions/{externalInstitutionId}/products/{productId}/onboarded-institution-info" : {
+    "/v1/institutions/{externalInstitutionId}/products/{productId}/onboarded-institution-info" : {
       "get" : {
         "tags" : [ "institutions" ],
         "summary" : "getInstitutionOnboardingInfo",
@@ -1227,7 +1216,7 @@
         } ]
       }
     },
-    "/institutions/{externalInstitutionId}/products/{productId}/onboarding" : {
+    "/v1/institutions/{externalInstitutionId}/products/{productId}/onboarding" : {
       "post" : {
         "tags" : [ "institutions" ],
         "summary" : "onboarding",
@@ -1332,7 +1321,92 @@
         } ]
       }
     },
-    "/pnPGInstitutions/{externalInstitutionId}/legal-address" : {
+    "/v2/institutions/onboarding" : {
+      "post" : {
+        "tags" : [ "institutions" ],
+        "summary" : "onboarding",
+        "description" : "The service allows the onboarding of Users to a subunit of an Institution",
+        "operationId" : "onboardingUsingPOST_3",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/OnboardingProductDto"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "201" : {
+            "description" : "Created"
+          },
+          "400" : {
+            "description" : "Bad Request",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Unauthorized",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "Forbidden",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "Not Found",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "409" : {
+            "description" : "Conflict",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "Internal Server Error",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ "global" ]
+        } ]
+      }
+    },
+    "/v1/pnPGInstitutions/{externalInstitutionId}/legal-address" : {
       "get" : {
         "tags" : [ "pnPGInstitutions" ],
         "summary" : "getInstitutionLegalAddress",
@@ -1406,7 +1480,7 @@
         } ]
       }
     },
-    "/pnPGInstitutions/{externalInstitutionId}/match" : {
+    "/v1/pnPGInstitutions/{externalInstitutionId}/match" : {
       "post" : {
         "tags" : [ "pnPGInstitutions" ],
         "summary" : "matchInstitutionAndUser",
@@ -1499,7 +1573,7 @@
         } ]
       }
     },
-    "/pnPGInstitutions/{externalInstitutionId}/products/{productId}/onboarding" : {
+    "/v1/pnPGInstitutions/{externalInstitutionId}/products/{productId}/onboarding" : {
       "post" : {
         "tags" : [ "pnPGInstitutions" ],
         "summary" : "onboardingPG",
@@ -1604,7 +1678,7 @@
         } ]
       }
     },
-    "/product/{id}" : {
+    "/v1/product/{id}" : {
       "get" : {
         "tags" : [ "product" ],
         "summary" : "getProduct",
@@ -1687,7 +1761,7 @@
         } ]
       }
     },
-    "/tokens/{tokenId}/complete" : {
+    "/v1/tokens/{tokenId}/complete" : {
       "post" : {
         "tags" : [ "tokens" ],
         "summary" : "Complete an onboarding request",
@@ -1834,7 +1908,7 @@
         } ]
       }
     },
-    "/tokens/{tokenId}/verify" : {
+    "/v1/tokens/{tokenId}/verify" : {
       "post" : {
         "tags" : [ "tokens" ],
         "summary" : "Verify if the token is already consumed",
@@ -1917,7 +1991,100 @@
         } ]
       }
     },
-    "/users/validate" : {
+    "/v2/tokens/{onboardingId}/complete" : {
+      "post" : {
+        "tags" : [ "tokens" ],
+        "summary" : "Complete an onboarding request",
+        "description" : "Complete an onboarding request",
+        "operationId" : "completeUsingPOST_1",
+        "parameters" : [ {
+          "name" : "onboardingId",
+          "in" : "path",
+          "description" : "Contract's unique identifier",
+          "required" : true,
+          "style" : "simple",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "multipart/form-data" : {
+              "schema" : {
+                "required" : [ "contract" ],
+                "type" : "object",
+                "properties" : {
+                  "contract" : {
+                    "type" : "string",
+                    "description" : "contract",
+                    "format" : "binary"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses" : {
+          "204" : {
+            "description" : "No Content"
+          },
+          "400" : {
+            "description" : "Bad Request",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Unauthorized",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "Not Found",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "409" : {
+            "description" : "Conflict",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "Internal Server Error",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ "global" ]
+        } ]
+      }
+    },
+    "/v1/users/validate" : {
       "post" : {
         "tags" : [ "user" ],
         "summary" : "validate",

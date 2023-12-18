@@ -15,7 +15,7 @@ ingress:
   hosts:
     - host: "selc.internal.selfcare.pagopa.it"
       paths:
-        - path: /onboarding/v1/(.*)
+        - path: /onboarding/(.*)
           pathType: ImplementationSpecific
 
 autoscaling:
@@ -34,6 +34,7 @@ configEnvSpecific:
   APPLICATIONINSIGHTS_INSTRUMENTATION_LOGGING_LEVEL: "OFF"
   B4F_ONBOARDING_LOG_LEVEL: "INFO"
   REST_CLIENT_LOGGER_LEVEL: "BASIC"
+  MS_ONBOARDING_URL: "https://selc-d-onboarding-ms-ca.gentleflower-c63e62fe.westeurope.azurecontainerapps.io"
   ONBOARDING_ALLOWED_INSTITUTIONS_PRODUCTS: "{'prod-interop':{'*'},'prod-pn':{'*'},'prod-pagopa':{'*'},'prod-io':{'*'},'prod-io-premium':{'*'},'prod-io-sign':{'*'}}"
   REST_CLIENT_READ_TIMEOUT: "60000"
   REST_CLIENT_CONNECT_TIMEOUT: "60000"

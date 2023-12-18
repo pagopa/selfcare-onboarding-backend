@@ -10,6 +10,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -33,6 +34,13 @@ public interface OnboardingMapper {
         institution.subunitType(Optional.ofNullable(onboardingData.getSubunitType())
                 .map(InstitutionPaSubunitType::valueOf)
                 .orElse(null));
+        institution.setOrigin(Optional.ofNullable(onboardingData.getOrigin()).map(Origin::fromValue).orElse(null));
+        if(Objects.nonNull(onboardingData.getLocation())) {
+            institution.setCity(onboardingData.getLocation().getCity());
+            institution.setCountry(onboardingData.getLocation().getCountry());
+            institution.setCounty(onboardingData.getLocation().getCounty());
+        }
+        institution.setDescription(onboardingData.getInstitutionUpdate().getDescription());
         institution.digitalAddress(onboardingData.getInstitutionUpdate().getDigitalAddress());
         institution.address(onboardingData.getInstitutionUpdate().getAddress());
         institution.zipCode(onboardingData.getInstitutionUpdate().getZipCode());
@@ -61,6 +69,12 @@ public interface OnboardingMapper {
                 .map(InstitutionPaSubunitType::valueOf)
                 .orElse(null));
 
+        institutionPsp.setOrigin(Optional.ofNullable(onboardingData.getOrigin()).map(Origin::fromValue).orElse(null));
+        if(Objects.nonNull(onboardingData.getLocation())) {
+            institutionPsp.setCity(onboardingData.getLocation().getCity());
+            institutionPsp.setCountry(onboardingData.getLocation().getCountry());
+            institutionPsp.setCounty(onboardingData.getLocation().getCounty());
+        }
         institutionPsp.setDescription(onboardingData.getInstitutionUpdate().getDescription());
         institutionPsp.digitalAddress(onboardingData.getInstitutionUpdate().getDigitalAddress());
         institutionPsp.address(onboardingData.getInstitutionUpdate().getAddress());
