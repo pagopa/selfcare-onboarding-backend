@@ -105,6 +105,17 @@ public class TokenServiceImplTest {
     }
 
     @Test
+    void onboardingPending() {
+        //given
+        final String onboardingId = "onboardingId";
+        // when
+        tokenService.verifyOnboarding(onboardingId);
+        //then
+        Mockito.verify(onboardingMsConnector, Mockito.times(1))
+                .onboardingPending(onboardingId);
+    }
+
+    @Test
     void shouldDeleteToken() {
         //given
         String tokenId = "example";

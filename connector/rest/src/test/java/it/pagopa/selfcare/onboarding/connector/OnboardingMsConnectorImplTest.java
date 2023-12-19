@@ -128,4 +128,17 @@ public class OnboardingMsConnectorImplTest {
                 ._v1OnboardingOnboardingIdCompletePut(tokenId, mockMultipartFile);
         verifyNoMoreInteractions(msOnboardingApiClient);
     }
+
+    @Test
+    void onboardingPending() {
+        // given
+        final String onboardingId = "onboardingId";
+        // when
+        final Executable executable = () -> onboardingMsConnector.onboardingPending(onboardingId);
+        // then
+        assertDoesNotThrow(executable);
+        verify(msOnboardingApiClient, times(1))
+                ._v1OnboardingOnboardingIdPendingGet(onboardingId);
+        verifyNoMoreInteractions(msOnboardingApiClient);
+    }
 }
