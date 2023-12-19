@@ -16,6 +16,12 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.UUID;
+
+import static org.mockito.Mockito.*;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 @WebMvcTest(value = {TokenV2Controller.class}, excludeAutoConfiguration = SecurityAutoConfiguration.class)
 @ContextConfiguration(classes = {TokenV2Controller.class, WebTestConfig.class})
 public class TokenV2ControllerTest {
@@ -27,7 +33,7 @@ public class TokenV2ControllerTest {
     private TokenService tokenService;
 
     /**
-     * Method under test: {@link TokenController#complete(String, MultipartFile)}
+     * Method under test: {@link TokenV2Controller#complete(String, MultipartFile)}
      */
     @Test
     void shouldCompleteToken() throws Exception {
@@ -39,5 +45,25 @@ public class TokenV2ControllerTest {
                 .file(file);
         mvc.perform(requestBuilder)
                 .andExpect(MockMvcResultMatchers.status().isNoContent());
+    }
+
+    /**
+     * Method under test: {@link TokenV2Controller#verifyOnboarding(String)}
+     */
+    @Test
+    void verifyOnboarding() throws Exception {
+
+        String onboardingId = UUID.randomUUID().toString();
+        doNothing().when(tokenService).verifyOnboarding(onboardingId);
+
+        //when
+        mvc.perform(MockMvcRequestBuilders
+                        .post("/v2/tokens/{onboardingId}/verify", onboardingId)
+                        .contentType(APPLICATION_JSON_VALUE)
+                        .accept(APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk());
+        //then
+        verify(tokenService, times(1))
+                .verifyOnboarding(onboardingId);
     }
 }

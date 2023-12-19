@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import it.pagopa.selfcare.commons.base.logging.LogUtils;
 import it.pagopa.selfcare.onboarding.core.TokenService;
+import it.pagopa.selfcare.onboarding.web.model.TokenVerifyResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -48,5 +49,26 @@ public class TokenV2Controller {
         log.debug(LogUtils.CONFIDENTIAL_MARKER, "complete Token tokenId = {}, contract = {}", onboardingId, contract);
         tokenService.completeTokenV2(onboardingId, contract);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    /**
+     * The verifyOnboarding function is used to verify the onboarding has already consumed.
+     * It takes in a String onboarding and returns a Token object.
+     *
+     * @param onboardingId onboardingId
+     * @return The onboardingId
+     * * Code: 200, Message: successful operation, DataType: TokenId
+     * * Code: 400, Message: Invalid ID supplied, DataType: Problem
+     * * Code: 404, Message: Token not found, DataType: Problem
+     * * Code: 409, Message: Token already consumed, DataType: Problem
+     */
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "${swagger.tokens.verify}", notes = "${swagger.tokens.verify}")
+    @PostMapping("/{onboardingId}/verify")
+    public ResponseEntity<TokenVerifyResponse> verifyOnboarding(@ApiParam("${swagger.tokens.tokenId}")
+                                                           @PathVariable("onboardingId") String onboardingId) {
+        log.debug("Verify token identified with {}", onboardingId);
+        tokenService.verifyOnboarding(onboardingId);
+        return ResponseEntity.ok().body(TokenVerifyResponse.builder().id(onboardingId).build());
     }
 }
