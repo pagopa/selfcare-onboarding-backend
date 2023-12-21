@@ -1,11 +1,16 @@
 package it.pagopa.selfcare.onboarding.web.model.mapper;
 
+import it.pagopa.selfcare.commons.base.security.PartyRole;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.User;
 import it.pagopa.selfcare.onboarding.web.model.CompanyOnboardingDto;
 import it.pagopa.selfcare.onboarding.web.model.OnboardingProductDto;
+import it.pagopa.selfcare.onboarding.web.model.OnboardingRequestResource;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
+
+import java.util.List;
 
 
 @Mapper(componentModel = "spring")
@@ -35,6 +40,43 @@ public interface OnboardingResourceMapper {
     @Named("getOrigin")
     default String getOrigin(Boolean certified) {
         return Boolean.TRUE.equals(certified) ? "INFOCAMERE" : "ADE";
+    }
+
+
+    @Mapping(source = "institutionUpdate.description", target = "institutionInfo.name")
+    @Mapping(source = "institutionUpdate.institutionType", target = "institutionInfo.institutionType")
+    @Mapping(source = "institutionUpdate.digitalAddress", target = "institutionInfo.mailAddress")
+    @Mapping(source = "location.country", target = "institutionInfo.country")
+    @Mapping(source = "location.county", target = "institutionInfo.county")
+    @Mapping(source = "location.city", target = "institutionInfo.city")
+    @Mapping(source = "institutionUpdate.taxCode", target = "institutionInfo.fiscalCode")
+
+    @Mapping(source = "billing.vatNumber", target = "institutionInfo.vatNumber")
+    @Mapping(source = "billing.recipientCode", target = "institutionInfo.recipientCode")
+    @Mapping(source = "institutionUpdate.paymentServiceProvider", target = "institutionInfo.pspData")
+    @Mapping(source = "institutionUpdate.dataProtectionOfficer", target = "institutionInfo.dpoData")
+
+    @Mapping(source = "users", target = "manager", qualifiedByName = "toManager")
+    @Mapping(source = "users", target = "admins", qualifiedByName = "toAdmin")
+    OnboardingRequestResource toOnboardingRequestResource(OnboardingData onboardingData);
+
+    @Mapping(source = "taxCode", target = "fiscalCode")
+    OnboardingRequestResource.UserInfo toUserInfo(User user);
+
+    @Named("toManager")
+    default OnboardingRequestResource.UserInfo toManager(List<User> users) {
+        return users.stream()
+                .filter(user -> PartyRole.MANAGER.equals(user.getRole()))
+                .map(this::toUserInfo)
+                .findAny()
+                .orElse(null);
+    }
+    @Named("toAdmin")
+    default List<OnboardingRequestResource.UserInfo> toAdmin(List<User> users) {
+        return users.stream()
+                .filter(user -> !PartyRole.MANAGER.equals(user.getRole()))
+                .map(this::toUserInfo)
+                .toList();
     }
 
 }

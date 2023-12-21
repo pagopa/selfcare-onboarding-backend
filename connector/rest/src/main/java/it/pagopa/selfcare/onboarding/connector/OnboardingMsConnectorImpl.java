@@ -5,6 +5,7 @@ import it.pagopa.selfcare.onboarding.connector.api.OnboardingMsConnector;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
 import it.pagopa.selfcare.onboarding.connector.rest.client.MsOnboardingApiClient;
 import it.pagopa.selfcare.onboarding.connector.rest.mapper.OnboardingMapper;
+import it.pagopa.selfcare.onboarding.generated.openapi.v1.dto.OnboardingGet;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -43,5 +44,17 @@ public class OnboardingMsConnectorImpl implements OnboardingMsConnector {
     @Override
     public void onboardingPending(String onboardingId) {
         msOnboardingApiClient._v1OnboardingOnboardingIdPendingGet(onboardingId);
+    }
+
+    @Override
+    public OnboardingData getOnboarding(String onboardingId) {
+        OnboardingGet onboardingGet = msOnboardingApiClient._v1OnboardingOnboardingIdGet(onboardingId).getBody();
+        return onboardingMapper.toOnboardingData(onboardingGet);
+    }
+
+    @Override
+    public OnboardingData getOnboardingWithUserInfo(String onboardingId) {
+        OnboardingGet onboardingGet = msOnboardingApiClient._v1OnboardingOnboardingIdWithUserInfoGet(onboardingId).getBody();
+        return onboardingMapper.toOnboardingData(onboardingGet);
     }
 }
