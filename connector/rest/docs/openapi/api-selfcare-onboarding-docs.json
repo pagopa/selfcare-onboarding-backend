@@ -330,6 +330,41 @@
           "SecurityScheme" : [ ]
         } ]
       }
+    },
+    "/v1/onboarding/{onboardingId}/withUserInfo" : {
+      "get" : {
+        "tags" : [ "Onboarding Controller" ],
+        "summary" : "Retrieve an onboarding record given its ID adding to user sensitive information",
+        "parameters" : [ {
+          "name" : "onboardingId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/OnboardingGet"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "Not Allowed"
+          },
+          "401" : {
+            "description" : "Not Authorized"
+          }
+        },
+        "security" : [ {
+          "SecurityScheme" : [ ]
+        } ]
+      }
     }
   },
   "components" : {
@@ -408,6 +443,17 @@
           }
         }
       },
+      "GeographicTaxonomyDto" : {
+        "type" : "object",
+        "properties" : {
+          "code" : {
+            "type" : "string"
+          },
+          "desc" : {
+            "type" : "string"
+          }
+        }
+      },
       "InstitutionBaseRequest" : {
         "required" : [ "institutionType", "taxCode", "digitalAddress" ],
         "type" : "object",
@@ -450,10 +496,10 @@
           "zipCode" : {
             "type" : "string"
           },
-          "geographicTaxonomyCodes" : {
+          "geographicTaxonomies" : {
             "type" : "array",
             "items" : {
-              "type" : "string"
+              "$ref" : "#/components/schemas/GeographicTaxonomyDto"
             }
           },
           "rea" : {
@@ -522,10 +568,10 @@
           "zipCode" : {
             "type" : "string"
           },
-          "geographicTaxonomyCodes" : {
+          "geographicTaxonomies" : {
             "type" : "array",
             "items" : {
-              "type" : "string"
+              "$ref" : "#/components/schemas/GeographicTaxonomyDto"
             }
           },
           "rea" : {
@@ -593,10 +639,10 @@
           "zipCode" : {
             "type" : "string"
           },
-          "geographicTaxonomyCodes" : {
+          "geographicTaxonomies" : {
             "type" : "array",
             "items" : {
-              "type" : "string"
+              "$ref" : "#/components/schemas/GeographicTaxonomyDto"
             }
           },
           "rea" : {
