@@ -40,7 +40,7 @@ public interface OnboardingMapper {
             institution.setCountry(onboardingData.getLocation().getCountry());
             institution.setCounty(onboardingData.getLocation().getCounty());
         }
-        institution.setDescription(onboardingData.getBusinessName());
+        institution.setDescription(onboardingData.getInstitutionUpdate().getDescription());
         institution.digitalAddress(onboardingData.getInstitutionUpdate().getDigitalAddress());
         institution.address(onboardingData.getInstitutionUpdate().getAddress());
         institution.zipCode(onboardingData.getInstitutionUpdate().getZipCode());

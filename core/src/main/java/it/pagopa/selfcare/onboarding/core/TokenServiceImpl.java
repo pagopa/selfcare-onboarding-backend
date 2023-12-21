@@ -31,6 +31,16 @@ public class TokenServiceImpl implements TokenService {
     }
 
     @Override
+    public void verifyOnboarding(String onboardingId) {
+        log.trace("verifyOnboarding start");
+        log.debug("verifyOnboarding id = {}", onboardingId);
+        Assert.notNull(onboardingId, "OnboardingId is required");
+        onboardingMsConnector.onboardingPending(onboardingId);
+        log.debug("verifyOnboarding result = success");
+        log.trace("verifyOnboarding end");
+    }
+
+    @Override
     public void completeToken(String tokenId, MultipartFile contract) {
         log.trace("completeToken start");
         log.debug("completeToken id = {}", tokenId);
