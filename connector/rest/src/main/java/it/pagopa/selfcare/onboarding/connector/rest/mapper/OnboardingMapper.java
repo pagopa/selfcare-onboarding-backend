@@ -24,6 +24,7 @@ public interface OnboardingMapper {
     @Mapping(target = "institution", source = ".", qualifiedByName = "toInstitutionBase")
     OnboardingDefaultRequest toOnboardingDefaultRequest(OnboardingData onboardingData);
 
+    GeographicTaxonomyDto toGeographicTaxonomyDto(GeographicTaxonomy geographicTaxonomy);
 
     @Named("toInstitutionBase")
     default InstitutionBaseRequest toInstitutionBase(OnboardingData onboardingData) {
@@ -44,9 +45,9 @@ public interface OnboardingMapper {
         institution.digitalAddress(onboardingData.getInstitutionUpdate().getDigitalAddress());
         institution.address(onboardingData.getInstitutionUpdate().getAddress());
         institution.zipCode(onboardingData.getInstitutionUpdate().getZipCode());
-        institution.geographicTaxonomyCodes(Optional.ofNullable(onboardingData.getInstitutionUpdate().getGeographicTaxonomies())
+        institution.geographicTaxonomies(Optional.ofNullable(onboardingData.getInstitutionUpdate().getGeographicTaxonomies())
                 .map(geotaxes -> geotaxes.stream()
-                        .map(GeographicTaxonomy::getCode)
+                        .map(this::toGeographicTaxonomyDto)
                         .collect(Collectors.toList()))
                 .orElse(null));
         institution.rea(onboardingData.getInstitutionUpdate().getRea());
@@ -79,9 +80,9 @@ public interface OnboardingMapper {
         institutionPsp.digitalAddress(onboardingData.getInstitutionUpdate().getDigitalAddress());
         institutionPsp.address(onboardingData.getInstitutionUpdate().getAddress());
         institutionPsp.zipCode(onboardingData.getInstitutionUpdate().getZipCode());
-        institutionPsp.geographicTaxonomyCodes(Optional.ofNullable(onboardingData.getInstitutionUpdate().getGeographicTaxonomies())
+        institutionPsp.geographicTaxonomies(Optional.ofNullable(onboardingData.getInstitutionUpdate().getGeographicTaxonomies())
                 .map(geotaxes -> geotaxes.stream()
-                    .map(GeographicTaxonomy::getCode)
+                    .map(this::toGeographicTaxonomyDto)
                     .collect(Collectors.toList()))
                 .orElse(null));
         institutionPsp.rea(onboardingData.getInstitutionUpdate().getRea());
@@ -99,4 +100,7 @@ public interface OnboardingMapper {
 
     PaymentServiceProviderRequest toPaymentServiceProviderRequest(PaymentServiceProvider paymentServiceProvider);
     DataProtectionOfficerRequest toDataProtectionOfficerRequest(DataProtectionOfficer dataProtectionOfficer);
+
+    @Mapping(target = "institutionUpdate", source = "institution")
+    OnboardingData toOnboardingData(OnboardingGet onboardingGet);
 }

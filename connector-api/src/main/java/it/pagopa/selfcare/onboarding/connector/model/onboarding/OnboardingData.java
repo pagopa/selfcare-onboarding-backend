@@ -30,6 +30,7 @@ public class OnboardingData {
     private String subunitType;
     private String productId;
     private String productName;
+    private String status;
     private List<User> users;
     private String contractPath;
     private String contractVersion;

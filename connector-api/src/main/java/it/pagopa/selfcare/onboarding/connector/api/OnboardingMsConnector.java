@@ -7,4 +7,10 @@ public interface OnboardingMsConnector {
     void onboarding(OnboardingData onboardingData);
 
     void onboardingTokenComplete(String onboardingId, MultipartFile contract);
+
+    void onboardingPending(String onboardingId);
+
+    OnboardingData getOnboarding(String onboardingId);
+
+    OnboardingData getOnboardingWithUserInfo(String onboardingId);
 }

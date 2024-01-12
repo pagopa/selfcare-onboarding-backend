@@ -6,6 +6,7 @@ import it.pagopa.selfcare.onboarding.connector.rest.client.MsOnboardingApiClient
 import it.pagopa.selfcare.onboarding.connector.rest.mapper.OnboardingMapper;
 import it.pagopa.selfcare.onboarding.connector.rest.mapper.OnboardingMapperImpl;
 import it.pagopa.selfcare.onboarding.generated.openapi.v1.dto.OnboardingDefaultRequest;
+import it.pagopa.selfcare.onboarding.generated.openapi.v1.dto.OnboardingGet;
 import it.pagopa.selfcare.onboarding.generated.openapi.v1.dto.OnboardingPaRequest;
 import it.pagopa.selfcare.onboarding.generated.openapi.v1.dto.OnboardingPspRequest;
 import org.junit.jupiter.api.Test;
@@ -16,12 +17,14 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockMultipartFile;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Optional;
 
 import static it.pagopa.selfcare.commons.utils.TestUtils.mockInstance;
 import static org.junit.jupiter.api.Assertions.*;
@@ -126,6 +129,34 @@ public class OnboardingMsConnectorImplTest {
         assertDoesNotThrow(executable);
         verify(msOnboardingApiClient, times(1))
                 ._v1OnboardingOnboardingIdCompletePut(tokenId, mockMultipartFile);
+        verifyNoMoreInteractions(msOnboardingApiClient);
+    }
+
+    @Test
+    void onboardingPending() {
+        // given
+        final String onboardingId = "onboardingId";
+        // when
+        final Executable executable = () -> onboardingMsConnector.onboardingPending(onboardingId);
+        // then
+        assertDoesNotThrow(executable);
+        verify(msOnboardingApiClient, times(1))
+                ._v1OnboardingOnboardingIdPendingGet(onboardingId);
+        verifyNoMoreInteractions(msOnboardingApiClient);
+    }
+
+    @Test
+    void getOnboardingWithUserInfo() {
+        // given
+        final String onboardingId = "onboardingId";
+        when(msOnboardingApiClient._v1OnboardingOnboardingIdWithUserInfoGet(onboardingId))
+                .thenReturn(ResponseEntity.of(Optional.of(new OnboardingGet())));
+        // when
+        final Executable executable = () -> onboardingMsConnector.getOnboardingWithUserInfo(onboardingId);
+        // then
+        assertDoesNotThrow(executable);
+        verify(msOnboardingApiClient, times(1))
+                ._v1OnboardingOnboardingIdWithUserInfoGet(onboardingId);
         verifyNoMoreInteractions(msOnboardingApiClient);
     }
 }
