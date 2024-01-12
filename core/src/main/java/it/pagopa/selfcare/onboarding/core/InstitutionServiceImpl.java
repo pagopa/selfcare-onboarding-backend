@@ -151,10 +151,7 @@ class InstitutionServiceImpl implements InstitutionService {
                     (onboardingData.getOrigin().equalsIgnoreCase(Origin.INFOCAMERE.getValue()) || onboardingData.getOrigin().equalsIgnoreCase(Origin.ADE.getValue()))) {
                 institution = partyConnector.createInstitutionFromInfocamere(onboardingData);
             }
-            else if (InstitutionType.PA.equals(onboardingData.getInstitutionType()) ||
-                    InstitutionType.SA.equals(onboardingData.getInstitutionType()) ||
-                    (InstitutionType.GSP.equals(onboardingData.getInstitutionType()) && onboardingData.getProductId().equals(PROD_INTEROP.getValue())
-                            && onboardingData.getOrigin().equals(Origin.IPA.getValue()))) {
+            else if (isInstitutionPresentOnIpa(onboardingData)) {
                 institution = partyConnector.createInstitutionFromIpa(onboardingData.getTaxCode(), onboardingData.getSubunitCode(), onboardingData.getSubunitType());
             } else {
                 institution = partyConnector.createInstitution(onboardingData);
@@ -184,6 +181,21 @@ class InstitutionServiceImpl implements InstitutionService {
         return !Origin.IPA.equals(Origin.fromValue(origin)) &&
                 !Origin.ADE.equals(Origin.fromValue(origin)) &&
                 !Origin.INFOCAMERE.equals(Origin.fromValue(origin));
+    }
+
+    private boolean isInstitutionPresentOnIpa(OnboardingData onboardingData) {
+        try {
+            if (onboardingData.getSubunitType() != null && onboardingData.getSubunitType().equals("AOO")) {
+                partyRegistryProxyConnector.getAooById(onboardingData.getSubunitCode());
+            } else if (onboardingData.getSubunitType() != null && onboardingData.getSubunitType().equals("UO")) {
+                partyRegistryProxyConnector.getUoById(onboardingData.getSubunitCode());
+            } else {
+                partyRegistryProxyConnector.getInstitutionProxyById(onboardingData.getTaxCode());
+            }
+            return true;
+        } catch (ResourceNotFoundException e) {
+            return false;
+        }
     }
 
     private void checkIfProductIsActiveAndSetUserProductRole(Product product, OnboardingData onboardingData) {
