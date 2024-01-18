@@ -28,7 +28,7 @@ public class AdditionalInformationsDto {
     private boolean isAgentOfPublicService;
 
     @ApiModelProperty(value = "${swagger.onboarding.institutions.model.assistance.agentOfPublicServiceNote}")
-    private boolean agentOfPublicServiceNote;
+    private String agentOfPublicServiceNote;
 
     @ApiModelProperty(value = "${swagger.onboarding.institutions.model.assistance.otherNote}")
     private String otherNote;
