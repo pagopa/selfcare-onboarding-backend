@@ -32,6 +32,17 @@
             "legalRegisterNumber": "string",
             "vatNumberGroup": true
           },
+          "additionalInformations" : {
+            "belongRegulatedMarket" : true,
+            "regulatedMarketNote" :  "string",
+            "isIpa" : true,
+            "ipaCode" : "string",
+            "establishedByRegulatoryProvision" : true,
+            "establishedByRegulatoryProvisionNote" : "string",
+            "isAgentOfPublicService" : true,
+            "agentOfPublicServiceNote" : "string",
+            "otherNote" : "string"
+          },
           "dataProtectionOfficer": {
             "address": "string",
             "email": "string",
