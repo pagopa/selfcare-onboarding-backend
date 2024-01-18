@@ -2326,13 +2326,12 @@
             "type" : "boolean"
           },
           "agentOfPublicServiceNote" : {
-            "type" : "boolean",
-            "description" : "agentOfPublicService Note",
-            "example" : false
+            "type" : "string",
+            "description" : "agentOfPublicService Note"
           },
           "belongRegulatedMarket" : {
             "type" : "boolean",
-            "description" : "he institution belongs to a regulated market",
+            "description" : "The institution belongs to a regulated market",
             "example" : false
           },
           "establishedByRegulatoryProvision" : {
