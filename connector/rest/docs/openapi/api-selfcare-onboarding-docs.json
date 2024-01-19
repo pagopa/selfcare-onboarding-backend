@@ -220,10 +220,72 @@
         } ]
       }
     },
+    "/v1/onboarding/{onboardingId}/approve" : {
+      "put" : {
+        "tags" : [ "Onboarding Controller" ],
+        "summary" : "Perform approve operation of an onboarding request receiving onboarding id.Function triggers async activities related to onboarding based on institution type. ",
+        "parameters" : [ {
+          "name" : "onboardingId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : { }
+            }
+          },
+          "403" : {
+            "description" : "Not Allowed"
+          },
+          "401" : {
+            "description" : "Not Authorized"
+          }
+        },
+        "security" : [ {
+          "SecurityScheme" : [ ]
+        } ]
+      }
+    },
+    "/v1/onboarding/{onboardingId}/approve/completion" : {
+      "put" : {
+        "tags" : [ "Onboarding Controller" ],
+        "summary" : "Perform approve operation of an onboarding request receiving onboarding id.It triggers async activities related to complete onboarding workflow after approving ",
+        "parameters" : [ {
+          "name" : "onboardingId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : { }
+            }
+          },
+          "403" : {
+            "description" : "Not Allowed"
+          },
+          "401" : {
+            "description" : "Not Authorized"
+          }
+        },
+        "security" : [ {
+          "SecurityScheme" : [ ]
+        } ]
+      }
+    },
     "/v1/onboarding/{onboardingId}/complete" : {
       "put" : {
         "tags" : [ "Onboarding Controller" ],
-        "summary" : "Perform complete operation of an onboarding request receiving onboarding id and contract signed by hte institution.It checks the contract's signature and upload the contract on an azure storageAt the end, function triggers async activities related to complete onboarding that consist of create the institution, activate the onboarding and sending data to notification queue.",
+        "summary" : "Perform complete operation of an onboarding request receiving onboarding id and contract signed by the institution.It checks the contract's signature and upload the contract on an azure storageAt the end, function triggers async activities related to complete onboarding that consist of create the institution, activate the onboarding and sending data to notification queue.",
         "parameters" : [ {
           "name" : "onboardingId",
           "in" : "path",
