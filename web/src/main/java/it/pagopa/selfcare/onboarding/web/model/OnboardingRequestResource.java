@@ -30,6 +30,8 @@ public class OnboardingRequestResource {
     @ApiModelProperty(value = "${swagger.onboarding.model.admins}")
     private List<UserInfo> admins;
 
+    @ApiModelProperty(value = "${swagger.dashboard.onboarding-request.model.productId}")
+    private String productId;
 
     @Data
     @EqualsAndHashCode(of = "id")
