@@ -30,7 +30,7 @@ public class OnboardingRequestResource {
     @ApiModelProperty(value = "${swagger.onboarding.model.admins}")
     private List<UserInfo> admins;
 
-    @ApiModelProperty(value = "${swagger.dashboard.onboarding-request.model.productId}")
+    @ApiModelProperty(value = "${swagger.onboarding.product.model.id}")
     private String productId;
 
     @Data

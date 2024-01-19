@@ -149,4 +149,16 @@ public class TokenServiceImplTest {
         Mockito.verify(onboardingMsConnector, Mockito.times(1))
                 .approveOnboarding(onboardingId);
     }
+
+    @Test
+    void rejectOnboarding() {
+        //given
+        String onboardingId = "example";
+        doNothing().when(onboardingMsConnector).rejectOnboarding(onboardingId);
+        // when
+        tokenService.rejectOnboarding(onboardingId);
+        //then
+        Mockito.verify(onboardingMsConnector, Mockito.times(1))
+                .rejectOnboarding(onboardingId);
+    }
 }

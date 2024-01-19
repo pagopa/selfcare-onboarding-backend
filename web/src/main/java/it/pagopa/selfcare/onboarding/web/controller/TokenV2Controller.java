@@ -94,8 +94,6 @@ public class TokenV2Controller {
         return result;
     }
 
-
-
     /**
      * The function is used to approve the onboarding by admin.
      * It takes in a String onboarding id.
@@ -115,4 +113,26 @@ public class TokenV2Controller {
         tokenService.approveOnboarding(onboardingId);
     }
 
+
+
+
+
+    /**
+     * The function is used to reject the onboarding by admin.
+     * It takes in a String onboarding id.
+     *
+     * @param onboardingId onboardingId
+     * * Code: 200, Message: successful operation, DataType: TokenId
+     * * Code: 400, Message: Invalid ID supplied, DataType: Problem
+     * * Code: 404, Message: Token not found, DataType: Problem
+     * * Code: 409, Message: Token already consumed, DataType: Problem
+     */
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "${swagger.tokens.rejectOnboardingRequest}")
+    @PostMapping("/{onboardingId}/reject")
+    public void rejectOnboarding(@ApiParam("${swagger.tokens.onboardingId}")
+                                  @PathVariable("onboardingId") String onboardingId) {
+        log.debug("reject onboarding identified with {}", onboardingId);
+        tokenService.rejectOnboarding(onboardingId);
+    }
 }

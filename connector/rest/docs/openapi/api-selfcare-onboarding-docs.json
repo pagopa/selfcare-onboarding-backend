@@ -223,38 +223,7 @@
     "/v1/onboarding/{onboardingId}/approve" : {
       "put" : {
         "tags" : [ "Onboarding Controller" ],
-        "summary" : "Perform approve operation of an onboarding request receiving onboarding id.Function triggers async activities related to onboarding based on institution type. ",
-        "parameters" : [ {
-          "name" : "onboardingId",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "application/json" : { }
-            }
-          },
-          "403" : {
-            "description" : "Not Allowed"
-          },
-          "401" : {
-            "description" : "Not Authorized"
-          }
-        },
-        "security" : [ {
-          "SecurityScheme" : [ ]
-        } ]
-      }
-    },
-    "/v1/onboarding/{onboardingId}/approve/completion" : {
-      "put" : {
-        "tags" : [ "Onboarding Controller" ],
-        "summary" : "Perform approve operation of an onboarding request receiving onboarding id.It triggers async activities related to complete onboarding workflow after approving ",
+        "summary" : "Perform approve operation of an onboarding request receiving onboarding id.Function triggers async activities related to onboarding based on institution type or completing onboarding. ",
         "parameters" : [ {
           "name" : "onboardingId",
           "in" : "path",
@@ -328,36 +297,6 @@
         } ]
       }
     },
-    "/v1/onboarding/{onboardingId}/delete" : {
-      "put" : {
-        "tags" : [ "Onboarding Controller" ],
-        "parameters" : [ {
-          "name" : "onboardingId",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "application/json" : { }
-            }
-          },
-          "403" : {
-            "description" : "Not Allowed"
-          },
-          "401" : {
-            "description" : "Not Authorized"
-          }
-        },
-        "security" : [ {
-          "SecurityScheme" : [ ]
-        } ]
-      }
-    },
     "/v1/onboarding/{onboardingId}/pending" : {
       "get" : {
         "tags" : [ "Onboarding Controller" ],
@@ -379,6 +318,37 @@
                   "$ref" : "#/components/schemas/OnboardingGet"
                 }
               }
+            }
+          },
+          "403" : {
+            "description" : "Not Allowed"
+          },
+          "401" : {
+            "description" : "Not Authorized"
+          }
+        },
+        "security" : [ {
+          "SecurityScheme" : [ ]
+        } ]
+      }
+    },
+    "/v1/onboarding/{onboardingId}/reject" : {
+      "put" : {
+        "tags" : [ "Onboarding Controller" ],
+        "summary" : "Perform reject operation of an onboarding request receiving onboarding id.Function change status to REJECT for an onboarding request that is not COMPLETED. ",
+        "parameters" : [ {
+          "name" : "onboardingId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : { }
             }
           },
           "403" : {
