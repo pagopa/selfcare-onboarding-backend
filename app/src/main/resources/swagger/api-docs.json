@@ -2064,6 +2064,82 @@
         } ]
       }
     },
+    "/v2/tokens/{onboardingId}/approve" : {
+      "post" : {
+        "tags" : [ "tokens" ],
+        "summary" : "Service to approve a specific onboarding request",
+        "description" : "Service to approve a specific onboarding request",
+        "operationId" : "approveOnboardingUsingPOST",
+        "parameters" : [ {
+          "name" : "onboardingId",
+          "in" : "path",
+          "description" : "Onboarding's unique identifier",
+          "required" : true,
+          "style" : "simple",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK"
+          },
+          "400" : {
+            "description" : "Bad Request",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Unauthorized",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "Not Found",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "409" : {
+            "description" : "Conflict",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "Internal Server Error",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ "global" ]
+        } ]
+      }
+    },
     "/v2/tokens/{onboardingId}/complete" : {
       "post" : {
         "tags" : [ "tokens" ],
@@ -2100,6 +2176,81 @@
         "responses" : {
           "204" : {
             "description" : "No Content"
+          },
+          "400" : {
+            "description" : "Bad Request",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Unauthorized",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "Not Found",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "409" : {
+            "description" : "Conflict",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "Internal Server Error",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ "global" ]
+        } ]
+      }
+    },
+    "/v2/tokens/{onboardingId}/reject" : {
+      "post" : {
+        "tags" : [ "tokens" ],
+        "summary" : "Service to reject a specific onboarding request",
+        "operationId" : "rejectOnboardingUsingPOST",
+        "parameters" : [ {
+          "name" : "onboardingId",
+          "in" : "path",
+          "description" : "Onboarding's unique identifier",
+          "required" : true,
+          "style" : "simple",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK"
           },
           "400" : {
             "description" : "Bad Request",
@@ -3102,6 +3253,10 @@
           "manager" : {
             "description" : "Manager specific data. It's required when institutionType is not PT",
             "$ref" : "#/components/schemas/UserInfo"
+          },
+          "productId" : {
+            "type" : "string",
+            "description" : "Product's unique identifier"
           },
           "status" : {
             "type" : "string",
