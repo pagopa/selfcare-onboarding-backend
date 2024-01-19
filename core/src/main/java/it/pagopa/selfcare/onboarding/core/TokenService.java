@@ -11,6 +11,8 @@ public interface TokenService {
 
     void approveOnboarding(String onboardingId);
 
+    void rejectOnboarding(String onboardingId);
+
     OnboardingData getOnboardingWithUserInfo(String onboardingId);
 
     public void completeToken(String tokenId, MultipartFile contract);

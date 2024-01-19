@@ -172,4 +172,17 @@ public class OnboardingMsConnectorImplTest {
                 ._v1OnboardingOnboardingIdApprovePut(onboardingId);
         verifyNoMoreInteractions(msOnboardingApiClient);
     }
+
+    @Test
+    void rejectOnboarding() {
+        // given
+        final String onboardingId = "onboardingId";
+        // when
+        final Executable executable = () -> onboardingMsConnector.rejectOnboarding(onboardingId);
+        // then
+        assertDoesNotThrow(executable);
+        verify(msOnboardingApiClient, times(1))
+                ._v1OnboardingOnboardingIdRejectPut(onboardingId);
+        verifyNoMoreInteractions(msOnboardingApiClient);
+    }
 }

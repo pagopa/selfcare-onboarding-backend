@@ -12,6 +12,8 @@ public interface OnboardingMsConnector {
 
     void approveOnboarding(String onboardingId);
 
+    void rejectOnboarding(String onboardingId);
+
     OnboardingData getOnboarding(String onboardingId);
 
     OnboardingData getOnboardingWithUserInfo(String onboardingId);
