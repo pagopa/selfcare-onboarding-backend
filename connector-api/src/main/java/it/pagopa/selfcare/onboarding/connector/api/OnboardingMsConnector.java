@@ -10,6 +10,8 @@ public interface OnboardingMsConnector {
 
     void onboardingPending(String onboardingId);
 
+    void approveOnboarding(String onboardingId);
+
     OnboardingData getOnboarding(String onboardingId);
 
     OnboardingData getOnboardingWithUserInfo(String onboardingId);

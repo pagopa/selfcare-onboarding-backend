@@ -111,4 +111,26 @@ public class TokenV2ControllerTest {
         verify(tokenService, times(1))
                 .getOnboardingWithUserInfo(onboardingId);
     }
+
+    /**
+     * Method under test: {@link TokenV2Controller#approveOnboarding(String)}
+     */
+    @Test
+    void approveOnboardingRequest() throws Exception {
+
+        String onboardingId = UUID.randomUUID().toString();
+        doNothing().when(tokenService).approveOnboarding(onboardingId);
+
+        //when
+        mvc.perform(MockMvcRequestBuilders
+                        .post("/v2/tokens/{onboardingId}/approve", onboardingId)
+                        .contentType(APPLICATION_JSON_VALUE)
+                        .accept(APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk())
+                .andReturn();
+        //then
+
+        verify(tokenService, times(1))
+                .approveOnboarding(onboardingId);
+    }
 }

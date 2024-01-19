@@ -94,4 +94,25 @@ public class TokenV2Controller {
         return result;
     }
 
+
+
+    /**
+     * The function is used to approve the onboarding by admin.
+     * It takes in a String onboarding id.
+     *
+     * @param onboardingId onboardingId
+     * * Code: 200, Message: successful operation, DataType: TokenId
+     * * Code: 400, Message: Invalid ID supplied, DataType: Problem
+     * * Code: 404, Message: Token not found, DataType: Problem
+     * * Code: 409, Message: Token already consumed, DataType: Problem
+     */
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "${swagger.tokens.approveOnboardingRequest}", notes = "${swagger.tokens.approveOnboardingRequest}")
+    @PostMapping("/{onboardingId}/approve")
+    public void approveOnboarding(@ApiParam("${swagger.tokens.onboardingId}")
+                                                                @PathVariable("onboardingId") String onboardingId) {
+        log.debug("approve onboarding identified with {}", onboardingId);
+        tokenService.approveOnboarding(onboardingId);
+    }
+
 }

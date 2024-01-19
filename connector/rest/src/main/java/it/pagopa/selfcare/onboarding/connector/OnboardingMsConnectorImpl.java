@@ -47,6 +47,11 @@ public class OnboardingMsConnectorImpl implements OnboardingMsConnector {
     }
 
     @Override
+    public void approveOnboarding(String onboardingId) {
+        msOnboardingApiClient._v1OnboardingOnboardingIdApprovePut(onboardingId);
+    }
+
+    @Override
     public OnboardingData getOnboarding(String onboardingId) {
         OnboardingGet onboardingGet = msOnboardingApiClient._v1OnboardingOnboardingIdGet(onboardingId).getBody();
         return onboardingMapper.toOnboardingData(onboardingGet);
