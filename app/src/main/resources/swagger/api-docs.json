@@ -2474,7 +2474,9 @@
         "type" : "object",
         "properties" : {
           "agentOfPublicService" : {
-            "type" : "boolean"
+            "type" : "boolean",
+            "description" : "The institution is an agent of a public service",
+            "example" : false
           },
           "agentOfPublicServiceNote" : {
             "type" : "string",
@@ -2495,7 +2497,9 @@
             "description" : "establishedByRegulatoryProvision Note"
           },
           "ipa" : {
-            "type" : "boolean"
+            "type" : "boolean",
+            "description" : "The institution is registered on IPA",
+            "example" : false
           },
           "ipaCode" : {
             "type" : "string",
