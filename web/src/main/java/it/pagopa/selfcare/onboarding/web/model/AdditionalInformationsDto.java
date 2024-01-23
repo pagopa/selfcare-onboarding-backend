@@ -12,8 +12,8 @@ public class AdditionalInformationsDto {
     @ApiModelProperty(value = "${swagger.onboarding.institutions.model.assistance.regulatedMarketNote}")
     private String regulatedMarketNote;
 
-    @ApiModelProperty(value = "${swagger.onboarding.institutions.model.assistance.isIpa}")
-    private boolean isIpa;
+    @ApiModelProperty(value = "${swagger.onboarding.institutions.model.assistance.ipa}")
+    private boolean ipa;
 
     @ApiModelProperty(value = "${swagger.onboarding.institutions.model.assistance.ipaCode}")
     private String ipaCode;
@@ -24,8 +24,8 @@ public class AdditionalInformationsDto {
     @ApiModelProperty(value = "${swagger.onboarding.institutions.model.assistance.establishedByRegulatoryProvisionNote}")
     private String establishedByRegulatoryProvisionNote;
 
-    @ApiModelProperty(value = "${swagger.onboarding.institutions.model.assistance.isAgentOfPublicService}")
-    private boolean isAgentOfPublicService;
+    @ApiModelProperty(value = "${swagger.onboarding.institutions.model.assistance.agentOfPublicService}")
+    private boolean agentOfPublicService;
 
     @ApiModelProperty(value = "${swagger.onboarding.institutions.model.assistance.agentOfPublicServiceNote}")
     private String agentOfPublicServiceNote;
