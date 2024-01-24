@@ -52,6 +52,7 @@ class InstitutionServiceImpl implements InstitutionService {
     protected static final String REQUIRED_TAX_CODE_MESSAGE = "A taxCode id is required";
     protected static final String REQUIRED_INSTITUTION_BILLING_DATA_MESSAGE = "Institution's billing data are required";
     protected static final String REQUIRED_INSTITUTION_TYPE_MESSAGE = "An institution type is required";
+    protected static final String REQUIRED_INSTITUTION_UPDATE_MESSAGE = "InsitutionUpdate is required";
     protected static final String REQUIRED_ONBOARDING_DATA_MESSAGE = "Onboarding data is required";
     protected static final String ATLEAST_ONE_PRODUCT_ROLE_REQUIRED = "At least one Product role related to %s Party role is required";
     protected static final String MORE_THAN_ONE_PRODUCT_ROLE_AVAILABLE = "More than one Product role related to %s Party role is available. Cannot automatically set the Product role";
@@ -63,6 +64,9 @@ class InstitutionServiceImpl implements InstitutionService {
     public static final String FIELD_PSP_DATA_IS_REQUIRED_FOR_PSP_INSTITUTION_ONBOARDING = "Field 'pspData' is required for PSP institution onboarding";
     static final String DESCRIPTION_TO_REPLACE_REGEX = " - COMUNE";
 
+
+
+    private final OnboardingMsConnector onboardingMsConnector;
     private final PartyConnector partyConnector;
     private final ProductsConnector productsConnector;
     private final UserRegistryConnector userConnector;
@@ -74,13 +78,14 @@ class InstitutionServiceImpl implements InstitutionService {
 
 
     @Autowired
-    InstitutionServiceImpl(PartyConnector partyConnector,
+    InstitutionServiceImpl(OnboardingMsConnector onboardingMsConnector, PartyConnector partyConnector,
                            ProductsConnector productsConnector,
                            UserRegistryConnector userConnector,
                            MsExternalInterceptorConnector externalInterceptorConnector, MsCoreConnector msCoreConnector,
                            PartyRegistryProxyConnector partyRegistryProxyConnector,
                            OnboardingValidationStrategy onboardingValidationStrategy,
                            InstitutionInfoMapper institutionMapper) {
+        this.onboardingMsConnector = onboardingMsConnector;
         this.partyConnector = partyConnector;
         this.externalInterceptorConnector = externalInterceptorConnector;
         this.partyRegistryProxyConnector = partyRegistryProxyConnector;
@@ -93,10 +98,10 @@ class InstitutionServiceImpl implements InstitutionService {
 
 
     @Override
-    public void onboardingProductAsync(OnboardingData onboardingData) {
+    public void onboardingProductV2(OnboardingData onboardingData) {
         log.trace("onboardingProductAsync start");
         log.debug("onboardingProductAsync onboardingData = {}", onboardingData);
-        partyConnector.onboarding(onboardingData);
+        onboardingMsConnector.onboarding(onboardingData);
         log.trace("onboarding end");
     }
 
@@ -105,6 +110,11 @@ class InstitutionServiceImpl implements InstitutionService {
         log.trace("onboarding start");
         log.debug("onboarding onboardingData = {}", onboardingData);
 
+        Assert.notNull(onboardingData, REQUIRED_ONBOARDING_DATA_MESSAGE);
+        Assert.notNull(onboardingData.getBilling(), REQUIRED_INSTITUTION_BILLING_DATA_MESSAGE);
+        Assert.notNull(onboardingData.getInstitutionType(), REQUIRED_INSTITUTION_TYPE_MESSAGE);
+        Assert.notNull(onboardingData.getInstitutionUpdate(), REQUIRED_INSTITUTION_UPDATE_MESSAGE);
+
         if (InstitutionType.PSP.equals(onboardingData.getInstitutionType()) && onboardingData.getInstitutionUpdate().getPaymentServiceProvider() == null) {
             throw new ValidationException(FIELD_PSP_DATA_IS_REQUIRED_FOR_PSP_INSTITUTION_ONBOARDING);
         }
@@ -112,9 +122,6 @@ class InstitutionServiceImpl implements InstitutionService {
             throw new ValidationException(LOCATION_INFO_IS_REQUIRED);
         }
 
-        Assert.notNull(onboardingData, REQUIRED_ONBOARDING_DATA_MESSAGE);
-        Assert.notNull(onboardingData.getBilling(), REQUIRED_INSTITUTION_BILLING_DATA_MESSAGE);
-        Assert.notNull(onboardingData.getInstitutionType(), REQUIRED_INSTITUTION_TYPE_MESSAGE);
         Product product = productsConnector.getProduct(onboardingData.getProductId(), onboardingData.getInstitutionType());
         Assert.notNull(product, "Product is required");
         checkIfProductIsDelegable(onboardingData, product.isDelegable());
@@ -147,10 +154,7 @@ class InstitutionServiceImpl implements InstitutionService {
                     (onboardingData.getOrigin().equalsIgnoreCase(Origin.INFOCAMERE.getValue()) || onboardingData.getOrigin().equalsIgnoreCase(Origin.ADE.getValue()))) {
                 institution = partyConnector.createInstitutionFromInfocamere(onboardingData);
             }
-            else if (InstitutionType.PA.equals(onboardingData.getInstitutionType()) ||
-                    InstitutionType.SA.equals(onboardingData.getInstitutionType()) ||
-                    (InstitutionType.GSP.equals(onboardingData.getInstitutionType()) && onboardingData.getProductId().equals(PROD_INTEROP.getValue())
-                            && onboardingData.getOrigin().equals(Origin.IPA.getValue()))) {
+            else if (isInstitutionPresentOnIpa(onboardingData)) {
                 institution = partyConnector.createInstitutionFromIpa(onboardingData.getTaxCode(), onboardingData.getSubunitCode(), onboardingData.getSubunitType());
             } else {
                 institution = partyConnector.createInstitution(onboardingData);
@@ -180,6 +184,21 @@ class InstitutionServiceImpl implements InstitutionService {
         return !Origin.IPA.equals(Origin.fromValue(origin)) &&
                 !Origin.ADE.equals(Origin.fromValue(origin)) &&
                 !Origin.INFOCAMERE.equals(Origin.fromValue(origin));
+    }
+
+    private boolean isInstitutionPresentOnIpa(OnboardingData onboardingData) {
+        try {
+            if (onboardingData.getSubunitType() != null && onboardingData.getSubunitType().equals("AOO")) {
+                partyRegistryProxyConnector.getAooById(onboardingData.getSubunitCode());
+            } else if (onboardingData.getSubunitType() != null && onboardingData.getSubunitType().equals("UO")) {
+                partyRegistryProxyConnector.getUoById(onboardingData.getSubunitCode());
+            } else {
+                partyRegistryProxyConnector.getInstitutionProxyById(onboardingData.getTaxCode());
+            }
+            return true;
+        } catch (ResourceNotFoundException e) {
+            return false;
+        }
     }
 
     private void checkIfProductIsActiveAndSetUserProductRole(Product product, OnboardingData onboardingData) {

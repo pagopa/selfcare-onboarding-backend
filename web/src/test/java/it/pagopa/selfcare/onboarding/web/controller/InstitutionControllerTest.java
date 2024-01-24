@@ -52,7 +52,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ContextConfiguration(classes = {InstitutionController.class, WebTestConfig.class, OnboardingResourceMapperImpl.class, OnboardingInstitutionInfoMapperImpl.class})
 class InstitutionControllerTest {
 
-    private static final String BASE_URL = "/institutions";
+    private static final String BASE_URL = "/v1/institutions";
 
     @Autowired
     protected MockMvc mvc;
@@ -104,27 +104,6 @@ class InstitutionControllerTest {
         // then
         verify(institutionServiceMock, times(1))
                 .onboardingProduct(any(OnboardingData.class));
-        verifyNoMoreInteractions(institutionServiceMock);
-    }
-
-
-    @Test
-    void onboardingProductAsync(@Value("classpath:stubs/onboardingProductsDtoWithoutGeo.json") Resource onboardingDto) throws Exception {
-        // given
-        String institutionId = "institutionId";
-        String productId = "productId";
-        // when
-        mvc.perform(MockMvcRequestBuilders
-                        .post(BASE_URL + "/onboarding", institutionId, productId)
-                        .param("mode", OnboardingMode.ASYNC.toString())
-                        .content(onboardingDto.getInputStream().readAllBytes())
-                        .contentType(APPLICATION_JSON_VALUE)
-                        .accept(APPLICATION_JSON_VALUE))
-                .andExpect(status().isCreated())
-                .andExpect(content().string(emptyString()));
-        // then
-        verify(institutionServiceMock, times(1))
-                .onboardingProductAsync(any(OnboardingData.class));
         verifyNoMoreInteractions(institutionServiceMock);
     }
 

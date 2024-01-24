@@ -28,7 +28,7 @@ import static org.mockito.ArgumentMatchers.any;
         WebTestConfig.class
 })
 class ProductControllerTest {
-    private static final String BASE_URL = "/product";
+    private static final String BASE_URL = "/v1/product";
 
     @Autowired
     protected MockMvc mvc;

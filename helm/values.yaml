@@ -51,7 +51,7 @@ ingress:
   hosts:
     - host: ""
       paths:
-        - path: /onboarding/v1/(.*)
+        - path: /onboarding/(.*)
           pathType: ImplementationSpecific
   tls: []
   #  - secretName: chart-example-tls
@@ -89,4 +89,5 @@ affinity: {}
 
 config:
   APPLICATIONINSIGHTS_ROLE_NAME: "b4f-onboarding"
-  REST_CLIENT_READ_TIMEOUT: "10000"
+  REST_CLIENT_READ_TIMEOUT: "30000"
+  REST_CLIENT_CONNECT_TIMEOUT: "30000"

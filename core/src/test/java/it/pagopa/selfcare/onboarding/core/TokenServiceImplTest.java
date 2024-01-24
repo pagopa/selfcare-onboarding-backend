@@ -1,6 +1,7 @@
 package it.pagopa.selfcare.onboarding.core;
 
 
+import it.pagopa.selfcare.onboarding.connector.api.OnboardingMsConnector;
 import it.pagopa.selfcare.onboarding.connector.api.PartyConnector;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -28,6 +29,9 @@ public class TokenServiceImplTest {
 
     @Mock
     private PartyConnector partyConnector;
+
+    @Mock
+    private OnboardingMsConnector onboardingMsConnector;
 
     @Test
     void shouldNotVerifyTokenWhenIdIsNull() {
@@ -79,6 +83,50 @@ public class TokenServiceImplTest {
     }
 
     @Test
+    void shouldNotCompleteTokenV2WhenIdIsNull() {
+        Executable executable = () -> tokenService.completeTokenV2(null, null);
+        //then
+        Exception e = Assertions.assertThrows(IllegalArgumentException.class, executable);
+        Assertions.assertEquals("TokenId is required", e.getMessage());
+        Mockito.verifyNoInteractions(partyConnector);
+    }
+
+    @Test
+    void shouldCompleteTokenV2() throws IOException {
+        //given
+        String tokenId = "example";
+        MockMultipartFile mockMultipartFile = new MockMultipartFile("example", new ByteArrayInputStream("example".getBytes(StandardCharsets.UTF_8)));
+        doNothing().when(onboardingMsConnector).onboardingTokenComplete(anyString(), any());
+        // when
+        tokenService.completeTokenV2(tokenId, mockMultipartFile);
+        //then
+        Mockito.verify(onboardingMsConnector, Mockito.times(1))
+                .onboardingTokenComplete(tokenId, mockMultipartFile);
+    }
+
+    @Test
+    void onboardingPending() {
+        //given
+        final String onboardingId = "onboardingId";
+        // when
+        tokenService.verifyOnboarding(onboardingId);
+        //then
+        Mockito.verify(onboardingMsConnector, Mockito.times(1))
+                .onboardingPending(onboardingId);
+    }
+
+    @Test
+    void onboardingWithUserInfo() {
+        //given
+        final String onboardingId = "onboardingId";
+        // when
+        tokenService.getOnboardingWithUserInfo(onboardingId);
+        //then
+        Mockito.verify(onboardingMsConnector, Mockito.times(1))
+                .getOnboardingWithUserInfo(onboardingId);
+    }
+
+    @Test
     void shouldDeleteToken() {
         //given
         String tokenId = "example";
@@ -88,5 +136,29 @@ public class TokenServiceImplTest {
         //then
         Mockito.verify(partyConnector, Mockito.times(1))
                 .deleteTokenComplete(tokenId);
+    }
+
+    @Test
+    void approveOnboarding() {
+        //given
+        String onboardingId = "example";
+        doNothing().when(onboardingMsConnector).approveOnboarding(onboardingId);
+        // when
+        tokenService.approveOnboarding(onboardingId);
+        //then
+        Mockito.verify(onboardingMsConnector, Mockito.times(1))
+                .approveOnboarding(onboardingId);
+    }
+
+    @Test
+    void rejectOnboarding() {
+        //given
+        String onboardingId = "example";
+        doNothing().when(onboardingMsConnector).rejectOnboarding(onboardingId);
+        // when
+        tokenService.rejectOnboarding(onboardingId);
+        //then
+        Mockito.verify(onboardingMsConnector, Mockito.times(1))
+                .rejectOnboarding(onboardingId);
     }
 }

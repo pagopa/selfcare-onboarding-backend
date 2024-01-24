@@ -46,7 +46,7 @@ public class TokenControllerTest {
 
         //when
         mvc.perform(MockMvcRequestBuilders
-                        .post("/tokens/{tokenId}/verify", id)
+                        .post("/v1/tokens/{tokenId}/verify", id)
                         .contentType(APPLICATION_JSON_VALUE)
                         .accept(APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk())
@@ -64,7 +64,7 @@ public class TokenControllerTest {
 
         MockMultipartFile file = new MockMultipartFile("contract", "".getBytes());
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
-                .multipart("/tokens/{tokenId}/complete",
+                .multipart("/v1/tokens/{tokenId}/complete",
                         "42")
                 .file(file);
         mvc.perform(requestBuilder)
@@ -82,7 +82,7 @@ public class TokenControllerTest {
 
         //when
         mvc.perform(MockMvcRequestBuilders
-                        .delete("/tokens/{tokenId}/complete", id)
+                        .delete("/v1/tokens/{tokenId}/complete", id)
                         .contentType(APPLICATION_JSON_VALUE)
                         .accept(APPLICATION_JSON_VALUE))
                 .andExpect(status().isNoContent());
