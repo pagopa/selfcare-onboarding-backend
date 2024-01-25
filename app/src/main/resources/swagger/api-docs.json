@@ -2469,6 +2469,52 @@
   },
   "components" : {
     "schemas" : {
+      "AdditionalInformations" : {
+        "title" : "AdditionalInformations",
+        "type" : "object",
+        "properties" : {
+          "agentOfPublicService" : {
+            "type" : "boolean",
+            "description" : "The institution is an agent of a public service",
+            "example" : false
+          },
+          "agentOfPublicServiceNote" : {
+            "type" : "string",
+            "description" : "agentOfPublicService Note"
+          },
+          "belongRegulatedMarket" : {
+            "type" : "boolean",
+            "description" : "The institution belongs to a regulated market",
+            "example" : false
+          },
+          "establishedByRegulatoryProvision" : {
+            "type" : "boolean",
+            "description" : "The institution is a company established by a regulatory provision",
+            "example" : false
+          },
+          "establishedByRegulatoryProvisionNote" : {
+            "type" : "string",
+            "description" : "establishedByRegulatoryProvision Note"
+          },
+          "ipa" : {
+            "type" : "boolean",
+            "description" : "The institution is registered on IPA",
+            "example" : false
+          },
+          "ipaCode" : {
+            "type" : "string",
+            "description" : "IPA code"
+          },
+          "otherNote" : {
+            "type" : "string",
+            "description" : "Other note"
+          },
+          "regulatedMarketNote" : {
+            "type" : "string",
+            "description" : "regulatedMarket Note"
+          }
+        }
+      },
       "AdditionalInformationsDto" : {
         "title" : "AdditionalInformationsDto",
         "type" : "object",
@@ -2889,6 +2935,10 @@
         "required" : [ "address", "fiscalCode", "id", "institutionType", "mailAddress", "name", "recipientCode", "vatNumber", "zipCode" ],
         "type" : "object",
         "properties" : {
+          "additionalInformations" : {
+            "description" : "GSP institution's additional informations",
+            "$ref" : "#/components/schemas/AdditionalInformations"
+          },
           "address" : {
             "type" : "string",
             "description" : "Institution's physical address"

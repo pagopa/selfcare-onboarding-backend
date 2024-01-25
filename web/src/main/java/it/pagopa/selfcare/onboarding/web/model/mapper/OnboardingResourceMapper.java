@@ -59,6 +59,7 @@ public interface OnboardingResourceMapper {
 
     @Mapping(source = "users", target = "manager", qualifiedByName = "toManager")
     @Mapping(source = "users", target = "admins", qualifiedByName = "toAdmin")
+    @Mapping(source = "institutionUpdate.additionalInformations", target = "institutionInfo.additionalInformations")
     OnboardingRequestResource toOnboardingRequestResource(OnboardingData onboardingData);
 
     @Mapping(source = "taxCode", target = "fiscalCode")

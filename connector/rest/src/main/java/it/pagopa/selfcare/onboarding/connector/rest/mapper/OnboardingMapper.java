@@ -22,6 +22,7 @@ public interface OnboardingMapper {
     @Mapping(target = "institution", source = ".", qualifiedByName = "toInstitutionPsp")
     OnboardingPspRequest toOnboardingPspRequest(OnboardingData onboardingData);
     @Mapping(target = "institution", source = ".", qualifiedByName = "toInstitutionBase")
+    @Mapping(target = "additionalInformations", source = "institutionUpdate.additionalInformations")
     OnboardingDefaultRequest toOnboardingDefaultRequest(OnboardingData onboardingData);
 
     GeographicTaxonomyDto toGeographicTaxonomyDto(GeographicTaxonomy geographicTaxonomy);
@@ -102,5 +103,6 @@ public interface OnboardingMapper {
     DataProtectionOfficerRequest toDataProtectionOfficerRequest(DataProtectionOfficer dataProtectionOfficer);
 
     @Mapping(target = "institutionUpdate", source = "institution")
+    @Mapping(target = "institutionUpdate.additionalInformations", source = "additionalInformations")
     OnboardingData toOnboardingData(OnboardingGet onboardingGet);
 }

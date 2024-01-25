@@ -113,6 +113,42 @@
         } ]
       }
     },
+    "/v1/onboarding/completion" : {
+      "post" : {
+        "tags" : [ "Onboarding Controller" ],
+        "summary" : "Perform onboarding as /onboarding but completing the onboarding request to COMPLETED phase.",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/OnboardingDefaultRequest"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/OnboardingResponse"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "Not Allowed"
+          },
+          "401" : {
+            "description" : "Not Authorized"
+          }
+        },
+        "security" : [ {
+          "SecurityScheme" : [ ]
+        } ]
+      }
+    },
     "/v1/onboarding/pa" : {
       "post" : {
         "tags" : [ "Onboarding Controller" ],
@@ -149,10 +185,82 @@
         } ]
       }
     },
+    "/v1/onboarding/pa/completion" : {
+      "post" : {
+        "tags" : [ "Onboarding Controller" ],
+        "summary" : "Perform onboarding as /onboarding/pa but completing the onboarding request to COMPLETED phase.",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/OnboardingPaRequest"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/OnboardingResponse"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "Not Allowed"
+          },
+          "401" : {
+            "description" : "Not Authorized"
+          }
+        },
+        "security" : [ {
+          "SecurityScheme" : [ ]
+        } ]
+      }
+    },
     "/v1/onboarding/psp" : {
       "post" : {
         "tags" : [ "Onboarding Controller" ],
         "summary" : "Perform onboarding request for PSP institution type.Users data will be saved on personal data vault if it doesn't already exist.At the end, function triggers async activities related to onboarding that consist of sending mail to Selfcare admin for approve request.",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/OnboardingPspRequest"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/OnboardingResponse"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "Not Allowed"
+          },
+          "401" : {
+            "description" : "Not Authorized"
+          }
+        },
+        "security" : [ {
+          "SecurityScheme" : [ ]
+        } ]
+      }
+    },
+    "/v1/onboarding/psp/completion" : {
+      "post" : {
+        "tags" : [ "Onboarding Controller" ],
+        "summary" : "Perform onboarding as /onboarding/psp but completing the onboarding request to COMPLETED phase.",
         "requestBody" : {
           "content" : {
             "application/json" : {
@@ -401,6 +509,70 @@
   },
   "components" : {
     "schemas" : {
+      "AdditionalInformationsRequest" : {
+        "type" : "object",
+        "properties" : {
+          "belongRegulatedMarket" : {
+            "type" : "boolean"
+          },
+          "regulatedMarketNote" : {
+            "type" : "string"
+          },
+          "ipa" : {
+            "type" : "boolean"
+          },
+          "ipaCode" : {
+            "type" : "string"
+          },
+          "establishedByRegulatoryProvision" : {
+            "type" : "boolean"
+          },
+          "establishedByRegulatoryProvisionNote" : {
+            "type" : "string"
+          },
+          "agentOfPublicService" : {
+            "type" : "boolean"
+          },
+          "agentOfPublicServiceNote" : {
+            "type" : "string"
+          },
+          "otherNote" : {
+            "type" : "string"
+          }
+        }
+      },
+      "AdditionalInformationsResponse" : {
+        "type" : "object",
+        "properties" : {
+          "belongRegulatedMarket" : {
+            "type" : "boolean"
+          },
+          "regulatedMarketNote" : {
+            "type" : "string"
+          },
+          "ipa" : {
+            "type" : "boolean"
+          },
+          "ipaCode" : {
+            "type" : "string"
+          },
+          "establishedByRegulatoryProvision" : {
+            "type" : "boolean"
+          },
+          "establishedByRegulatoryProvisionNote" : {
+            "type" : "string"
+          },
+          "agentOfPublicService" : {
+            "type" : "boolean"
+          },
+          "agentOfPublicServiceNote" : {
+            "type" : "string"
+          },
+          "otherNote" : {
+            "type" : "string"
+          }
+        }
+      },
       "BillingPaRequest" : {
         "required" : [ "vatNumber", "recipientCode" ],
         "type" : "object",
@@ -744,6 +916,9 @@
           },
           "billing" : {
             "$ref" : "#/components/schemas/BillingRequest"
+          },
+          "additionalInformations" : {
+            "$ref" : "#/components/schemas/AdditionalInformationsRequest"
           }
         }
       },
@@ -776,6 +951,9 @@
           },
           "signContract" : {
             "type" : "boolean"
+          },
+          "additionalInformations" : {
+            "$ref" : "#/components/schemas/AdditionalInformationsResponse"
           },
           "status" : {
             "type" : "string"
