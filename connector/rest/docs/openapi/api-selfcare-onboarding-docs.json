@@ -67,11 +67,11 @@
               }
             }
           },
-          "403" : {
-            "description" : "Not Allowed"
-          },
           "401" : {
             "description" : "Not Authorized"
+          },
+          "403" : {
+            "description" : "Not Allowed"
           }
         },
         "security" : [ {
@@ -101,11 +101,11 @@
               }
             }
           },
-          "403" : {
-            "description" : "Not Allowed"
-          },
           "401" : {
             "description" : "Not Authorized"
+          },
+          "403" : {
+            "description" : "Not Allowed"
           }
         },
         "security" : [ {
@@ -137,11 +137,11 @@
               }
             }
           },
-          "403" : {
-            "description" : "Not Allowed"
-          },
           "401" : {
             "description" : "Not Authorized"
+          },
+          "403" : {
+            "description" : "Not Allowed"
           }
         },
         "security" : [ {
@@ -173,11 +173,11 @@
               }
             }
           },
-          "403" : {
-            "description" : "Not Allowed"
-          },
           "401" : {
             "description" : "Not Authorized"
+          },
+          "403" : {
+            "description" : "Not Allowed"
           }
         },
         "security" : [ {
@@ -209,11 +209,11 @@
               }
             }
           },
-          "403" : {
-            "description" : "Not Allowed"
-          },
           "401" : {
             "description" : "Not Authorized"
+          },
+          "403" : {
+            "description" : "Not Allowed"
           }
         },
         "security" : [ {
@@ -245,11 +245,11 @@
               }
             }
           },
-          "403" : {
-            "description" : "Not Allowed"
-          },
           "401" : {
             "description" : "Not Authorized"
+          },
+          "403" : {
+            "description" : "Not Allowed"
           }
         },
         "security" : [ {
@@ -281,11 +281,11 @@
               }
             }
           },
-          "403" : {
-            "description" : "Not Allowed"
-          },
           "401" : {
             "description" : "Not Authorized"
+          },
+          "403" : {
+            "description" : "Not Allowed"
           }
         },
         "security" : [ {
@@ -316,11 +316,11 @@
               }
             }
           },
-          "403" : {
-            "description" : "Not Allowed"
-          },
           "401" : {
             "description" : "Not Authorized"
+          },
+          "403" : {
+            "description" : "Not Allowed"
           }
         },
         "security" : [ {
@@ -347,11 +347,11 @@
               "application/json" : { }
             }
           },
-          "403" : {
-            "description" : "Not Allowed"
-          },
           "401" : {
             "description" : "Not Authorized"
+          },
+          "403" : {
+            "description" : "Not Allowed"
           }
         },
         "security" : [ {
@@ -393,11 +393,11 @@
               "application/json" : { }
             }
           },
-          "403" : {
-            "description" : "Not Allowed"
-          },
           "401" : {
             "description" : "Not Authorized"
+          },
+          "403" : {
+            "description" : "Not Allowed"
           }
         },
         "security" : [ {
@@ -428,11 +428,11 @@
               }
             }
           },
-          "403" : {
-            "description" : "Not Allowed"
-          },
           "401" : {
             "description" : "Not Authorized"
+          },
+          "403" : {
+            "description" : "Not Allowed"
           }
         },
         "security" : [ {
@@ -459,11 +459,11 @@
               "application/json" : { }
             }
           },
-          "403" : {
-            "description" : "Not Allowed"
-          },
           "401" : {
             "description" : "Not Authorized"
+          },
+          "403" : {
+            "description" : "Not Allowed"
           }
         },
         "security" : [ {
@@ -494,11 +494,11 @@
               }
             }
           },
-          "403" : {
-            "description" : "Not Allowed"
-          },
           "401" : {
             "description" : "Not Authorized"
+          },
+          "403" : {
+            "description" : "Not Allowed"
           }
         },
         "security" : [ {
@@ -509,39 +509,7 @@
   },
   "components" : {
     "schemas" : {
-      "AdditionalInformationsRequest" : {
-        "type" : "object",
-        "properties" : {
-          "belongRegulatedMarket" : {
-            "type" : "boolean"
-          },
-          "regulatedMarketNote" : {
-            "type" : "string"
-          },
-          "ipa" : {
-            "type" : "boolean"
-          },
-          "ipaCode" : {
-            "type" : "string"
-          },
-          "establishedByRegulatoryProvision" : {
-            "type" : "boolean"
-          },
-          "establishedByRegulatoryProvisionNote" : {
-            "type" : "string"
-          },
-          "agentOfPublicService" : {
-            "type" : "boolean"
-          },
-          "agentOfPublicServiceNote" : {
-            "type" : "string"
-          },
-          "otherNote" : {
-            "type" : "string"
-          }
-        }
-      },
-      "AdditionalInformationsResponse" : {
+      "AdditionalInformationsDto" : {
         "type" : "object",
         "properties" : {
           "belongRegulatedMarket" : {
@@ -918,7 +886,7 @@
             "$ref" : "#/components/schemas/BillingRequest"
           },
           "additionalInformations" : {
-            "$ref" : "#/components/schemas/AdditionalInformationsRequest"
+            "$ref" : "#/components/schemas/AdditionalInformationsDto"
           }
         }
       },
@@ -953,7 +921,7 @@
             "type" : "boolean"
           },
           "additionalInformations" : {
-            "$ref" : "#/components/schemas/AdditionalInformationsResponse"
+            "$ref" : "#/components/schemas/AdditionalInformationsDto"
           },
           "status" : {
             "type" : "string"
