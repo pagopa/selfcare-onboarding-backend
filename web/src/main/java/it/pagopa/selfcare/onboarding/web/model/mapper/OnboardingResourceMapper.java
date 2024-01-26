@@ -28,6 +28,7 @@ public interface OnboardingResourceMapper {
     @Mapping(source = "companyInformations.businessRegisterPlace", target = "institutionUpdate.businessRegisterPlace")
     @Mapping(source = "assistanceContacts.supportEmail", target = "institutionUpdate.supportEmail")
     @Mapping(source = "assistanceContacts.supportPhone", target = "institutionUpdate.supportPhone")
+    @Mapping(source = "additionalInformations", target = "institutionUpdate.additionalInformations")
     OnboardingData toEntity(OnboardingProductDto dto);
 
     @Mapping(source = "billingData", target = "billing")
@@ -58,6 +59,7 @@ public interface OnboardingResourceMapper {
 
     @Mapping(source = "users", target = "manager", qualifiedByName = "toManager")
     @Mapping(source = "users", target = "admins", qualifiedByName = "toAdmin")
+    @Mapping(source = "institutionUpdate.additionalInformations", target = "institutionInfo.additionalInformations")
     OnboardingRequestResource toOnboardingRequestResource(OnboardingData onboardingData);
 
     @Mapping(source = "taxCode", target = "fiscalCode")

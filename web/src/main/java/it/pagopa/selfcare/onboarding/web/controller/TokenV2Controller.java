@@ -94,4 +94,66 @@ public class TokenV2Controller {
         return result;
     }
 
+    /**
+     * The function is used to approve the onboarding by admin.
+     * It takes in a String onboarding id.
+     *
+     * @param onboardingId onboardingId
+     * * Code: 200, Message: successful operation, DataType: TokenId
+     * * Code: 400, Message: Invalid ID supplied, DataType: Problem
+     * * Code: 404, Message: Token not found, DataType: Problem
+     * * Code: 409, Message: Token already consumed, DataType: Problem
+     */
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "${swagger.tokens.approveOnboardingRequest}", notes = "${swagger.tokens.approveOnboardingRequest}")
+    @PostMapping("/{onboardingId}/approve")
+    public void approveOnboarding(@ApiParam("${swagger.tokens.onboardingId}")
+                                                                @PathVariable("onboardingId") String onboardingId) {
+        log.debug("approve onboarding identified with {}", onboardingId);
+        tokenService.approveOnboarding(onboardingId);
+    }
+
+
+
+
+
+    /**
+     * The function is used to reject the onboarding by admin.
+     * It takes in a String onboarding id.
+     *
+     * @param onboardingId onboardingId
+     * * Code: 200, Message: successful operation, DataType: TokenId
+     * * Code: 400, Message: Invalid ID supplied, DataType: Problem
+     * * Code: 404, Message: Token not found, DataType: Problem
+     * * Code: 409, Message: Token already consumed, DataType: Problem
+     */
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "${swagger.tokens.rejectOnboardingRequest}")
+    @PostMapping("/{onboardingId}/reject")
+    public void rejectOnboarding(@ApiParam("${swagger.tokens.onboardingId}")
+                                  @PathVariable("onboardingId") String onboardingId) {
+        log.debug("reject onboarding identified with {}", onboardingId);
+        tokenService.rejectOnboarding(onboardingId);
+    }
+
+    /**
+     * The function delete token on onboarding request
+     * it is duplicated with /reject for retro compatibility
+     *
+     * @param onboardingId String
+     * @return no content
+     * * Code: 204, Message: successful operation, DataType: TokenId
+     * * Code: 400, Message: Invalid ID supplied, DataType: Problem
+     * * Code: 404, Message: Not found, DataType: Problem
+     */
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ApiOperation(value = "${swagger.tokens.complete}", notes = "${swagger.tokens.complete}")
+    @DeleteMapping(value = "/{onboardingId}/complete")
+    public ResponseEntity<Void> delete(@ApiParam("${swagger.tokens.tokenId}")
+                                       @PathVariable(value = "onboardingId") String onboardingId) {
+        log.trace("delete Token start");
+        log.debug("delete Token tokenId = {}", onboardingId);
+        tokenService.rejectOnboarding(onboardingId);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
 }

@@ -55,6 +55,26 @@ public class TokenServiceImpl implements TokenService {
     }
 
     @Override
+    public void approveOnboarding(String onboardingId) {
+        log.trace("approveOnboarding start");
+        log.debug("approveOnboarding id = {}", onboardingId);
+        Assert.notNull(onboardingId, "OnboardingId is required");
+        onboardingMsConnector.approveOnboarding(onboardingId);
+        log.debug("approveOnboarding result = success");
+        log.trace("approveOnboarding end");
+    }
+
+    @Override
+    public void rejectOnboarding(String onboardingId) {
+        log.trace("rejectOnboarding start");
+        log.debug("rejectOnboarding id = {}", onboardingId);
+        Assert.notNull(onboardingId, "OnboardingId is required");
+        onboardingMsConnector.rejectOnboarding(onboardingId);
+        log.debug("rejectOnboarding result = success");
+        log.trace("rejectOnboarding end");
+    }
+
+    @Override
     public OnboardingData getOnboardingWithUserInfo(String onboardingId) {
         log.trace("getOnboardingWithUserInfo start");
         log.debug("getOnboardingWithUserInfo id = {}", onboardingId);

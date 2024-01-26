@@ -1,6 +1,7 @@
 package it.pagopa.selfcare.onboarding.connector.rest.model;
 
 import it.pagopa.selfcare.commons.base.utils.InstitutionType;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.AdditionalInformations;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.DataProtectionOfficer;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.PaymentServiceProvider;
 import lombok.Data;
@@ -28,5 +29,6 @@ public class InstitutionUpdate {
     private String supportEmail;
     private String supportPhone;
     private Boolean imported;
+    private AdditionalInformations additionalInformations;
 
 }

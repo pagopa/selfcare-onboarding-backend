@@ -1701,7 +1701,7 @@
           "style" : "form",
           "schema" : {
             "type" : "string",
-            "enum" : [ "AS", "GSP", "PA", "PG", "PSP", "PT", "SA", "SCP" ]
+            "enum" : [ "AS", "CON", "GSP", "PA", "PG", "PSP", "PT", "REC", "SA", "SCP" ]
           }
         } ],
         "responses" : {
@@ -2064,6 +2064,82 @@
         } ]
       }
     },
+    "/v2/tokens/{onboardingId}/approve" : {
+      "post" : {
+        "tags" : [ "tokens" ],
+        "summary" : "Service to approve a specific onboarding request",
+        "description" : "Service to approve a specific onboarding request",
+        "operationId" : "approveOnboardingUsingPOST",
+        "parameters" : [ {
+          "name" : "onboardingId",
+          "in" : "path",
+          "description" : "Onboarding's unique identifier",
+          "required" : true,
+          "style" : "simple",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK"
+          },
+          "400" : {
+            "description" : "Bad Request",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Unauthorized",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "Not Found",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "409" : {
+            "description" : "Conflict",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "Internal Server Error",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ "global" ]
+        } ]
+      }
+    },
     "/v2/tokens/{onboardingId}/complete" : {
       "post" : {
         "tags" : [ "tokens" ],
@@ -2100,6 +2176,135 @@
         "responses" : {
           "204" : {
             "description" : "No Content"
+          },
+          "400" : {
+            "description" : "Bad Request",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Unauthorized",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "Not Found",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "409" : {
+            "description" : "Conflict",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "Internal Server Error",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ "global" ]
+        } ]
+      },
+      "delete" : {
+        "tags" : [ "tokens" ],
+        "summary" : "Complete an onboarding request",
+        "description" : "Complete an onboarding request",
+        "operationId" : "deleteUsingDELETE_1",
+        "parameters" : [ {
+          "name" : "onboardingId",
+          "in" : "path",
+          "description" : "Contract's unique identifier",
+          "required" : true,
+          "style" : "simple",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "No Content"
+          },
+          "400" : {
+            "description" : "Bad Request",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Unauthorized",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "Internal Server Error",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ "global" ]
+        } ]
+      }
+    },
+    "/v2/tokens/{onboardingId}/reject" : {
+      "post" : {
+        "tags" : [ "tokens" ],
+        "summary" : "Service to reject a specific onboarding request",
+        "operationId" : "rejectOnboardingUsingPOST",
+        "parameters" : [ {
+          "name" : "onboardingId",
+          "in" : "path",
+          "description" : "Onboarding's unique identifier",
+          "required" : true,
+          "style" : "simple",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK"
           },
           "400" : {
             "description" : "Bad Request",
@@ -2318,6 +2523,98 @@
   },
   "components" : {
     "schemas" : {
+      "AdditionalInformations" : {
+        "title" : "AdditionalInformations",
+        "type" : "object",
+        "properties" : {
+          "agentOfPublicService" : {
+            "type" : "boolean",
+            "description" : "The institution is an agent of a public service",
+            "example" : false
+          },
+          "agentOfPublicServiceNote" : {
+            "type" : "string",
+            "description" : "agentOfPublicService Note"
+          },
+          "belongRegulatedMarket" : {
+            "type" : "boolean",
+            "description" : "The institution belongs to a regulated market",
+            "example" : false
+          },
+          "establishedByRegulatoryProvision" : {
+            "type" : "boolean",
+            "description" : "The institution is a company established by a regulatory provision",
+            "example" : false
+          },
+          "establishedByRegulatoryProvisionNote" : {
+            "type" : "string",
+            "description" : "establishedByRegulatoryProvision Note"
+          },
+          "ipa" : {
+            "type" : "boolean",
+            "description" : "The institution is registered on IPA",
+            "example" : false
+          },
+          "ipaCode" : {
+            "type" : "string",
+            "description" : "IPA code"
+          },
+          "otherNote" : {
+            "type" : "string",
+            "description" : "Other note"
+          },
+          "regulatedMarketNote" : {
+            "type" : "string",
+            "description" : "regulatedMarket Note"
+          }
+        }
+      },
+      "AdditionalInformationsDto" : {
+        "title" : "AdditionalInformationsDto",
+        "type" : "object",
+        "properties" : {
+          "agentOfPublicService" : {
+            "type" : "boolean",
+            "description" : "The institution is an agent of a public service",
+            "example" : false
+          },
+          "agentOfPublicServiceNote" : {
+            "type" : "string",
+            "description" : "agentOfPublicService Note"
+          },
+          "belongRegulatedMarket" : {
+            "type" : "boolean",
+            "description" : "The institution belongs to a regulated market",
+            "example" : false
+          },
+          "establishedByRegulatoryProvision" : {
+            "type" : "boolean",
+            "description" : "The institution is a company established by a regulatory provision",
+            "example" : false
+          },
+          "establishedByRegulatoryProvisionNote" : {
+            "type" : "string",
+            "description" : "establishedByRegulatoryProvision Note"
+          },
+          "ipa" : {
+            "type" : "boolean",
+            "description" : "The institution is registered on IPA",
+            "example" : false
+          },
+          "ipaCode" : {
+            "type" : "string",
+            "description" : "IPA code"
+          },
+          "otherNote" : {
+            "type" : "string",
+            "description" : "Other note"
+          },
+          "regulatedMarketNote" : {
+            "type" : "string",
+            "description" : "regulatedMarket Note"
+          }
+        }
+      },
       "AssistanceContactsDto" : {
         "title" : "AssistanceContactsDto",
         "type" : "object",
@@ -2523,7 +2820,7 @@
           "institutionType" : {
             "type" : "string",
             "description" : "Institution's type",
-            "enum" : [ "AS", "GSP", "PA", "PG", "PSP", "PT", "SA", "SCP" ]
+            "enum" : [ "AS", "CON", "GSP", "PA", "PG", "PSP", "PT", "REC", "SA", "SCP" ]
           },
           "productId" : {
             "type" : "string",
@@ -2680,7 +2977,7 @@
           "institutionType" : {
             "type" : "string",
             "description" : "Institution's type",
-            "enum" : [ "AS", "GSP", "PA", "PG", "PSP", "PT", "SA", "SCP" ]
+            "enum" : [ "AS", "CON", "GSP", "PA", "PG", "PSP", "PT", "REC", "SA", "SCP" ]
           },
           "origin" : {
             "type" : "string"
@@ -2692,6 +2989,10 @@
         "required" : [ "address", "fiscalCode", "id", "institutionType", "mailAddress", "name", "recipientCode", "vatNumber", "zipCode" ],
         "type" : "object",
         "properties" : {
+          "additionalInformations" : {
+            "description" : "GSP institution's additional informations",
+            "$ref" : "#/components/schemas/AdditionalInformations"
+          },
           "address" : {
             "type" : "string",
             "description" : "Institution's physical address"
@@ -2723,7 +3024,7 @@
           "institutionType" : {
             "type" : "string",
             "description" : "Institution's type",
-            "enum" : [ "AS", "GSP", "PA", "PG", "PSP", "PT", "SA", "SCP" ]
+            "enum" : [ "AS", "CON", "GSP", "PA", "PG", "PSP", "PT", "REC", "SA", "SCP" ]
           },
           "mailAddress" : {
             "type" : "string",
@@ -2841,7 +3142,7 @@
           "institutionType" : {
             "type" : "string",
             "description" : "Institution's type",
-            "enum" : [ "AS", "GSP", "PA", "PG", "PSP", "PT", "SA", "SCP" ]
+            "enum" : [ "AS", "CON", "GSP", "PA", "PG", "PSP", "PT", "REC", "SA", "SCP" ]
           },
           "origin" : {
             "type" : "string",
@@ -2940,7 +3241,7 @@
           "institutionType" : {
             "type" : "string",
             "description" : "Institution's type",
-            "enum" : [ "AS", "GSP", "PA", "PG", "PSP", "PT", "SA", "SCP" ]
+            "enum" : [ "AS", "CON", "GSP", "PA", "PG", "PSP", "PT", "REC", "SA", "SCP" ]
           },
           "origin" : {
             "type" : "string",
@@ -2968,6 +3269,10 @@
         "required" : [ "billingData", "institutionType", "productId", "taxCode", "users" ],
         "type" : "object",
         "properties" : {
+          "additionalInformations" : {
+            "description" : "GSP institution's additional informations",
+            "$ref" : "#/components/schemas/AdditionalInformationsDto"
+          },
           "assistanceContacts" : {
             "description" : "Institution's assistance contacts",
             "$ref" : "#/components/schemas/AssistanceContactsDto"
@@ -2994,7 +3299,7 @@
           "institutionType" : {
             "type" : "string",
             "description" : "Institution's type",
-            "enum" : [ "AS", "GSP", "PA", "PG", "PSP", "PT", "SA", "SCP" ]
+            "enum" : [ "AS", "CON", "GSP", "PA", "PG", "PSP", "PT", "REC", "SA", "SCP" ]
           },
           "ivassCode" : {
             "type" : "string",
@@ -3056,6 +3361,10 @@
           "manager" : {
             "description" : "Manager specific data. It's required when institutionType is not PT",
             "$ref" : "#/components/schemas/UserInfo"
+          },
+          "productId" : {
+            "type" : "string",
+            "description" : "Product's unique identifier"
           },
           "status" : {
             "type" : "string",

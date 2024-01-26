@@ -52,6 +52,7 @@ class InstitutionServiceImpl implements InstitutionService {
     protected static final String REQUIRED_TAX_CODE_MESSAGE = "A taxCode id is required";
     protected static final String REQUIRED_INSTITUTION_BILLING_DATA_MESSAGE = "Institution's billing data are required";
     protected static final String REQUIRED_INSTITUTION_TYPE_MESSAGE = "An institution type is required";
+    protected static final String REQUIRED_INSTITUTION_UPDATE_MESSAGE = "InsitutionUpdate is required";
     protected static final String REQUIRED_ONBOARDING_DATA_MESSAGE = "Onboarding data is required";
     protected static final String ATLEAST_ONE_PRODUCT_ROLE_REQUIRED = "At least one Product role related to %s Party role is required";
     protected static final String MORE_THAN_ONE_PRODUCT_ROLE_AVAILABLE = "More than one Product role related to %s Party role is available. Cannot automatically set the Product role";
@@ -109,6 +110,11 @@ class InstitutionServiceImpl implements InstitutionService {
         log.trace("onboarding start");
         log.debug("onboarding onboardingData = {}", onboardingData);
 
+        Assert.notNull(onboardingData, REQUIRED_ONBOARDING_DATA_MESSAGE);
+        Assert.notNull(onboardingData.getBilling(), REQUIRED_INSTITUTION_BILLING_DATA_MESSAGE);
+        Assert.notNull(onboardingData.getInstitutionType(), REQUIRED_INSTITUTION_TYPE_MESSAGE);
+        Assert.notNull(onboardingData.getInstitutionUpdate(), REQUIRED_INSTITUTION_UPDATE_MESSAGE);
+
         if (InstitutionType.PSP.equals(onboardingData.getInstitutionType()) && onboardingData.getInstitutionUpdate().getPaymentServiceProvider() == null) {
             throw new ValidationException(FIELD_PSP_DATA_IS_REQUIRED_FOR_PSP_INSTITUTION_ONBOARDING);
         }
@@ -116,9 +122,6 @@ class InstitutionServiceImpl implements InstitutionService {
             throw new ValidationException(LOCATION_INFO_IS_REQUIRED);
         }
 
-        Assert.notNull(onboardingData, REQUIRED_ONBOARDING_DATA_MESSAGE);
-        Assert.notNull(onboardingData.getBilling(), REQUIRED_INSTITUTION_BILLING_DATA_MESSAGE);
-        Assert.notNull(onboardingData.getInstitutionType(), REQUIRED_INSTITUTION_TYPE_MESSAGE);
         Product product = productsConnector.getProduct(onboardingData.getProductId(), onboardingData.getInstitutionType());
         Assert.notNull(product, "Product is required");
         checkIfProductIsDelegable(onboardingData, product.isDelegable());

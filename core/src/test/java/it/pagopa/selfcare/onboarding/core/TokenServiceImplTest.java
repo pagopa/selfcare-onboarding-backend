@@ -137,4 +137,28 @@ public class TokenServiceImplTest {
         Mockito.verify(partyConnector, Mockito.times(1))
                 .deleteTokenComplete(tokenId);
     }
+
+    @Test
+    void approveOnboarding() {
+        //given
+        String onboardingId = "example";
+        doNothing().when(onboardingMsConnector).approveOnboarding(onboardingId);
+        // when
+        tokenService.approveOnboarding(onboardingId);
+        //then
+        Mockito.verify(onboardingMsConnector, Mockito.times(1))
+                .approveOnboarding(onboardingId);
+    }
+
+    @Test
+    void rejectOnboarding() {
+        //given
+        String onboardingId = "example";
+        doNothing().when(onboardingMsConnector).rejectOnboarding(onboardingId);
+        // when
+        tokenService.rejectOnboarding(onboardingId);
+        //then
+        Mockito.verify(onboardingMsConnector, Mockito.times(1))
+                .rejectOnboarding(onboardingId);
+    }
 }
