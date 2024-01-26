@@ -23,8 +23,7 @@ public class OnboardingRequestResource {
     @JsonProperty(required = true)
     private InstitutionInfo institutionInfo;
 
-    @ApiModelProperty(value = "${swagger.onboarding.model.manager}", required = true)
-    @JsonProperty(required = true)
+    @ApiModelProperty(value = "${swagger.onboarding.model.manager}")
     private UserInfo manager;
 
     @ApiModelProperty(value = "${swagger.onboarding.model.admins}")
