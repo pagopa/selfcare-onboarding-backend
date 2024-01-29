@@ -17,6 +17,8 @@ public interface InstitutionService {
 
     void onboardingProductV2(OnboardingData onboardingData);
 
+    void onboardingCompanyV2(OnboardingData onboardingData);
+
     void onboardingProduct(OnboardingData onboardingData);
 
     void onboarding(OnboardingData onboardingData);

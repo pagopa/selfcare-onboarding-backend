@@ -135,4 +135,25 @@ public class TokenV2Controller {
         log.debug("reject onboarding identified with {}", onboardingId);
         tokenService.rejectOnboarding(onboardingId);
     }
+
+    /**
+     * The function delete token on onboarding request
+     * it is duplicated with /reject for retro compatibility
+     *
+     * @param onboardingId String
+     * @return no content
+     * * Code: 204, Message: successful operation, DataType: TokenId
+     * * Code: 400, Message: Invalid ID supplied, DataType: Problem
+     * * Code: 404, Message: Not found, DataType: Problem
+     */
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ApiOperation(value = "${swagger.tokens.complete}", notes = "${swagger.tokens.complete}")
+    @DeleteMapping(value = "/{onboardingId}/complete")
+    public ResponseEntity<Void> delete(@ApiParam("${swagger.tokens.tokenId}")
+                                       @PathVariable(value = "onboardingId") String onboardingId) {
+        log.trace("delete Token start");
+        log.debug("delete Token tokenId = {}", onboardingId);
+        tokenService.rejectOnboarding(onboardingId);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
 }
