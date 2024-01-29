@@ -52,4 +52,23 @@ public class InstitutionV2ControllerTest {
                 .onboardingProductV2(any(OnboardingData.class));
         verifyNoMoreInteractions(institutionServiceMock);
     }
+
+
+    @Test
+    void onboardingCompany(@Value("classpath:stubs/onboardingCompanyDto.json") Resource onboardingDto) throws Exception {
+
+        // when
+        mvc.perform(MockMvcRequestBuilders
+                        .post(BASE_URL + "/company/onboarding")
+                        .content(onboardingDto.getInputStream().readAllBytes())
+                        .contentType(APPLICATION_JSON_VALUE)
+                        .accept(APPLICATION_JSON_VALUE))
+                .andExpect(status().isCreated())
+                .andExpect(content().string(emptyString()));
+        // then
+
+        verify(institutionServiceMock, times(1))
+                .onboardingCompanyV2(any(OnboardingData.class));
+        verifyNoMoreInteractions(institutionServiceMock);
+    }
 }

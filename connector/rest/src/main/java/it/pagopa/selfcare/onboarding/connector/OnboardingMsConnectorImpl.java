@@ -36,6 +36,12 @@ public class OnboardingMsConnectorImpl implements OnboardingMsConnector {
         }
     }
 
+
+    @Override
+    public void onboardingCompany(OnboardingData onboardingData) {
+        msOnboardingApiClient._v1OnboardingPgCompletionPost(onboardingMapper.toOnboardingPgRequest(onboardingData));
+    }
+
     @Override
     public void onboardingTokenComplete(String onboardingId, MultipartFile contract) {
         msOnboardingApiClient._v1OnboardingOnboardingIdCompletePut(onboardingId, contract);

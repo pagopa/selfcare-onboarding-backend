@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import it.pagopa.selfcare.commons.web.model.Problem;
 import it.pagopa.selfcare.onboarding.core.InstitutionService;
+import it.pagopa.selfcare.onboarding.web.model.CompanyOnboardingDto;
 import it.pagopa.selfcare.onboarding.web.model.OnboardingProductDto;
 import it.pagopa.selfcare.onboarding.web.model.mapper.OnboardingResourceMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -51,6 +52,24 @@ public class InstitutionV2Controller {
         log.trace(ONBOARDING_START);
         log.debug("onboarding request = {}", request);
         institutionService.onboardingProductV2(onboardingResourceMapper.toEntity(request));
+        log.trace(ONBOARDING_END);
+    }
+
+
+
+    @ApiResponse(responseCode = "403",
+            description = "Forbidden",
+            content = {
+                    @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE,
+                            schema = @Schema(implementation = Problem.class))
+            })
+    @PostMapping(value = "/company/onboarding")
+    @ResponseStatus(HttpStatus.CREATED)
+    @ApiOperation(value = "", notes = "${swagger.onboarding.institutions.api.onboarding.subunit}")
+    public void onboarding(@RequestBody @Valid CompanyOnboardingDto request) {
+        log.trace(ONBOARDING_START);
+        log.debug("onboarding request = {}", request);
+        institutionService.onboardingCompanyV2(onboardingResourceMapper.toEntity(request));
         log.trace(ONBOARDING_END);
     }
 

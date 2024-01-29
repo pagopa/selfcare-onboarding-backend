@@ -25,6 +25,10 @@ public interface OnboardingMapper {
     @Mapping(target = "additionalInformations", source = "institutionUpdate.additionalInformations")
     OnboardingDefaultRequest toOnboardingDefaultRequest(OnboardingData onboardingData);
 
+    @Mapping(target = "taxCode", source = "institutionUpdate.taxCode")
+    @Mapping(target = "digitalAddress", source = "institutionUpdate.digitalAddress")
+    OnboardingPgRequest toOnboardingPgRequest(OnboardingData onboardingData);
+
     GeographicTaxonomyDto toGeographicTaxonomyDto(GeographicTaxonomy geographicTaxonomy);
 
     @Named("toInstitutionBase")
