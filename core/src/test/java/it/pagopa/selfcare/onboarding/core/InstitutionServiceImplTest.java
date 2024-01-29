@@ -472,6 +472,20 @@ class InstitutionServiceImplTest {
                 .onboarding(any());
     }
 
+
+    @Test
+    void onboardingCompanyV2() {
+        // given
+        OnboardingData onboardingData = mockInstance(new OnboardingData(), "setInstitutionType", "setUsers");
+        onboardingData.setInstitutionType(InstitutionType.PG);
+        onboardingData.setUsers(List.of(dummyManager, dummyDelegate));
+        // when
+        institutionService.onboardingCompanyV2(onboardingData);
+        // then
+        verify(onboardingMsConnector, times(1))
+                .onboardingCompany(any());
+    }
+
     @Test
     void shouldOnboardingProductInstitutionNotPa() {
         // given
