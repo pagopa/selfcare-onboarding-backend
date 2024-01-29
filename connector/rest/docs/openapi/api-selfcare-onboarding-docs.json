@@ -221,6 +221,41 @@
         } ]
       }
     },
+    "/v1/onboarding/pg/completion" : {
+      "post" : {
+        "tags" : [ "Onboarding Controller" ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/OnboardingPgRequest"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/OnboardingResponse"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Not Authorized"
+          },
+          "403" : {
+            "description" : "Not Allowed"
+          }
+        },
+        "security" : [ {
+          "SecurityScheme" : [ ]
+        } ]
+      }
+    },
     "/v1/onboarding/psp" : {
       "post" : {
         "tags" : [ "Onboarding Controller" ],
@@ -998,6 +1033,39 @@
           },
           "billing" : {
             "$ref" : "#/components/schemas/BillingPaRequest"
+          }
+        }
+      },
+      "OnboardingPgRequest" : {
+        "required" : [ "productId", "users", "taxCode", "origin", "digitalAddress" ],
+        "type" : "object",
+        "properties" : {
+          "productId" : {
+            "minLength" : 1,
+            "type" : "string"
+          },
+          "users" : {
+            "minItems" : 1,
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/UserRequest"
+            }
+          },
+          "taxCode" : {
+            "type" : "string"
+          },
+          "businessName" : {
+            "type" : "string"
+          },
+          "origin" : {
+            "$ref" : "#/components/schemas/Origin"
+          },
+          "digitalAddress" : {
+            "pattern" : "\\S",
+            "type" : "string"
+          },
+          "userRequestUid" : {
+            "type" : "string"
           }
         }
       },
