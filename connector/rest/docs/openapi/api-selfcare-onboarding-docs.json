@@ -540,6 +540,43 @@
           "SecurityScheme" : [ ]
         } ]
       }
+    },
+    "/v1/tokens" : {
+      "get" : {
+        "tags" : [ "Token Controller" ],
+        "summary" : "Retrieves the token for a given onboarding",
+        "parameters" : [ {
+          "name" : "onboardingId",
+          "in" : "query",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/TokenResponse"
+                  }
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Not Authorized"
+          },
+          "403" : {
+            "description" : "Not Allowed"
+          }
+        },
+        "security" : [ {
+          "SecurityScheme" : [ ]
+        } ]
+      }
     }
   },
   "components" : {
@@ -577,7 +614,7 @@
         }
       },
       "BillingPaRequest" : {
-        "required" : [ "vatNumber", "recipientCode" ],
+        "required" : [ "vatNumber" ],
         "type" : "object",
         "properties" : {
           "vatNumber" : {
@@ -585,7 +622,6 @@
             "type" : "string"
           },
           "recipientCode" : {
-            "minLength" : 1,
             "type" : "string"
           },
           "publicServices" : {
@@ -876,8 +912,13 @@
         }
       },
       "InstitutionType" : {
-        "enum" : [ "PA", "PG", "GSP", "SA", "PT", "SCP", "PSP", "AS" ],
+        "enum" : [ "PA", "PG", "GSP", "SA", "PT", "SCP", "PSP", "AS", "REC", "CON" ],
         "type" : "string"
+      },
+      "LocalDateTime" : {
+        "format" : "date-time",
+        "type" : "string",
+        "example" : "2022-03-10T12:15:50"
       },
       "OffsetDateTime" : {
         "format" : "date-time",
@@ -910,9 +951,6 @@
           },
           "signContract" : {
             "type" : "boolean"
-          },
-          "userRequestUid" : {
-            "type" : "string"
           },
           "institution" : {
             "$ref" : "#/components/schemas/InstitutionBaseRequest"
@@ -1025,9 +1063,6 @@
           "signContract" : {
             "type" : "boolean"
           },
-          "userRequestUid" : {
-            "type" : "string"
-          },
           "institution" : {
             "$ref" : "#/components/schemas/InstitutionBaseRequest"
           },
@@ -1043,6 +1078,9 @@
           "productId" : {
             "minLength" : 1,
             "type" : "string"
+          },
+          "institutionType" : {
+            "$ref" : "#/components/schemas/InstitutionType"
           },
           "users" : {
             "minItems" : 1,
@@ -1062,9 +1100,6 @@
           },
           "digitalAddress" : {
             "pattern" : "\\S",
-            "type" : "string"
-          },
-          "userRequestUid" : {
             "type" : "string"
           }
         }
@@ -1096,9 +1131,6 @@
           "signContract" : {
             "type" : "boolean"
           },
-          "userRequestUid" : {
-            "type" : "string"
-          },
           "institution" : {
             "$ref" : "#/components/schemas/InstitutionPspRequest"
           },
@@ -1110,11 +1142,17 @@
       "OnboardingResponse" : {
         "type" : "object",
         "properties" : {
-          "institution" : {
-            "$ref" : "#/components/schemas/InstitutionResponse"
+          "id" : {
+            "type" : "string"
           },
           "productId" : {
             "type" : "string"
+          },
+          "workflowType" : {
+            "type" : "string"
+          },
+          "institution" : {
+            "$ref" : "#/components/schemas/InstitutionResponse"
           },
           "pricingPlan" : {
             "type" : "string"
@@ -1122,11 +1160,17 @@
           "users" : {
             "type" : "array",
             "items" : {
-              "$ref" : "#/components/schemas/UserResponse"
+              "$ref" : "#/components/schemas/UserOnboardingResponse"
             }
           },
           "billing" : {
             "$ref" : "#/components/schemas/BillingResponse"
+          },
+          "status" : {
+            "type" : "string"
+          },
+          "additionalInformations" : {
+            "$ref" : "#/components/schemas/AdditionalInformationsDto"
           },
           "userRequestUid" : {
             "type" : "string"
@@ -1161,6 +1205,62 @@
           }
         }
       },
+      "TokenResponse" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string"
+          },
+          "type" : {
+            "$ref" : "#/components/schemas/TokenType"
+          },
+          "productId" : {
+            "type" : "string"
+          },
+          "checksum" : {
+            "type" : "string"
+          },
+          "contractVersion" : {
+            "type" : "string"
+          },
+          "contractTemplate" : {
+            "type" : "string"
+          },
+          "contractSigned" : {
+            "type" : "string"
+          },
+          "createdAt" : {
+            "$ref" : "#/components/schemas/LocalDateTime"
+          },
+          "updatedAt" : {
+            "$ref" : "#/components/schemas/LocalDateTime"
+          },
+          "closedAt" : {
+            "$ref" : "#/components/schemas/LocalDateTime"
+          },
+          "deletedAt" : {
+            "$ref" : "#/components/schemas/LocalDateTime"
+          }
+        }
+      },
+      "TokenType" : {
+        "enum" : [ "INSTITUTION", "LEGALS" ],
+        "type" : "string"
+      },
+      "UserOnboardingResponse" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string"
+          },
+          "role" : {
+            "$ref" : "#/components/schemas/PartyRole"
+          },
+          "productRole" : {
+            "type" : "string"
+          }
+        }
+      },
       "UserRequest" : {
         "type" : "object",
         "properties" : {
@@ -1178,9 +1278,6 @@
           },
           "role" : {
             "$ref" : "#/components/schemas/PartyRole"
-          },
-          "productRole" : {
-            "type" : "string"
           }
         }
       },
@@ -1204,6 +1301,9 @@
           },
           "role" : {
             "$ref" : "#/components/schemas/PartyRole"
+          },
+          "productRole" : {
+            "type" : "string"
           }
         }
       }
