@@ -43,6 +43,6 @@ configEnvSpecific:
   B4F_ONBOARDING_LOG_LEVEL: "INFO"
   REST_CLIENT_LOGGER_LEVEL: "BASIC"
   MS_ONBOARDING_URL: "https://selc-d-onboarding-ms-ca.gentleflower-c63e62fe.westeurope.azurecontainerapps.io"
-  ONBOARDING_ALLOWED_INSTITUTIONS_PRODUCTS: "{'prod-interop':{'*'},'prod-pn':{'*'},'prod-pagopa':{'*'},'prod-io':{'*'},'prod-io-premium':{'*'},'prod-io-sign':{'*'}}"
+  ONBOARDING_ALLOWED_INSTITUTIONS_PRODUCTS: "{'prod-interop':{'*'},'prod-pn':{'*'},'prod-pagopa':{'*'},'prod-io':{'*'},'prod-io-premium':{'*'},'prod-io-sign':{'*'},'prod-sendino':{'*'}}"
   REST_CLIENT_READ_TIMEOUT: "60000"
   REST_CLIENT_CONNECT_TIMEOUT: "60000"

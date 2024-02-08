@@ -6,6 +6,8 @@ import org.springframework.web.multipart.MultipartFile;
 public interface OnboardingMsConnector {
     void onboarding(OnboardingData onboardingData);
 
+    void onboardingCompany(OnboardingData onboardingData);
+
     void onboardingTokenComplete(String onboardingId, MultipartFile contract);
 
     void onboardingPending(String onboardingId);

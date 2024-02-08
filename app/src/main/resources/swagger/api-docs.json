@@ -1321,12 +1321,97 @@
         } ]
       }
     },
-    "/v2/institutions/onboarding" : {
+    "/v2/institutions/company/onboarding" : {
       "post" : {
         "tags" : [ "institutions" ],
         "summary" : "onboarding",
         "description" : "The service allows the onboarding of Users to a subunit of an Institution",
         "operationId" : "onboardingUsingPOST_3",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/CompanyOnboardingDto"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "201" : {
+            "description" : "Created"
+          },
+          "400" : {
+            "description" : "Bad Request",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Unauthorized",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "Forbidden",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "Not Found",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "409" : {
+            "description" : "Conflict",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "Internal Server Error",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ "global" ]
+        } ]
+      }
+    },
+    "/v2/institutions/onboarding" : {
+      "post" : {
+        "tags" : [ "institutions" ],
+        "summary" : "onboarding",
+        "description" : "The service allows the onboarding of Users to a subunit of an Institution",
+        "operationId" : "onboardingUsingPOST_4",
         "requestBody" : {
           "content" : {
             "application/json" : {
@@ -2231,6 +2316,60 @@
         "security" : [ {
           "bearerAuth" : [ "global" ]
         } ]
+      },
+      "delete" : {
+        "tags" : [ "tokens" ],
+        "summary" : "Complete an onboarding request",
+        "description" : "Complete an onboarding request",
+        "operationId" : "deleteUsingDELETE_1",
+        "parameters" : [ {
+          "name" : "onboardingId",
+          "in" : "path",
+          "description" : "Contract's unique identifier",
+          "required" : true,
+          "style" : "simple",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "No Content"
+          },
+          "400" : {
+            "description" : "Bad Request",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Unauthorized",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "Internal Server Error",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ "global" ]
+        } ]
       }
     },
     "/v2/tokens/{onboardingId}/reject" : {
@@ -2469,6 +2608,52 @@
   },
   "components" : {
     "schemas" : {
+      "AdditionalInformations" : {
+        "title" : "AdditionalInformations",
+        "type" : "object",
+        "properties" : {
+          "agentOfPublicService" : {
+            "type" : "boolean",
+            "description" : "The institution is an agent of a public service",
+            "example" : false
+          },
+          "agentOfPublicServiceNote" : {
+            "type" : "string",
+            "description" : "agentOfPublicService Note"
+          },
+          "belongRegulatedMarket" : {
+            "type" : "boolean",
+            "description" : "The institution belongs to a regulated market",
+            "example" : false
+          },
+          "establishedByRegulatoryProvision" : {
+            "type" : "boolean",
+            "description" : "The institution is a company established by a regulatory provision",
+            "example" : false
+          },
+          "establishedByRegulatoryProvisionNote" : {
+            "type" : "string",
+            "description" : "establishedByRegulatoryProvision Note"
+          },
+          "ipa" : {
+            "type" : "boolean",
+            "description" : "The institution is registered on IPA",
+            "example" : false
+          },
+          "ipaCode" : {
+            "type" : "string",
+            "description" : "IPA code"
+          },
+          "otherNote" : {
+            "type" : "string",
+            "description" : "Other note"
+          },
+          "regulatedMarketNote" : {
+            "type" : "string",
+            "description" : "regulatedMarket Note"
+          }
+        }
+      },
       "AdditionalInformationsDto" : {
         "title" : "AdditionalInformationsDto",
         "type" : "object",
@@ -2889,6 +3074,10 @@
         "required" : [ "address", "fiscalCode", "id", "institutionType", "mailAddress", "name", "recipientCode", "vatNumber", "zipCode" ],
         "type" : "object",
         "properties" : {
+          "additionalInformations" : {
+            "description" : "GSP institution's additional informations",
+            "$ref" : "#/components/schemas/AdditionalInformations"
+          },
           "address" : {
             "type" : "string",
             "description" : "Institution's physical address"
@@ -3240,7 +3429,7 @@
       },
       "OnboardingRequestResource" : {
         "title" : "OnboardingRequestResource",
-        "required" : [ "institutionInfo", "manager", "status" ],
+        "required" : [ "institutionInfo", "status" ],
         "type" : "object",
         "properties" : {
           "admins" : {
