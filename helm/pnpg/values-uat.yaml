@@ -27,3 +27,4 @@ configEnvSpecific:
   APPLICATIONINSIGHTS_INSTRUMENTATION_LOGGING_LEVEL: "OFF"
   B4F_ONBOARDING_LOG_LEVEL: "DEBUG"
   REST_CLIENT_LOGGER_LEVEL: "FULL"
+  MS_ONBOARDING_URL: "https://selc-u-pnpg-onboarding-ms-ca.redground-be752d1f.westeurope.azurecontainerapps.io"
