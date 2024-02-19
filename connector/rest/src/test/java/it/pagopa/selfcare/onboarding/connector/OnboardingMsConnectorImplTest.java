@@ -117,10 +117,12 @@ public class OnboardingMsConnectorImplTest {
     void onboardingCompany() {
         // given
         OnboardingData onboardingData = new OnboardingData();
+        onboardingData.setProductId("produictId");
         onboardingData.setTaxCode("taxCode");
         onboardingData.setInstitutionType(InstitutionType.PG);
         InstitutionUpdate institutionUpdate = new InstitutionUpdate();
         institutionUpdate.setTaxCode("taxCode");
+        institutionUpdate.setDescription("description");
         onboardingData.setUsers(List.of(mockInstance(new User())));
         onboardingData.setInstitutionUpdate(institutionUpdate);
         // when
@@ -130,8 +132,11 @@ public class OnboardingMsConnectorImplTest {
         verify(msOnboardingApiClient, times(1))
                 ._v1OnboardingPgCompletionPost(onboardingRequestCaptor.capture());
         OnboardingPgRequest actual = onboardingRequestCaptor.getValue();
+        assertEquals(actual.getProductId(), onboardingData.getProductId());
         assertEquals(actual.getTaxCode(), institutionUpdate.getTaxCode());
         assertEquals(actual.getDigitalAddress(), institutionUpdate.getDigitalAddress());
+        assertEquals(actual.getBusinessName(), institutionUpdate.getDescription());
+        assertEquals(actual.getInstitutionType().getValue(), onboardingData.getInstitutionType().name());
         verifyNoMoreInteractions(msOnboardingApiClient);
     }
 
