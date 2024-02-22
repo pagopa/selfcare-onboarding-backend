@@ -5,10 +5,7 @@ import it.pagopa.selfcare.onboarding.connector.model.onboarding.*;
 import it.pagopa.selfcare.onboarding.connector.rest.client.MsOnboardingApiClient;
 import it.pagopa.selfcare.onboarding.connector.rest.mapper.OnboardingMapper;
 import it.pagopa.selfcare.onboarding.connector.rest.mapper.OnboardingMapperImpl;
-import it.pagopa.selfcare.onboarding.generated.openapi.v1.dto.OnboardingDefaultRequest;
-import it.pagopa.selfcare.onboarding.generated.openapi.v1.dto.OnboardingGet;
-import it.pagopa.selfcare.onboarding.generated.openapi.v1.dto.OnboardingPaRequest;
-import it.pagopa.selfcare.onboarding.generated.openapi.v1.dto.OnboardingPspRequest;
+import it.pagopa.selfcare.onboarding.generated.openapi.v1.dto.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
@@ -114,6 +111,32 @@ public class OnboardingMsConnectorImplTest {
         assertEquals(actual.getInstitution().getTaxCode(), institutionUpdate.getTaxCode());
         assertNotNull(actual.getInstitution().getPaymentServiceProvider());
         assertNotNull(actual.getInstitution().getDataProtectionOfficer());
+        verifyNoMoreInteractions(msOnboardingApiClient);
+    }
+    @Test
+    void onboardingCompany() {
+        // given
+        OnboardingData onboardingData = new OnboardingData();
+        onboardingData.setProductId("produictId");
+        onboardingData.setTaxCode("taxCode");
+        onboardingData.setInstitutionType(InstitutionType.PG);
+        InstitutionUpdate institutionUpdate = new InstitutionUpdate();
+        institutionUpdate.setTaxCode("taxCode");
+        institutionUpdate.setDescription("description");
+        onboardingData.setUsers(List.of(mockInstance(new User())));
+        onboardingData.setInstitutionUpdate(institutionUpdate);
+        // when
+        onboardingMsConnector.onboardingCompany(onboardingData);
+        // then
+        ArgumentCaptor<OnboardingPgRequest> onboardingRequestCaptor = ArgumentCaptor.forClass(OnboardingPgRequest.class);
+        verify(msOnboardingApiClient, times(1))
+                ._v1OnboardingPgCompletionPost(onboardingRequestCaptor.capture());
+        OnboardingPgRequest actual = onboardingRequestCaptor.getValue();
+        assertEquals(actual.getProductId(), onboardingData.getProductId());
+        assertEquals(actual.getTaxCode(), institutionUpdate.getTaxCode());
+        assertEquals(actual.getDigitalAddress(), institutionUpdate.getDigitalAddress());
+        assertEquals(actual.getBusinessName(), institutionUpdate.getDescription());
+        assertEquals(actual.getInstitutionType().getValue(), onboardingData.getInstitutionType().name());
         verifyNoMoreInteractions(msOnboardingApiClient);
     }
 

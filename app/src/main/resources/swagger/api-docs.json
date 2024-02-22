@@ -1321,12 +1321,97 @@
         } ]
       }
     },
-    "/v2/institutions/onboarding" : {
+    "/v2/institutions/company/onboarding" : {
       "post" : {
         "tags" : [ "institutions" ],
         "summary" : "onboarding",
         "description" : "The service allows the onboarding of Users to a subunit of an Institution",
         "operationId" : "onboardingUsingPOST_3",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/CompanyOnboardingDto"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "201" : {
+            "description" : "Created"
+          },
+          "400" : {
+            "description" : "Bad Request",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Unauthorized",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "Forbidden",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "Not Found",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "409" : {
+            "description" : "Conflict",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "Internal Server Error",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ "global" ]
+        } ]
+      }
+    },
+    "/v2/institutions/onboarding" : {
+      "post" : {
+        "tags" : [ "institutions" ],
+        "summary" : "onboarding",
+        "description" : "The service allows the onboarding of Users to a subunit of an Institution",
+        "operationId" : "onboardingUsingPOST_4",
         "requestBody" : {
           "content" : {
             "application/json" : {
@@ -2986,7 +3071,7 @@
       },
       "InstitutionInfo" : {
         "title" : "InstitutionInfo",
-        "required" : [ "address", "fiscalCode", "id", "institutionType", "mailAddress", "name", "recipientCode", "vatNumber", "zipCode" ],
+        "required" : [ "address", "fiscalCode", "institutionType", "mailAddress", "name", "vatNumber", "zipCode" ],
         "type" : "object",
         "properties" : {
           "additionalInformations" : {
@@ -3344,7 +3429,7 @@
       },
       "OnboardingRequestResource" : {
         "title" : "OnboardingRequestResource",
-        "required" : [ "institutionInfo", "manager", "status" ],
+        "required" : [ "institutionInfo", "status" ],
         "type" : "object",
         "properties" : {
           "admins" : {
