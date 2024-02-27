@@ -1,7 +1,10 @@
 package it.pagopa.selfcare.onboarding.web.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import it.pagopa.selfcare.onboarding.core.*;
+import it.pagopa.selfcare.onboarding.core.InstitutionService;
+import it.pagopa.selfcare.onboarding.core.ProductService;
+import it.pagopa.selfcare.onboarding.core.TokenService;
+import it.pagopa.selfcare.onboarding.core.UserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -44,9 +47,6 @@ class SwaggerConfigTest {
 
     @MockBean
     private TokenService tokenService;
-
-    @MockBean
-    private PnPGInstitutionService pnpgInstitutionService;
 
     @Autowired
     WebApplicationContext context;
