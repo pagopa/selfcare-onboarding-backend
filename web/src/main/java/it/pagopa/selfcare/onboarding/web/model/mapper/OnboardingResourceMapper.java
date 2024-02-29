@@ -1,9 +1,11 @@
 package it.pagopa.selfcare.onboarding.web.model.mapper;
 
 import it.pagopa.selfcare.commons.base.security.PartyRole;
+import it.pagopa.selfcare.onboarding.connector.model.InstitutionLegalAddressData;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.User;
 import it.pagopa.selfcare.onboarding.web.model.CompanyOnboardingDto;
+import it.pagopa.selfcare.onboarding.web.model.InstitutionLegalAddressResource;
 import it.pagopa.selfcare.onboarding.web.model.OnboardingProductDto;
 import it.pagopa.selfcare.onboarding.web.model.OnboardingRequestResource;
 import org.mapstruct.Mapper;
@@ -64,6 +66,8 @@ public interface OnboardingResourceMapper {
 
     @Mapping(source = "taxCode", target = "fiscalCode")
     OnboardingRequestResource.UserInfo toUserInfo(User user);
+
+    InstitutionLegalAddressResource toResource(InstitutionLegalAddressData model);
 
     @Named("toManager")
     default OnboardingRequestResource.UserInfo toManager(List<User> users) {

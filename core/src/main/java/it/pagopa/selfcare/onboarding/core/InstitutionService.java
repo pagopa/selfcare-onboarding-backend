@@ -21,13 +21,9 @@ public interface InstitutionService {
 
     void onboardingProduct(OnboardingData onboardingData);
 
-    void onboarding(OnboardingData onboardingData);
-
     Collection<InstitutionInfo> getInstitutions(String productFilter);
 
     InstitutionOnboardingData getInstitutionOnboardingData(String taxCode, String subunitCode, String productId);
-
-    InstitutionOnboardingData getInstitutionOnboardingData(String externalInstitutionId, String productId);
 
     List<GeographicTaxonomy> getGeographicTaxonomyList(String externalInstitutionId);
 
@@ -38,6 +34,7 @@ public interface InstitutionService {
     void verifyOnboarding(String externalInstitutionId, String productId);
 
     void verifyOnboarding(String taxCode, String subunitCode, String productId);
+
     void checkOrganization(String productId, String fiscalCode, String vatNumber);
     MatchInfoResult matchInstitutionAndUser(String externalInstitutionId, User user);
 
