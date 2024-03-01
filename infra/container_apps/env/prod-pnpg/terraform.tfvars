@@ -31,6 +31,50 @@ container_app = {
 }
 
 app_settings = [
+  {
+    name  = "APPLICATIONINSIGHTS_ROLE_NAME"
+    value = "b4f-onboarding",
+  },
+  {
+    name  = "JAVA_TOOL_OPTIONS"
+    value = "-javaagent:/applicationinsights-agent.jar",
+  },
+  {
+    name  = "APPLICATIONINSIGHTS_INSTRUMENTATION_LOGGING_LEVEL"
+    value = "OFF",
+  },
+  {
+    name  = "B4F_ONBOARDING_LOG_LEVEL"
+    value = "INFO",
+  },
+  {
+    name  = "REST_CLIENT_LOGGER_LEVEL"
+    value = "BASIC",
+  },
+  {
+    name  = "MS_ONBOARDING_URL"
+    value = "https://selc-d-onboarding-ms-ca.salmonpond-60269923.westeurope.azurecontainerapps.io",
+  },
+  {
+    name  = "ONBOARDING_ALLOWED_INSTITUTIONS_PRODUCTS"
+    value = "{'prod-pn-pg':{'*'}}"
+  },
+  {
+    name  = "REST_CLIENT_READ_TIMEOUT"
+    value = "60000"
+  },
+  {
+    name  = "REST_CLIENT_CONNECT_TIMEOUT"
+    value = "60000"
+  },
+  {
+    name  = "MS_CORE_URL"
+    value = "https://selc.internal.selfcare.pagopa.it/ms-core/v1"
+  },
+  {
+    name  = "MS_EXTERNAL_INTERCEPTOR_URL"
+    value = "http://ms-external-interceptor:8080"
+  }
 ]
 
 secrets_names = [

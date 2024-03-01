@@ -17,7 +17,60 @@ container_app = {
 }
 
 app_settings = [
+  {
+    name  = "APPLICATIONINSIGHTS_ROLE_NAME"
+    value = "b4f-onboarding",
+  },
+  {
+    name  = "JAVA_TOOL_OPTIONS"
+    value = "-javaagent:/applicationinsights-agent.jar",
+  },
+  {
+    name  = "APPLICATIONINSIGHTS_INSTRUMENTATION_LOGGING_LEVEL"
+    value = "OFF",
+  },
+  {
+    name  = "B4F_ONBOARDING_LOG_LEVEL"
+    value = "DEBUG",
+  },
+  {
+    name  = "REST_CLIENT_LOGGER_LEVEL"
+    value = "FULL",
+  },
+  {
+    name  = "MS_ONBOARDING_URL"
+    value = "https://selc-d-onboarding-ms-ca.gentleflower-c63e62fe.westeurope.azurecontainerapps.io",
+  },
+  {
+    name  = "ONBOARDING_ALLOWED_INSTITUTIONS_PRODUCTS"
+    value = "{'prod-interop':{'*'},'prod-pn':{'*'},'prod-io':{'*'},'prod-io-premium':{'*'},'prod-pagopa':{'*'},'prod-fd':{'*'},'prod-fd-garantito':{'*'},'prod-io-sign':{'*'},'prod-sendino':{'*'}}"
+  },
+  {
+    name  = "MS_CORE_URL"
+    value = "https://selc.internal.dev.selfcare.pagopa.it/ms-core/v1"
+  },
+  {
+    name  = "MS_EXTERNAL_INTERCEPTOR_URL"
+    value = "http://ms-external-interceptor:8080"
+  },
+  {
+    name  = "USERVICE_PARTY_PROCESS_URL"
+    value = "https://selc.internal.dev.selfcare.pagopa.it/ms-core/v1"
+  },
+  {
+    name  = "USERVICE_PARTY_REGISTRY_PROXY_URL"
+    value = "http://selc.internal.dev.selfcare.pagopa.it/party-registry-proxy/v1"
+  },
+  {
+    name  = "MS_PRODUCT_URL"
+    value = "http://selc.internal.dev.selfcare.pagopa.it/ms-product/v1"
+  },
+  {
+    name  = "USERVICE_USER_REGISTRY_URL"
+    value = "https://api.uat.pdv.pagopa.it/user-registry/v1"
+  }
 ]
 
 secrets_names = [
+  "user-registry-api-key",
 ]
