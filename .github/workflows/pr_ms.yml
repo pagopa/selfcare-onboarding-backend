@@ -1,14 +1,6 @@
 name: Code Review onboarding-backend
 on:
   workflow_dispatch:
-    inputs:
-      env:
-        type: choice
-        description: Environment
-        options: 
-        - dev
-        - uat
-        - prod
 
   pull_request:
     types:
