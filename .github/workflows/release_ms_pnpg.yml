@@ -34,7 +34,7 @@ jobs:
     with:
       environment: dev
       tf_environment: dev-pnpg
-      dir: 'infra'
+      dir: 'infra/container_apps'
 
   release_uat:
     uses: pagopa/selfcare-commons/.github/workflows/call_release_docker.yml@EC-149-template-git-hub-workflows
@@ -44,7 +44,7 @@ jobs:
     with:
       environment: uat
       tf_environment: uat-pnpg
-      dir: 'infra'
+      dir: 'infra/container_apps'
 
   release_prod:
     uses: pagopa/selfcare-commons/.github/workflows/call_release_docker.yml@EC-149-template-git-hub-workflows
@@ -54,4 +54,4 @@ jobs:
     with:
       environment: prod
       tf_environment: prod-pnpg
-      dir: 'infra'
+      dir: 'infra/container_apps'
