@@ -73,5 +73,5 @@ app_settings = [
 
 secrets_names = {
   "USER_REGISTRY_API_KEY" = "user-registry-api-key"
-  "APPLICATIONINSIGHTS_CONNECTION_STRING" = "appinsights-instrumentation-key"
+  "APPLICATIONINSIGHTS_CONNECTION_STRING" = "appinsights-connection-string"
 }
