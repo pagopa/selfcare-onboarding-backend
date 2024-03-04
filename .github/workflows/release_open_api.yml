@@ -2,7 +2,7 @@ name: Swagger Detect Conflict and Update
 on:
   pull_request:
     branches:
-      - ops/SELC-3954
+      - release-dev
     types: [ opened, synchronize, reopened ]
     
 permissions:
@@ -15,7 +15,7 @@ jobs:
     name: Swagger Detect Conflict and Update
     steps:
       - id: swagger-conflict-update
-        uses: pagopa/selfcare-commons/github-actions-template/swagger-detect-conflict-spring@feature/SELC-3954
+        uses: pagopa/selfcare-commons/github-actions-template/swagger-detect-conflict-spring@main
         with:
           path_openapi_docs: app/src/main/resources/swagger/api-docs.json
           branch_ref: release-dev
