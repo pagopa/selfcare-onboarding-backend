@@ -18,4 +18,4 @@ RUN chmod 755 ./applicationinsights-agent.jar
 EXPOSE 8080
 USER 1001
 
-ENTRYPOINT ["ls", "-l"]
+ENTRYPOINT ["java", "-jar", "app.jar"]
