@@ -156,4 +156,16 @@ public class TokenV2Controller {
         tokenService.rejectOnboarding(onboardingId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
+
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ApiOperation(value = "${swagger.tokens.complete}", notes = "${swagger.tokens.complete}")
+    @DeleteMapping(value = "/{onboardingId}/complete/test")
+    public ResponseEntity<Void> deleteTest(@ApiParam("${swagger.tokens.tokenId}")
+                                       @PathVariable(value = "onboardingId") String onboardingId) {
+        log.trace("delete Token start");
+        log.debug("delete Token tokenId = {}", onboardingId);
+        tokenService.rejectOnboarding(onboardingId);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
 }
