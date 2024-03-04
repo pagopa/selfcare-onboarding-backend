@@ -23,7 +23,7 @@ app_settings = [
   },
   {
     name  = "JAVA_TOOL_OPTIONS"
-    value = "-javaagent:/applicationinsights-agent.jar",
+    value = "-javaagent:applicationinsights-agent.jar",
   },
   {
     name  = "APPLICATIONINSIGHTS_INSTRUMENTATION_LOGGING_LEVEL"
@@ -55,5 +55,7 @@ app_settings = [
   }
 ]
 
-secrets_names = [
-]
+secrets_names = {
+  "USER_REGISTRY_API_KEY" = "user-registry-api-key"
+  "APPLICATIONINSIGHTS_CONNECTION_STRING" = "appinsights-instrumentation-key"
+}
