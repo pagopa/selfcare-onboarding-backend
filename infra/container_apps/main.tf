@@ -9,7 +9,7 @@ provider "azurerm" {
 }
 
 module "container_app_dashboard_backend" {
-  source = "github.com/pagopa/selfcare-commons//infra/terraform-modules/container_app_microservice?ref=ca-secret-env-name"
+  source = "github.com/pagopa/selfcare-commons//infra/terraform-modules/container_app_microservice?ref=main"
 
   is_pnpg = var.is_pnpg
 
