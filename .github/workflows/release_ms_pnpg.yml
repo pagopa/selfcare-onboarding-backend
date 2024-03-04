@@ -2,6 +2,14 @@ name: Release PNPG ms-onboarding-backend
 
 on:
   workflow_dispatch:
+    inputs:
+      env:
+        type: choice
+        description: Environment
+        options: 
+        - dev
+        - uat
+        - prod
 
   push:
     branches:
@@ -21,7 +29,7 @@ jobs:
   release_dev:
     uses: pagopa/selfcare-commons/.github/workflows/call_release_docker.yml@EC-149-template-git-hub-workflows
     name: '[Dev] OnboardingBackend ms Release'
-    if: startsWith(github.ref_name, 'releases/') != true
+    if: ${{ (startsWith(github.ref_name, 'releases/') != true && inputs.env == null) || inputs.env == 'dev' }}
     secrets: inherit
     with:
       environment: dev
@@ -31,7 +39,7 @@ jobs:
   release_uat:
     uses: pagopa/selfcare-commons/.github/workflows/call_release_docker.yml@EC-149-template-git-hub-workflows
     name: '[UAT] OnboardingBackend ms Release'
-    if: startsWith(github.ref_name, 'releases/')
+    if: ${{ (startsWith(github.ref_name, 'releases/') == true && inputs.env == null) || inputs.env == 'uat' }}
     secrets: inherit
     with:
       environment: uat
@@ -41,7 +49,7 @@ jobs:
   release_prod:
     uses: pagopa/selfcare-commons/.github/workflows/call_release_docker.yml@EC-149-template-git-hub-workflows
     name: '[Prod] OnboardingBackend ms Release'
-    if: startsWith(github.ref_name, 'releases/')
+    if: ${{ inputs.env == 'prod' }}
     secrets: inherit
     with:
       environment: prod
