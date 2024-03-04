@@ -33,7 +33,7 @@ jobs:
     secrets: inherit
     with:
       environment: dev
-      dir: 'infra'
+      dir: 'infra/container_apps'
 
   release_uat:
     uses: pagopa/selfcare-commons/.github/workflows/call_release_docker.yml@EC-149-template-git-hub-workflows
@@ -42,7 +42,7 @@ jobs:
     secrets: inherit
     with:
       environment: uat
-      dir: 'infra'
+      dir: 'infra/container_apps'
 
   release_prod:
     uses: pagopa/selfcare-commons/.github/workflows/call_release_docker.yml@EC-149-template-git-hub-workflows
@@ -51,4 +51,4 @@ jobs:
     secrets: inherit
     with:
       environment: prod
-      dir: 'infra'
+      dir: 'infra/container_apps'
