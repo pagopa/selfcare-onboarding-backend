@@ -2,7 +2,7 @@ name: Swagger Detect Conflict and Update
 on:
   pull_request:
     branches:
-      - release-dev
+      - ops/SELC-3954
     types: [ opened, synchronize, reopened ]
     
 permissions:
