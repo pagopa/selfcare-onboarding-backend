@@ -11,7 +11,7 @@ public interface TokenService {
 
     void approveOnboarding(String onboardingId);
 
-    void rejectOnboarding(String onboardingId);
+    void rejectOnboarding(String onboardingId, String reason);
 
     OnboardingData getOnboardingWithUserInfo(String onboardingId);
 

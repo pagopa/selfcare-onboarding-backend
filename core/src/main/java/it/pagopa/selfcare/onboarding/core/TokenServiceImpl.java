@@ -65,11 +65,11 @@ public class TokenServiceImpl implements TokenService {
     }
 
     @Override
-    public void rejectOnboarding(String onboardingId) {
+    public void rejectOnboarding(String onboardingId, String reason) {
         log.trace("rejectOnboarding start");
         log.debug("rejectOnboarding id = {}", onboardingId);
         Assert.notNull(onboardingId, "OnboardingId is required");
-        onboardingMsConnector.rejectOnboarding(onboardingId);
+        onboardingMsConnector.rejectOnboarding(onboardingId, reason);
         log.debug("rejectOnboarding result = success");
         log.trace("rejectOnboarding end");
     }

@@ -6,6 +6,7 @@ import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
 import it.pagopa.selfcare.onboarding.connector.rest.client.MsOnboardingApiClient;
 import it.pagopa.selfcare.onboarding.connector.rest.mapper.OnboardingMapper;
 import it.pagopa.selfcare.onboarding.generated.openapi.v1.dto.OnboardingGet;
+import it.pagopa.selfcare.onboarding.generated.openapi.v1.dto.ReasonRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -58,8 +59,10 @@ public class OnboardingMsConnectorImpl implements OnboardingMsConnector {
     }
 
     @Override
-    public void rejectOnboarding(String onboardingId) {
-        msOnboardingApiClient._v1OnboardingOnboardingIdRejectPut(onboardingId);
+    public void rejectOnboarding(String onboardingId, String reason) {
+        ReasonRequest reasonForReject = new ReasonRequest();
+        reasonForReject.setReasonForReject(reason);
+        msOnboardingApiClient._v1OnboardingOnboardingIdRejectPut(onboardingId, reasonForReject);
     }
 
     @Override
