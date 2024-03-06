@@ -8,6 +8,7 @@ import lombok.EqualsAndHashCode;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -31,6 +32,15 @@ public class OnboardingRequestResource {
 
     @ApiModelProperty(value = "${swagger.onboarding.product.model.id}")
     private String productId;
+
+    @ApiModelProperty(value = "${swagger.onboarding.model.updateDate}")
+    private LocalDateTime updatedAt;
+
+    @ApiModelProperty(value = "${swagger.onboarding.model.expiringDate}")
+    private LocalDateTime expiringDate;
+
+    @ApiModelProperty(value = "${swagger.onboarding.model.reason}")
+    private String reasonForReject;
 
     @Data
     @EqualsAndHashCode(of = "id")

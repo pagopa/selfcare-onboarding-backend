@@ -1760,6 +1760,15 @@
             "type" : "string"
           }
         } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ReasonForRejectDto"
+              }
+            }
+          }
+        },
         "responses" : {
           "200" : {
             "description" : "OK"
@@ -2762,6 +2771,11 @@
               "$ref" : "#/components/schemas/UserInfo"
             }
           },
+          "expiringDate" : {
+            "type" : "string",
+            "description" : "Onboarding request expiring date",
+            "format" : "date-time"
+          },
           "institutionInfo" : {
             "description" : "Institution specific data",
             "$ref" : "#/components/schemas/InstitutionInfo"
@@ -2774,9 +2788,18 @@
             "type" : "string",
             "description" : "Product's unique identifier"
           },
+          "reasonForReject" : {
+            "type" : "string",
+            "description" : "Onboarding request rejection reason"
+          },
           "status" : {
             "type" : "string",
             "description" : "Onboarding request's status"
+          },
+          "updatedAt" : {
+            "type" : "string",
+            "description" : "Onboarding request update date",
+            "format" : "date-time"
           }
         }
       },
@@ -2897,6 +2920,17 @@
             "type" : "boolean",
             "description" : "PSP's Vat Number group",
             "example" : false
+          }
+        }
+      },
+      "ReasonForRejectDto" : {
+        "title" : "ReasonForRejectDto",
+        "required" : [ "reason" ],
+        "type" : "object",
+        "properties" : {
+          "reason" : {
+            "type" : "string",
+            "description" : "Rejection reason of an onboarding request"
           }
         }
       },
