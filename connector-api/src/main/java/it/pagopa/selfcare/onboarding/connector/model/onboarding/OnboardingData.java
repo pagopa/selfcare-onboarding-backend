@@ -16,6 +16,7 @@ import it.pagopa.selfcare.commons.base.utils.InstitutionType;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -42,7 +43,9 @@ public class OnboardingData {
     private String pricingPlan;
     private String businessName;
     private boolean existsInRegistry;
-
+    private LocalDateTime updatedAt;
+    private LocalDateTime expiringDate;
+    private String reasonForReject;
     public List<User> getUsers() {
         return Optional.ofNullable(users).orElse(Collections.emptyList());
     }
