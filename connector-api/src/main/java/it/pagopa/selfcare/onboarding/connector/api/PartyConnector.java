@@ -34,7 +34,9 @@ public interface PartyConnector {
     Institution createInstitutionFromIVASS(OnboardingData onboardingData);
 
     Institution createInstitutionUsingExternalId(String institutionExternalId);
+
     Institution createInstitutionFromInfocamere(OnboardingData onboardingData);
+
     Institution createInstitution(OnboardingData onboardingData);
 
     UserInfo getInstitutionManager(String externalInstitutionId, String productId);
@@ -45,9 +47,4 @@ public interface PartyConnector {
 
     void verifyOnboarding(String taxCode, String subunitCode, String productId);
 
-    void tokensVerify(String tokenId);
-
-    void onboardingTokenComplete(String tokenId, MultipartFile contract);
-
-    void deleteTokenComplete(String tokenId);
 }

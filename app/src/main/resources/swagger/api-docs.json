@@ -23,14 +23,11 @@
     "name" : "institutions",
     "description" : "Institution operations"
   }, {
-    "name" : "pnPGInstitutions",
-    "description" : "PN PG Institution operations"
-  }, {
     "name" : "product",
     "description" : "Product operations"
   }, {
     "name" : "tokens",
-    "description" : "Token Controller"
+    "description" : "Token V 2 Controller"
   }, {
     "name" : "user",
     "description" : "User Controller"
@@ -1219,236 +1216,6 @@
         } ]
       }
     },
-    "/v1/tokens/{tokenId}/complete" : {
-      "post" : {
-        "tags" : [ "tokens" ],
-        "summary" : "Complete an onboarding request",
-        "description" : "Complete an onboarding request",
-        "operationId" : "completeUsingPOST",
-        "parameters" : [ {
-          "name" : "tokenId",
-          "in" : "path",
-          "description" : "Contract's unique identifier",
-          "required" : true,
-          "style" : "simple",
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "requestBody" : {
-          "content" : {
-            "multipart/form-data" : {
-              "schema" : {
-                "required" : [ "contract" ],
-                "type" : "object",
-                "properties" : {
-                  "contract" : {
-                    "type" : "string",
-                    "description" : "contract",
-                    "format" : "binary"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses" : {
-          "204" : {
-            "description" : "No Content"
-          },
-          "400" : {
-            "description" : "Bad Request",
-            "content" : {
-              "application/problem+json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Problem"
-                }
-              }
-            }
-          },
-          "401" : {
-            "description" : "Unauthorized",
-            "content" : {
-              "application/problem+json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Problem"
-                }
-              }
-            }
-          },
-          "404" : {
-            "description" : "Not Found",
-            "content" : {
-              "application/problem+json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Problem"
-                }
-              }
-            }
-          },
-          "409" : {
-            "description" : "Conflict",
-            "content" : {
-              "application/problem+json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Problem"
-                }
-              }
-            }
-          },
-          "500" : {
-            "description" : "Internal Server Error",
-            "content" : {
-              "application/problem+json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Problem"
-                }
-              }
-            }
-          }
-        },
-        "security" : [ {
-          "bearerAuth" : [ "global" ]
-        } ]
-      },
-      "delete" : {
-        "tags" : [ "tokens" ],
-        "summary" : "Complete an onboarding request",
-        "description" : "Complete an onboarding request",
-        "operationId" : "deleteUsingDELETE",
-        "parameters" : [ {
-          "name" : "tokenId",
-          "in" : "path",
-          "description" : "Contract's unique identifier",
-          "required" : true,
-          "style" : "simple",
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "204" : {
-            "description" : "No Content"
-          },
-          "400" : {
-            "description" : "Bad Request",
-            "content" : {
-              "application/problem+json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Problem"
-                }
-              }
-            }
-          },
-          "401" : {
-            "description" : "Unauthorized",
-            "content" : {
-              "application/problem+json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Problem"
-                }
-              }
-            }
-          },
-          "500" : {
-            "description" : "Internal Server Error",
-            "content" : {
-              "application/problem+json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Problem"
-                }
-              }
-            }
-          }
-        },
-        "security" : [ {
-          "bearerAuth" : [ "global" ]
-        } ]
-      }
-    },
-    "/v1/tokens/{tokenId}/verify" : {
-      "post" : {
-        "tags" : [ "tokens" ],
-        "summary" : "Verify if the token is already consumed",
-        "description" : "Verify if the token is already consumed",
-        "operationId" : "verifyTokenUsingPOST",
-        "parameters" : [ {
-          "name" : "tokenId",
-          "in" : "path",
-          "description" : "Contract's unique identifier",
-          "required" : true,
-          "style" : "simple",
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/TokenVerifyResponse"
-                }
-              }
-            }
-          },
-          "400" : {
-            "description" : "Bad Request",
-            "content" : {
-              "application/problem+json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Problem"
-                }
-              }
-            }
-          },
-          "401" : {
-            "description" : "Unauthorized",
-            "content" : {
-              "application/problem+json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Problem"
-                }
-              }
-            }
-          },
-          "404" : {
-            "description" : "Not Found",
-            "content" : {
-              "application/problem+json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Problem"
-                }
-              }
-            }
-          },
-          "409" : {
-            "description" : "Conflict",
-            "content" : {
-              "application/problem+json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Problem"
-                }
-              }
-            }
-          },
-          "500" : {
-            "description" : "Internal Server Error",
-            "content" : {
-              "application/problem+json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Problem"
-                }
-              }
-            }
-          }
-        },
-        "security" : [ {
-          "bearerAuth" : [ "global" ]
-        } ]
-      }
-    },
     "/v2/tokens/{onboardingId}" : {
       "get" : {
         "tags" : [ "tokens" ],
@@ -1603,7 +1370,7 @@
         "tags" : [ "tokens" ],
         "summary" : "Complete an onboarding request",
         "description" : "Complete an onboarding request",
-        "operationId" : "completeUsingPOST_1",
+        "operationId" : "completeUsingPOST",
         "parameters" : [ {
           "name" : "onboardingId",
           "in" : "path",
@@ -1694,7 +1461,7 @@
         "tags" : [ "tokens" ],
         "summary" : "Complete an onboarding request",
         "description" : "Complete an onboarding request",
-        "operationId" : "deleteUsingDELETE_1",
+        "operationId" : "deleteUsingDELETE",
         "parameters" : [ {
           "name" : "onboardingId",
           "in" : "path",

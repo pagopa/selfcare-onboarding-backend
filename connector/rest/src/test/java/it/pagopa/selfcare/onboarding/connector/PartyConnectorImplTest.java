@@ -1181,18 +1181,6 @@ class PartyConnectorImplTest {
 
     }
 
-    @Test
-    void tokensVerify_nullProductId() {
-        // given
-        final String tokenId = null;
-        // when
-        final Executable executable = () -> partyConnector.tokensVerify(tokenId);
-        // then
-        final Exception e = assertThrows(IllegalArgumentException.class, executable);
-        assertEquals("A token Id is required", e.getMessage());
-        verifyNoInteractions(restClientMock);
-    }
-
 
     @Test
     void tokensVerify() {
