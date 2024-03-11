@@ -2,11 +2,13 @@ package it.pagopa.selfcare.onboarding.web.controller;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.InstitutionUpdate;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
 import it.pagopa.selfcare.onboarding.core.TokenService;
 import it.pagopa.selfcare.onboarding.web.config.WebTestConfig;
 import it.pagopa.selfcare.onboarding.web.model.OnboardingRequestResource;
+import it.pagopa.selfcare.onboarding.web.model.ReasonForRejectDto;
 import it.pagopa.selfcare.onboarding.web.model.mapper.OnboardingResourceMapperImpl;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -135,17 +137,25 @@ public class TokenV2ControllerTest {
     }
 
     /**
-     * Method under test: {@link TokenV2Controller#rejectOnboarding(String)}
+     * Method under test: {@link TokenV2Controller#rejectOnboarding(String,ReasonForRejectDto)}
      */
     @Test
     void rejectOnboardingRequest() throws Exception {
 
         String onboardingId = UUID.randomUUID().toString();
-        doNothing().when(tokenService).rejectOnboarding(onboardingId);
+        String reason = "reason";
+        ReasonForRejectDto reasonDto = new ReasonForRejectDto();
+        reasonDto.setReason(reason);
+
+        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+        String json = ow.writeValueAsString(reasonDto);
+
+        doNothing().when(tokenService).rejectOnboarding(onboardingId, reason);
 
         //when
         mvc.perform(MockMvcRequestBuilders
                         .post("/v2/tokens/{onboardingId}/reject", onboardingId)
+                        .content(json)
                         .contentType(APPLICATION_JSON_VALUE)
                         .accept(APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk())
@@ -153,6 +163,6 @@ public class TokenV2ControllerTest {
         //then
 
         verify(tokenService, times(1))
-                .rejectOnboarding(onboardingId);
+                .rejectOnboarding(onboardingId, reason);
     }
 }

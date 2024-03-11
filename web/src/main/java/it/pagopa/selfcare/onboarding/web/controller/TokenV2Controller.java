@@ -8,6 +8,7 @@ import it.pagopa.selfcare.commons.base.logging.LogUtils;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
 import it.pagopa.selfcare.onboarding.core.TokenService;
 import it.pagopa.selfcare.onboarding.web.model.OnboardingRequestResource;
+import it.pagopa.selfcare.onboarding.web.model.ReasonForRejectDto;
 import it.pagopa.selfcare.onboarding.web.model.TokenVerifyResponse;
 import it.pagopa.selfcare.onboarding.web.model.mapper.OnboardingResourceMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -131,9 +132,10 @@ public class TokenV2Controller {
     @ApiOperation(value = "${swagger.tokens.rejectOnboardingRequest}")
     @PostMapping("/{onboardingId}/reject")
     public void rejectOnboarding(@ApiParam("${swagger.tokens.onboardingId}")
-                                  @PathVariable("onboardingId") String onboardingId) {
+                                  @PathVariable("onboardingId") String onboardingId,
+                                 @RequestBody ReasonForRejectDto reasonForRejectDto) {
         log.debug("reject onboarding identified with {}", onboardingId);
-        tokenService.rejectOnboarding(onboardingId);
+        tokenService.rejectOnboarding(onboardingId, reasonForRejectDto.getReason());
     }
 
     /**
@@ -153,7 +155,7 @@ public class TokenV2Controller {
                                        @PathVariable(value = "onboardingId") String onboardingId) {
         log.trace("delete Token start");
         log.debug("delete Token tokenId = {}", onboardingId);
-        tokenService.rejectOnboarding(onboardingId);
+        tokenService.rejectOnboarding(onboardingId, null);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }
