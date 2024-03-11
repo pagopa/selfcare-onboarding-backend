@@ -50,8 +50,8 @@ public class TokenV2Controller {
     @ApiOperation(value = "${swagger.tokens.complete}", notes = "${swagger.tokens.complete}")
     @PostMapping(value = "/{onboardingId}/complete")
     public ResponseEntity<Void> complete(@ApiParam("${swagger.tokens.onboardingId}")
-                                                   @PathVariable(value = "onboardingId") String onboardingId,
-                                                   @RequestPart MultipartFile contract) {
+                                         @PathVariable(value = "onboardingId") String onboardingId,
+                                         @RequestPart MultipartFile contract) {
         log.trace("complete Token start");
         log.debug(LogUtils.CONFIDENTIAL_MARKER, "complete Token tokenId = {}, contract = {}", onboardingId, contract);
         tokenService.completeTokenV2(onboardingId, contract);
@@ -73,7 +73,7 @@ public class TokenV2Controller {
     @ApiOperation(value = "${swagger.tokens.verify}", notes = "${swagger.tokens.verify}")
     @PostMapping("/{onboardingId}/verify")
     public ResponseEntity<TokenVerifyResponse> verifyOnboarding(@ApiParam("${swagger.tokens.onboardingId}")
-                                                           @PathVariable("onboardingId") String onboardingId) {
+                                                                @PathVariable("onboardingId") String onboardingId) {
         log.debug("Verify token identified with {}", onboardingId);
         tokenService.verifyOnboarding(onboardingId);
         return ResponseEntity.ok().body(TokenVerifyResponse.builder().id(onboardingId).build());
@@ -109,14 +109,10 @@ public class TokenV2Controller {
     @ApiOperation(value = "${swagger.tokens.approveOnboardingRequest}", notes = "${swagger.tokens.approveOnboardingRequest}")
     @PostMapping("/{onboardingId}/approve")
     public void approveOnboarding(@ApiParam("${swagger.tokens.onboardingId}")
-                                                                @PathVariable("onboardingId") String onboardingId) {
+                                  @PathVariable("onboardingId") String onboardingId) {
         log.debug("approve onboarding identified with {}", onboardingId);
         tokenService.approveOnboarding(onboardingId);
     }
-
-
-
-
 
     /**
      * The function is used to reject the onboarding by admin.
@@ -132,7 +128,7 @@ public class TokenV2Controller {
     @ApiOperation(value = "${swagger.tokens.rejectOnboardingRequest}")
     @PostMapping("/{onboardingId}/reject")
     public void rejectOnboarding(@ApiParam("${swagger.tokens.onboardingId}")
-                                  @PathVariable("onboardingId") String onboardingId,
+                                 @PathVariable("onboardingId") String onboardingId,
                                  @RequestBody ReasonForRejectDto reasonForRejectDto) {
         log.debug("reject onboarding identified with {}", onboardingId);
         tokenService.rejectOnboarding(onboardingId, reasonForRejectDto.getReason());
