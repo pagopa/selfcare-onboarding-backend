@@ -60,11 +60,27 @@ app_settings = [
   },
   {
     name  = "MS_CORE_URL"
-    value = "https://selc.internal.selfcare.pagopa.it/ms-core/v1"
+    value = "https://selc-p-ms-core-ca.bluedune-cc0f8752.westeurope.azurecontainerapps.io"
   },
   {
     name  = "MS_EXTERNAL_INTERCEPTOR_URL"
-    value = "http://ms-external-interceptor:8080"
+    value = "https://selc-p-ms-external-api-backend-ca.bluedune-cc0f8752.westeurope.azurecontainerapps.io"
+  },
+  {
+    name  = "USERVICE_PARTY_PROCESS_URL"
+    value = "https://selc-p-ms-core-ca.bluedune-cc0f8752.westeurope.azurecontainerapps.io"
+  },
+  {
+    name  = "USERVICE_PARTY_REGISTRY_PROXY_URL"
+    value = "https://selc-p-party-reg-proxy-ca.bluedune-cc0f8752.westeurope.azurecontainerapps.io"
+  },
+  {
+    name  = "MS_PRODUCT_URL"
+    value = "http://selc.internal.selfcare.pagopa.it/ms-product/v1"
+  },
+  {
+    name  = "USERVICE_USER_REGISTRY_URL"
+    value = "https://api.pdv.pagopa.it/user-registry/v1"
   }
 ]
 

@@ -53,7 +53,7 @@ app_settings = [
   },
   {
     name  = "MS_ONBOARDING_URL"
-    value = "https://selc-d-onboarding-ms-ca.salmonpond-60269923.westeurope.azurecontainerapps.io",
+    value = "https://selc-p-pnpg-onboarding-ms-ca.salmonpond-60269923.westeurope.azurecontainerapps.io",
   },
   {
     name  = "ONBOARDING_ALLOWED_INSTITUTIONS_PRODUCTS"
@@ -69,11 +69,27 @@ app_settings = [
   },
   {
     name  = "MS_CORE_URL"
-    value = "https://selc.internal.selfcare.pagopa.it/ms-core/v1"
+    value = "https://selc-p-pnpg-ms-core-ca.salmonpond-60269923.westeurope.azurecontainerapps.io"
   },
   {
     name  = "MS_EXTERNAL_INTERCEPTOR_URL"
-    value = "http://ms-external-interceptor:8080"
+    value = "https://selc-p-pnpg-ms-external-api-backend-ca.salmonpond-60269923.westeurope.azurecontainerapps.io"
+  },
+  {
+    name  = "USERVICE_PARTY_PROCESS_URL"
+    value = "https://selc-p-pnpg-ms-core-ca.salmonpond-60269923.westeurope.azurecontainerapps.io"
+  },
+  {
+    name  = "USERVICE_PARTY_REGISTRY_PROXY_URL"
+    value = "https://selc-p-pnpg-party-reg-proxy-ca.salmonpond-60269923.westeurope.azurecontainerapps.io"
+  },
+  {
+    name  = "MS_PRODUCT_URL"
+    value = "http://prod01.pnpg.internal.selfcare.pagopa.it/ms-product/v1"
+  },
+  {
+    name  = "USERVICE_USER_REGISTRY_URL"
+    value = "https://api.pdv.pagopa.it/user-registry/v1"
   }
 ]
 
