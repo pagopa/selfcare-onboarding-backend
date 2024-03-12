@@ -44,7 +44,7 @@ app_settings = [
   {
     name  = "ONBOARDING_ALLOWED_INSTITUTIONS_PRODUCTS"
     value = "{'prod-interop':{'*'},'prod-pn':{'*'},'prod-io':{'*'},'prod-io-premium':{'*'},'prod-pagopa':{'*'},'prod-fd':{'*'},'prod-fd-garantito':{'*'},'prod-io-sign':{'*'},'prod-sendino':{'*'}}"
-  },,
+  },
   {
     name  = "MS_CORE_URL"
     value = "https://selc-d-ms-core-ca.gentleflower-c63e62fe.westeurope.azurecontainerapps.io"
