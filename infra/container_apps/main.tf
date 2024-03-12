@@ -16,7 +16,7 @@ module "container_app_dashboard_backend" {
   env_short          = var.env_short
   container_app      = var.container_app
   container_app_name = "onboardingbackend"
-  image_name         = "selfcare-onboarding-backend-ms"
+  image_name         = "selfcare-onboarding-backend"
   image_tag          = var.image_tag
   app_settings       = var.app_settings
   secrets_names      = var.secrets_names
