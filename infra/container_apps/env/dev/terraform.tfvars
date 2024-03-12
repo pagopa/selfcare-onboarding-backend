@@ -47,19 +47,19 @@ app_settings = [
   },
   {
     name  = "MS_CORE_URL"
-    value = "https://selc.internal.dev.selfcare.pagopa.it/ms-core/v1"
+    value = "https://selc-d-ms-core-ca.gentleflower-c63e62fe.westeurope.azurecontainerapps.io"
   },
   {
     name  = "MS_EXTERNAL_INTERCEPTOR_URL"
-    value = "http://ms-external-interceptor:8080"
+    value = "https://selc-d-ms-external-api-backend-ca.gentleflower-c63e62fe.westeurope.azurecontainerapps.io"
   },
   {
     name  = "USERVICE_PARTY_PROCESS_URL"
-    value = "https://selc.internal.dev.selfcare.pagopa.it/ms-core/v1"
+    value = "https://selc-d-ms-core-ca.gentleflower-c63e62fe.westeurope.azurecontainerapps.io"
   },
   {
     name  = "USERVICE_PARTY_REGISTRY_PROXY_URL"
-    value = "http://selc.internal.dev.selfcare.pagopa.it/party-registry-proxy/v1"
+    value = "https://selc-d-party-reg-proxy-ca.gentleflower-c63e62fe.westeurope.azurecontainerapps.io"
   },
   {
     name  = "MS_PRODUCT_URL"

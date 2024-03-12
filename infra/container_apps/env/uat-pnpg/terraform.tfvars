@@ -40,7 +40,7 @@ app_settings = [
   },
   {
     name  = "MS_ONBOARDING_URL"
-    value = "https://selc-d-onboarding-ms-ca.redground-be752d1f.westeurope.azurecontainerapps.io",
+    value = "https://selc-u-pnpg-onboarding-ms-ca.redground-be752d1f.westeurope.azurecontainerapps.io",
   },
   {
     name  = "ONBOARDING_ALLOWED_INSTITUTIONS_PRODUCTS"
@@ -48,11 +48,27 @@ app_settings = [
   },
   {
     name  = "MS_CORE_URL"
-    value = "https://selc.internal.uat.selfcare.pagopa.it/ms-core/v1"
+    value = "https://selc-u-pnpg-ms-core-ca.redground-be752d1f5.westeurope.azurecontainerapps.io"
   },
   {
     name  = "MS_EXTERNAL_INTERCEPTOR_URL"
-    value = "http://ms-external-interceptor:8080"
+    value = "https://selc-u-pnpg-ms-external-api-backend-ca.redground-be752d1f5.westeurope.azurecontainerapps.io"
+  },
+  {
+    name  = "USERVICE_PARTY_PROCESS_URL"
+    value = "https://selc-u-pnpg-ms-core-ca.redground-be752d1f5.westeurope.azurecontainerapps.io"
+  },
+  {
+    name  = "USERVICE_PARTY_REGISTRY_PROXY_URL"
+    value = "https://selc-u-pnpg-party-reg-proxy-ca.redground-be752d1f5.westeurope.azurecontainerapps.io"
+  },
+  {
+    name  = "MS_PRODUCT_URL"
+    value = "http://uat01.pnpg.internal.uat.selfcare.pagopa.it/ms-product/v1"
+  },
+  {
+    name  = "USERVICE_USER_REGISTRY_URL"
+    value = "https://api.uat.pdv.pagopa.it/user-registry/v1"
   }
 ]
 
