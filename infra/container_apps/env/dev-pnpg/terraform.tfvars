@@ -64,7 +64,7 @@ app_settings = [
   },
   {
     name  = "MS_PRODUCT_URL"
-    value = "http://selc.internal.dev.selfcare.pagopa.it/ms-product/v1"
+    value = "http://dev01.pnpg.internal.dev.selfcare.pagopa.it/ms-product/v1"
   },
   {
     name  = "USERVICE_USER_REGISTRY_URL"
