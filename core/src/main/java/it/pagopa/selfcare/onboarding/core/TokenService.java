@@ -4,7 +4,7 @@ import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface TokenService {
-    void verifyOnboarding(String onboardingId);
+    OnboardingData verifyOnboarding(String onboardingId);
 
     void approveOnboarding(String onboardingId);
 

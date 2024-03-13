@@ -19,13 +19,14 @@ public class TokenServiceImpl implements TokenService {
     }
 
     @Override
-    public void verifyOnboarding(String onboardingId) {
+    public OnboardingData verifyOnboarding(String onboardingId) {
         log.trace("verifyOnboarding start");
         log.debug("verifyOnboarding id = {}", onboardingId);
         Assert.notNull(onboardingId, ONBOARDING_ID_REQUIRED_MESSAGE);
-        onboardingMsConnector.onboardingPending(onboardingId);
+        OnboardingData onboardingData = onboardingMsConnector.getOnboarding(onboardingId);
         log.debug("verifyOnboarding result = success");
         log.trace("verifyOnboarding end");
+        return onboardingData;
     }
 
     @Override

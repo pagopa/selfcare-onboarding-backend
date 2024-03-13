@@ -66,7 +66,8 @@ public class TokenV2ControllerTest {
     void verifyOnboarding() throws Exception {
 
         String onboardingId = UUID.randomUUID().toString();
-        doNothing().when(tokenService).verifyOnboarding(onboardingId);
+        when(tokenService.getOnboardingWithUserInfo(onboardingId))
+                .thenReturn(new OnboardingData());
 
         //when
         mvc.perform(MockMvcRequestBuilders

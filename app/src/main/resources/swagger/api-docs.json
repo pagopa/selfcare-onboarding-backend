@@ -1618,7 +1618,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/TokenVerifyResponse"
+                  "$ref" : "#/components/schemas/OnboardingRequestResource"
                 }
               }
             }
@@ -2698,15 +2698,6 @@
           "reason" : {
             "type" : "string",
             "description" : "Rejection reason of an onboarding request"
-          }
-        }
-      },
-      "TokenVerifyResponse" : {
-        "title" : "TokenVerifyResponse",
-        "type" : "object",
-        "properties" : {
-          "id" : {
-            "type" : "string"
           }
         }
       },
