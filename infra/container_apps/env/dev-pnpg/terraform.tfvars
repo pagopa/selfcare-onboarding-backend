@@ -10,7 +10,7 @@ tags = {
 }
 
 container_app = {
-  min_replicas = 0
+  min_replicas = 1
   max_replicas = 1
   scale_rules  = []
   cpu          = 0.5
@@ -64,7 +64,7 @@ app_settings = [
   },
   {
     name  = "MS_PRODUCT_URL"
-    value = "http://selc.internal.dev.selfcare.pagopa.it/ms-product/v1"
+    value = "http://dev01.pnpg.internal.dev.selfcare.pagopa.it/ms-product/v1"
   },
   {
     name  = "USERVICE_USER_REGISTRY_URL"
@@ -75,4 +75,5 @@ app_settings = [
 secrets_names = {
   "USERVICE_USER_REGISTRY_API_KEY"        = "user-registry-api-key"
   "APPLICATIONINSIGHTS_CONNECTION_STRING" = "appinsights-instrumentation-key"
+    "JWT_TOKEN_PUBLIC_KEY"                = "jwt-public-key"
 }

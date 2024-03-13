@@ -96,4 +96,5 @@ app_settings = [
 secrets_names = {
   "USERVICE_USER_REGISTRY_API_KEY"        = "user-registry-api-key"
   "APPLICATIONINSIGHTS_CONNECTION_STRING" = "appinsights-instrumentation-key"
+  "JWT_TOKEN_PUBLIC_KEY"                  = "jwt-public-key"
 }
