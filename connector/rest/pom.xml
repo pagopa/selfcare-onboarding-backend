@@ -65,7 +65,7 @@
                                 <apiPackage>${project.groupId}.core.generated.openapi.v1.api</apiPackage>
                                 <configPackage>${project.groupId}.core.generated.openapi.v1.config</configPackage>
                                 <additionalModelTypeAnnotations>@lombok.Builder; @lombok.NoArgsConstructor; @lombok.AllArgsConstructor</additionalModelTypeAnnotations>
-                                <dateLibrary>java8</dateLibrary>
+                                <dateLibrary>java8-localdatetime</dateLibrary>
                                 <delegatePattern>true</delegatePattern>
                                 <interfaceOnly>true</interfaceOnly>
                                 <annotationLibrary>none</annotationLibrary>
@@ -103,7 +103,7 @@
                                 <apiPackage>${project.groupId}.onboarding.generated.openapi.v1.api</apiPackage>
                                 <configPackage>${project.groupId}.onboarding.generated.openapi.v1.config</configPackage>
                                 <additionalModelTypeAnnotations>@lombok.Builder; @lombok.NoArgsConstructor; @lombok.AllArgsConstructor</additionalModelTypeAnnotations>
-                                <dateLibrary>java8</dateLibrary>
+                                <dateLibrary>java8-localdatetime</dateLibrary>
                                 <delegatePattern>true</delegatePattern>
                                 <interfaceOnly>true</interfaceOnly>
                                 <annotationLibrary>none</annotationLibrary>

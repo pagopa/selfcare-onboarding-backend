@@ -199,13 +199,16 @@ public class OnboardingMsConnectorImplTest {
     @Test
     void rejectOnboarding() {
         // given
+        final String reason = "reason";
         final String onboardingId = "onboardingId";
+        ReasonRequest reasonDto = new ReasonRequest();
+        reasonDto.setReasonForReject(reason);
         // when
-        final Executable executable = () -> onboardingMsConnector.rejectOnboarding(onboardingId);
+        final Executable executable = () -> onboardingMsConnector.rejectOnboarding(onboardingId, reason);
         // then
         assertDoesNotThrow(executable);
         verify(msOnboardingApiClient, times(1))
-                ._v1OnboardingOnboardingIdRejectPut(onboardingId);
+                ._v1OnboardingOnboardingIdRejectPut(onboardingId, reasonDto);
         verifyNoMoreInteractions(msOnboardingApiClient);
     }
 }

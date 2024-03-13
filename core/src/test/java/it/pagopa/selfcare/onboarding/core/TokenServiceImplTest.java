@@ -154,11 +154,12 @@ public class TokenServiceImplTest {
     void rejectOnboarding() {
         //given
         String onboardingId = "example";
-        doNothing().when(onboardingMsConnector).rejectOnboarding(onboardingId);
+        String reason = "reason";
+        doNothing().when(onboardingMsConnector).rejectOnboarding(onboardingId, reason);
         // when
-        tokenService.rejectOnboarding(onboardingId);
+        tokenService.rejectOnboarding(onboardingId, reason);
         //then
         Mockito.verify(onboardingMsConnector, Mockito.times(1))
-                .rejectOnboarding(onboardingId);
+                .rejectOnboarding(onboardingId, reason);
     }
 }

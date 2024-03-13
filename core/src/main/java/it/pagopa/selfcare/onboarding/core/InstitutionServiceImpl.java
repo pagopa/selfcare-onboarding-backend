@@ -13,7 +13,10 @@ import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionInf
 import it.pagopa.selfcare.onboarding.connector.model.institutions.MatchInfoResult;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.OnboardingResource;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.infocamere.InstitutionInfoIC;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.*;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.GeographicTaxonomy;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.InstitutionLocation;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.User;
 import it.pagopa.selfcare.onboarding.connector.model.product.Product;
 import it.pagopa.selfcare.onboarding.connector.model.product.ProductRoleInfo;
 import it.pagopa.selfcare.onboarding.connector.model.product.ProductStatus;
@@ -39,8 +42,6 @@ import org.springframework.util.Assert;
 import javax.validation.ValidationException;
 import java.util.*;
 
-import static it.pagopa.selfcare.onboarding.connector.model.product.ProductId.PROD_INTEROP;
-import static it.pagopa.selfcare.onboarding.connector.model.product.ProductId.PROD_PN_PG;
 import static it.pagopa.selfcare.onboarding.connector.model.user.User.Fields.*;
 
 @Slf4j
@@ -48,7 +49,6 @@ import static it.pagopa.selfcare.onboarding.connector.model.user.User.Fields.*;
 class InstitutionServiceImpl implements InstitutionService {
 
     protected static final String REQUIRED_INSTITUTION_ID_MESSAGE = "An Institution id is required";
-
     protected static final String REQUIRED_TAX_CODE_MESSAGE = "A taxCode id is required";
     protected static final String REQUIRED_INSTITUTION_BILLING_DATA_MESSAGE = "Institution's billing data are required";
     protected static final String REQUIRED_INSTITUTION_TYPE_MESSAGE = "An institution type is required";
@@ -63,35 +63,30 @@ class InstitutionServiceImpl implements InstitutionService {
     public static final String UNABLE_TO_COMPLETE_THE_ONBOARDING_FOR_INSTITUTION_FOR_PRODUCT_DISMISSED = "Unable to complete the onboarding for institution with taxCode '%s' to product '%s', the product is dismissed.";
     public static final String FIELD_PSP_DATA_IS_REQUIRED_FOR_PSP_INSTITUTION_ONBOARDING = "Field 'pspData' is required for PSP institution onboarding";
     static final String DESCRIPTION_TO_REPLACE_REGEX = " - COMUNE";
-
-
-
     private final OnboardingMsConnector onboardingMsConnector;
     private final PartyConnector partyConnector;
     private final ProductsConnector productsConnector;
     private final UserRegistryConnector userConnector;
     private final MsExternalInterceptorConnector externalInterceptorConnector;
-    private final MsCoreConnector msCoreConnector;
     private final OnboardingValidationStrategy onboardingValidationStrategy;
     private final PartyRegistryProxyConnector partyRegistryProxyConnector;
     private final InstitutionInfoMapper institutionMapper;
-
 
     @Autowired
     InstitutionServiceImpl(OnboardingMsConnector onboardingMsConnector, PartyConnector partyConnector,
                            ProductsConnector productsConnector,
                            UserRegistryConnector userConnector,
-                           MsExternalInterceptorConnector externalInterceptorConnector, MsCoreConnector msCoreConnector,
+                           MsExternalInterceptorConnector externalInterceptorConnector,
                            PartyRegistryProxyConnector partyRegistryProxyConnector,
                            OnboardingValidationStrategy onboardingValidationStrategy,
-                           InstitutionInfoMapper institutionMapper) {
+                           InstitutionInfoMapper institutionMapper
+                           ) {
         this.onboardingMsConnector = onboardingMsConnector;
         this.partyConnector = partyConnector;
         this.externalInterceptorConnector = externalInterceptorConnector;
         this.partyRegistryProxyConnector = partyRegistryProxyConnector;
         this.productsConnector = productsConnector;
         this.userConnector = userConnector;
-        this.msCoreConnector = msCoreConnector;
         this.onboardingValidationStrategy = onboardingValidationStrategy;
         this.institutionMapper = institutionMapper;
     }
@@ -256,100 +251,6 @@ class InstitutionServiceImpl implements InstitutionService {
         }
     }
 
-    /**
-     * @deprecated [reference SELC-2815]
-     * @param onboardingData
-     */
-    @Deprecated(forRemoval = true)
-    @Override
-    public void onboarding(OnboardingData onboardingData) {
-        log.trace("onboarding start");
-        log.debug("onboarding onboardingData = {}", onboardingData);
-        Assert.notNull(onboardingData, REQUIRED_ONBOARDING_DATA_MESSAGE);
-        Assert.notNull(onboardingData.getBilling(), REQUIRED_INSTITUTION_BILLING_DATA_MESSAGE);
-        Assert.notNull(onboardingData.getInstitutionType(), REQUIRED_INSTITUTION_TYPE_MESSAGE);
-
-        Product product = productsConnector.getProduct(onboardingData.getProductId(), onboardingData.getInstitutionType());
-        Assert.notNull(product, "Product is required");
-
-        if(product.getStatus() == ProductStatus.PHASE_OUT){
-            throw new ValidationException(String.format("Unable to complete the onboarding for institution with external id '%s' to product '%s', the product is dismissed.",
-                    onboardingData.getInstitutionExternalId(),
-                    product.getId()));
-        }
-
-        onboardingData.setContractPath(product.getContractTemplatePath());
-        onboardingData.setContractVersion(product.getContractTemplateVersion());
-
-        final EnumMap<PartyRole, ProductRoleInfo> roleMappings;
-        if (product.getParentId() != null) {
-            final Product baseProduct = productsConnector.getProduct(product.getParentId(), null);
-            if(baseProduct.getStatus() == ProductStatus.PHASE_OUT){
-                throw new ValidationException(String.format("Unable to complete the onboarding for institution with external id '%s' to product '%s', the base product is dismissed.",
-                        onboardingData.getInstitutionExternalId(),
-                        baseProduct.getId()));
-            }
-            validateOnboarding(onboardingData.getInstitutionExternalId(), baseProduct.getId());
-            try {
-                partyConnector.verifyOnboarding(onboardingData.getInstitutionExternalId(), baseProduct.getId());
-            } catch (RuntimeException e) {
-                throw new ValidationException(String.format("Unable to complete the onboarding for institution with external id '%s' to product '%s'. Please onboard first the '%s' product for the same institution",
-                        onboardingData.getInstitutionExternalId(),
-                        product.getId(),
-                        baseProduct.getId()));
-            }
-            roleMappings = baseProduct.getRoleMappings();
-        } else {
-            validateOnboarding(onboardingData.getInstitutionExternalId(), product.getId());
-            roleMappings = product.getRoleMappings();
-        }
-        onboardingData.setProductName(product.getTitle());
-
-        validateProductRole(onboardingData.getUsers(), roleMappings);
-
-        Institution institution;
-        try {
-            institution = partyConnector.getInstitutionByExternalId(onboardingData.getInstitutionExternalId());
-        } catch (ResourceNotFoundException e) {
-            if (InstitutionType.PA.equals(onboardingData.getInstitutionType()) ||
-                    (InstitutionType.GSP.equals(onboardingData.getInstitutionType()) && onboardingData.getProductId().equals(PROD_INTEROP.getValue())
-                            && onboardingData.getOrigin().equals("IPA"))) {
-                institution = partyConnector.createInstitutionUsingExternalId(onboardingData.getInstitutionExternalId());
-            } else if (InstitutionType.PG.equals(onboardingData.getInstitutionType()) && onboardingData.getProductId().startsWith(PROD_PN_PG.getValue())) {
-                CreateInstitutionData createInstitutionData = mapCreateInstitutionData(onboardingData);
-                institution = msCoreConnector.createInstitutionUsingInstitutionData(createInstitutionData);
-            } else {
-                institution = partyConnector.createInstitution(onboardingData);
-            }
-        }
-        String finalInstitutionInternalId = institution.getId();
-        onboardingData.getUsers().forEach(user -> {
-
-            final Optional<it.pagopa.selfcare.onboarding.connector.model.user.User> searchResult =
-                    userConnector.search(user.getTaxCode(), USER_FIELD_LIST);
-            searchResult.ifPresentOrElse(foundUser -> {
-                Optional<MutableUserFieldsDto> updateRequest = createUpdateRequest(user, foundUser, finalInstitutionInternalId);
-                updateRequest.ifPresent(mutableUserFieldsDto ->
-                        userConnector.updateUser(UUID.fromString(foundUser.getId()), mutableUserFieldsDto));
-                user.setId(foundUser.getId());
-            }, () -> user.setId(userConnector.saveUser(UserMapper.toSaveUserDto(user, finalInstitutionInternalId))
-                    .getId().toString()));
-        });
-
-        partyConnector.onboardingOrganization(onboardingData);
-        log.trace("onboarding end");
-    }
-
-
-    private CreateInstitutionData mapCreateInstitutionData(OnboardingData onboardingData) {
-        CreateInstitutionData createInstitutionData = new CreateInstitutionData();
-        createInstitutionData.setDescription(onboardingData.getBusinessName());
-        createInstitutionData.setTaxId(onboardingData.getInstitutionExternalId());
-        createInstitutionData.setExistsInRegistry(onboardingData.isExistsInRegistry());
-        return createInstitutionData;
-    }
-
-
     protected static Optional<MutableUserFieldsDto> createUpdateRequest(User user, it.pagopa.selfcare.onboarding.connector.model.user.User foundUser, String institutionInternalId) {
         Optional<MutableUserFieldsDto> mutableUserFieldsDto = Optional.empty();
         if (isFieldToUpdate(foundUser.getName(), user.getName())) {
@@ -435,84 +336,6 @@ class InstitutionServiceImpl implements InstitutionService {
         log.trace("getInstitutionOnboardingData end");
         return result;
     }
-
-    @Override
-    public InstitutionOnboardingData getInstitutionOnboardingData(String externalInstitutionId, String productId) {
-        log.trace("getInstitutionOnboardingData start");
-        log.debug("getInstitutionOnboardingData externalInstitutionId = {}, productId = {}", externalInstitutionId, productId);
-        Assert.hasText(externalInstitutionId, REQUIRED_INSTITUTION_ID_MESSAGE);
-        Assert.hasText(productId, A_PRODUCT_ID_IS_REQUIRED);
-        InstitutionOnboardingData result = new InstitutionOnboardingData();
-
-        InstitutionInfo institutionInfo = partyConnector.getInstitutionBillingData(externalInstitutionId, productId);
-        if (institutionInfo == null) {
-            throw new ResourceNotFoundException(String.format("Institution %s not found", externalInstitutionId));
-        }
-
-        Institution institution = partyConnector.getInstitutionByExternalId(externalInstitutionId);
-        if (institution == null) {
-            throw new ResourceNotFoundException(String.format("Institution %s not found", externalInstitutionId));
-        }
-        if (institution.getGeographicTaxonomies() == null) {
-            throw new ValidationException(String.format("The institution %s does not have geographic taxonomies.", externalInstitutionId));
-        }
-        setInstitutionInfo(institution, institutionInfo);
-        setLocationInfo(institutionInfo);
-        result.setInstitution(institutionInfo);
-        result.setGeographicTaxonomies(institution.getGeographicTaxonomies());
-        result.setCompanyInformations(institution.getCompanyInformations());
-        result.setAssistanceContacts(institution.getAssistanceContacts());
-
-        log.debug(LogUtils.CONFIDENTIAL_MARKER, "getInstitutionOnboardingData result = {}", result);
-        log.trace("getInstitutionOnboardingData end");
-        return result;
-    }
-    private void setInstitutionInfo(Institution institution, InstitutionInfo institutionInfo){
-        InstitutionLocation institutionLocation = new InstitutionLocation();
-        institutionLocation.setCountry(institution.getCountry());
-        institutionLocation.setCity(institution.getCity());
-        institutionLocation.setCounty(institution.getCounty());
-        institutionInfo.setInstitutionLocation(institutionLocation);
-        institutionInfo.setSubunitCode(institution.getSubunitCode());
-        institutionInfo.setSubunitType(institution.getSubunitType());
-        institutionInfo.setOrigin(institution.getOrigin());
-    }
-
-    private void setLocationInfo(InstitutionInfo institutionInfo){
-        if (institutionInfo.getInstitutionLocation().getCity()==null && Origin.IPA.getValue().equals(institutionInfo.getOrigin())){
-            try {
-                GeographicTaxonomies geographicTaxonomies = null;
-                if (institutionInfo.getSubunitType() != null) {
-                    geographicTaxonomies = switch (Objects.requireNonNull(institutionInfo.getSubunitType())) {
-                        case "UO" -> {
-                            OrganizationUnit organizationUnit = partyRegistryProxyConnector.getUoById(institutionInfo.getSubunitCode());
-                            yield partyRegistryProxyConnector.getExtById(organizationUnit.getMunicipalIstatCode());
-                        }
-                        case "AOO" -> {
-                            HomogeneousOrganizationalArea homogeneousOrganizationalArea = partyRegistryProxyConnector.getAooById(institutionInfo.getSubunitCode());
-                            yield partyRegistryProxyConnector.getExtById(homogeneousOrganizationalArea.getMunicipalIstatCode());
-                        }
-                        default -> {
-                            InstitutionProxyInfo proxyInfo = partyRegistryProxyConnector.getInstitutionProxyById(institutionInfo.getTaxCode());
-                            yield partyRegistryProxyConnector.getExtById(proxyInfo.getIstatCode());
-                        }
-                    };
-                }
-                else {
-                    InstitutionProxyInfo proxyInfo = partyRegistryProxyConnector.getInstitutionProxyById(institutionInfo.getTaxCode());
-                    geographicTaxonomies= partyRegistryProxyConnector.getExtById(proxyInfo.getIstatCode());
-                }
-                if (geographicTaxonomies != null) {
-                    institutionInfo.getInstitutionLocation().setCounty(geographicTaxonomies.getProvinceAbbreviation());
-                    institutionInfo.getInstitutionLocation().setCountry(geographicTaxonomies.getCountryAbbreviation());
-                    institutionInfo.getInstitutionLocation().setCity(geographicTaxonomies.getDescription().replace(DESCRIPTION_TO_REPLACE_REGEX, ""));
-                }
-            } catch (ResourceNotFoundException e) {
-                log.warn("Error while searching institution {} on IPA, {} ", institutionInfo.getDescription(), e.getMessage());
-            }
-        }
-    }
-
 
     @Override
     public Institution getInstitutionByExternalId(String externalInstitutionId) {
@@ -613,6 +436,83 @@ class InstitutionServiceImpl implements InstitutionService {
         log.debug("getInstitutionLegalAddress result = {}", result);
         log.trace("getInstitutionLegalAddress end");
         return result;
+    }
+
+    @Override
+    public InstitutionOnboardingData getInstitutionOnboardingData(String externalInstitutionId, String productId) {
+        log.trace("getInstitutionOnboardingData start");
+        log.debug("getInstitutionOnboardingData externalInstitutionId = {}, productId = {}", externalInstitutionId, productId);
+        Assert.hasText(externalInstitutionId, REQUIRED_INSTITUTION_ID_MESSAGE);
+        Assert.hasText(productId, A_PRODUCT_ID_IS_REQUIRED);
+        InstitutionOnboardingData result = new InstitutionOnboardingData();
+
+        InstitutionInfo institutionInfo = partyConnector.getInstitutionBillingData(externalInstitutionId, productId);
+        if (institutionInfo == null) {
+            throw new ResourceNotFoundException(String.format("Institution %s not found", externalInstitutionId));
+        }
+
+        Institution institution = partyConnector.getInstitutionByExternalId(externalInstitutionId);
+        if (institution == null) {
+            throw new ResourceNotFoundException(String.format("Institution %s not found", externalInstitutionId));
+        }
+        if (institution.getGeographicTaxonomies() == null) {
+            throw new ValidationException(String.format("The institution %s does not have geographic taxonomies.", externalInstitutionId));
+        }
+        setInstitutionInfo(institution, institutionInfo);
+        setLocationInfo(institutionInfo);
+        result.setInstitution(institutionInfo);
+        result.setGeographicTaxonomies(institution.getGeographicTaxonomies());
+        result.setCompanyInformations(institution.getCompanyInformations());
+        result.setAssistanceContacts(institution.getAssistanceContacts());
+
+        log.debug(LogUtils.CONFIDENTIAL_MARKER, "getInstitutionOnboardingData result = {}", result);
+        log.trace("getInstitutionOnboardingData end");
+        return result;
+    }
+    private void setInstitutionInfo(Institution institution, InstitutionInfo institutionInfo){
+        InstitutionLocation institutionLocation = new InstitutionLocation();
+        institutionLocation.setCountry(institution.getCountry());
+        institutionLocation.setCity(institution.getCity());
+        institutionLocation.setCounty(institution.getCounty());
+        institutionInfo.setInstitutionLocation(institutionLocation);
+        institutionInfo.setSubunitCode(institution.getSubunitCode());
+        institutionInfo.setSubunitType(institution.getSubunitType());
+        institutionInfo.setOrigin(institution.getOrigin());
+    }
+
+    private void setLocationInfo(InstitutionInfo institutionInfo){
+        if (institutionInfo.getInstitutionLocation().getCity()==null && Origin.IPA.getValue().equals(institutionInfo.getOrigin())){
+            try {
+                GeographicTaxonomies geographicTaxonomies = null;
+                if (institutionInfo.getSubunitType() != null) {
+                    geographicTaxonomies = switch (Objects.requireNonNull(institutionInfo.getSubunitType())) {
+                        case "UO" -> {
+                            OrganizationUnit organizationUnit = partyRegistryProxyConnector.getUoById(institutionInfo.getSubunitCode());
+                            yield partyRegistryProxyConnector.getExtById(organizationUnit.getMunicipalIstatCode());
+                        }
+                        case "AOO" -> {
+                            HomogeneousOrganizationalArea homogeneousOrganizationalArea = partyRegistryProxyConnector.getAooById(institutionInfo.getSubunitCode());
+                            yield partyRegistryProxyConnector.getExtById(homogeneousOrganizationalArea.getMunicipalIstatCode());
+                        }
+                        default -> {
+                            InstitutionProxyInfo proxyInfo = partyRegistryProxyConnector.getInstitutionProxyById(institutionInfo.getTaxCode());
+                            yield partyRegistryProxyConnector.getExtById(proxyInfo.getIstatCode());
+                        }
+                    };
+                }
+                else {
+                    InstitutionProxyInfo proxyInfo = partyRegistryProxyConnector.getInstitutionProxyById(institutionInfo.getTaxCode());
+                    geographicTaxonomies= partyRegistryProxyConnector.getExtById(proxyInfo.getIstatCode());
+                }
+                if (geographicTaxonomies != null) {
+                    institutionInfo.getInstitutionLocation().setCounty(geographicTaxonomies.getProvinceAbbreviation());
+                    institutionInfo.getInstitutionLocation().setCountry(geographicTaxonomies.getCountryAbbreviation());
+                    institutionInfo.getInstitutionLocation().setCity(geographicTaxonomies.getDescription().replace(DESCRIPTION_TO_REPLACE_REGEX, ""));
+                }
+            } catch (ResourceNotFoundException e) {
+                log.warn("Error while searching institution {} on IPA, {} ", institutionInfo.getDescription(), e.getMessage());
+            }
+        }
     }
 
 }

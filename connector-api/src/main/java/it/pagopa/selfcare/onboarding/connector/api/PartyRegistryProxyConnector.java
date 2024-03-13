@@ -17,7 +17,9 @@ public interface PartyRegistryProxyConnector {
     InstitutionLegalAddressData getInstitutionLegalAddress(String externalInstitutionId);
 
     HomogeneousOrganizationalArea getAooById(String aooCode);
+
     OrganizationUnit getUoById(String uoCode);
+
     GeographicTaxonomies getExtById(String code);
 
     InstitutionProxyInfo getInstitutionProxyById(String externalId);

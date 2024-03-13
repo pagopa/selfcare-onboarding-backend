@@ -21,8 +21,6 @@ public interface InstitutionService {
 
     void onboardingProduct(OnboardingData onboardingData);
 
-    void onboarding(OnboardingData onboardingData);
-
     Collection<InstitutionInfo> getInstitutions(String productFilter);
 
     InstitutionOnboardingData getInstitutionOnboardingData(String taxCode, String subunitCode, String productId);
@@ -38,6 +36,7 @@ public interface InstitutionService {
     void verifyOnboarding(String externalInstitutionId, String productId);
 
     void verifyOnboarding(String taxCode, String subunitCode, String productId);
+
     void checkOrganization(String productId, String fiscalCode, String vatNumber);
     MatchInfoResult matchInstitutionAndUser(String externalInstitutionId, User user);
 
