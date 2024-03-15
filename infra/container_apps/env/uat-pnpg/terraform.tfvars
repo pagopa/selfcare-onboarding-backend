@@ -1,7 +1,7 @@
 is_pnpg   = true
 env_short = "u"
 private_dns_name = "selc-u-pnpg-onboardingbackend-ca.redground-be752d1f5.westeurope.azurecontainerapps.io"
-dns_zone_prefix    = "uat.selfcare"
+dns_zone_prefix    = "imprese.uat.notifichedigitali"
 api_dns_zone_prefix = "api-pnpg.uat.selfcare"
 
 tags = {
