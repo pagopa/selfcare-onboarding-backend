@@ -1,4 +1,7 @@
 env_short = "p"
+private_dns_name = "selc-p-onboardingbackend-ca.bluedune-cc0f8752.westeurope.azurecontainerapps.io"
+dns_zone_prefix    = "selfcare"
+api_dns_zone_prefix = "api.selfcare"
 
 tags = {
   CreatedBy   = "Terraform"

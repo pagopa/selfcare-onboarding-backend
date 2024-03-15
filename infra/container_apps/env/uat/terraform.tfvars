@@ -1,4 +1,7 @@
 env_short = "u"
+private_dns_name = "selc-u-onboardingbackend-ca.calmsky-143987c1.westeurope.azurecontainerapps.io"
+dns_zone_prefix    = "uat.selfcare"
+api_dns_zone_prefix = "api.uat.selfcare"
 
 tags = {
   CreatedBy   = "Terraform"
