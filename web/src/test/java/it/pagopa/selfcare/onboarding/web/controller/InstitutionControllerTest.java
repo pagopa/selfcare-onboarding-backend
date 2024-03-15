@@ -10,6 +10,7 @@ import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionInf
 import it.pagopa.selfcare.onboarding.connector.model.institutions.MatchInfoResult;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.infocamere.BusinessInfoIC;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.infocamere.InstitutionInfoIC;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.Billing;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.GeographicTaxonomy;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.User;
@@ -35,6 +36,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import java.util.Collections;
 import java.util.List;
 
+import static it.pagopa.selfcare.commons.utils.TestUtils.checkNotNullFields;
 import static it.pagopa.selfcare.commons.utils.TestUtils.mockInstance;
 import static java.util.UUID.randomUUID;
 import static org.hamcrest.Matchers.emptyString;
@@ -451,5 +453,48 @@ class InstitutionControllerTest {
         assertNotNull(response);
         assertEquals(response.getAddress(), data.getAddress());
         assertEquals(response.getZipCode(), data.getZipCode());
+    }
+
+    @Test
+    void getInstitutionOnboardingInfoResource() throws Exception {
+        //given
+        String institutionId = "institutionId";
+        String productId = "productId";
+        InstitutionInfo institutionInfoMock = mockInstance(new InstitutionInfo());
+        institutionInfoMock.setBilling(mockInstance(new Billing()));
+        InstitutionOnboardingData onBoardingDataMock = mockInstance(new InstitutionOnboardingData());
+        onBoardingDataMock.setInstitution(institutionInfoMock);
+        onBoardingDataMock.setGeographicTaxonomies(List.of(mockInstance(new GeographicTaxonomy())));
+
+        when(institutionServiceMock.getInstitutionOnboardingData(Mockito.anyString(), Mockito.anyString()))
+                .thenReturn(onBoardingDataMock);
+        //when
+        MvcResult result = mvc.perform(MockMvcRequestBuilders
+                        .get(BASE_URL + "/{institutionId}/products/{productId}/onboarded-institution-info", institutionId, productId)
+                        .contentType(APPLICATION_JSON_VALUE)
+                        .accept(APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk())
+                .andReturn();
+        //then
+        InstitutionOnboardingInfoResource response = objectMapper.readValue(
+                result.getResponse().getContentAsString(),
+                InstitutionOnboardingInfoResource.class
+        );
+        assertNotNull(response);
+        assertNotNull(response.getInstitution());
+
+        BillingDataResponseDto responseBillings = response.getInstitution().getBillingData();
+        assertEquals(onBoardingDataMock.getInstitution().getBilling().getRecipientCode(), responseBillings.getRecipientCode());
+        assertEquals(onBoardingDataMock.getInstitution().getBilling().getPublicServices(), responseBillings.getPublicServices());
+        assertEquals(onBoardingDataMock.getInstitution().getBilling().getVatNumber(), responseBillings.getVatNumber());
+        assertEquals(onBoardingDataMock.getInstitution().getDigitalAddress(), responseBillings.getDigitalAddress());
+        assertEquals(onBoardingDataMock.getInstitution().getTaxCode(), responseBillings.getTaxCode());
+        assertEquals(onBoardingDataMock.getInstitution().getAddress(), responseBillings.getRegisteredOffice());
+        assertEquals(onBoardingDataMock.getInstitution().getInstitutionType(), response.getInstitution().getInstitutionType());
+        checkNotNullFields(response);
+        verify(institutionServiceMock, times(1))
+                .getInstitutionOnboardingData(institutionId, productId);
+        verifyNoMoreInteractions(institutionServiceMock);
+
     }
 }

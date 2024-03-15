@@ -265,4 +265,28 @@ public class InstitutionController {
         return result;
     }
 
+    /**
+     * @param externalInstitutionId
+     * @return
+     * @deprecated [reference SELC-2815]
+     */
+    @Deprecated(forRemoval = true)
+    @GetMapping(value = "/{externalInstitutionId}/products/{productId}/onboarded-institution-info")
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "", notes = "${swagger.onboarding.institutions.api.getInstitutionOnboardingInfo}")
+    public InstitutionOnboardingInfoResource getInstitutionOnboardingInfo(@ApiParam("${swagger.onboarding.institutions.model.externalId}")
+                                                                          @PathVariable("externalInstitutionId")
+                                                                          String externalInstitutionId,
+                                                                          @ApiParam("${swagger.onboarding.product.model.id}")
+                                                                          @PathVariable("productId")
+                                                                          String productId) {
+        log.trace("getInstitutionOnBoardingInfo start");
+        log.debug("getInstitutionOnBoardingInfo institutionId = {}, productId = {}", externalInstitutionId, productId);
+        InstitutionOnboardingData institutionOnboardingData = institutionService.getInstitutionOnboardingData(externalInstitutionId, productId);
+        InstitutionOnboardingInfoResource result = onboardingInstitutionInfoMapper.toResource(institutionOnboardingData);
+        log.debug("getInstitutionOnBoardingInfo result = {}", result);
+        log.trace("getInstitutionOnBoardingInfo end");
+        return result;
+    }
+
 }
