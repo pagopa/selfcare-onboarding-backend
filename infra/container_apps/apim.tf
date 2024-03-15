@@ -52,6 +52,7 @@ module "apim_api_bff_onboarding" {
                 <method>POST</method>
                 <method>PUT</method>
                 <method>DELETE</method>
+                <method>HEAD</method>
                 <method>OPTIONS</method>
             </allowed-methods>
             <allowed-headers>
