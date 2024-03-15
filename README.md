@@ -1,4 +1,4 @@
-# Progetto Selfcare Onboarding Backend
+# Progetto Selfcare Onboarding Backend 
 An orchestrator for the onboarding process
 
 ## Configuration Properties
@@ -24,7 +24,7 @@ An orchestrator for the onboarding process
 |feign.client.config.products.readTimeout|MS_PRODUCT_REST_CLIENT_READ_TIMEOUT<br>REST_CLIENT_READ_TIMEOUT|<a name= "default property"></a>[default_property](https://github.com/pagopa/selfcare-onboarding-backend/blob/main/connector/rest/src/main/resources/config/products-rest-client.properties)| yes |
 |feign.client.config.products.loggerLevel|MS_PRODUCT_REST_CLIENT_LOGGER_LEVEL<br>REST_CLIENT_LOGGER_LEVEL|<a name= "default property"></a>[default_property](https://github.com/pagopa/selfcare-onboarding-backend/blob/main/connector/rest/src/main/resources/config/products-rest-client.properties)| yes |
 |rest-client.user-registry.base-url|USERVICE_USER_REGISTRY_URL|<a name= "default property"></a>[default_property](https://github.com/pagopa/selfcare-onboarding-backend/blob/main/connector/rest/src/main/resources/config/user-registry-rest-client.properties)| yes |
-|feign.client.config.user-registry.defaultRequestHeaders.x-api-key|USERVICE_USER_REGISTRY_API_KEY|<a name= "default property"></a>[default_property](https://github.com/pagopa/selfcare-onboarding-backend/blob/main/connector/rest/src/main/resources/config/user-registry-rest-client.properties)| yes |
+|feign.client.config.user-registry.defaultRequestHeaders.x-api-key|USERVICE_USERVICE_USER_REGISTRY_API_KEY|<a name= "default property"></a>[default_property](https://github.com/pagopa/selfcare-onboarding-backend/blob/main/connector/rest/src/main/resources/config/user-registry-rest-client.properties)| yes |
 |feign.client.config.user-registry.connectTimeout|USERVICE_USER_REGISTRY_REST_CLIENT_CONNECT_TIMEOUT<br>REST_CLIENT_CONNECT_TIMEOUT|<a name= "default property"></a>[default_property](https://github.com/pagopa/selfcare-onboarding-backend/blob/main/connector/rest/src/main/resources/config/user-registry-rest-client.properties)| yes |
 |feign.client.config.user-registry.readTimeout|USERVICE_USER_REGISTRY_REST_CLIENT_READ_TIMEOUT<br>REST_CLIENT_READ_TIMEOUT|<a name= "default property"></a>[default_property](https://github.com/pagopa/selfcare-onboarding-backend/blob/main/connector/rest/src/main/resources/config/user-registry-rest-client.properties)| yes |
 |feign.client.config.user-registry.loggerLevel|USERVICE_USER_REGISTRY_REST_CLIENT_LOGGER_LEVEL<br>REST_CLIENT_LOGGER_LEVEL|<a name= "default property"></a>[default_property](https://github.com/pagopa/selfcare-onboarding-backend/blob/main/connector/rest/src/main/resources/config/user-registry-rest-client.properties)| yes |

@@ -130,7 +130,7 @@ public class TokenV2Controller {
     @ApiOperation(value = "${swagger.tokens.rejectOnboardingRequest}")
     @PostMapping("/{onboardingId}/reject")
     public void rejectOnboarding(@ApiParam("${swagger.tokens.onboardingId}")
-                                 @PathVariable("onboardingId") String onboardingId,
+                                  @PathVariable("onboardingId") String onboardingId,
                                  @RequestBody ReasonForRejectDto reasonForRejectDto) {
         log.debug("reject onboarding identified with {}", onboardingId);
         tokenService.rejectOnboarding(onboardingId, reasonForRejectDto.getReason());

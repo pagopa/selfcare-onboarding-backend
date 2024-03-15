@@ -14,11 +14,16 @@ import it.pagopa.selfcare.onboarding.connector.model.institutions.MatchInfoResul
 import it.pagopa.selfcare.onboarding.connector.model.institutions.OnboardingResource;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.infocamere.InstitutionInfoIC;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.GeographicTaxonomy;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.InstitutionLocation;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.User;
 import it.pagopa.selfcare.onboarding.connector.model.product.Product;
 import it.pagopa.selfcare.onboarding.connector.model.product.ProductRoleInfo;
 import it.pagopa.selfcare.onboarding.connector.model.product.ProductStatus;
+import it.pagopa.selfcare.onboarding.connector.model.registry_proxy.GeographicTaxonomies;
+import it.pagopa.selfcare.onboarding.connector.model.registry_proxy.HomogeneousOrganizationalArea;
+import it.pagopa.selfcare.onboarding.connector.model.registry_proxy.InstitutionProxyInfo;
+import it.pagopa.selfcare.onboarding.connector.model.registry_proxy.OrganizationUnit;
 import it.pagopa.selfcare.onboarding.connector.model.user.Certification;
 import it.pagopa.selfcare.onboarding.connector.model.user.CertifiedField;
 import it.pagopa.selfcare.onboarding.connector.model.user.MutableUserFieldsDto;
@@ -57,6 +62,7 @@ class InstitutionServiceImpl implements InstitutionService {
     private static final String ONBOARDING_NOT_ALLOWED_ERROR_MESSAGE_TEMPLATE = "Institution with external id '%s' is not allowed to onboard '%s' product";
     public static final String UNABLE_TO_COMPLETE_THE_ONBOARDING_FOR_INSTITUTION_FOR_PRODUCT_DISMISSED = "Unable to complete the onboarding for institution with taxCode '%s' to product '%s', the product is dismissed.";
     public static final String FIELD_PSP_DATA_IS_REQUIRED_FOR_PSP_INSTITUTION_ONBOARDING = "Field 'pspData' is required for PSP institution onboarding";
+    static final String DESCRIPTION_TO_REPLACE_REGEX = " - COMUNE";
     private final OnboardingMsConnector onboardingMsConnector;
     private final PartyConnector partyConnector;
     private final ProductsConnector productsConnector;
@@ -73,7 +79,8 @@ class InstitutionServiceImpl implements InstitutionService {
                            MsExternalInterceptorConnector externalInterceptorConnector,
                            PartyRegistryProxyConnector partyRegistryProxyConnector,
                            OnboardingValidationStrategy onboardingValidationStrategy,
-                           InstitutionInfoMapper institutionMapper) {
+                           InstitutionInfoMapper institutionMapper
+                           ) {
         this.onboardingMsConnector = onboardingMsConnector;
         this.partyConnector = partyConnector;
         this.externalInterceptorConnector = externalInterceptorConnector;
@@ -429,6 +436,83 @@ class InstitutionServiceImpl implements InstitutionService {
         log.debug("getInstitutionLegalAddress result = {}", result);
         log.trace("getInstitutionLegalAddress end");
         return result;
+    }
+
+    @Override
+    public InstitutionOnboardingData getInstitutionOnboardingData(String externalInstitutionId, String productId) {
+        log.trace("getInstitutionOnboardingData start");
+        log.debug("getInstitutionOnboardingData externalInstitutionId = {}, productId = {}", externalInstitutionId, productId);
+        Assert.hasText(externalInstitutionId, REQUIRED_INSTITUTION_ID_MESSAGE);
+        Assert.hasText(productId, A_PRODUCT_ID_IS_REQUIRED);
+        InstitutionOnboardingData result = new InstitutionOnboardingData();
+
+        InstitutionInfo institutionInfo = partyConnector.getInstitutionBillingData(externalInstitutionId, productId);
+        if (institutionInfo == null) {
+            throw new ResourceNotFoundException(String.format("Institution %s not found", externalInstitutionId));
+        }
+
+        Institution institution = partyConnector.getInstitutionByExternalId(externalInstitutionId);
+        if (institution == null) {
+            throw new ResourceNotFoundException(String.format("Institution %s not found", externalInstitutionId));
+        }
+        if (institution.getGeographicTaxonomies() == null) {
+            throw new ValidationException(String.format("The institution %s does not have geographic taxonomies.", externalInstitutionId));
+        }
+        setInstitutionInfo(institution, institutionInfo);
+        setLocationInfo(institutionInfo);
+        result.setInstitution(institutionInfo);
+        result.setGeographicTaxonomies(institution.getGeographicTaxonomies());
+        result.setCompanyInformations(institution.getCompanyInformations());
+        result.setAssistanceContacts(institution.getAssistanceContacts());
+
+        log.debug(LogUtils.CONFIDENTIAL_MARKER, "getInstitutionOnboardingData result = {}", result);
+        log.trace("getInstitutionOnboardingData end");
+        return result;
+    }
+    private void setInstitutionInfo(Institution institution, InstitutionInfo institutionInfo){
+        InstitutionLocation institutionLocation = new InstitutionLocation();
+        institutionLocation.setCountry(institution.getCountry());
+        institutionLocation.setCity(institution.getCity());
+        institutionLocation.setCounty(institution.getCounty());
+        institutionInfo.setInstitutionLocation(institutionLocation);
+        institutionInfo.setSubunitCode(institution.getSubunitCode());
+        institutionInfo.setSubunitType(institution.getSubunitType());
+        institutionInfo.setOrigin(institution.getOrigin());
+    }
+
+    private void setLocationInfo(InstitutionInfo institutionInfo){
+        if (institutionInfo.getInstitutionLocation().getCity()==null && Origin.IPA.getValue().equals(institutionInfo.getOrigin())){
+            try {
+                GeographicTaxonomies geographicTaxonomies = null;
+                if (institutionInfo.getSubunitType() != null) {
+                    geographicTaxonomies = switch (Objects.requireNonNull(institutionInfo.getSubunitType())) {
+                        case "UO" -> {
+                            OrganizationUnit organizationUnit = partyRegistryProxyConnector.getUoById(institutionInfo.getSubunitCode());
+                            yield partyRegistryProxyConnector.getExtById(organizationUnit.getMunicipalIstatCode());
+                        }
+                        case "AOO" -> {
+                            HomogeneousOrganizationalArea homogeneousOrganizationalArea = partyRegistryProxyConnector.getAooById(institutionInfo.getSubunitCode());
+                            yield partyRegistryProxyConnector.getExtById(homogeneousOrganizationalArea.getMunicipalIstatCode());
+                        }
+                        default -> {
+                            InstitutionProxyInfo proxyInfo = partyRegistryProxyConnector.getInstitutionProxyById(institutionInfo.getTaxCode());
+                            yield partyRegistryProxyConnector.getExtById(proxyInfo.getIstatCode());
+                        }
+                    };
+                }
+                else {
+                    InstitutionProxyInfo proxyInfo = partyRegistryProxyConnector.getInstitutionProxyById(institutionInfo.getTaxCode());
+                    geographicTaxonomies= partyRegistryProxyConnector.getExtById(proxyInfo.getIstatCode());
+                }
+                if (geographicTaxonomies != null) {
+                    institutionInfo.getInstitutionLocation().setCounty(geographicTaxonomies.getProvinceAbbreviation());
+                    institutionInfo.getInstitutionLocation().setCountry(geographicTaxonomies.getCountryAbbreviation());
+                    institutionInfo.getInstitutionLocation().setCity(geographicTaxonomies.getDescription().replace(DESCRIPTION_TO_REPLACE_REGEX, ""));
+                }
+            } catch (ResourceNotFoundException e) {
+                log.warn("Error while searching institution {} on IPA, {} ", institutionInfo.getDescription(), e.getMessage());
+            }
+        }
     }
 
 }
