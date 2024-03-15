@@ -1,7 +1,9 @@
 locals {
-    apim_name = format("selc-%s-apim", var.env_short)
-    apim_rg   = format("selc-%s-api-rg", var.env_short)
-    api_name  = format("selc-%s-api-bff-onboarding", var.env_short)
+    apim_name       = format("selc-%s-apim", var.env_short)
+    apim_rg         = format("selc-%s-api-rg", var.env_short)
+    api_name        = var.is_pnpg ? format("selc-%s-pnpg-api-bff-onboarding", var.env_short) : format("selc-%s-api-bff-onboarding", var.env_short)
+    display_name    = var.is_pnpg ? "BFF PNPG Onboarding API" : "BFF Onboarding API"
+    base_path       = var.is_pnpg ? "imprese/onboarding" : "onboarding"
 }
 
 
@@ -9,7 +11,7 @@ resource "azurerm_api_management_api_version_set" "apim_api_bff_onboarding" {
   name                = local.api_name
   resource_group_name = local.apim_rg
   api_management_name = local.apim_name
-  display_name        = "BFF Onboarding API"
+  display_name        = local.display_name
   versioning_scheme   = "Segment"
 }
 
@@ -21,9 +23,9 @@ module "apim_api_bff_onboarding" {
   resource_group_name = local.apim_rg
   version_set_id      = azurerm_api_management_api_version_set.apim_api_bff_onboarding.id
 
-  description  = "BFF Onboarding API"
-  display_name = "BFF Onboarding API"
-  path         = "onboarding"
+  description  = local.display_name
+  display_name = local.display_name
+  path         = local.base_path
   protocols = [
     "https"
   ]
@@ -33,7 +35,7 @@ module "apim_api_bff_onboarding" {
   content_format = "openapi+json"
   content_value  = templatefile("../../app/src/main/resources/swagger/api-docs.json", {
     url         = format("%s.%s", var.api_dns_zone_prefix, var.external_domain)
-    basePath     = "/onboarding"
+    basePath     = local.base_path
   })
 
   subscription_required = false
