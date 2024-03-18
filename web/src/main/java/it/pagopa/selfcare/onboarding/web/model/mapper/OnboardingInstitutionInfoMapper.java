@@ -21,8 +21,8 @@ import java.util.stream.Collectors;
 @Mapper(componentModel = "spring")
 public interface OnboardingInstitutionInfoMapper {
     @Mappings({
-            @Mapping(target = "institution", expression = "java(toDataImpl(model.getInstitution()))"),
-            @Mapping(target = "geographicTaxonomies", expression = "java(mapGeographicTaxonomies(model.getGeographicTaxonomies()))")
+            @Mapping(target = "geographicTaxonomies", expression = "java(mapGeographicTaxonomies(model.getGeographicTaxonomies()))"),
+            @Mapping(target = "institution", expression = "java(toDataImpl(model.getInstitution(), model.getAssistanceContacts(), model.getCompanyInformations()))")
     })
     InstitutionOnboardingInfoResource toResource(InstitutionOnboardingData model);
 
@@ -35,18 +35,18 @@ public interface OnboardingInstitutionInfoMapper {
                 .orElse(null);
     }
 
-
-    default InstitutionData toDataImpl(InstitutionInfo model) {
-        return toData(model);
+    @Named("toDataImpl")
+    default InstitutionData toDataImpl(InstitutionInfo model, AssistanceContacts contacts, CompanyInformations companyInformations) {
+        return toData(model, contacts, companyInformations);
     }
 
     @Mappings({
             @Mapping(target = "billingData", source = "model", qualifiedByName = "toBilling"),
-            @Mapping(target = "city", source = "institutionLocation.city"),
-            @Mapping(target = "country", source = "institutionLocation.country"),
-            @Mapping(target = "county", source = "institutionLocation.county")
+            @Mapping(target = "city", source = "model.institutionLocation.city"),
+            @Mapping(target = "country", source = "model.institutionLocation.country"),
+            @Mapping(target = "county", source = "model.institutionLocation.county")
     })
-    InstitutionData toData(InstitutionInfo model);
+    InstitutionData toData(InstitutionInfo model, AssistanceContacts assistanceContacts, CompanyInformations companyInformations);
 
     @Named("toBilling")
     @Mappings({
