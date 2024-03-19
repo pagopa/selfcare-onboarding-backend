@@ -57,14 +57,14 @@ public class TokenServiceImplTest {
     }
 
     @Test
-    void onboardingPending() {
+    void verifyOnboarding() {
         //given
         final String onboardingId = "onboardingId";
         // when
         tokenService.verifyOnboarding(onboardingId);
         //then
         Mockito.verify(onboardingMsConnector, Mockito.times(1))
-                .onboardingPending(onboardingId);
+                .getOnboarding(onboardingId);
     }
 
     @Test
