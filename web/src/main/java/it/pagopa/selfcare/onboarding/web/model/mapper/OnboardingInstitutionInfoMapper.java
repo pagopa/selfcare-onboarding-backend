@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 public interface OnboardingInstitutionInfoMapper {
     @Mappings({
             @Mapping(target = "geographicTaxonomies", expression = "java(mapGeographicTaxonomies(model.getGeographicTaxonomies()))"),
-            @Mapping(target = "institution", expression = "java(toDataImpl(model.getInstitution(), model.getAssistanceContacts(), model.getCompanyInformations()))")
+            @Mapping(target = "institution", expression = "java(toInstitutionData(model.getInstitution(), model.getAssistanceContacts(), model.getCompanyInformations()))")
     })
     InstitutionOnboardingInfoResource toResource(InstitutionOnboardingData model);
 
@@ -35,27 +35,23 @@ public interface OnboardingInstitutionInfoMapper {
                 .orElse(null);
     }
 
-    @Named("toDataImpl")
-    default InstitutionData toDataImpl(InstitutionInfo model, AssistanceContacts contacts, CompanyInformations companyInformations) {
+    @Named("toInstitutionData")
+    default InstitutionData toInstitutionData(InstitutionInfo model, AssistanceContacts contacts, CompanyInformations companyInformations) {
         return toData(model, contacts, companyInformations);
     }
 
-    @Mappings({
-            @Mapping(target = "billingData", source = "model", qualifiedByName = "toBilling"),
-            @Mapping(target = "city", source = "model.institutionLocation.city"),
-            @Mapping(target = "country", source = "model.institutionLocation.country"),
+            @Mapping(target = "billingData", source = "model", qualifiedByName = "toBilling")
+            @Mapping(target = "city", source = "model.institutionLocation.city")
+            @Mapping(target = "country", source = "model.institutionLocation.country")
             @Mapping(target = "county", source = "model.institutionLocation.county")
-    })
     InstitutionData toData(InstitutionInfo model, AssistanceContacts assistanceContacts, CompanyInformations companyInformations);
 
     @Named("toBilling")
-    @Mappings({
-            @Mapping(target = "publicServices", source = "model.billing.publicServices"),
-            @Mapping(target = "recipientCode", source = "model.billing.recipientCode"),
-            @Mapping(target = "vatNumber", source = "model.billing.vatNumber"),
-            @Mapping(target = "registeredOffice", source = "address"),
+            @Mapping(target = "publicServices", source = "model.billing.publicServices")
+            @Mapping(target = "recipientCode", source = "model.billing.recipientCode")
+            @Mapping(target = "vatNumber", source = "model.billing.vatNumber")
+            @Mapping(target = "registeredOffice", source = "address")
             @Mapping(target = "businessName", source = "description")
-    })
     BillingDataResponseDto toBilling(InstitutionInfo model);
 
     @Named("toInstitutionResource")
