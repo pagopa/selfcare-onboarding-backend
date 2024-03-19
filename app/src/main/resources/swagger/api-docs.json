@@ -1701,7 +1701,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/OnboardingRequestResource"
+                  "$ref" : "#/components/schemas/OnboardingVerify"
                 }
               }
             }
@@ -2650,6 +2650,26 @@
             "type" : "string",
             "description" : "Onboarding request update date",
             "format" : "date-time"
+          }
+        }
+      },
+      "OnboardingVerify" : {
+        "title" : "OnboardingVerify",
+        "required" : [ "status" ],
+        "type" : "object",
+        "properties" : {
+          "expiringDate" : {
+            "type" : "string",
+            "description" : "Onboarding request expiring date",
+            "format" : "date-time"
+          },
+          "productId" : {
+            "type" : "string",
+            "description" : "Product's unique identifier"
+          },
+          "status" : {
+            "type" : "string",
+            "description" : "Onboarding request's status"
           }
         }
       },

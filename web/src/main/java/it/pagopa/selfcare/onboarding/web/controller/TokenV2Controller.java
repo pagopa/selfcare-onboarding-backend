@@ -8,6 +8,7 @@ import it.pagopa.selfcare.commons.base.logging.LogUtils;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
 import it.pagopa.selfcare.onboarding.core.TokenService;
 import it.pagopa.selfcare.onboarding.web.model.OnboardingRequestResource;
+import it.pagopa.selfcare.onboarding.web.model.OnboardingVerify;
 import it.pagopa.selfcare.onboarding.web.model.ReasonForRejectDto;
 import it.pagopa.selfcare.onboarding.web.model.mapper.OnboardingResourceMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -71,11 +72,11 @@ public class TokenV2Controller {
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "${swagger.tokens.verify}", notes = "${swagger.tokens.verify}")
     @PostMapping("/{onboardingId}/verify")
-    public OnboardingRequestResource verifyOnboarding(@ApiParam("${swagger.tokens.onboardingId}")
+    public OnboardingVerify verifyOnboarding(@ApiParam("${swagger.tokens.onboardingId}")
                                                                 @PathVariable("onboardingId") String onboardingId) {
         log.debug("Verify token identified with {}", onboardingId);
         final OnboardingData onboardingData = tokenService.verifyOnboarding(onboardingId);
-        OnboardingRequestResource result = onboardingResourceMapper.toOnboardingRequestResource(onboardingData);
+        OnboardingVerify result = onboardingResourceMapper.toOnboardingVerify(onboardingData);
         log.debug("Verify token identified result = {}", result);
         log.trace("Verify token identified end");
         return result;
