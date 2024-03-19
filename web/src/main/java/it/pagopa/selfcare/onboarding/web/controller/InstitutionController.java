@@ -48,12 +48,14 @@ public class InstitutionController {
     private final OnboardingInstitutionInfoMapper onboardingInstitutionInfoMapper;
     private static final String ONBOARDING_START = "onboarding start";
     private static final String ONBOARDING_END = "onboarding end";
+    private final GeographicTaxonomyMapper geographicTaxonomyMapper;
 
     @Autowired
-    public InstitutionController(InstitutionService institutionService, OnboardingResourceMapper onboardingResourceMapper, OnboardingInstitutionInfoMapper onboardingInstitutionInfoMapper) {
+    public InstitutionController(InstitutionService institutionService, OnboardingResourceMapper onboardingResourceMapper, OnboardingInstitutionInfoMapper onboardingInstitutionInfoMapper, GeographicTaxonomyMapper geographicTaxonomyMapper) {
         this.institutionService = institutionService;
         this.onboardingResourceMapper = onboardingResourceMapper;
         this.onboardingInstitutionInfoMapper = onboardingInstitutionInfoMapper;
+        this.geographicTaxonomyMapper = geographicTaxonomyMapper;
     }
 
 
@@ -120,7 +122,7 @@ public class InstitutionController {
         log.debug("getInstitutionGeographicTaxonomy institutionId = {}", externalInstitutionId);
         List<GeographicTaxonomyResource> geographicTaxonomies = institutionService.getGeographicTaxonomyList(externalInstitutionId)
                 .stream()
-                .map(GeographicTaxonomyMapper::toResource)
+                .map(geographicTaxonomyMapper::toResource)
                 .collect(Collectors.toList());
         log.debug("getInstitutionGeographicTaxonomy result = {}", geographicTaxonomies);
         log.trace("getInstitutionGeographicTaxonomy end");
@@ -143,7 +145,7 @@ public class InstitutionController {
 
         List<GeographicTaxonomyResource> geographicTaxonomies = institutionService.getGeographicTaxonomyList(taxCode, subunitCode)
                 .stream()
-                .map(GeographicTaxonomyMapper::toResource)
+                .map(geographicTaxonomyMapper::toResource)
                 .collect(Collectors.toList());
         log.debug("getGeographicTaxonomiesByTaxCodeAndSubunitCode result = {}", geographicTaxonomies);
         log.trace("getGeographicTaxonomiesByTaxCodeAndSubunitCode end");
