@@ -1,5 +1,8 @@
 is_pnpg   = true
 env_short = "p"
+private_dns_name = "selc-p-pnpg-onboardingbackend-ca.salmonpond-60269923.westeurope.azurecontainerapps.io"
+dns_zone_prefix    = "imprese.notifichedigitali"
+api_dns_zone_prefix = "api-pnpg.selfcare"
 
 tags = {
   CreatedBy   = "Terraform"
@@ -95,6 +98,6 @@ app_settings = [
 
 secrets_names = {
   "USERVICE_USER_REGISTRY_API_KEY"        = "user-registry-api-key"
-  "APPLICATIONINSIGHTS_CONNECTION_STRING" = "appinsights-instrumentation-key"
+  "APPLICATIONINSIGHTS_CONNECTION_STRING" = "appinsights-connection-string"
   "JWT_TOKEN_PUBLIC_KEY"                  = "jwt-public-key"
 }

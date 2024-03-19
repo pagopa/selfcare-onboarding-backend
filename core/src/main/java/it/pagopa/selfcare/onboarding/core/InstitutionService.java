@@ -44,4 +44,5 @@ public interface InstitutionService {
 
     InstitutionInfoIC getInstitutionsByUser(String taxCode);
 
+    InstitutionOnboardingData getInstitutionOnboardingData(String externalInstitutionId, String productId);
 }

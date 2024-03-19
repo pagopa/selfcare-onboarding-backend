@@ -33,54 +33,6 @@ public class TokenServiceImplTest {
     @Mock
     private OnboardingMsConnector onboardingMsConnector;
 
-    @Test
-    void shouldNotVerifyTokenWhenIdIsNull() {
-        //given
-        String tokenId = null;
-        //when
-        Executable executable = () -> tokenService.verifyToken(tokenId);
-        //then
-        Exception e = Assertions.assertThrows(IllegalArgumentException.class, executable);
-        Assertions.assertEquals("TokenId is required", e.getMessage());
-        Mockito.verifyNoInteractions(partyConnector);
-    }
-
-    @Test
-    void shouldVerifyToken() {
-        //given
-        String tokenId = "example";
-        doNothing().when(partyConnector).tokensVerify(anyString());
-        // when
-        tokenService.verifyToken(tokenId);
-        //then
-        Mockito.verify(partyConnector, Mockito.times(1))
-                .tokensVerify(tokenId);
-    }
-
-    @Test
-    void shouldNotCompleteTokenWhenIdIsNull() {
-        //given
-        String tokenId = null;
-        //when
-        Executable executable = () -> tokenService.completeToken(tokenId, null);
-        //then
-        Exception e = Assertions.assertThrows(IllegalArgumentException.class, executable);
-        Assertions.assertEquals("TokenId is required", e.getMessage());
-        Mockito.verifyNoInteractions(partyConnector);
-    }
-
-    @Test
-    void shouldCompleteToken() throws IOException {
-        //given
-        String tokenId = "example";
-        MockMultipartFile mockMultipartFile = new MockMultipartFile("example", new ByteArrayInputStream("example".getBytes(StandardCharsets.UTF_8)));
-        doNothing().when(partyConnector).onboardingTokenComplete(anyString(), any());
-        // when
-        tokenService.completeToken(tokenId, mockMultipartFile);
-        //then
-        Mockito.verify(partyConnector, Mockito.times(1))
-                .onboardingTokenComplete(tokenId, mockMultipartFile);
-    }
 
     @Test
     void shouldNotCompleteTokenV2WhenIdIsNull() {
@@ -124,18 +76,6 @@ public class TokenServiceImplTest {
         //then
         Mockito.verify(onboardingMsConnector, Mockito.times(1))
                 .getOnboardingWithUserInfo(onboardingId);
-    }
-
-    @Test
-    void shouldDeleteToken() {
-        //given
-        String tokenId = "example";
-        doNothing().when(partyConnector).deleteTokenComplete(anyString());
-        // when
-        tokenService.deleteToken(tokenId);
-        //then
-        Mockito.verify(partyConnector, Mockito.times(1))
-                .deleteTokenComplete(tokenId);
     }
 
     @Test
