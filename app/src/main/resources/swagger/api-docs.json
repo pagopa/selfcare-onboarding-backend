@@ -1701,7 +1701,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/TokenVerifyResponse"
+                  "$ref" : "#/components/schemas/OnboardingVerify"
                 }
               }
             }
@@ -2653,6 +2653,26 @@
           }
         }
       },
+      "OnboardingVerify" : {
+        "title" : "OnboardingVerify",
+        "required" : [ "status" ],
+        "type" : "object",
+        "properties" : {
+          "expiringDate" : {
+            "type" : "string",
+            "description" : "Onboarding request expiring date",
+            "format" : "date-time"
+          },
+          "productId" : {
+            "type" : "string",
+            "description" : "Product's unique identifier"
+          },
+          "status" : {
+            "type" : "string",
+            "description" : "Onboarding request's status"
+          }
+        }
+      },
       "Problem" : {
         "title" : "Problem",
         "required" : [ "status", "title" ],
@@ -2781,15 +2801,6 @@
           "reason" : {
             "type" : "string",
             "description" : "Rejection reason of an onboarding request"
-          }
-        }
-      },
-      "TokenVerifyResponse" : {
-        "title" : "TokenVerifyResponse",
-        "type" : "object",
-        "properties" : {
-          "id" : {
-            "type" : "string"
           }
         }
       },
