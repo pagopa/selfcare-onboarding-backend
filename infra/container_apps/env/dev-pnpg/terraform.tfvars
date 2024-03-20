@@ -43,7 +43,7 @@ app_settings = [
   },
   {
     name  = "MS_ONBOARDING_URL"
-    value = "https://selc-d-onboarding-ms-ca.whiteglacier-211c4885.westeurope.azurecontainerapps.io",
+    value = "https://selc-d-pnpg-onboarding-ms-ca.whiteglacier-211c4885.westeurope.azurecontainerapps.io",
   },
   {
     name  = "ONBOARDING_ALLOWED_INSTITUTIONS_PRODUCTS"
