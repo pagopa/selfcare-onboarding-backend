@@ -102,4 +102,15 @@ public class TokenServiceImplTest {
         Mockito.verify(onboardingMsConnector, Mockito.times(1))
                 .rejectOnboarding(onboardingId, reason);
     }
+
+    @Test
+    void getContract() {
+        //given
+        final String onboardingId = "onboardingId";
+        // when
+        tokenService.getContract(onboardingId);
+        //then
+        Mockito.verify(onboardingMsConnector, Mockito.times(1))
+                .getContract(onboardingId);
+    }
 }

@@ -12,11 +12,15 @@ import it.pagopa.selfcare.onboarding.web.model.OnboardingVerify;
 import it.pagopa.selfcare.onboarding.web.model.ReasonForRejectDto;
 import it.pagopa.selfcare.onboarding.web.model.mapper.OnboardingResourceMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @Slf4j
 @RestController
@@ -156,5 +160,22 @@ public class TokenV2Controller {
         log.debug("delete Token tokenId = {}", onboardingId);
         tokenService.rejectOnboarding(onboardingId, null);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+
+    @GetMapping(value = "/{onboardingId}/contract", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "", notes = "${swagger.tokens.getContract}")
+    public ResponseEntity<byte[]> getContract(@ApiParam("${swagger.tokens.onboardingId}")
+                                              @PathVariable("onboardingId")
+                                              String onboardingId) throws IOException {
+        log.trace("getContract start");
+        log.debug("getContract onboardingId = {}", onboardingId);
+        Resource contract = tokenService.getContract(onboardingId);
+        byte[] bytes = contract.getInputStream().readAllBytes();
+        log.trace("getContract end");
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" +contract.getFilename())
+                .body(bytes);
     }
 }

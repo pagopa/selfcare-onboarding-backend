@@ -3,6 +3,7 @@ package it.pagopa.selfcare.onboarding.core;
 import it.pagopa.selfcare.onboarding.connector.api.OnboardingMsConnector;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.web.multipart.MultipartFile;
@@ -69,5 +70,16 @@ public class TokenServiceImpl implements TokenService {
         onboardingMsConnector.onboardingTokenComplete(onboardingId, contract);
         log.debug("completeTokenAsync result = success");
         log.trace("completeTokenAsync end");
+    }
+
+    @Override
+    public Resource getContract(String onboardingId) {
+        log.trace("getContract start");
+        log.debug("getContract id = {}", onboardingId);
+        Assert.notNull(onboardingId, "TokenId is required");
+        Resource resource = onboardingMsConnector.getContract(onboardingId);
+        log.debug("getContract result = success");
+        log.trace("getContract end");
+        return resource;
     }
 }
