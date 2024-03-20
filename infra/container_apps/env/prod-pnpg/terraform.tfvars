@@ -3,6 +3,7 @@ env_short = "p"
 private_dns_name = "selc-p-pnpg-onboardingbackend-ca.salmonpond-60269923.westeurope.azurecontainerapps.io"
 dns_zone_prefix    = "imprese.notifichedigitali"
 api_dns_zone_prefix = "api-pnpg.selfcare"
+external_domain     = "it"
 
 tags = {
   CreatedBy   = "Terraform"
