@@ -1617,8 +1617,7 @@
             "content" : {
               "application/octet-stream" : {
                 "schema" : {
-                  "type" : "string",
-                  "format" : "byte"
+                  "$ref" : "#/components/schemas/Resource"
                 }
               }
             }
@@ -2333,6 +2332,10 @@
           }
         }
       },
+      "InputStream" : {
+        "title" : "InputStream",
+        "type" : "object"
+      },
       "InstitutionData" : {
         "title" : "InstitutionData",
         "type" : "object",
@@ -2875,6 +2878,39 @@
           "reason" : {
             "type" : "string",
             "description" : "Rejection reason of an onboarding request"
+          }
+        }
+      },
+      "Resource" : {
+        "title" : "Resource",
+        "type" : "object",
+        "properties" : {
+          "description" : {
+            "type" : "string"
+          },
+          "file" : {
+            "type" : "string",
+            "format" : "binary"
+          },
+          "filename" : {
+            "type" : "string"
+          },
+          "inputStream" : {
+            "$ref" : "#/components/schemas/InputStream"
+          },
+          "open" : {
+            "type" : "boolean"
+          },
+          "readable" : {
+            "type" : "boolean"
+          },
+          "uri" : {
+            "type" : "string",
+            "format" : "uri"
+          },
+          "url" : {
+            "type" : "string",
+            "format" : "url"
           }
         }
       },

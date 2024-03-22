@@ -27,6 +27,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.UUID;
 
@@ -174,11 +175,12 @@ public class TokenV2ControllerTest {
     @Test
     void getContract() throws Exception {
         String onboardingId = "onboardingId";
-        InputStream inputStream = Mockito.mock(InputStream.class);
+        String text = "String";
+        byte[] bytes= text.getBytes();
+        InputStream is = new ByteArrayInputStream(bytes);
         Resource resource = Mockito.mock(Resource.class);
         Mockito.when(tokenService.getContract(onboardingId)).thenReturn(resource);
-        Mockito.when(resource.getInputStream()).thenReturn(inputStream);
-        Mockito.when(inputStream.readAllBytes()).thenReturn(any());
+        Mockito.when(resource.getInputStream()).thenReturn(is);
 
         //when
         mvc.perform(MockMvcRequestBuilders

@@ -20,8 +20,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-
 @Slf4j
 @RestController
 @RequestMapping(value = "/v2/tokens", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -166,16 +164,15 @@ public class TokenV2Controller {
     @GetMapping(value = "/{onboardingId}/contract", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "", notes = "${swagger.tokens.getContract}")
-    public ResponseEntity<byte[]> getContract(@ApiParam("${swagger.tokens.onboardingId}")
+    public ResponseEntity<Resource> getContract(@ApiParam("${swagger.tokens.onboardingId}")
                                               @PathVariable("onboardingId")
-                                              String onboardingId) throws IOException {
+                                              String onboardingId){
         log.trace("getContract start");
         log.debug("getContract onboardingId = {}", onboardingId);
         Resource contract = tokenService.getContract(onboardingId);
-        byte[] bytes = contract.getInputStream().readAllBytes();
         log.trace("getContract end");
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" +contract.getFilename())
-                .body(bytes);
+                .body(contract);
     }
 }
