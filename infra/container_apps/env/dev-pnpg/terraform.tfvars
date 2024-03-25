@@ -72,6 +72,14 @@ app_settings = [
   {
     name  = "USERVICE_USER_REGISTRY_URL"
     value = "https://api.uat.pdv.pagopa.it/user-registry/v1"
+  },
+  {
+    name  = "REST_CLIENT_CONNECT_TIMEOUT"
+    value = "60000"
+  },
+  {
+    name  = "REST_CLIENT_READ_TIMEOUT"
+    value = "60000"
   }
 ]
 
