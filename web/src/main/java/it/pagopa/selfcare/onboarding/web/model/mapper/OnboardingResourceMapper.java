@@ -4,10 +4,7 @@ import it.pagopa.selfcare.commons.base.security.PartyRole;
 import it.pagopa.selfcare.onboarding.connector.model.InstitutionLegalAddressData;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.User;
-import it.pagopa.selfcare.onboarding.web.model.CompanyOnboardingDto;
-import it.pagopa.selfcare.onboarding.web.model.InstitutionLegalAddressResource;
-import it.pagopa.selfcare.onboarding.web.model.OnboardingProductDto;
-import it.pagopa.selfcare.onboarding.web.model.OnboardingRequestResource;
+import it.pagopa.selfcare.onboarding.web.model.*;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
@@ -63,6 +60,7 @@ public interface OnboardingResourceMapper {
     @Mapping(source = "users", target = "admins", qualifiedByName = "toAdmin")
     @Mapping(source = "institutionUpdate.additionalInformations", target = "institutionInfo.additionalInformations")
     OnboardingRequestResource toOnboardingRequestResource(OnboardingData onboardingData);
+    OnboardingVerify toOnboardingVerify(OnboardingData onboardingData);
 
     @Mapping(source = "taxCode", target = "fiscalCode")
     OnboardingRequestResource.UserInfo toUserInfo(User user);

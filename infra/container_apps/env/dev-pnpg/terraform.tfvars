@@ -43,7 +43,7 @@ app_settings = [
   },
   {
     name  = "MS_ONBOARDING_URL"
-    value = "https://selc-d-onboarding-ms-ca.whiteglacier-211c4885.westeurope.azurecontainerapps.io",
+    value = "https://selc-d-pnpg-onboarding-ms-ca.whiteglacier-211c4885.westeurope.azurecontainerapps.io",
   },
   {
     name  = "ONBOARDING_ALLOWED_INSTITUTIONS_PRODUCTS"
@@ -77,6 +77,6 @@ app_settings = [
 
 secrets_names = {
   "USERVICE_USER_REGISTRY_API_KEY"        = "user-registry-api-key"
-  "APPLICATIONINSIGHTS_CONNECTION_STRING" = "appinsights-instrumentation-key"
+  "APPLICATIONINSIGHTS_CONNECTION_STRING" = "appinsights-connection-string"
     "JWT_TOKEN_PUBLIC_KEY"                = "jwt-public-key"
 }

@@ -4,10 +4,12 @@ import it.pagopa.selfcare.commons.base.utils.InstitutionType;
 import it.pagopa.selfcare.onboarding.connector.api.OnboardingMsConnector;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
 import it.pagopa.selfcare.onboarding.connector.rest.client.MsOnboardingApiClient;
+import it.pagopa.selfcare.onboarding.connector.rest.client.MsOnboardingTokenApiClient;
 import it.pagopa.selfcare.onboarding.connector.rest.mapper.OnboardingMapper;
 import it.pagopa.selfcare.onboarding.generated.openapi.v1.dto.OnboardingGet;
 import it.pagopa.selfcare.onboarding.generated.openapi.v1.dto.ReasonRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -19,10 +21,13 @@ public class OnboardingMsConnectorImpl implements OnboardingMsConnector {
 
     private final MsOnboardingApiClient msOnboardingApiClient;
 
+    private final MsOnboardingTokenApiClient msOnboardingTokenApiClient;
+
     private final OnboardingMapper onboardingMapper;
 
-    public OnboardingMsConnectorImpl(MsOnboardingApiClient msOnboardingApiClient, OnboardingMapper onboardingMapper) {
+    public OnboardingMsConnectorImpl(MsOnboardingApiClient msOnboardingApiClient, MsOnboardingTokenApiClient msOnboardingTokenApiClient, OnboardingMapper onboardingMapper) {
         this.msOnboardingApiClient = msOnboardingApiClient;
+        this.msOnboardingTokenApiClient = msOnboardingTokenApiClient;
         this.onboardingMapper = onboardingMapper;
     }
 
@@ -75,5 +80,10 @@ public class OnboardingMsConnectorImpl implements OnboardingMsConnector {
     public OnboardingData getOnboardingWithUserInfo(String onboardingId) {
         OnboardingGet onboardingGet = msOnboardingApiClient._v1OnboardingOnboardingIdWithUserInfoGet(onboardingId).getBody();
         return onboardingMapper.toOnboardingData(onboardingGet);
+    }
+
+    @Override
+    public Resource getContract(String onboardingId) {
+        return msOnboardingTokenApiClient._v1TokensOnboardingIdContractGet(onboardingId).getBody();
     }
 }

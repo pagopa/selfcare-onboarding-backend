@@ -1,64 +1,40 @@
 package it.pagopa.selfcare.onboarding.core;
 
 import it.pagopa.selfcare.onboarding.connector.api.OnboardingMsConnector;
-import it.pagopa.selfcare.onboarding.connector.api.PartyConnector;
-import it.pagopa.selfcare.onboarding.connector.api.UserRegistryConnector;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
-import it.pagopa.selfcare.onboarding.connector.model.user.User;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.util.EnumSet;
 
 @Slf4j
 @Service
 public class TokenServiceImpl implements TokenService {
 
-    private final PartyConnector partyConnector;
-
     private final OnboardingMsConnector onboardingMsConnector;
+    private static final String ONBOARDING_ID_REQUIRED_MESSAGE = "OnboardingId is required";
 
-    private final UserRegistryConnector userRegistryConnector;
-
-
-    private static final EnumSet<User.Fields> USER_FIELD_LIST_ENHANCED = EnumSet.of(User.Fields.fiscalCode,
-            User.Fields.name,
-            User.Fields.familyName,
-            User.Fields.workContacts);
-
-    public TokenServiceImpl(PartyConnector partyConnector, OnboardingMsConnector onboardingMsConnector, UserRegistryConnector userRegistryConnector) {
-        this.partyConnector = partyConnector;
+    public TokenServiceImpl(OnboardingMsConnector onboardingMsConnector) {
         this.onboardingMsConnector = onboardingMsConnector;
-        this.userRegistryConnector = userRegistryConnector;
     }
 
     @Override
-    public void verifyToken(String tokenId) {
-        log.trace("verifyToken start");
-        log.debug("verifyToken id = {}", tokenId);
-        Assert.notNull(tokenId, "TokenId is required");
-        partyConnector.tokensVerify(tokenId);
-        log.debug("verifyToken result = success");
-        log.trace("verifyToken end");
-    }
-
-    @Override
-    public void verifyOnboarding(String onboardingId) {
+    public OnboardingData verifyOnboarding(String onboardingId) {
         log.trace("verifyOnboarding start");
         log.debug("verifyOnboarding id = {}", onboardingId);
-        Assert.notNull(onboardingId, "OnboardingId is required");
-        onboardingMsConnector.onboardingPending(onboardingId);
+        Assert.notNull(onboardingId, ONBOARDING_ID_REQUIRED_MESSAGE);
+        OnboardingData onboardingData = onboardingMsConnector.getOnboarding(onboardingId);
         log.debug("verifyOnboarding result = success");
         log.trace("verifyOnboarding end");
+        return onboardingData;
     }
 
     @Override
     public void approveOnboarding(String onboardingId) {
         log.trace("approveOnboarding start");
         log.debug("approveOnboarding id = {}", onboardingId);
-        Assert.notNull(onboardingId, "OnboardingId is required");
+        Assert.notNull(onboardingId, ONBOARDING_ID_REQUIRED_MESSAGE);
         onboardingMsConnector.approveOnboarding(onboardingId);
         log.debug("approveOnboarding result = success");
         log.trace("approveOnboarding end");
@@ -68,7 +44,7 @@ public class TokenServiceImpl implements TokenService {
     public void rejectOnboarding(String onboardingId, String reason) {
         log.trace("rejectOnboarding start");
         log.debug("rejectOnboarding id = {}", onboardingId);
-        Assert.notNull(onboardingId, "OnboardingId is required");
+        Assert.notNull(onboardingId, ONBOARDING_ID_REQUIRED_MESSAGE);
         onboardingMsConnector.rejectOnboarding(onboardingId, reason);
         log.debug("rejectOnboarding result = success");
         log.trace("rejectOnboarding end");
@@ -78,22 +54,13 @@ public class TokenServiceImpl implements TokenService {
     public OnboardingData getOnboardingWithUserInfo(String onboardingId) {
         log.trace("getOnboardingWithUserInfo start");
         log.debug("getOnboardingWithUserInfo id = {}", onboardingId);
-        Assert.notNull(onboardingId, "OnboardingId is required");
+        Assert.notNull(onboardingId, ONBOARDING_ID_REQUIRED_MESSAGE);
         OnboardingData onboardingData = onboardingMsConnector.getOnboardingWithUserInfo(onboardingId);
         log.debug("getOnboardingWithUserInfo result = success");
         log.trace("getOnboardingWithUserInfo end");
         return onboardingData;
     }
 
-    @Override
-    public void completeToken(String tokenId, MultipartFile contract) {
-        log.trace("completeToken start");
-        log.debug("completeToken id = {}", tokenId);
-        Assert.notNull(tokenId, "TokenId is required");
-        partyConnector.onboardingTokenComplete(tokenId, contract);
-        log.debug("completeToken result = success");
-        log.trace("completeToken end");
-    }
 
     @Override
     public void completeTokenV2(String onboardingId, MultipartFile contract) {
@@ -106,12 +73,13 @@ public class TokenServiceImpl implements TokenService {
     }
 
     @Override
-    public void deleteToken(String tokenId) {
-        log.trace("deleteToken start");
-        log.debug("deleteToken id = {}", tokenId);
-        Assert.notNull(tokenId, "TokenId is required");
-        partyConnector.deleteTokenComplete(tokenId);
-        log.debug("deleteToken result = success");
-        log.trace("deleteToken end");
+    public Resource getContract(String onboardingId) {
+        log.trace("getContract start");
+        log.debug("getContract id = {}", onboardingId);
+        Assert.notNull(onboardingId, "TokenId is required");
+        Resource resource = onboardingMsConnector.getContract(onboardingId);
+        log.debug("getContract result = success");
+        log.trace("getContract end");
+        return resource;
     }
 }

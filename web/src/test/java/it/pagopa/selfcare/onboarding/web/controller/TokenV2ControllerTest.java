@@ -11,10 +11,13 @@ import it.pagopa.selfcare.onboarding.web.model.OnboardingRequestResource;
 import it.pagopa.selfcare.onboarding.web.model.ReasonForRejectDto;
 import it.pagopa.selfcare.onboarding.web.model.mapper.OnboardingResourceMapperImpl;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.core.io.Resource;
+import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
@@ -24,6 +27,8 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -66,7 +71,8 @@ public class TokenV2ControllerTest {
     void verifyOnboarding() throws Exception {
 
         String onboardingId = UUID.randomUUID().toString();
-        doNothing().when(tokenService).verifyOnboarding(onboardingId);
+        when(tokenService.verifyOnboarding(onboardingId))
+                .thenReturn(new OnboardingData());
 
         //when
         mvc.perform(MockMvcRequestBuilders
@@ -164,5 +170,27 @@ public class TokenV2ControllerTest {
 
         verify(tokenService, times(1))
                 .rejectOnboarding(onboardingId, reason);
+    }
+
+    @Test
+    void getContract() throws Exception {
+        String onboardingId = "onboardingId";
+        String text = "String";
+        byte[] bytes= text.getBytes();
+        InputStream is = new ByteArrayInputStream(bytes);
+        Resource resource = Mockito.mock(Resource.class);
+        Mockito.when(tokenService.getContract(onboardingId)).thenReturn(resource);
+        Mockito.when(resource.getInputStream()).thenReturn(is);
+
+        //when
+        mvc.perform(MockMvcRequestBuilders
+                        .get("/v2/tokens/{onboardingId}/contract", onboardingId)
+                        .accept(MediaType.APPLICATION_OCTET_STREAM_VALUE))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        //then
+        verify(tokenService, times(1))
+                .getContract(onboardingId);
     }
 }

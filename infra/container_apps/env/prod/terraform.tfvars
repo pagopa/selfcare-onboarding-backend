@@ -39,7 +39,7 @@ app_settings = [
   },
   {
     name  = "JAVA_TOOL_OPTIONS"
-    value = "",
+    value = "-javaagent:applicationinsights-agent.jar",
   },
   {
     name  = "APPLICATIONINSIGHTS_INSTRUMENTATION_LOGGING_LEVEL"
@@ -55,11 +55,11 @@ app_settings = [
   },
   {
     name  = "MS_ONBOARDING_URL"
-    value = "https://selc-d-onboarding-ms-ca.bluedune-cc0f8752.westeurope.azurecontainerapps.io",
+    value = "https://selc-p-onboarding-ms-ca.bluedune-cc0f8752.westeurope.azurecontainerapps.io",
   },
   {
     name  = "ONBOARDING_ALLOWED_INSTITUTIONS_PRODUCTS"
-    value = "{'prod-interop':{'*'},'prod-pn':{'*'},'prod-io':{'*'},'prod-io-premium':{'*'},'prod-pagopa':{'*'},'prod-fd':{'*'},'prod-fd-garantito':{'*'},'prod-io-sign':{'*'},'prod-sendino':{'*'}}"
+    value = "{'prod-interop':{'*'},'prod-pn':{'*'},'prod-io':{'*'},'prod-io-premium':{'*'},'prod-pagopa':{'*'},'prod-io-sign':{'*'},'prod-sendino':{'*'}}"
   },
   {
     name  = "MS_CORE_URL"
@@ -84,11 +84,19 @@ app_settings = [
   {
     name  = "USERVICE_USER_REGISTRY_URL"
     value = "https://api.pdv.pagopa.it/user-registry/v1"
+  },
+  {
+    name  = "REST_CLIENT_CONNECT_TIMEOUT"
+    value = "60000"
+  },
+  {
+    name  = "REST_CLIENT_READ_TIMEOUT"
+    value = "60000"
   }
 ]
 
 secrets_names = {
   "USERVICE_USER_REGISTRY_API_KEY"        = "user-registry-api-key"
-  "APPLICATIONINSIGHTS_CONNECTION_STRING" = "appinsights-instrumentation-key"
+  "APPLICATIONINSIGHTS_CONNECTION_STRING" = "appinsights-connection-string"
   "JWT_TOKEN_PUBLIC_KEY"                  = "jwt-public-key"
 }
