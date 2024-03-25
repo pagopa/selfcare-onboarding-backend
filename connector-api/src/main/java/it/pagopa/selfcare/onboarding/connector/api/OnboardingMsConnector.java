@@ -1,6 +1,7 @@
 package it.pagopa.selfcare.onboarding.connector.api;
 
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
+import org.springframework.core.io.Resource;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface OnboardingMsConnector {
@@ -19,4 +20,6 @@ public interface OnboardingMsConnector {
     OnboardingData getOnboarding(String onboardingId);
 
     OnboardingData getOnboardingWithUserInfo(String onboardingId);
+
+    Resource getContract(String onboardingId);
 }

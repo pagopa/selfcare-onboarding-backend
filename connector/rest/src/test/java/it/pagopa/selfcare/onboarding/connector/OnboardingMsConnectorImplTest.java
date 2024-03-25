@@ -3,17 +3,16 @@ package it.pagopa.selfcare.onboarding.connector;
 import it.pagopa.selfcare.commons.base.utils.InstitutionType;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.*;
 import it.pagopa.selfcare.onboarding.connector.rest.client.MsOnboardingApiClient;
+import it.pagopa.selfcare.onboarding.connector.rest.client.MsOnboardingTokenApiClient;
 import it.pagopa.selfcare.onboarding.connector.rest.mapper.OnboardingMapper;
 import it.pagopa.selfcare.onboarding.connector.rest.mapper.OnboardingMapperImpl;
 import it.pagopa.selfcare.onboarding.generated.openapi.v1.dto.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
-import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Spy;
+import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockMultipartFile;
 
@@ -34,6 +33,9 @@ public class OnboardingMsConnectorImplTest {
     private OnboardingMsConnectorImpl onboardingMsConnector;
     @Mock
     private MsOnboardingApiClient msOnboardingApiClient;
+
+    @Mock
+    private MsOnboardingTokenApiClient msOnboardingTokenApiClient;
 
     @Spy
     private OnboardingMapper onboardingMapper = new OnboardingMapperImpl();
@@ -210,5 +212,21 @@ public class OnboardingMsConnectorImplTest {
         verify(msOnboardingApiClient, times(1))
                 ._v1OnboardingOnboardingIdRejectPut(onboardingId, reasonDto);
         verifyNoMoreInteractions(msOnboardingApiClient);
+    }
+
+    @Test
+    void getContract() {
+        // given
+        final String onboardingId = "onboardingId";
+        Resource resource = Mockito.mock(Resource.class);
+        when(msOnboardingTokenApiClient._v1TokensOnboardingIdContractGet(onboardingId))
+                .thenReturn(ResponseEntity.of(Optional.of(resource)));
+        // when
+        final Executable executable = () -> onboardingMsConnector.getContract(onboardingId);
+        // then
+        assertDoesNotThrow(executable);
+        verify(msOnboardingTokenApiClient, times(1))
+                ._v1TokensOnboardingIdContractGet(onboardingId);
+        verifyNoMoreInteractions(msOnboardingTokenApiClient);
     }
 }
