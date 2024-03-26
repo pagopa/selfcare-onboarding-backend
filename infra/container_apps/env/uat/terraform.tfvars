@@ -54,7 +54,7 @@ app_settings = [
   },
   {
     name  = "MS_EXTERNAL_INTERCEPTOR_URL"
-    value = "https://selc-u-ms-external-api-backend-ca.calmsky-143987c1.westeurope.azurecontainerapps.io"
+    value = "https://selc-u-ext-interceptor-ca.calmsky-143987c1.westeurope.azurecontainerapps.io"
   },
   {
     name  = "USERVICE_PARTY_PROCESS_URL"
