@@ -56,7 +56,7 @@ app_settings = [
   },
   {
     name  = "MS_EXTERNAL_INTERCEPTOR_URL"
-    value = "https://selc-u-pnpg-ms-external-api-backend-ca.redground-be752d1f.westeurope.azurecontainerapps.io"
+    value = "https://selc-u-pnpg-ext-interceptor-ca.redground-be752d1f.westeurope.azurecontainerapps.io"
   },
   {
     name  = "USERVICE_PARTY_PROCESS_URL"
