@@ -59,7 +59,7 @@ app_settings = [
   },
   {
     name  = "ONBOARDING_ALLOWED_INSTITUTIONS_PRODUCTS"
-    value = "{'prod-interop':{'*'},'prod-pn':{'*'},'prod-io':{'*'},'prod-io-premium':{'*'},'prod-pagopa':{'*'},'prod-io-sign':{'*'},'prod-sendino':{'*'}}"
+    value = "{'prod-interop':{'*'},'prod-pn':{'*'},'prod-io':{'*'},'prod-io-premium':{'*'},'prod-pagopa':{'*'},'prod-io-sign':{'*'},'prod-sendino':{'*'},'prod-fd':{'*'},'prod-fd-garantito':{'*'}}"
   },
   {
     name  = "MS_CORE_URL"
@@ -67,7 +67,7 @@ app_settings = [
   },
   {
     name  = "MS_EXTERNAL_INTERCEPTOR_URL"
-    value = "https://selc-p-ext-interceptor-ca.bluedune-cc0f8752.westeurope.azurecontainerapps.io"
+    value = "http://selc.internal.selfcare.pagopa.it//ms-external-interceptor/v1"
   },
   {
     name  = "USERVICE_PARTY_PROCESS_URL"

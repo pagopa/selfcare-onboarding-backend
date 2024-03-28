@@ -54,7 +54,7 @@ app_settings = [
   },
   {
     name  = "MS_EXTERNAL_INTERCEPTOR_URL"
-    value = "https://selc-d-ext-interceptor-ca.gentleflower-c63e62fe.westeurope.azurecontainerapps.io"
+    value = "http://selc.internal.dev.selfcare.pagopa.it//ms-external-interceptor/v1"
   },
   {
     name  = "USERVICE_PARTY_PROCESS_URL"
