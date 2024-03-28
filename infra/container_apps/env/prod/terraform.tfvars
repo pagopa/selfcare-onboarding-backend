@@ -67,7 +67,7 @@ app_settings = [
   },
   {
     name  = "MS_EXTERNAL_INTERCEPTOR_URL"
-    value = "http://selc.internal.selfcare.pagopa.it//ms-external-interceptor/v1"
+    value = "http://selc.internal.selfcare.pagopa.it/ms-external-interceptor/v1"
   },
   {
     name  = "USERVICE_PARTY_PROCESS_URL"
