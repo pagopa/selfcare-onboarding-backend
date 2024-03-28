@@ -77,7 +77,7 @@ app_settings = [
   },
   {
     name  = "MS_EXTERNAL_INTERCEPTOR_URL"
-    value = "https://selc-p-pnpg-ms-external-api-backend-ca.salmonpond-60269923.westeurope.azurecontainerapps.io"
+    value = "https://selc-p-pnpg-ext-interceptor-ca.salmonpond-60269923.westeurope.azurecontainerapps.io"
   },
   {
     name  = "USERVICE_PARTY_PROCESS_URL"

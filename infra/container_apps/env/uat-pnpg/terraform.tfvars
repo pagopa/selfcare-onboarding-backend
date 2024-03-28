@@ -56,7 +56,7 @@ app_settings = [
   },
   {
     name  = "MS_EXTERNAL_INTERCEPTOR_URL"
-    value = "https://selc-u-pnpg-ms-external-api-backend-ca.redground-be752d1f.westeurope.azurecontainerapps.io"
+    value = "https://selc-u-pnpg-ext-interceptor-ca.redground-be752d1f.westeurope.azurecontainerapps.io"
   },
   {
     name  = "USERVICE_PARTY_PROCESS_URL"
@@ -73,6 +73,14 @@ app_settings = [
   {
     name  = "USERVICE_USER_REGISTRY_URL"
     value = "https://api.uat.pdv.pagopa.it/user-registry/v1"
+  },
+  {
+    name  = "REST_CLIENT_CONNECT_TIMEOUT"
+    value = "60000"
+  },
+  {
+    name  = "REST_CLIENT_READ_TIMEOUT"
+    value = "60000"
   }
 ]
 
