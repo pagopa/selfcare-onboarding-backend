@@ -1,5 +1,5 @@
 env_short = "d"
-private_dns_name = "selc-d-onboardingbackend-ca.livelydesert-633675b.westeurope.azurecontainerapps.io"
+private_dns_name = "selc-d-onboardingbackend-ca.livelydesert-633675bb.westeurope.azurecontainerapps.io"
 dns_zone_prefix    = "dev.selfcare"
 api_dns_zone_prefix = "api.dev.selfcare"
 
@@ -55,7 +55,7 @@ app_settings = [
   },
   {
     name  = "MS_ONBOARDING_URL"
-    value = "https://selc-d-onboarding-ms-ca.livelydesert-633675b.westeurope.azurecontainerapps.io",
+    value = "https://selc-d-onboarding-ms-ca.livelydesert-633675bb.westeurope.azurecontainerapps.io",
   },
   {
     name  = "ONBOARDING_ALLOWED_INSTITUTIONS_PRODUCTS"
@@ -63,7 +63,7 @@ app_settings = [
   },
   {
     name  = "MS_CORE_URL"
-    value = "https://selc-d-ms-core-ca.livelydesert-633675b.westeurope.azurecontainerapps.io"
+    value = "https://selc-d-ms-core-ca.livelydesert-633675bb.westeurope.azurecontainerapps.io"
   },
   {
     name  = "MS_EXTERNAL_INTERCEPTOR_URL"
@@ -71,15 +71,15 @@ app_settings = [
   },
   {
     name  = "USERVICE_PARTY_PROCESS_URL"
-    value = "https://selc-d-ms-core-ca.livelydesert-633675b.westeurope.azurecontainerapps.io"
+    value = "https://selc-d-ms-core-ca.livelydesert-633675bb.westeurope.azurecontainerapps.io"
   },
   {
     name  = "USERVICE_PARTY_REGISTRY_PROXY_URL"
-    value = "https://selc-d-party-reg-proxy-ca.livelydesert-633675b.westeurope.azurecontainerapps.io"
+    value = "https://selc-d-party-reg-proxy-ca.livelydesert-633675bb.westeurope.azurecontainerapps.io"
   },
   {
     name  = "MS_PRODUCT_URL"
-    value = "https://selc-d-product-ca.livelydesert-633675bb.westeurope.azurecontainerapps.io"
+    value = "https://selc-d-product-ca.livelydesert-633675bbb.westeurope.azurecontainerapps.io"
   },
   {
     name  = "USERVICE_USER_REGISTRY_URL"
