@@ -82,7 +82,7 @@ app_settings = [
   },
   {
     name  = "MS_PRODUCT_URL"
-    value = "http://dev01.pnpg.internal.dev.selfcare.pagopa.it/ms-product/v1"
+    value = "https://selc-d-pnpg-product-ca.whiteglacier-211c4885.westeurope.azurecontainerapps.io"
   },
   {
     name  = "USERVICE_USER_REGISTRY_URL"
