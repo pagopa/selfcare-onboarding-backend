@@ -181,6 +181,7 @@ public class TokenV2Controller {
             log.trace("getContract end");
             return ResponseEntity.ok()
                     .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + contract.getFilename())
+                    .header(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS)
                     .body(byteArray);
         } finally {
             IOUtils.close(inputStream);
