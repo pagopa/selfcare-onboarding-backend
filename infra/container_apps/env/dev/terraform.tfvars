@@ -79,7 +79,7 @@ app_settings = [
   },
   {
     name  = "MS_PRODUCT_URL"
-    value = "https://selc-d-product-ca.livelydesert-633675bbb.westeurope.azurecontainerapps.io"
+    value = "https://selc-d-product-ca.livelydesert-633675bb.westeurope.azurecontainerapps.io"
   },
   {
     name  = "USERVICE_USER_REGISTRY_URL"
