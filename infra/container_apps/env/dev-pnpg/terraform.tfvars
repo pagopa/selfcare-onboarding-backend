@@ -1,6 +1,6 @@
 is_pnpg   = true
 env_short = "d"
-private_dns_name = "selc-d-pnpg-onboardingbackend-ca.whiteglacier-211c4885.westeurope.azurecontainerapps.io"
+private_dns_name = "selc-d-pnpg-onboardingbackend-ca.yellowdesert-85d3792d.westeurope.azurecontainerapps.io"
 dns_zone_prefix    = "pnpg.dev.selfcare"
 api_dns_zone_prefix = "api-pnpg.dev.selfcare"
 
@@ -56,7 +56,7 @@ app_settings = [
   },
   {
     name  = "MS_ONBOARDING_URL"
-    value = "https://selc-d-pnpg-onboarding-ms-ca.whiteglacier-211c4885.westeurope.azurecontainerapps.io",
+    value = "https://selc-d-pnpg-onboarding-ms-ca.yellowdesert-85d3792d.westeurope.azurecontainerapps.io",
   },
   {
     name  = "ONBOARDING_ALLOWED_INSTITUTIONS_PRODUCTS"
@@ -64,23 +64,23 @@ app_settings = [
   },
   {
     name  = "MS_CORE_URL"
-    value = "https://selc-d-pnpg-ms-core-ca.whiteglacier-211c4885.westeurope.azurecontainerapps.io"
+    value = "https://selc-d-pnpg-ms-core-ca.yellowdesert-85d3792d.westeurope.azurecontainerapps.io"
   },
   {
     name  = "MS_EXTERNAL_INTERCEPTOR_URL"
-    value = "https://selc-d-pnpg-ext-interceptor-ca.whiteglacier-211c4885.westeurope.azurecontainerapps.io"
+    value = "https://selc-d-pnpg-ext-interceptor-ca.yellowdesert-85d3792d.westeurope.azurecontainerapps.io"
   },
   {
     name  = "USERVICE_PARTY_PROCESS_URL"
-    value = "https://selc-d-pnpg-ms-core-ca.whiteglacier-211c4885.westeurope.azurecontainerapps.io"
+    value = "https://selc-d-pnpg-ms-core-ca.yellowdesert-85d3792d.westeurope.azurecontainerapps.io"
   },
   {
     name  = "USERVICE_PARTY_REGISTRY_PROXY_URL"
-    value = "https://selc-d-pnpg-party-reg-proxy-ca.whiteglacier-211c4885.westeurope.azurecontainerapps.io"
+    value = "https://selc-d-pnpg-party-reg-proxy-ca.yellowdesert-85d3792d.westeurope.azurecontainerapps.io"
   },
   {
     name  = "MS_PRODUCT_URL"
-    value = "https://selc-d-pnpg-product-ca.whiteglacier-211c4885.westeurope.azurecontainerapps.io"
+    value = "https://selc-d-pnpg-product-ca.yellowdesert-85d3792d.westeurope.azurecontainerapps.io"
   },
   {
     name  = "USERVICE_USER_REGISTRY_URL"
