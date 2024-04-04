@@ -29,6 +29,6 @@ configEnvSpecific:
   B4F_ONBOARDING_LOG_LEVEL: "INFO"
   REST_CLIENT_LOGGER_LEVEL: "BASIC"
   ONBOARDING_ALLOWED_INSTITUTIONS_PRODUCTS: "{'prod-pn-pg':{'*'}}"
-  MS_ONBOARDING_URL: "https://selc-p-pnpg-onboardingbackend-ca.redbeach-5da5166f.westeurope.azurecontainerapps.io"
+  MS_ONBOARDING_URL: "https://selc-p-pnpg-onboarding-ms-ca.redbeach-5da5166f.westeurope.azurecontainerapps.io"
   REST_CLIENT_READ_TIMEOUT: "60000"
   REST_CLIENT_CONNECT_TIMEOUT: "5000"
