@@ -167,6 +167,7 @@ public class TokenV2Controller {
 
     @GetMapping(value = "/{onboardingId}/contract", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     @ResponseStatus(HttpStatus.OK)
+
     @ApiOperation(value = "", notes = "${swagger.tokens.getContract}")
     public ResponseEntity<byte[]> getContract(@ApiParam("${swagger.tokens.onboardingId}")
                                               @PathVariable("onboardingId")
@@ -180,8 +181,7 @@ public class TokenV2Controller {
             byte[] byteArray = IOUtils.toByteArray(inputStream);
             log.trace("getContract end");
             return ResponseEntity.ok()
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + contract.getFilename())
-                    .header(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, HttpHeaders.CONTENT_DISPOSITION)
+                    .header(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + contract.getFilename())
                     .body(byteArray);
         } finally {
             IOUtils.close(inputStream);
