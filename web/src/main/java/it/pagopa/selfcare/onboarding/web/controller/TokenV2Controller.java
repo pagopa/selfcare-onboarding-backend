@@ -167,7 +167,6 @@ public class TokenV2Controller {
 
     @GetMapping(value = "/{onboardingId}/contract", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     @ResponseStatus(HttpStatus.OK)
-
     @ApiOperation(value = "", notes = "${swagger.tokens.getContract}")
     public ResponseEntity<byte[]> getContract(@ApiParam("${swagger.tokens.onboardingId}")
                                               @PathVariable("onboardingId")
