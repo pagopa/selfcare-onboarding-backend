@@ -1,5 +1,6 @@
 package it.pagopa.selfcare.onboarding.connector;
 
+import io.github.resilience4j.retry.annotation.Retry;
 import it.pagopa.selfcare.commons.base.utils.InstitutionType;
 import it.pagopa.selfcare.onboarding.connector.api.OnboardingMsConnector;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
@@ -32,6 +33,7 @@ public class OnboardingMsConnectorImpl implements OnboardingMsConnector {
     }
 
     @Override
+    @Retry(name = "retryTimeout")
     public void onboarding(OnboardingData onboardingData) {
         if (onboardingData.getInstitutionType() == InstitutionType.PA) {
             msOnboardingApiClient._v1OnboardingPaPost(onboardingMapper.toOnboardingPaRequest(onboardingData));
@@ -44,26 +46,31 @@ public class OnboardingMsConnectorImpl implements OnboardingMsConnector {
 
 
     @Override
+    @Retry(name = "retryTimeout")
     public void onboardingCompany(OnboardingData onboardingData) {
         msOnboardingApiClient._v1OnboardingPgCompletionPost(onboardingMapper.toOnboardingPgRequest(onboardingData));
     }
 
     @Override
+    @Retry(name = "retryTimeout")
     public void onboardingTokenComplete(String onboardingId, MultipartFile contract) {
         msOnboardingApiClient._v1OnboardingOnboardingIdCompletePut(onboardingId, contract);
     }
 
     @Override
+    @Retry(name = "retryTimeout")
     public void onboardingPending(String onboardingId) {
         msOnboardingApiClient._v1OnboardingOnboardingIdPendingGet(onboardingId);
     }
 
     @Override
+    @Retry(name = "retryTimeout")
     public void approveOnboarding(String onboardingId) {
         msOnboardingApiClient._v1OnboardingOnboardingIdApprovePut(onboardingId);
     }
 
     @Override
+    @Retry(name = "retryTimeout")
     public void rejectOnboarding(String onboardingId, String reason) {
         ReasonRequest reasonForReject = new ReasonRequest();
         reasonForReject.setReasonForReject(reason);
@@ -71,18 +78,21 @@ public class OnboardingMsConnectorImpl implements OnboardingMsConnector {
     }
 
     @Override
+    @Retry(name = "retryTimeout")
     public OnboardingData getOnboarding(String onboardingId) {
         OnboardingGet onboardingGet = msOnboardingApiClient._v1OnboardingOnboardingIdGet(onboardingId).getBody();
         return onboardingMapper.toOnboardingData(onboardingGet);
     }
 
     @Override
+    @Retry(name = "retryTimeout")
     public OnboardingData getOnboardingWithUserInfo(String onboardingId) {
         OnboardingGet onboardingGet = msOnboardingApiClient._v1OnboardingOnboardingIdWithUserInfoGet(onboardingId).getBody();
         return onboardingMapper.toOnboardingData(onboardingGet);
     }
 
     @Override
+    @Retry(name = "retryTimeout")
     public Resource getContract(String onboardingId) {
         return msOnboardingTokenApiClient._v1TokensOnboardingIdContractGet(onboardingId).getBody();
     }
