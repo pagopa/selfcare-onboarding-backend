@@ -13,7 +13,7 @@ ingress:
   hosts:
     - host: "prod01.pnpg.internal.selfcare.pagopa.it"
       paths:
-        - path: /onboarding/(.*)
+        - path: /imprese/onboarding/(.*)
           pathType: ImplementationSpecific
 
 autoscaling:
@@ -29,6 +29,6 @@ configEnvSpecific:
   B4F_ONBOARDING_LOG_LEVEL: "INFO"
   REST_CLIENT_LOGGER_LEVEL: "BASIC"
   ONBOARDING_ALLOWED_INSTITUTIONS_PRODUCTS: "{'prod-pn-pg':{'*'}}"
-  MS_ONBOARDING_URL: "https://selc-p-pnpg-onboarding-ms-ca.salmonpond-60269923.westeurope.azurecontainerapps.io"
+  MS_ONBOARDING_URL: "https://selc-p-pnpg-onboarding-ms-ca.redbeach-5da5166f.westeurope.azurecontainerapps.io"
   REST_CLIENT_READ_TIMEOUT: "60000"
-  REST_CLIENT_CONNECT_TIMEOUT: "60000"
+  REST_CLIENT_CONNECT_TIMEOUT: "5000"
