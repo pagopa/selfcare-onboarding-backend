@@ -68,7 +68,7 @@ app_settings = [
   },
   {
     name  = "MS_PRODUCT_URL"
-    value = "http://uat01.pnpg.internal.uat.selfcare.pagopa.it/ms-product/v1"
+    value = "https://selc-u-pnpg-product-ca.calmforest-ffe47bf1.westeurope.azurecontainerapps.io"
   },
   {
     name  = "USERVICE_USER_REGISTRY_URL"

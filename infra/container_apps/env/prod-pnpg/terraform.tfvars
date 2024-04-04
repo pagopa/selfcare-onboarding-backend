@@ -1,6 +1,6 @@
 is_pnpg   = true
 env_short = "p"
-private_dns_name = "selc-p-pnpg-onboardingbackend-ca.salmonpond-60269923.westeurope.azurecontainerapps.io"
+private_dns_name = "selc-p-pnpg-onboardingbackend-ca.redbeach-5da5166f.westeurope.azurecontainerapps.io"
 dns_zone_prefix    = "imprese.notifichedigitali"
 api_dns_zone_prefix = "api-pnpg.selfcare"
 external_domain     = "it"
@@ -57,7 +57,7 @@ app_settings = [
   },
   {
     name  = "MS_ONBOARDING_URL"
-    value = "https://selc-p-pnpg-onboarding-ms-ca.salmonpond-60269923.westeurope.azurecontainerapps.io",
+    value = "https://selc-p-pnpg-onboarding-ms-ca.redbeach-5da5166f.westeurope.azurecontainerapps.io",
   },
   {
     name  = "ONBOARDING_ALLOWED_INSTITUTIONS_PRODUCTS"
@@ -73,23 +73,23 @@ app_settings = [
   },
   {
     name  = "MS_CORE_URL"
-    value = "https://selc-p-pnpg-ms-core-ca.salmonpond-60269923.westeurope.azurecontainerapps.io"
+    value = "https://selc-p-pnpg-ms-core-ca.redbeach-5da5166f.westeurope.azurecontainerapps.io"
   },
   {
     name  = "MS_EXTERNAL_INTERCEPTOR_URL"
-    value = "https://selc-p-pnpg-ext-interceptor-ca.salmonpond-60269923.westeurope.azurecontainerapps.io"
+    value = "https://selc-p-pnpg-ext-interceptor-ca.redbeach-5da5166f.westeurope.azurecontainerapps.io"
   },
   {
     name  = "USERVICE_PARTY_PROCESS_URL"
-    value = "https://selc-p-pnpg-ms-core-ca.salmonpond-60269923.westeurope.azurecontainerapps.io"
+    value = "https://selc-p-pnpg-ms-core-ca.redbeach-5da5166f.westeurope.azurecontainerapps.io"
   },
   {
     name  = "USERVICE_PARTY_REGISTRY_PROXY_URL"
-    value = "https://selc-p-pnpg-party-reg-proxy-ca.salmonpond-60269923.westeurope.azurecontainerapps.io"
+    value = "https://selc-p-pnpg-party-reg-proxy-ca.redbeach-5da5166f.westeurope.azurecontainerapps.io"
   },
   {
     name  = "MS_PRODUCT_URL"
-    value = "http://prod01.pnpg.internal.selfcare.pagopa.it/ms-product/v1"
+    value = "https://selc-p-pnpg-product-ca.redbeach-5da5166f.westeurope.azurecontainerapps.io"
   },
   {
     name  = "USERVICE_USER_REGISTRY_URL"
