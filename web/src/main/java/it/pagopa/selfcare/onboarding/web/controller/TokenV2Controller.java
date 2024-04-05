@@ -187,6 +187,7 @@ public class TokenV2Controller {
             List<String> allowedHeaders = new ArrayList<>();
             allowedHeaders.add(HttpHeaders.CONTENT_DISPOSITION);
             headers.setAccessControlExposeHeaders(allowedHeaders);
+            headers.set("CUSTOM_HEADER", "test");
             headers.setContentDisposition(contentDisposition);
             return ResponseEntity.ok()
                     .headers(headers)
