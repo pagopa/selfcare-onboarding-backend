@@ -23,6 +23,8 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.springframework.http.MediaType.APPLICATION_OCTET_STREAM_VALUE;
+
 @Slf4j
 @RestController
 @RequestMapping(value = "/v2/tokens", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -179,16 +181,9 @@ public class TokenV2Controller {
             byte[] byteArray = IOUtils.toByteArray(inputStream);
             log.trace("getContract end");
 
-            ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
-                    .filename(contract.getFilename())
-                    .build();
-
             HttpHeaders headers = new HttpHeaders();
-            List<String> allowedHeaders = new ArrayList<>();
-            allowedHeaders.add(HttpHeaders.CONTENT_DISPOSITION);
-            headers.setAccessControlExposeHeaders(allowedHeaders);
-            headers.set("CUSTOM_HEADER", "test");
-            headers.setContentDisposition(contentDisposition);
+            headers.add(HttpHeaders.CONTENT_TYPE, APPLICATION_OCTET_STREAM_VALUE);
+            headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + contract.getFilename());
             return ResponseEntity.ok()
                     .headers(headers)
                     .body(byteArray);
