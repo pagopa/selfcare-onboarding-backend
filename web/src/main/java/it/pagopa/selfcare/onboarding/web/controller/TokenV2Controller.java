@@ -14,15 +14,14 @@ import it.pagopa.selfcare.onboarding.web.model.mapper.OnboardingResourceMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.springframework.core.io.Resource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -179,9 +178,16 @@ public class TokenV2Controller {
             inputStream = contract.getInputStream();
             byte[] byteArray = IOUtils.toByteArray(inputStream);
             log.trace("getContract end");
+
+            ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
+                    .filename(contract.getFilename())
+                    .build();
+
             HttpHeaders headers = new HttpHeaders();
-            headers.add(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, HttpHeaders.CONTENT_DISPOSITION);
-            headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + contract.getFilename());
+            List<String> allowedHeaders = new ArrayList<>();
+            allowedHeaders.add(HttpHeaders.CONTENT_DISPOSITION);
+            headers.setAccessControlExposeHeaders(allowedHeaders);
+            headers.setContentDisposition(contentDisposition);
             return ResponseEntity.ok()
                     .headers(headers)
                     .body(byteArray);
