@@ -1,7 +1,7 @@
-is_pnpg   = true
-env_short = "d"
-private_dns_name = "selc-d-pnpg-onboardingbackend-ca.yellowdesert-85d3792d.westeurope.azurecontainerapps.io"
-dns_zone_prefix    = "pnpg.dev.selfcare"
+is_pnpg             = true
+env_short           = "d"
+private_dns_name    = "selc-d-pnpg-onboardingbackend-ca.yellowdesert-85d3792d.westeurope.azurecontainerapps.io"
+dns_zone_prefix     = "pnpg.dev.selfcare"
 api_dns_zone_prefix = "api-pnpg.dev.selfcare"
 
 tags = {
@@ -29,8 +29,8 @@ container_app = {
       name = "cron-scale-rule"
     }
   ]
-  cpu          = 0.5
-  memory       = "1Gi"
+  cpu    = 0.5
+  memory = "1Gi"
 }
 
 app_settings = [
@@ -99,5 +99,5 @@ app_settings = [
 secrets_names = {
   "USERVICE_USER_REGISTRY_API_KEY"        = "user-registry-api-key"
   "APPLICATIONINSIGHTS_CONNECTION_STRING" = "appinsights-connection-string"
-    "JWT_TOKEN_PUBLIC_KEY"                = "jwt-public-key"
+  "JWT_TOKEN_PUBLIC_KEY"                  = "jwt-public-key"
 }

@@ -1,6 +1,6 @@
-env_short = "d"
-private_dns_name = "selc-d-onboardingbackend-ca.livelydesert-633675bb.westeurope.azurecontainerapps.io"
-dns_zone_prefix    = "dev.selfcare"
+env_short           = "d"
+private_dns_name    = "selc-d-onboardingbackend-ca.livelydesert-633675bb.westeurope.azurecontainerapps.io"
+dns_zone_prefix     = "dev.selfcare"
 api_dns_zone_prefix = "api.dev.selfcare"
 
 tags = {
@@ -28,8 +28,8 @@ container_app = {
       name = "cron-scale-rule"
     }
   ]
-  cpu          = 0.5
-  memory       = "1Gi"
+  cpu    = 0.5
+  memory = "1Gi"
 }
 
 app_settings = [
