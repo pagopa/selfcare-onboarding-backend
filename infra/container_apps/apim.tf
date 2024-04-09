@@ -60,6 +60,9 @@ module "apim_api_bff_onboarding" {
             <allowed-headers>
                 <header>*</header>
             </allowed-headers>
+            <expose-headers>
+                <header>*</header>
+            </expose-headers>
         </cors>
         <base />
     </inbound>
