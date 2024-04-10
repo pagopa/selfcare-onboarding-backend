@@ -1,7 +1,7 @@
-is_pnpg   = true
-env_short = "d"
-private_dns_name = "selc-d-pnpg-onboardingbackend-ca.yellowdesert-85d3792d.westeurope.azurecontainerapps.io"
-dns_zone_prefix    = "pnpg.dev.selfcare"
+is_pnpg             = true
+env_short           = "d"
+private_dns_name    = "selc-d-pnpg-onboardingbackend-ca.victoriousfield-e39534b8.westeurope.azurecontainerapps.io"
+dns_zone_prefix     = "pnpg.dev.selfcare"
 api_dns_zone_prefix = "api-pnpg.dev.selfcare"
 
 tags = {
@@ -29,8 +29,8 @@ container_app = {
       name = "cron-scale-rule"
     }
   ]
-  cpu          = 0.5
-  memory       = "1Gi"
+  cpu    = 0.5
+  memory = "1Gi"
 }
 
 app_settings = [
@@ -56,7 +56,7 @@ app_settings = [
   },
   {
     name  = "MS_ONBOARDING_URL"
-    value = "https://selc-d-pnpg-onboarding-ms-ca.yellowdesert-85d3792d.westeurope.azurecontainerapps.io",
+    value = "https://selc-d-pnpg-onboarding-ms-ca.victoriousfield-e39534b8.westeurope.azurecontainerapps.io",
   },
   {
     name  = "ONBOARDING_ALLOWED_INSTITUTIONS_PRODUCTS"
@@ -64,23 +64,23 @@ app_settings = [
   },
   {
     name  = "MS_CORE_URL"
-    value = "https://selc-d-pnpg-ms-core-ca.yellowdesert-85d3792d.westeurope.azurecontainerapps.io"
+    value = "https://selc-d-pnpg-ms-core-ca.victoriousfield-e39534b8.westeurope.azurecontainerapps.io"
   },
   {
     name  = "MS_EXTERNAL_INTERCEPTOR_URL"
-    value = "https://selc-d-pnpg-ext-interceptor-ca.yellowdesert-85d3792d.westeurope.azurecontainerapps.io"
+    value = "https://selc-d-pnpg-ext-interceptor-ca.victoriousfield-e39534b8.westeurope.azurecontainerapps.io"
   },
   {
     name  = "USERVICE_PARTY_PROCESS_URL"
-    value = "https://selc-d-pnpg-ms-core-ca.yellowdesert-85d3792d.westeurope.azurecontainerapps.io"
+    value = "https://selc-d-pnpg-ms-core-ca.victoriousfield-e39534b8.westeurope.azurecontainerapps.io"
   },
   {
     name  = "USERVICE_PARTY_REGISTRY_PROXY_URL"
-    value = "https://selc-d-pnpg-party-reg-proxy-ca.yellowdesert-85d3792d.westeurope.azurecontainerapps.io"
+    value = "https://selc-d-pnpg-party-reg-proxy-ca.victoriousfield-e39534b8.westeurope.azurecontainerapps.io"
   },
   {
     name  = "MS_PRODUCT_URL"
-    value = "https://selc-d-pnpg-product-ca.yellowdesert-85d3792d.westeurope.azurecontainerapps.io"
+    value = "https://selc-d-pnpg-product-ca.victoriousfield-e39534b8.westeurope.azurecontainerapps.io"
   },
   {
     name  = "USERVICE_USER_REGISTRY_URL"
@@ -99,5 +99,5 @@ app_settings = [
 secrets_names = {
   "USERVICE_USER_REGISTRY_API_KEY"        = "user-registry-api-key"
   "APPLICATIONINSIGHTS_CONNECTION_STRING" = "appinsights-connection-string"
-    "JWT_TOKEN_PUBLIC_KEY"                = "jwt-public-key"
+  "JWT_TOKEN_PUBLIC_KEY"                  = "jwt-public-key"
 }
