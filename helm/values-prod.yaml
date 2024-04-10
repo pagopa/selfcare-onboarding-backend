@@ -42,7 +42,7 @@ configEnvSpecific:
   APPLICATIONINSIGHTS_INSTRUMENTATION_LOGGING_LEVEL: "OFF"
   B4F_ONBOARDING_LOG_LEVEL: "INFO"
   REST_CLIENT_LOGGER_LEVEL: "BASIC"
-  MS_ONBOARDING_URL: "https://selc-p-onboarding-ms-ca.salmonstone-7f910b8f.westeurope.azurecontainerapps.io"
+  MS_ONBOARDING_URL: "https://selc-p-onboarding-ms-ca.greensand-62fc96da.westeurope.azurecontainerapps.io"
   ONBOARDING_ALLOWED_INSTITUTIONS_PRODUCTS: "{'prod-interop':{'*'},'prod-pn':{'*'},'prod-pagopa':{'*'},'prod-io':{'*'},'prod-io-premium':{'*'},'prod-io-sign':{'*'},'prod-sendino':{'*'},'prod-fd':{'*'},'prod-fd-garantito':{'*'}}"
   REST_CLIENT_READ_TIMEOUT: "60000"
   REST_CLIENT_CONNECT_TIMEOUT: "5000"
