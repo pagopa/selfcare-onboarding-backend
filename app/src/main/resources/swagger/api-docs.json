@@ -2038,7 +2038,7 @@
       },
       "BillingDataDto" : {
         "title" : "BillingDataDto",
-        "required" : [ "businessName", "digitalAddress", "recipientCode", "registeredOffice", "taxCode", "vatNumber", "zipCode" ],
+        "required" : [ "businessName", "digitalAddress", "registeredOffice", "zipCode" ],
         "type" : "object",
         "properties" : {
           "businessName" : {
@@ -2459,7 +2459,6 @@
       },
       "InstitutionLocationDataDto" : {
         "title" : "InstitutionLocationDataDto",
-        "required" : [ "city", "country", "county" ],
         "type" : "object",
         "properties" : {
           "city" : {
@@ -2607,7 +2606,7 @@
       },
       "OnboardingProductDto" : {
         "title" : "OnboardingProductDto",
-        "required" : [ "billingData", "institutionType", "productId", "taxCode", "users" ],
+        "required" : [ "billingData", "institutionType", "productId", "users" ],
         "type" : "object",
         "properties" : {
           "additionalInformations" : {

@@ -56,8 +56,7 @@ public class OnboardingProductDto {
     @NotNull
     private String productId;
 
-    @ApiModelProperty(value = "${swagger.onboarding.institutions.model.taxCode}", required = true)
-    @NotNull
+    @ApiModelProperty(value = "${swagger.onboarding.institutions.model.taxCode}")
     private String taxCode;
 
     @ApiModelProperty(value = "${swagger.onboarding.institutions.model.subunitCode}")
