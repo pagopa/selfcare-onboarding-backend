@@ -30,11 +30,9 @@ public class BillingDataDto {
     private String zipCode;
 
     @ApiModelProperty(value = "${swagger.onboarding.institutions.model.taxCode}")
-    @JsonProperty
     private String taxCode;
 
     @ApiModelProperty(value = "${swagger.onboarding.institutions.model.vatNumber}")
-    @JsonProperty
     private String vatNumber;
 
     @ApiModelProperty(value = "${swagger.onboarding.institutions.model.recipientCode}")

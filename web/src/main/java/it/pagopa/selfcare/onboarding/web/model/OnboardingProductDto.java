@@ -23,7 +23,6 @@ public class OnboardingProductDto {
     private BillingDataDto billingData;
 
     @ApiModelProperty(value = "${swagger.onboarding.institution.model.locationData}")
-    @Valid
     private InstitutionLocationDataDto institutionLocationData;
 
     @ApiModelProperty(value = "${swagger.onboarding.institutions.model.institutionType}", required = true)
