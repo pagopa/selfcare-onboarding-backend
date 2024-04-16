@@ -29,17 +29,13 @@ public class BillingDataDto {
     @NotBlank
     private String zipCode;
 
-    @ApiModelProperty(value = "${swagger.onboarding.institutions.model.taxCode}", required = true)
-    @JsonProperty(required = true)
-    @NotBlank
+    @ApiModelProperty(value = "${swagger.onboarding.institutions.model.taxCode}")
     private String taxCode;
 
-    @ApiModelProperty(value = "${swagger.onboarding.institutions.model.vatNumber}", required = true)
-    @JsonProperty(required = true)
-    @NotBlank
+    @ApiModelProperty(value = "${swagger.onboarding.institutions.model.vatNumber}")
     private String vatNumber;
 
-    @ApiModelProperty(value = "${swagger.onboarding.institutions.model.recipientCode}", required = true)
+    @ApiModelProperty(value = "${swagger.onboarding.institutions.model.recipientCode}")
     private String recipientCode;
 
     @ApiModelProperty(value = "${swagger.onboarding.institutions.model.publicServices}")

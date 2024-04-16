@@ -23,7 +23,6 @@ public class OnboardingProductDto {
     private BillingDataDto billingData;
 
     @ApiModelProperty(value = "${swagger.onboarding.institution.model.locationData}")
-    @Valid
     private InstitutionLocationDataDto institutionLocationData;
 
     @ApiModelProperty(value = "${swagger.onboarding.institutions.model.institutionType}", required = true)
@@ -56,8 +55,7 @@ public class OnboardingProductDto {
     @NotNull
     private String productId;
 
-    @ApiModelProperty(value = "${swagger.onboarding.institutions.model.taxCode}", required = true)
-    @NotNull
+    @ApiModelProperty(value = "${swagger.onboarding.institutions.model.taxCode}")
     private String taxCode;
 
     @ApiModelProperty(value = "${swagger.onboarding.institutions.model.subunitCode}")
