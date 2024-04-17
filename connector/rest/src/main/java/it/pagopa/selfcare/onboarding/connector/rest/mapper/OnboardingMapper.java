@@ -12,7 +12,6 @@ import org.mapstruct.Named;
 
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring")
 public interface OnboardingMapper {
@@ -57,7 +56,7 @@ public interface OnboardingMapper {
         institution.geographicTaxonomies(Optional.ofNullable(onboardingData.getInstitutionUpdate().getGeographicTaxonomies())
                 .map(geotaxes -> geotaxes.stream()
                         .map(this::toGeographicTaxonomyDto)
-                        .collect(Collectors.toList()))
+                        .toList())
                 .orElse(null));
         institution.rea(onboardingData.getInstitutionUpdate().getRea());
         institution.shareCapital(onboardingData.getInstitutionUpdate().getShareCapital());
@@ -95,7 +94,7 @@ public interface OnboardingMapper {
         institutionPsp.geographicTaxonomies(Optional.ofNullable(onboardingData.getInstitutionUpdate().getGeographicTaxonomies())
                 .map(geotaxes -> geotaxes.stream()
                     .map(this::toGeographicTaxonomyDto)
-                    .collect(Collectors.toList()))
+                    .toList())
                 .orElse(null));
         institutionPsp.rea(onboardingData.getInstitutionUpdate().getRea());
         institutionPsp.shareCapital(onboardingData.getInstitutionUpdate().getShareCapital());

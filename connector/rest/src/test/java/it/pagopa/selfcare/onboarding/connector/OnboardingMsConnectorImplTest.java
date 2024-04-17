@@ -52,6 +52,7 @@ public class OnboardingMsConnectorImplTest {
         institutionUpdate.setDescription("description");
         onboardingData.setBilling(billing);
         onboardingData.setUsers(List.of(mockInstance(new User())));
+        onboardingData.setOriginId("originId");
         onboardingData.setInstitutionUpdate(institutionUpdate);
         // when
         onboardingMsConnector.onboarding(onboardingData);
