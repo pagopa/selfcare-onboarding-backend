@@ -40,6 +40,7 @@ public class OnboardingData {
     private InstitutionUpdate institutionUpdate;
     private InstitutionType institutionType;
     private String origin;
+    private String originId;
     private String pricingPlan;
     private String businessName;
     private boolean existsInRegistry;
