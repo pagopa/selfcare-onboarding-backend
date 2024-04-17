@@ -223,7 +223,7 @@ public class InstitutionController {
                                  @ApiParam("${swagger.onboarding.institutions.model.verifyType}")
                                  @RequestParam(value = "verifyType", required = false) VerifyType type) {
         log.trace("verifyOnboarding start");
-        log.debug("verifyOnboarding taxCode = {}, subunitCode = {}, productId = {}", taxCode, subunitCode, productId);
+        log.debug("verifyOnboarding taxCode = {}, subunitCode = {}, origin = {}, originId = {} productId = {}", taxCode, subunitCode, origin, originId, productId);
         if (VerifyType.EXTERNAL.equals(type) && vatNumber.isPresent() && (PROD_FD.getValue().equals(productId) || PROD_FD_GARANTITO.getValue().equals(productId))) {
             institutionService.checkOrganization(productId, taxCode, vatNumber.get());
         } else
