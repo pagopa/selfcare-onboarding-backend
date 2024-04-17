@@ -200,7 +200,7 @@ public class InstitutionController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @ApiOperation(value = "", notes = "${swagger.onboarding.institutions.api.verifyOnboarding}")
     public void verifyOnboarding(@ApiParam("${swagger.onboarding.institutions.model.taxCode}")
-                                 @RequestParam("taxCode")
+                                 @RequestParam(value = "taxCode", required = false)
                                  String taxCode,
                                  @ApiParam("${swagger.onboarding.institutions.model.subunitCode}")
                                  @RequestParam(value = "subunitCode", required = false)
@@ -208,6 +208,15 @@ public class InstitutionController {
                                  @ApiParam("${swagger.onboarding.product.model.id}")
                                  @RequestParam("productId")
                                  String productId,
+                                 @ApiParam("${swagger.onboarding.institutions.model.externalId}")
+                                 @RequestParam(value = "externalId", required = false)
+                                 String externalId,
+                                 @ApiParam("${swagger.onboarding.institutions.model.origin}")
+                                 @RequestParam(value = "origin", required = false)
+                                 String origin,
+                                 @ApiParam("${swagger.onboarding.product.model.originId}")
+                                 @RequestParam(value = "originId", required = false)
+                                 String originId,
                                  @ApiParam("${swagger.onboarding.institutions.model.vatNumber}")
                                  @RequestParam(value = "vatNumber", required = false)
                                  Optional<String> vatNumber,
@@ -218,7 +227,7 @@ public class InstitutionController {
         if (VerifyType.EXTERNAL.equals(type) && vatNumber.isPresent() && (PROD_FD.getValue().equals(productId) || PROD_FD_GARANTITO.getValue().equals(productId))) {
             institutionService.checkOrganization(productId, taxCode, vatNumber.get());
         } else
-            institutionService.verifyOnboarding(taxCode, subunitCode, productId);
+            institutionService.verifyOnboarding(productId, externalId, taxCode, origin, originId, subunitCode);
         log.trace("verifyOnboarding end");
     }
 

@@ -335,17 +335,25 @@ class InstitutionControllerTest {
         //given
         String productId = "prod-fd";
         String taxCode = "taxCode";
+        String subunitCode = "subunitCode";
+        String externalId = "externalId";
+        String origin = "origin";
+        String originId = "originId";
         //when
         mvc.perform(MockMvcRequestBuilders
                         .head(BASE_URL + "/onboarding")
-                        .queryParam("taxCode", taxCode)
                         .queryParam("productId", productId)
+                        .queryParam("externalId", externalId)
+                        .queryParam("taxCode", taxCode)
+                        .queryParam("origin", origin)
+                        .queryParam("originId", originId)
+                        .queryParam("subunitCode", subunitCode)
                         .queryParam("verifyType", VerifyType.EXTERNAL.name())
                         .contentType(APPLICATION_JSON_VALUE)
                         .accept(APPLICATION_JSON_VALUE))
                 .andExpect(status().isNoContent());
         //then
-        verify(institutionServiceMock, times(1)).verifyOnboarding(taxCode, null, productId);
+        verify(institutionServiceMock, times(1)).verifyOnboarding(productId, externalId, taxCode, origin, originId, subunitCode);
     }
     @Test
     void getInstitutionsByUserId() throws Exception {

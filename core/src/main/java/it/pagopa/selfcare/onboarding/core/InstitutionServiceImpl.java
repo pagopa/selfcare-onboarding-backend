@@ -214,7 +214,7 @@ class InstitutionServiceImpl implements InstitutionService {
             }
             validateOnboarding(onboardingData.getTaxCode(), baseProduct.getId());
             try {
-                partyConnector.verifyOnboarding(onboardingData.getTaxCode(), onboardingData.getSubunitCode(), baseProduct.getId());
+                partyConnector.verifyOnboarding(baseProduct.getId(), null, onboardingData.getTaxCode(), onboardingData.getOrigin(), null, onboardingData.getSubunitCode());
             } catch (RuntimeException e) {
                 throw new ValidationException(String.format("Unable to complete the onboarding for institution with taxCode '%s' to product '%s'. Please onboard first the '%s' product for the same institution",
                         onboardingData.getTaxCode(),
@@ -384,11 +384,11 @@ class InstitutionServiceImpl implements InstitutionService {
 
 
     @Override
-    public void verifyOnboarding(String taxCode, String subunitCode, String productId) {
+    public void verifyOnboarding(String productId, String externalId, String taxCode, String origin, String originId, String subunitCode) {
         log.trace("verifyOnboardingSubunit start");
         log.debug("verifyOnboardingSubunit taxCode = {}", taxCode);
         validateOnboarding(taxCode, productId);
-        partyConnector.verifyOnboarding(taxCode, subunitCode, productId);
+        partyConnector.verifyOnboarding(productId, externalId, taxCode, origin, originId, subunitCode);
         log.trace("verifyOnboardingSubunit end");
     }
 
