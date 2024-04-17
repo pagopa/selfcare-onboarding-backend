@@ -24,9 +24,7 @@ public class BillingDataDto {
     @NotBlank
     private String digitalAddress;
 
-    @ApiModelProperty(value = "${swagger.onboarding.institutions.model.zipCode}", required = true)
-    @JsonProperty(required = true)
-    @NotBlank
+    @ApiModelProperty(value = "${swagger.onboarding.institutions.model.zipCode}")
     private String zipCode;
 
     @ApiModelProperty(value = "${swagger.onboarding.institutions.model.taxCode}")
