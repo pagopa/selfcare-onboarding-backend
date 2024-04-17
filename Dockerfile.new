@@ -1,10 +1,10 @@
-FROM maven:3-eclipse-temurin-17 AS builder
+FROM maven:3-eclipse-temurin-17@sha256:7033f6a6b2db51e37e6f2a7a6f02795aa2a33df8a978252010408d76060e87b8 AS builder
 
 COPY . .
 
 RUN mvn clean package -DskipTests=true
 
-FROM openjdk:17-jdk AS runtime
+FROM openjdk:17-jdk@sha256:528707081fdb9562eb819128a9f85ae7fe000e2fbaeaf9f87662e7b3f38cb7d8 AS runtime
 
 ENV LANG='en_US.UTF-8' LANGUAGE='en_US:en'
 
