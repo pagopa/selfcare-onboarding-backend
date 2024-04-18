@@ -214,7 +214,7 @@ public class InstitutionController {
                                  @ApiParam("${swagger.onboarding.institutions.model.origin}")
                                  @RequestParam(value = "origin", required = false)
                                  String origin,
-                                 @ApiParam("${swagger.onboarding.product.model.originId}")
+                                 @ApiParam("${swagger.onboarding.institutions.model.originId}")
                                  @RequestParam(value = "originId", required = false)
                                  String originId,
                                  @ApiParam("${swagger.onboarding.institutions.model.vatNumber}")

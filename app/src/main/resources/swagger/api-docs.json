@@ -488,7 +488,7 @@
         }, {
           "name" : "originId",
           "in" : "query",
-          "description" : "${swagger.onboarding.product.model.originId}",
+          "description" : "Institution's details origin Id",
           "required" : false,
           "style" : "form",
           "schema" : {
