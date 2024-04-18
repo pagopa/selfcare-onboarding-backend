@@ -17,8 +17,7 @@ public class OnboardingProductDto {
     @Valid
     private List<UserDto> users;
 
-    @ApiModelProperty(value = "${swagger.onboarding.institutions.model.billingData}", required = true)
-    @NotNull
+    @ApiModelProperty(value = "${swagger.onboarding.institutions.model.billingData}")
     @Valid
     private BillingDataDto billingData;
 
