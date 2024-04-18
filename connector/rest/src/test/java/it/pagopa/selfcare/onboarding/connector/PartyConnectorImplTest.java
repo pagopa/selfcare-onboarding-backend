@@ -32,13 +32,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.util.ResourceUtils;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -1085,14 +1082,15 @@ class PartyConnectorImplTest {
         final String taxCode = "taxCode";
         final String subunitCode = "subunitCode";
         final String productId = "productId";
-        doNothing().when(restClientMock).verifyOnboarding(anyString(), anyString(), anyString());
-
+        final String externalId = "externalId";
+        final String origin = "origin";
+        final String originId = "originId";
         // when
-        final Executable executable = () -> partyConnector.verifyOnboarding(taxCode, subunitCode, productId);
+        final Executable executable = () -> partyConnector.verifyOnboarding(productId, externalId, taxCode, origin, originId, subunitCode);
         // then
         assertDoesNotThrow(executable);
         verify(restClientMock, times(1))
-                .verifyOnboarding(taxCode, subunitCode, productId);
+        ._verifyOnboardingInfoByFiltersUsingHEAD(productId, externalId, taxCode, origin, originId, subunitCode);
         verifyNoMoreInteractions(restClientMock);
     }
     @Test
@@ -1180,47 +1178,4 @@ class PartyConnectorImplTest {
         verifyNoMoreInteractions(restClientMock);
 
     }
-
-
-    @Test
-    void tokensVerify() {
-        // given
-        final String tokenId = "tokenId";
-        // when
-        final Executable executable = () -> msCoreTokenApiClient._verifyTokenUsingPOST(tokenId);
-        // then
-        assertDoesNotThrow(executable);
-        verify(msCoreTokenApiClient, times(1))
-                ._verifyTokenUsingPOST(tokenId);
-        verifyNoMoreInteractions(restClientMock);
-    }
-
-    @Test
-    void onboardingComplete() throws IOException {
-        // given
-        final String tokenId = "tokenId";
-        final MockMultipartFile mockMultipartFile =
-                new MockMultipartFile("example", new ByteArrayInputStream("example".getBytes(StandardCharsets.UTF_8)));
-
-        // when
-        final Executable executable = () -> msCoreOnboardingApiClient._completeOnboardingUsingPOST(tokenId, mockMultipartFile);
-        // then
-        assertDoesNotThrow(executable);
-        verify(msCoreOnboardingApiClient, times(1))
-                ._completeOnboardingUsingPOST(tokenId, mockMultipartFile);
-        verifyNoMoreInteractions(restClientMock);
-    }
-    @Test
-    void deleteOnboardingToken() {
-        // given
-        final String tokenId = "tokenId";
-        // when
-        final Executable executable = () -> msCoreOnboardingApiClient._invalidateOnboardingUsingDELETE(tokenId);
-        // then
-        assertDoesNotThrow(executable);
-        verify(msCoreOnboardingApiClient, times(1))
-                ._invalidateOnboardingUsingDELETE(tokenId);
-        verifyNoMoreInteractions(restClientMock);
-    }
-
 }

@@ -1,6 +1,7 @@
 package it.pagopa.selfcare.onboarding.connector.rest.client;
 
 import it.pagopa.selfcare.commons.base.security.PartyRole;
+import it.pagopa.selfcare.core.generated.openapi.v1.api.OnboardingApi;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipInfo;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipState;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipsResponse;
@@ -20,7 +21,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.HEAD;
  * Party Process Rest Client
  */
 @FeignClient(name = "${rest-client.party-process.serviceCode}", url = "${rest-client.party-process.base-url}")
-public interface PartyProcessRestClient {
+public interface PartyProcessRestClient extends OnboardingApi {
 
     @GetMapping(value = "${rest-client.party-process.getUserInstitutionRelationships.path}", produces = APPLICATION_JSON_VALUE)
     @ResponseBody
