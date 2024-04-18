@@ -1,7 +1,6 @@
 package it.pagopa.selfcare.onboarding.connector.rest.client;
 
 import it.pagopa.selfcare.commons.base.security.PartyRole;
-import it.pagopa.selfcare.core.generated.openapi.v1.api.InstitutionApi;
 import it.pagopa.selfcare.core.generated.openapi.v1.api.OnboardingApi;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipInfo;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipState;
