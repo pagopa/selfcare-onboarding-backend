@@ -375,7 +375,6 @@ class PartyConnectorImpl implements PartyConnector {
     @Override
     public void verifyOnboarding(String productId, String externalId, String taxCode, String origin, String originId, String subunitCode) {
         log.trace("verifyOnboarding start");
-        log.debug("verifyOnboarding taxCode = {}, subunitCode = {}, origin = {}, originId = {} productId = {}", taxCode, subunitCode, origin, originId, productId);
         Assert.hasText(productId, REQUIRED_PRODUCT_ID_MESSAGE);
         restClient._verifyOnboardingInfoByFiltersUsingHEAD(productId, externalId, taxCode, origin, originId, subunitCode);
         log.trace("verifyOnboarding end");
