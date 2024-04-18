@@ -2633,7 +2633,7 @@
       },
       "OnboardingProductDto" : {
         "title" : "OnboardingProductDto",
-        "required" : [ "billingData", "institutionType", "productId", "users" ],
+        "required" : [ "institutionType", "productId", "users" ],
         "type" : "object",
         "properties" : {
           "additionalInformations" : {
