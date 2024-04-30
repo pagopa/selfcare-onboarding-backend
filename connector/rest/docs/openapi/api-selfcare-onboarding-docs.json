@@ -1315,7 +1315,6 @@
             "$ref" : "#/components/schemas/Origin"
           },
           "digitalAddress" : {
-            "pattern" : "\\S",
             "type" : "string"
           }
         }
