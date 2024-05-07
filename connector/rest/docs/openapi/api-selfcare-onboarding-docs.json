@@ -156,6 +156,61 @@
         } ]
       }
     },
+    "/v1/onboarding/institutionOnboardings" : {
+      "get" : {
+        "tags" : [ "Onboarding Controller" ],
+        "summary" : "Returns onboardings record by institution taxCode/subunitCode/origin/originId",
+        "parameters" : [ {
+          "name" : "origin",
+          "in" : "query",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "originId",
+          "in" : "query",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "subunitCode",
+          "in" : "query",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "taxCode",
+          "in" : "query",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/OnboardingResponse"
+                  }
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "Not Allowed"
+          },
+          "401" : {
+            "description" : "Not Authorized"
+          }
+        },
+        "security" : [ {
+          "SecurityScheme" : [ ]
+        } ]
+      }
+    },
     "/v1/onboarding/pa" : {
       "post" : {
         "tags" : [ "Onboarding Controller" ],
@@ -750,11 +805,9 @@
         }
       },
       "BillingPaRequest" : {
-        "required" : [ "vatNumber" ],
         "type" : "object",
         "properties" : {
           "vatNumber" : {
-            "minLength" : 1,
             "type" : "string"
           },
           "recipientCode" : {
@@ -1116,7 +1169,7 @@
         "example" : "2022-03-10T12:15:50"
       },
       "OnboardingDefaultRequest" : {
-        "required" : [ "productId", "users", "institution", "billing" ],
+        "required" : [ "productId", "users", "institution" ],
         "type" : "object",
         "properties" : {
           "productId" : {
@@ -1259,7 +1312,7 @@
         }
       },
       "OnboardingPaRequest" : {
-        "required" : [ "productId", "users", "institution", "billing" ],
+        "required" : [ "productId", "users", "institution" ],
         "type" : "object",
         "properties" : {
           "productId" : {
