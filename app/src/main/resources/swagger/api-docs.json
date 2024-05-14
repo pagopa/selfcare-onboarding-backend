@@ -2098,6 +2098,10 @@
             "type" : "string",
             "description" : "Institution's taxCode"
           },
+          "taxCodeSfe" : {
+            "type" : "string",
+            "description" : "Institution's taxCodeSfe for electronic invoicing"
+          },
           "vatNumber" : {
             "type" : "string",
             "description" : "Institution's VAT number"
@@ -2460,6 +2464,10 @@
             "type" : "string",
             "description" : "Billing recipient code, not required only for institutionType SA"
           },
+          "taxCodeSfe" : {
+            "type" : "string",
+            "description" : "Institution's taxCodeSfe for electronic invoicing"
+          },
           "vatNumber" : {
             "type" : "string",
             "description" : "Institution's VAT number"
@@ -2699,6 +2707,10 @@
           "taxCode" : {
             "type" : "string",
             "description" : "Institution's taxCode"
+          },
+          "taxCodeSfe" : {
+            "type" : "string",
+            "description" : "Institution's taxCodeSfe for electronic invoicing"
           },
           "users" : {
             "type" : "array",
