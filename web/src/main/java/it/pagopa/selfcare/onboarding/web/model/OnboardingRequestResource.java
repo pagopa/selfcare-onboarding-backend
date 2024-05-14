@@ -82,8 +82,8 @@ public class OnboardingRequestResource {
         @JsonProperty(required = true)
         private String fiscalCode;
 
-        @ApiModelProperty(value = "${swagger.onboarding.institutions.model.taxCodeSfe}")
-        private String taxCodeSfe;
+        @ApiModelProperty(value = "${swagger.onboarding.institutions.model.taxCodeInvoicing}")
+        private String taxCodeInvoicing;
 
         @ApiModelProperty(value = "${swagger.onboarding.institutions.model.vatNumber}", required = true)
         private String vatNumber;
