@@ -36,6 +36,7 @@ public interface OnboardingMapper {
         InstitutionBaseRequest institution = new InstitutionBaseRequest();
         institution.institutionType(InstitutionType.valueOf(onboardingData.getInstitutionType().name()));
         institution.taxCode(onboardingData.getTaxCode());
+        institution.taxCodeInvoicing(onboardingData.getTaxCodeInvoicing());
         institution.subunitCode(onboardingData.getSubunitCode());
         institution.subunitType(Optional.ofNullable(onboardingData.getSubunitType())
                 .map(InstitutionPaSubunitType::valueOf)
