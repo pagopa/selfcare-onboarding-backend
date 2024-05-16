@@ -44,7 +44,7 @@ app_settings = [
   },
   {
     name  = "MS_ONBOARDING_URL"
-    value = "https://selc-u-onboarding-ms-ca.proudglacier-20652b81.westeurope.azurecontainerapps.io",
+    value = "http://selc-u-onboarding-ms-ca",
   },
   {
     name  = "ONBOARDING_ALLOWED_INSTITUTIONS_PRODUCTS"
@@ -52,7 +52,7 @@ app_settings = [
   },
   {
     name  = "MS_CORE_URL"
-    value = "https://selc-u-ms-core-ca.proudglacier-20652b81.westeurope.azurecontainerapps.io"
+    value = "http://selc-u-ms-core-ca"
   },
   {
     name  = "MS_EXTERNAL_INTERCEPTOR_URL"
@@ -60,15 +60,15 @@ app_settings = [
   },
   {
     name  = "USERVICE_PARTY_PROCESS_URL"
-    value = "https://selc-u-ms-core-ca.proudglacier-20652b81.westeurope.azurecontainerapps.io"
+    value = "http://selc-u-ms-core-ca"
   },
   {
     name  = "USERVICE_PARTY_REGISTRY_PROXY_URL"
-    value = "https://selc-u-party-reg-proxy-ca.proudglacier-20652b81.westeurope.azurecontainerapps.io"
+    value = "http://selc-u-party-reg-proxy-ca"
   },
   {
     name  = "MS_PRODUCT_URL"
-    value = "https://selc-u-product-ca.proudglacier-20652b81.westeurope.azurecontainerapps.io"
+    value = "http://selc-u-product-ca"
   },
   {
     name  = "USERVICE_USER_REGISTRY_URL"
