@@ -34,7 +34,8 @@
           "billing": {
             "vatNumber": "string",
             "recipientCode": "string",
-            "publicServices": true
+            "publicServices": true,
+            "taxCodeInvoicing": "string"
           },
           "origin": "IPA",
           "attributes": [

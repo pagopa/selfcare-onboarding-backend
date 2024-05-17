@@ -53,7 +53,6 @@ class PartyProcessRestClientTest extends BaseFeignRestClientTest {
             .options(RestTestUtils.getWireMockConfiguration("stubs/party-process"))
             .build();
 
-
     public static class RandomPortInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
         @SneakyThrows
         @Override
@@ -64,7 +63,6 @@ class PartyProcessRestClientTest extends BaseFeignRestClientTest {
             );
         }
     }
-
 
     private enum TestCase {
         FULLY_VALUED,
@@ -81,7 +79,6 @@ class PartyProcessRestClientTest extends BaseFeignRestClientTest {
     @Autowired
     private PartyProcessRestClient restClient;
 
-
     @Test
     void onboardingOrganization_fullyValued() {
         // given
@@ -93,7 +90,6 @@ class PartyProcessRestClientTest extends BaseFeignRestClientTest {
         // then
         assertDoesNotThrow(executable);
     }
-
 
     @Test
     void onboardingOrganization_fullyNull() {
@@ -111,13 +107,10 @@ class PartyProcessRestClientTest extends BaseFeignRestClientTest {
     void getUserInstitutionRelationships_fullyValued() {
         // given
         String institutionId = testCase2instIdMap.get(TestCase.FULLY_VALUED);
-        EnumSet<PartyRole> roles = null;
         EnumSet<RelationshipState> states = EnumSet.of(ACTIVE);
         Set<String> products = Set.of("productId");
-        Set<String> productRole = null;
-        String userId = null;
         // when
-        RelationshipsResponse response = restClient.getUserInstitutionRelationships(institutionId, roles, states, products, productRole, userId);
+        RelationshipsResponse response = restClient.getUserInstitutionRelationships(institutionId, null, states, products, null, null);
         // then
         assertNotNull(response);
         assertFalse(response.isEmpty());
@@ -133,13 +126,8 @@ class PartyProcessRestClientTest extends BaseFeignRestClientTest {
     void getInstitutionRelationships_fullyNull() {
         // given
         String institutionId = testCase2instIdMap.get(TestCase.FULLY_NULL);
-        EnumSet<PartyRole> roles = null;
-        EnumSet<RelationshipState> states = null;
-        Set<String> products = null;
-        Set<String> productRole = null;
-        String userId = null;
         // when
-        RelationshipsResponse response = restClient.getUserInstitutionRelationships(institutionId, roles, states, products, productRole, userId);
+        RelationshipsResponse response = restClient.getUserInstitutionRelationships(institutionId, null, null, null, null, null);
         // then
         assertNotNull(response);
         assertFalse(response.isEmpty());
@@ -166,7 +154,6 @@ class PartyProcessRestClientTest extends BaseFeignRestClientTest {
         assertTrue(response.isEmpty());
     }
 
-
     @Test
     void getOnBoardingInfo_fullyValued() {
         // given and when
@@ -181,7 +168,6 @@ class PartyProcessRestClientTest extends BaseFeignRestClientTest {
 
     }
 
-
     @Test
     void getOnBoardingInfo_fullyNull() {
         // given and when
@@ -191,7 +177,6 @@ class PartyProcessRestClientTest extends BaseFeignRestClientTest {
         assertNull(response.getUserId());
         assertNull(response.getInstitutions());
     }
-
 
     @Test
     void getOnBoardingInfo_emptyResult() {
@@ -327,7 +312,6 @@ class PartyProcessRestClientTest extends BaseFeignRestClientTest {
         assertNull(response.getPricingPlan());
         assertNull(response.getExternalId());
     }
-
 
     @Test
     void verifyOnboarding_found() {

@@ -815,6 +815,9 @@
           },
           "publicServices" : {
             "type" : "boolean"
+          },
+          "taxCodeInvoicing" : {
+            "type" : "string"
           }
         }
       },
@@ -879,9 +882,6 @@
             "$ref" : "#/components/schemas/InstitutionType"
           },
           "taxCode" : {
-            "type" : "string"
-          },
-          "taxCodeInvoicing" : {
             "type" : "string"
           },
           "subunitCode" : {
@@ -1023,9 +1023,6 @@
             "$ref" : "#/components/schemas/InstitutionType"
           },
           "taxCode" : {
-            "type" : "string"
-          },
-          "taxCodeInvoicing" : {
             "type" : "string"
           },
           "subunitCode" : {
