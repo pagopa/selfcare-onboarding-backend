@@ -2708,10 +2708,6 @@
             "type" : "string",
             "description" : "Institution's taxCode"
           },
-          "taxCodeInvoicing" : {
-            "type" : "string",
-            "description" : "Institution's taxCodeInvoicing for electronic invoicing"
-          },
           "users" : {
             "type" : "array",
             "description" : "List of onboarding users",

@@ -38,7 +38,6 @@ public class InstitutionV2Controller {
         this.onboardingResourceMapper = onboardingResourceMapper;
     }
 
-
     @ApiResponse(responseCode = "403",
             description = "Forbidden",
             content = {
@@ -54,8 +53,6 @@ public class InstitutionV2Controller {
         institutionService.onboardingProductV2(onboardingResourceMapper.toEntity(request));
         log.trace(ONBOARDING_END);
     }
-
-
 
     @ApiResponse(responseCode = "403",
             description = "Forbidden",

@@ -27,7 +27,6 @@ public class OnboardingData {
 
     private String institutionExternalId;
     private String taxCode;
-    private String taxCodeInvoicing;
     private String subunitCode;
     private String subunitType;
     private String productId;
