@@ -46,7 +46,7 @@ app_settings = [
   },
   {
     name  = "MS_ONBOARDING_URL"
-    value = "https://selc-u-pnpg-onboarding-ms-ca.orangeground-0bd2d4dc.westeurope.azurecontainerapps.io",
+    value = "http://selc-u-pnpg-onboarding-ms-ca",
   },
   {
     name  = "ONBOARDING_ALLOWED_INSTITUTIONS_PRODUCTS"
@@ -54,23 +54,23 @@ app_settings = [
   },
   {
     name  = "MS_CORE_URL"
-    value = "https://selc-u-pnpg-ms-core-ca.orangeground-0bd2d4dc.westeurope.azurecontainerapps.io"
+    value = "http://selc-u-pnpg-ms-core-ca"
   },
   {
     name  = "MS_EXTERNAL_INTERCEPTOR_URL"
-    value = "https://selc-u-pnpg-ext-interceptor-ca.orangeground-0bd2d4dc.westeurope.azurecontainerapps.io"
+    value = "http://selc-u-pnpg-ext-interceptor-ca"
   },
   {
     name  = "USERVICE_PARTY_PROCESS_URL"
-    value = "https://selc-u-pnpg-ms-core-ca.orangeground-0bd2d4dc.westeurope.azurecontainerapps.io"
+    value = "http://selc-u-pnpg-ms-core-ca"
   },
   {
     name  = "USERVICE_PARTY_REGISTRY_PROXY_URL"
-    value = "https://selc-u-pnpg-party-reg-proxy-ca.orangeground-0bd2d4dc.westeurope.azurecontainerapps.io"
+    value = "http://selc-u-pnpg-party-reg-proxy-ca"
   },
   {
     name  = "MS_PRODUCT_URL"
-    value = "https://selc-u-pnpg-product-ca.orangeground-0bd2d4dc.westeurope.azurecontainerapps.io"
+    value = "http://selc-u-pnpg-product-ca"
   },
   {
     name  = "USERVICE_USER_REGISTRY_URL"

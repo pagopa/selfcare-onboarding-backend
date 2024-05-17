@@ -55,7 +55,7 @@ app_settings = [
   },
   {
     name  = "MS_ONBOARDING_URL"
-    value = "https://selc-d-onboarding-ms-ca.politewater-9af33050.westeurope.azurecontainerapps.io",
+    value = "http://selc-d-onboarding-ms-ca",
   },
   {
     name  = "ONBOARDING_ALLOWED_INSTITUTIONS_PRODUCTS"
@@ -63,23 +63,23 @@ app_settings = [
   },
   {
     name  = "MS_CORE_URL"
-    value = "https://selc-d-ms-core-ca.politewater-9af33050.westeurope.azurecontainerapps.io"
+    value = "http://selc-d-ms-core-ca"
   },
   {
     name  = "MS_EXTERNAL_INTERCEPTOR_URL"
-    value = "https://selc-d-ext-interceptor-ca.politewater-9af33050.westeurope.azurecontainerapps.io"
+    value = "http://selc-d-ext-interceptor-ca"
   },
   {
     name  = "USERVICE_PARTY_PROCESS_URL"
-    value = "https://selc-d-ms-core-ca.politewater-9af33050.westeurope.azurecontainerapps.io"
+    value = "http://selc-d-ms-core-ca"
   },
   {
     name  = "USERVICE_PARTY_REGISTRY_PROXY_URL"
-    value = "https://selc-d-party-reg-proxy-ca.politewater-9af33050.westeurope.azurecontainerapps.io"
+    value = "http://selc-d-party-reg-proxy-ca"
   },
   {
     name  = "MS_PRODUCT_URL"
-    value = "https://selc-d-product-ca.politewater-9af33050.westeurope.azurecontainerapps.io"
+    value = "http://selc-d-product-ca"
   },
   {
     name  = "USERVICE_USER_REGISTRY_URL"

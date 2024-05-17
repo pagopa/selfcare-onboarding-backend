@@ -57,7 +57,7 @@ app_settings = [
   },
   {
     name  = "MS_ONBOARDING_URL"
-    value = "https://selc-p-pnpg-onboarding-ms-ca.calmmoss-0be48755.westeurope.azurecontainerapps.io",
+    value = "http://selc-p-pnpg-onboarding-ms-ca",
   },
   {
     name  = "ONBOARDING_ALLOWED_INSTITUTIONS_PRODUCTS"
@@ -73,23 +73,23 @@ app_settings = [
   },
   {
     name  = "MS_CORE_URL"
-    value = "https://selc-p-pnpg-ms-core-ca.calmmoss-0be48755.westeurope.azurecontainerapps.io"
+    value = "http://selc-p-pnpg-ms-core-ca"
   },
   {
     name  = "MS_EXTERNAL_INTERCEPTOR_URL"
-    value = "https://selc-p-pnpg-ext-interceptor-ca.calmmoss-0be48755.westeurope.azurecontainerapps.io"
+    value = "http://selc-p-pnpg-ext-interceptor-ca"
   },
   {
     name  = "USERVICE_PARTY_PROCESS_URL"
-    value = "https://selc-p-pnpg-ms-core-ca.calmmoss-0be48755.westeurope.azurecontainerapps.io"
+    value = "http://selc-p-pnpg-ms-core-ca"
   },
   {
     name  = "USERVICE_PARTY_REGISTRY_PROXY_URL"
-    value = "https://selc-p-pnpg-party-reg-proxy-ca.calmmoss-0be48755.westeurope.azurecontainerapps.io"
+    value = "http://selc-p-pnpg-party-reg-proxy-ca"
   },
   {
     name  = "MS_PRODUCT_URL"
-    value = "https://selc-p-pnpg-product-ca.calmmoss-0be48755.westeurope.azurecontainerapps.io"
+    value = "http://selc-p-pnpg-product-ca"
   },
   {
     name  = "USERVICE_USER_REGISTRY_URL"
