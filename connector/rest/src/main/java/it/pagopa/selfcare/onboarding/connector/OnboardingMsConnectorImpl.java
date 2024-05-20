@@ -12,6 +12,7 @@ import it.pagopa.selfcare.onboarding.generated.openapi.v1.dto.ReasonRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
@@ -73,7 +74,9 @@ public class OnboardingMsConnectorImpl implements OnboardingMsConnector {
     @Retry(name = "retryTimeout")
     public void rejectOnboarding(String onboardingId, String reason) {
         ReasonRequest reasonForReject = new ReasonRequest();
-        reasonForReject.setReasonForReject(reason);
+        if(StringUtils.hasText(reason)) {
+            reasonForReject.setReasonForReject(reason);
+        }
         msOnboardingApiClient._v1OnboardingOnboardingIdRejectPut(onboardingId, reasonForReject);
     }
 

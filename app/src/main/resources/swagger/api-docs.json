@@ -2903,7 +2903,6 @@
       },
       "ReasonForRejectDto" : {
         "title" : "ReasonForRejectDto",
-        "required" : [ "reason" ],
         "type" : "object",
         "properties" : {
           "reason" : {

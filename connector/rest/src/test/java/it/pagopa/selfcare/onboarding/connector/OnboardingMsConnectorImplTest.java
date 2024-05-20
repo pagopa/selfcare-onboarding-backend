@@ -216,6 +216,20 @@ public class OnboardingMsConnectorImplTest {
     }
 
     @Test
+    void rejectOnboardingWithNoReason() {
+        // given
+        final String onboardingId = "onboardingId";
+        ReasonRequest reasonDto = new ReasonRequest();
+        // when
+        final Executable executable = () -> onboardingMsConnector.rejectOnboarding(onboardingId, "");
+        // then
+        assertDoesNotThrow(executable);
+        verify(msOnboardingApiClient, times(1))
+                ._v1OnboardingOnboardingIdRejectPut(onboardingId, reasonDto);
+        verifyNoMoreInteractions(msOnboardingApiClient);
+    }
+
+    @Test
     void getContract() {
         // given
         final String onboardingId = "onboardingId";
