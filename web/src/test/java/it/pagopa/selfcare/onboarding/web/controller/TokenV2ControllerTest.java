@@ -70,7 +70,7 @@ public class TokenV2ControllerTest {
     @Test
     void verifyOnboarding() throws Exception {
 
-        String onboardingId = UUID.randomUUID().toString();
+        final String onboardingId = UUID.randomUUID().toString();
         when(tokenService.verifyOnboarding(onboardingId))
                 .thenReturn(new OnboardingData());
 
@@ -126,7 +126,7 @@ public class TokenV2ControllerTest {
     @Test
     void approveOnboardingRequest() throws Exception {
 
-        String onboardingId = UUID.randomUUID().toString();
+        final String onboardingId = UUID.randomUUID().toString();
         doNothing().when(tokenService).approveOnboarding(onboardingId);
 
         //when
@@ -148,8 +148,8 @@ public class TokenV2ControllerTest {
     @Test
     void rejectOnboardingRequest() throws Exception {
 
-        String onboardingId = UUID.randomUUID().toString();
-        String reason = "reason";
+        final String onboardingId = UUID.randomUUID().toString();
+        final String reason = "reason";
         ReasonForRejectDto reasonDto = new ReasonForRejectDto();
         reasonDto.setReason(reason);
 
@@ -172,6 +172,9 @@ public class TokenV2ControllerTest {
                 .rejectOnboarding(onboardingId, reason);
     }
 
+    /**
+     * Method under test: {@link TokenV2Controller#getContract(String)}
+     */
     @Test
     void getContract() throws Exception {
         String onboardingId = "onboardingId";
