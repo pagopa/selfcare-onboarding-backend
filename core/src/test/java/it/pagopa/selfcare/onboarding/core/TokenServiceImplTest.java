@@ -93,8 +93,8 @@ public class TokenServiceImplTest {
     @Test
     void rejectOnboarding() {
         //given
-        String onboardingId = "example";
-        String reason = "reason";
+        final String onboardingId = "example";
+        final String reason = "reason";
         doNothing().when(onboardingMsConnector).rejectOnboarding(onboardingId, reason);
         // when
         tokenService.rejectOnboarding(onboardingId, reason);
