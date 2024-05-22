@@ -155,40 +155,6 @@ class PartyProcessRestClientTest extends BaseFeignRestClientTest {
     }
 
     @Test
-    void getOnBoardingInfo_fullyValued() {
-        // given and when
-        OnBoardingInfo response = restClient.getOnBoardingInfo(testCase2instIdMap.get(TestCase.FULLY_VALUED), null);
-        // then
-        assertNotNull(response);
-        response.getInstitutions().forEach(onboardingResponseData -> {
-            checkNotNullFields(onboardingResponseData);
-            checkNotNullFields(onboardingResponseData.getBilling());
-            checkNotNullFields(onboardingResponseData.getProductInfo());
-        });
-
-    }
-
-    @Test
-    void getOnBoardingInfo_fullyNull() {
-        // given and when
-        OnBoardingInfo response = restClient.getOnBoardingInfo(testCase2instIdMap.get(TestCase.FULLY_NULL), EnumSet.of(ACTIVE));
-        // then
-        assertNotNull(response);
-        assertNull(response.getUserId());
-        assertNull(response.getInstitutions());
-    }
-
-    @Test
-    void getOnBoardingInfo_emptyResult() {
-        // given and when
-        OnBoardingInfo response = restClient.getOnBoardingInfo(testCase2instIdMap.get(TestCase.EMPTY_RESULT), EnumSet.of(ACTIVE, PENDING));
-        // then
-        assertNotNull(response);
-        assertTrue(response.getInstitutions().isEmpty());
-        assertNull(response.getUserId());
-    }
-
-    @Test
     void getInstitutionByExternalId_fullyValued() {
         //given
         String externalId = testCase2instIdMap.get(TestCase.FULLY_VALUED);

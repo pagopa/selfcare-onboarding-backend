@@ -7,18 +7,21 @@ import it.pagopa.selfcare.onboarding.connector.model.RelationshipsResponse;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionInfo;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.OnboardingResource;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.*;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.GeographicTaxonomy;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.User;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.UserInfo;
+import it.pagopa.selfcare.onboarding.connector.rest.client.MsUserApiClient;
 import it.pagopa.selfcare.onboarding.connector.rest.client.PartyProcessRestClient;
 import it.pagopa.selfcare.onboarding.connector.rest.mapper.InstitutionMapper;
-import it.pagopa.selfcare.onboarding.connector.rest.model.InstitutionUpdate;
 import it.pagopa.selfcare.onboarding.connector.rest.model.*;
+import it.pagopa.selfcare.user.generated.openapi.v1.dto.UserInstitutionResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import java.util.*;
-import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -35,25 +38,8 @@ class PartyConnectorImpl implements PartyConnector {
     private final PartyProcessRestClient restClient;
     private final InstitutionMapper institutionMapper;
 
-    private static final BinaryOperator<InstitutionInfo> MERGE_FUNCTION =
-            (inst1, inst2) -> inst1.getUserRole().compareTo(inst2.getUserRole()) < 0 ? inst1 : inst2;
-    private static final Function<OnboardingResponseData, InstitutionInfo> ONBOARDING_DATA_TO_INSTITUTION_INFO_FUNCTION = onboardingData -> {
-        InstitutionInfo institutionInfo = new InstitutionInfo();
-        institutionInfo.setId(onboardingData.getId());
-        institutionInfo.setExternalId(onboardingData.getExternalId());
-        institutionInfo.setDescription(onboardingData.getDescription());
-        institutionInfo.setStatus(onboardingData.getState().toString());
-        institutionInfo.setTaxCode(onboardingData.getTaxCode());
-        institutionInfo.setAddress(onboardingData.getAddress());
-        institutionInfo.setDigitalAddress(onboardingData.getDigitalAddress());
-        institutionInfo.setZipCode(onboardingData.getZipCode());
-        institutionInfo.setBilling(onboardingData.getBilling());
-        institutionInfo.setOrigin(onboardingData.getOrigin());
-        institutionInfo.setOriginId(onboardingData.getOriginId());
-        institutionInfo.setInstitutionType(onboardingData.getInstitutionType());
-        institutionInfo.setUserRole(onboardingData.getRole());
-        return institutionInfo;
-    };
+    private final MsUserApiClient userApiClient;
+
     static final Function<RelationshipInfo, UserInfo> RELATIONSHIP_INFO_TO_USER_INFO_FUNCTION = relationshipInfo -> {
         UserInfo userInfo = new UserInfo();
         userInfo.setId(relationshipInfo.getFrom());
@@ -64,9 +50,10 @@ class PartyConnectorImpl implements PartyConnector {
     };
 
     @Autowired
-    public PartyConnectorImpl(PartyProcessRestClient restClient, InstitutionMapper institutionMapper) {
+    public PartyConnectorImpl(PartyProcessRestClient restClient, InstitutionMapper institutionMapper, MsUserApiClient userApiClient) {
         this.restClient = restClient;
         this.institutionMapper = institutionMapper;
+        this.userApiClient = userApiClient;
     }
 
     @Override
@@ -126,47 +113,36 @@ class PartyConnectorImpl implements PartyConnector {
     }
 
     @Override
-    public Collection<InstitutionInfo> getOnBoardedInstitutions(String productFilter) {
-        log.trace("getOnBoardedInstitutions start");
-        OnBoardingInfo onBoardingInfo = restClient.getOnBoardingInfo(null, EnumSet.of(ACTIVE));
-        Collection<InstitutionInfo> result = parseOnBoardingInfo(onBoardingInfo, productFilter);
-        log.debug("getOnBoardedInstitutions result = {}", result);
-        log.trace("getOnBoardedInstitutions end");
+    public Collection<InstitutionInfo> getInstitutionsByUser(String productId, String userId) {
+        log.trace("getInstitutionsByUser start");
+        List<UserInstitutionResponse> userInstitutionResponses = userApiClient._usersGet(null, null, null, Optional.ofNullable(productId).map(List::of).orElse(null), null, null, List.of(ACTIVE.name()), userId).getBody();
+        Collection<InstitutionInfo> result = Optional.ofNullable(userInstitutionResponses)
+                .map(userInstitutions -> userInstitutions.stream()
+                    .filter(userInstitutionResponse -> Objects.isNull(productId) || userInstitutionResponse.getProducts().stream()
+                            .anyMatch(product -> verifyFilter(product.getProductId(),userInstitutionResponse.getInstitutionId(), productId)))
+                    .map(institutionMapper::toInstitutionInfo)
+                    .toList())
+                .orElse(List.of());
+
+        log.debug("getInstitutionsByUser result = {}", result);
+        log.trace("getInstitutionsByUser end");
         return result;
     }
 
-    private Collection<InstitutionInfo> parseOnBoardingInfo(OnBoardingInfo onBoardingInfo, String productFilter) {
-        log.trace("parseOnBoardingInfo start");
-        log.debug("parseOnBoardingInfo onBoardingInfo = {}", onBoardingInfo);
-        Collection<InstitutionInfo> institutions = Collections.emptyList();
-        if (onBoardingInfo != null && onBoardingInfo.getInstitutions() != null) {
-            institutions = onBoardingInfo.getInstitutions().stream()
-                    .filter(institution -> productFilter == null || productFilter.isEmpty() || verifyFilter(institution, productFilter))
-                    .map(ONBOARDING_DATA_TO_INSTITUTION_INFO_FUNCTION)
-                    .collect(Collectors.collectingAndThen(
-                            Collectors.toMap(InstitutionInfo::getId, Function.identity(), MERGE_FUNCTION),
-                            Map::values
-                    ));
-        }
-        log.debug("parseOnBoardingInfo result = {}", institutions);
-        log.trace("parseOnBoardingInfo end");
-        return institutions;
-    }
-
-    private Boolean verifyFilter(OnboardingResponseData onboardingResponseData, String productFilter) {
+    private Boolean verifyFilter(String userInstitutionProduct, String institutionId, String productFilter) {
 
         if (productFilter.contains("premium")) {
-            if (onboardingResponseData.getProductInfo().getId().equals(productFilter.split("-premium")[0])) {
-                try {
-                    restClient.verifyOnboarding(onboardingResponseData.getExternalId(), productFilter);
-                    return true;
-                } catch (RuntimeException e) {
-                    return false;
-                }
+            if (userInstitutionProduct.equals(productFilter.split("-premium")[0])) {
+                OnboardingsResponse onboardings = restClient.getOnboardings(institutionId, productFilter);
+                return Optional.ofNullable(onboardings.getOnboardings())
+                        .map(items -> items.stream()
+                        .anyMatch(onboarding -> onboarding.getProductId().equals(productFilter)
+                                && ACTIVE.name().equals(onboarding.getStatus())))
+                        .orElse(false);
             }
         }
 
-        return onboardingResponseData.getProductInfo().getId().equals(productFilter);
+        return userInstitutionProduct.equals(productFilter);
     }
 
     @Override

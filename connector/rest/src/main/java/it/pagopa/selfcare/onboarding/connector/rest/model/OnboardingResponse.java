@@ -22,7 +22,7 @@ public class OnboardingResponse {
 
     private String productId;
     private String tokenId;
-    //private RelationshipResponse status;
+    private String status;
     private String contract;
     private String pricingPlan;
     private Billing billing;
