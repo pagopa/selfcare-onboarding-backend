@@ -94,6 +94,10 @@ app_settings = [
   {
     name  = "USERVICE_USER_REGISTRY_URL"
     value = "https://api.pdv.pagopa.it/user-registry/v1"
+  },
+  {
+    name  = "MS_USER_URL"
+    value = "http://selc-p-pnpg-user-ms-ca"
   }
 ]
 
