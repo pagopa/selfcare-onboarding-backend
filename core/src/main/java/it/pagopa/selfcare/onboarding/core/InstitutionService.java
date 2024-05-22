@@ -21,7 +21,7 @@ public interface InstitutionService {
 
     void onboardingProduct(OnboardingData onboardingData);
 
-    Collection<InstitutionInfo> getInstitutions(String productFilter);
+    Collection<InstitutionInfo> getInstitutions(String productId, String userId);
 
     InstitutionOnboardingData getInstitutionOnboardingData(String taxCode, String subunitCode, String productId);
 
