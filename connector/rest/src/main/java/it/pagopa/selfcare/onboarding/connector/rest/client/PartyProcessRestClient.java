@@ -36,13 +36,6 @@ public interface PartyProcessRestClient extends OnboardingApi {
     @PostMapping(value = "${rest-client.party-process.onboardingOrganization.path}", consumes = APPLICATION_JSON_VALUE)
     @ResponseBody
     void onboardingOrganization(@RequestBody OnboardingInstitutionRequest request);
-
-
-    @GetMapping(value = "${rest-client.party-process.getOnBoardingInfo.path}", produces = APPLICATION_JSON_VALUE)
-    @ResponseBody
-    @CollectionFormat(CSV)
-    OnBoardingInfo getOnBoardingInfo(@RequestParam(value = "institutionExternalId", required = false) String institutionExternalId,
-                                     @RequestParam(value = "states", required = false) EnumSet<RelationshipState> states);
     @GetMapping(value = "${rest-client.party-process.getOnboardings.path}", produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     OnboardingsResponse getOnboardings(@PathVariable(value = "institutionId") String institutionId,

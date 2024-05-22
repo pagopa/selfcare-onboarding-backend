@@ -236,15 +236,23 @@ class InstitutionControllerTest {
     @Test
     void getInstitutions() throws Exception {
         //given
+        JwtAuthenticationToken mockPrincipal = Mockito.mock(JwtAuthenticationToken.class);
+        SelfCareUser selfCareUser = SelfCareUser.builder("example")
+                .fiscalCode("fiscalCode")
+                .build();
+        Mockito.when(mockPrincipal.getPrincipal()).thenReturn(selfCareUser);
+
         InstitutionInfo institutionInfo = mockInstance(new InstitutionInfo(), "setId");
         institutionInfo.setId(randomUUID().toString());
         String productFilter = "prod-io";
-        when(institutionServiceMock.getInstitutions(any()))
+        String userId = selfCareUser.getId();
+        when(institutionServiceMock.getInstitutions(productFilter, userId))
                 .thenReturn(Collections.singletonList(institutionInfo));
         //when
         MvcResult result = mvc.perform(MockMvcRequestBuilders
                         .get(BASE_URL)
                         .queryParam("productFilter", productFilter)
+                        .principal(mockPrincipal)
                         .contentType(APPLICATION_JSON_VALUE)
                         .accept(APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk())
@@ -260,7 +268,7 @@ class InstitutionControllerTest {
         assertEquals(institutionInfo.getExternalId(), response.get(0).getExternalId());
         assertEquals(institutionInfo.getDescription(), response.get(0).getDescription());
         verify(institutionServiceMock, times(1))
-                .getInstitutions(productFilter);
+                .getInstitutions(productFilter, userId);
         verifyNoMoreInteractions(institutionServiceMock);
     }
 

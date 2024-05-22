@@ -92,6 +92,10 @@ app_settings = [
   {
     name  = "REST_CLIENT_READ_TIMEOUT"
     value = "60000"
+  },
+  {
+    name  = "MS_USER_URL"
+    value = "http://selc-p-user-ms-ca"
   }
 ]
 
