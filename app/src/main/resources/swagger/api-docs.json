@@ -40,6 +40,14 @@
         "description" : "The service retrieves all the onboarded institutions related to the logged user",
         "operationId" : "getInstitutionsUsingGET",
         "parameters" : [ {
+          "name" : "name",
+          "in" : "query",
+          "required" : false,
+          "style" : "form",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
           "name" : "productFilter",
           "in" : "query",
           "description" : "A product to filter the institutions based on whether the institution has an ACTIVE onboarding on the specified product.",
@@ -2676,13 +2684,13 @@
             "description" : "Institution's type",
             "enum" : [ "AS", "CON", "GSP", "PA", "PG", "PSP", "PT", "REC", "SA", "SCP" ]
           },
-          "ivassCode" : {
-            "type" : "string",
-            "description" : "Institution's details ivass code for AS"
-          },
           "origin" : {
             "type" : "string",
             "description" : "Institution data origin"
+          },
+          "originId" : {
+            "type" : "string",
+            "description" : "Institution's details origin Id"
           },
           "pricingPlan" : {
             "type" : "string",

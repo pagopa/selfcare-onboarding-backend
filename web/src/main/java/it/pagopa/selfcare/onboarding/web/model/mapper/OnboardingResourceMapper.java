@@ -28,7 +28,7 @@ public interface OnboardingResourceMapper {
     @Mapping(source = "assistanceContacts.supportEmail", target = "institutionUpdate.supportEmail")
     @Mapping(source = "assistanceContacts.supportPhone", target = "institutionUpdate.supportPhone")
     @Mapping(source = "additionalInformations", target = "institutionUpdate.additionalInformations")
-    @Mapping(source = "ivassCode", target = "originId")
+    @Mapping(source = "originId", target = "originId")
     OnboardingData toEntity(OnboardingProductDto dto);
 
     @Mapping(source = "billingData", target = "billing")
