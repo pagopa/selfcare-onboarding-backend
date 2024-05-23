@@ -20,6 +20,7 @@ import it.pagopa.selfcare.onboarding.web.model.*;
 import it.pagopa.selfcare.onboarding.web.model.mapper.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.owasp.encoder.Encode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -101,7 +102,7 @@ public class InstitutionController {
                                                                           @RequestParam("productId")
                                                                           String productId) {
         log.trace("getInstitutionOnboardingInfoById start");
-        log.debug("getInstitutionOnboardingInfoById institutionId = {}, productId = {}", institutionId, productId);
+        log.debug("getInstitutionOnboardingInfoById institutionId = {}, productId = {}", Encode.forJava(institutionId), Encode.forJava(productId));
         InstitutionOnboardingData institutionOnboardingData = institutionService.getInstitutionOnboardingDataById(institutionId, productId);
         InstitutionOnboardingInfoResource result = onboardingInstitutionInfoMapper.toResource(institutionOnboardingData);
         log.debug("getInstitutionOnboardingInfoById result = {}", result);

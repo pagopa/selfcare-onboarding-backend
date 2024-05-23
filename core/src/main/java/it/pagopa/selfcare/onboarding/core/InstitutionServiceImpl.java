@@ -35,6 +35,7 @@ import it.pagopa.selfcare.onboarding.core.exception.UpdateNotAllowedException;
 import it.pagopa.selfcare.onboarding.core.mapper.InstitutionInfoMapper;
 import it.pagopa.selfcare.onboarding.core.strategy.OnboardingValidationStrategy;
 import lombok.extern.slf4j.Slf4j;
+import org.owasp.encoder.Encode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -308,7 +309,7 @@ class InstitutionServiceImpl implements InstitutionService {
     @Override
     public InstitutionOnboardingData getInstitutionOnboardingDataById(String institutionId, String productId) {
         log.trace("getInstitutionOnboardingData start");
-        log.debug("getInstitutionOnboardingData institutionId = {}, productId = {}", institutionId, productId);
+        log.debug("getInstitutionOnboardingData institutionId = {}, productId = {}", Encode.forJava(institutionId), Encode.forJava(productId));
         Assert.hasText(institutionId, REQUIRED_INSTITUTION_ID_MESSAGE);
         Assert.hasText(productId, A_PRODUCT_ID_IS_REQUIRED);
 
