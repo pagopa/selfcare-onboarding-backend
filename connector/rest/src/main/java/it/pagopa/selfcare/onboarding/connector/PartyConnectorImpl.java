@@ -17,6 +17,7 @@ import it.pagopa.selfcare.onboarding.connector.rest.mapper.InstitutionMapper;
 import it.pagopa.selfcare.onboarding.connector.rest.model.*;
 import it.pagopa.selfcare.user.generated.openapi.v1.dto.UserInstitutionResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.owasp.encoder.Encode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -226,9 +227,21 @@ class PartyConnectorImpl implements PartyConnector {
     }
 
     @Override
+    public Institution getInstitutionById(String institutionId) {
+        log.trace("getInstitutionById start");
+        log.debug("getInstitutionById institutionId = {}", Encode.forJava(institutionId));
+        Assert.hasText(institutionId, REQUIRED_INSTITUTION_ID_MESSAGE);
+        InstitutionResponse institutionResponse = restClient.getInstitutionById(institutionId);
+        Institution result = institutionMapper.toEntity(institutionResponse);
+        log.debug("getInstitutionById result = {}", result);
+        log.trace("getInstitutionById end");
+        return result;
+    }
+
+    @Override
     public List<OnboardingResource> getOnboardings(String institutionId, String productId) {
         log.trace("getOnboardings start");
-        log.debug("getOnboardings institutionId = {}", institutionId);
+        log.debug("getOnboardings institutionId = {}", Encode.forJava(institutionId));
         Assert.hasText(institutionId, REQUIRED_INSTITUTION_ID_MESSAGE);
         OnboardingsResponse onboardings = restClient.getOnboardings(institutionId, productId);
         List<OnboardingResource> onboardingResources = onboardings.getOnboardings().stream()
