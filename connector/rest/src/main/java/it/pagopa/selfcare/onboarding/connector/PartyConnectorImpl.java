@@ -241,7 +241,7 @@ class PartyConnectorImpl implements PartyConnector {
     @Override
     public List<OnboardingResource> getOnboardings(String institutionId, String productId) {
         log.trace("getOnboardings start");
-        log.debug("getOnboardings institutionId = {}", institutionId);
+        log.debug("getOnboardings institutionId = {}", Encode.forJava(institutionId));
         Assert.hasText(institutionId, REQUIRED_INSTITUTION_ID_MESSAGE);
         OnboardingsResponse onboardings = restClient.getOnboardings(institutionId, productId);
         List<OnboardingResource> onboardingResources = onboardings.getOnboardings().stream()
