@@ -789,6 +789,46 @@ class PartyConnectorImplTest {
     }
 
     @Test
+    void getInstitutionById_nullInstitutionId() {
+        //given
+        String institutionId = null;
+        //when
+        Executable exe = () -> partyConnector.getInstitutionById(institutionId);
+        //then
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, exe);
+        assertEquals(REQUIRED_INSTITUTION_ID_MESSAGE, e.getMessage());
+        Mockito.verifyNoInteractions(restClientMock);
+    }
+
+
+    @Test
+    void getInstitutionById() {
+        //given
+        String institutionId = "institutionId";
+        InstitutionResponse institutionResponseMock = mockInstance(new InstitutionResponse());
+        institutionResponseMock.setGeographicTaxonomies(List.of(mockInstance(new GeographicTaxonomy())));
+        when(restClientMock.getInstitutionById(institutionId))
+                .thenReturn(institutionResponseMock);
+        //when
+        Institution institution = partyConnector.getInstitutionById(institutionId);
+        //then
+        assertNotNull(institution);
+        assertEquals(institutionResponseMock.getExternalId(), institution.getExternalId());
+        assertEquals(institutionResponseMock.getDescription(), institution.getDescription());
+        assertEquals(institutionResponseMock.getAddress(), institution.getAddress());
+        assertEquals(institutionResponseMock.getTaxCode(), institution.getTaxCode());
+        assertEquals(institutionResponseMock.getId(), institution.getId());
+        assertEquals(institutionResponseMock.getZipCode(), institution.getZipCode());
+        assertEquals(institutionResponseMock.getDigitalAddress(), institution.getDigitalAddress());
+        assertEquals(institutionResponseMock.getInstitutionType(), institution.getInstitutionType());
+        assertEquals(institutionResponseMock.getGeographicTaxonomies().get(0).getCode(), institution.getGeographicTaxonomies().get(0).getCode());
+        assertEquals(institutionResponseMock.getGeographicTaxonomies().get(0).getDesc(), institution.getGeographicTaxonomies().get(0).getDesc());
+        verify(restClientMock, times(1))
+                .getInstitutionById(institutionId);
+        verifyNoMoreInteractions(restClientMock);
+    }
+
+    @Test
     void getOnboardings_emptyOnboardings() {
         // given
         String institutionId = "institutionId";

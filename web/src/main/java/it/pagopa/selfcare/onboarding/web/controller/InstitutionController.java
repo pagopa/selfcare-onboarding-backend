@@ -20,6 +20,7 @@ import it.pagopa.selfcare.onboarding.web.model.*;
 import it.pagopa.selfcare.onboarding.web.model.mapper.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.owasp.encoder.Encode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -94,21 +95,18 @@ public class InstitutionController {
     @GetMapping(value = "/onboarding/")
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "", notes = "${swagger.onboarding.institutions.api.getInstitutionOnboardingInfo}")
-    public InstitutionOnboardingInfoResource getInstitutionOnboardingInfo(@ApiParam("${swagger.onboarding.institutions.model.taxCode}")
-                                                                          @RequestParam("taxCode")
-                                                                          String taxCode,
-                                                                          @ApiParam("${swagger.onboarding.institutions.model.subunitCode}")
-                                                                          @RequestParam(value = "subunitCode", required = false)
-                                                                          String subunitCode,
+    public InstitutionOnboardingInfoResource getInstitutionOnboardingInfoById(@ApiParam("${swagger.onboarding.institutions.model.id}")
+                                                                          @RequestParam("institutionId")
+                                                                          String institutionId,
                                                                           @ApiParam("${swagger.onboarding.product.model.id}")
                                                                           @RequestParam("productId")
                                                                           String productId) {
-        log.trace("getInstitutionOnBoardingInfo start");
-        log.debug("getInstitutionOnBoardingInfo taxCode = {}, subunitCode = {}, productId = {}", taxCode, subunitCode, productId);
-        InstitutionOnboardingData institutionOnboardingData = institutionService.getInstitutionOnboardingData(taxCode, subunitCode, productId);
+        log.trace("getInstitutionOnboardingInfoById start");
+        log.debug("getInstitutionOnboardingInfoById institutionId = {}, productId = {}", Encode.forJava(institutionId), Encode.forJava(productId));
+        InstitutionOnboardingData institutionOnboardingData = institutionService.getInstitutionOnboardingDataById(institutionId, productId);
         InstitutionOnboardingInfoResource result = onboardingInstitutionInfoMapper.toResource(institutionOnboardingData);
-        log.debug("getInstitutionOnBoardingInfo result = {}", result);
-        log.trace("getInstitutionOnBoardingInfo end");
+        log.debug("getInstitutionOnboardingInfoById result = {}", result);
+        log.trace("getInstitutionOnboardingInfoById end");
         return result;
     }
 

@@ -35,6 +35,7 @@ import it.pagopa.selfcare.onboarding.core.exception.UpdateNotAllowedException;
 import it.pagopa.selfcare.onboarding.core.mapper.InstitutionInfoMapper;
 import it.pagopa.selfcare.onboarding.core.strategy.OnboardingValidationStrategy;
 import lombok.extern.slf4j.Slf4j;
+import org.owasp.encoder.Encode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -306,22 +307,18 @@ class InstitutionServiceImpl implements InstitutionService {
 
 
     @Override
-    public InstitutionOnboardingData getInstitutionOnboardingData(String taxCode, String subunitCode, String productId) {
+    public InstitutionOnboardingData getInstitutionOnboardingDataById(String institutionId, String productId) {
         log.trace("getInstitutionOnboardingData start");
-        log.debug("getInstitutionOnboardingData taxCode = {}, productId = {}", taxCode, productId);
-        Assert.hasText(taxCode, REQUIRED_INSTITUTION_ID_MESSAGE);
+        log.debug("getInstitutionOnboardingData institutionId = {}, productId = {}", Encode.forJava(institutionId), Encode.forJava(productId));
+        Assert.hasText(institutionId, REQUIRED_INSTITUTION_ID_MESSAGE);
         Assert.hasText(productId, A_PRODUCT_ID_IS_REQUIRED);
 
-        List<Institution> institutions = partyConnector.getInstitutionsByTaxCodeAndSubunitCode(taxCode, subunitCode);
-        Institution institution = institutions.stream()
-                .findFirst()
-                .orElseThrow(() -> new ResourceNotFoundException(String.format("Institution with taxCode %s and subunitCode %s not found", taxCode, subunitCode)));
-
-        List<OnboardingResource> onboardingsResource = partyConnector.getOnboardings(institution.getId(), productId);
+        List<OnboardingResource> onboardingsResource = partyConnector.getOnboardings(institutionId, productId);
         OnboardingResource onboardingResource = onboardingsResource.stream()
                 .findFirst()
-                .orElseThrow(() -> new ResourceNotFoundException(String.format("Institution with taxCode %s and subunitCode %s not found", taxCode, subunitCode)));
+                .orElseThrow(() -> new ResourceNotFoundException(String.format("Onboarding for institutionId %s not found", institutionId)));
 
+        Institution institution = partyConnector.getInstitutionById(institutionId);
         InstitutionOnboardingData result = new InstitutionOnboardingData();
         InstitutionInfo institutionInfo = institutionMapper.toInstitutionInfo(institution);
         institutionInfo.setPricingPlan(onboardingResource.getPricingPlan());

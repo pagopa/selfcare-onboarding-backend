@@ -23,7 +23,7 @@ public interface InstitutionService {
 
     Collection<InstitutionInfo> getInstitutions(String productId, String userId);
 
-    InstitutionOnboardingData getInstitutionOnboardingData(String taxCode, String subunitCode, String productId);
+    InstitutionOnboardingData getInstitutionOnboardingDataById(String institutionId, String productId);
 
     InstitutionOnboardingData getInstitutionOnboardingData(String externalInstitutionId, String productId);
 

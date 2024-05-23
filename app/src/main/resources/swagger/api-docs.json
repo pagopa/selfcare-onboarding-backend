@@ -40,6 +40,14 @@
         "description" : "The service retrieves all the onboarded institutions related to the logged user",
         "operationId" : "getInstitutionsUsingGET",
         "parameters" : [ {
+          "name" : "name",
+          "in" : "query",
+          "required" : false,
+          "style" : "form",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
           "name" : "productFilter",
           "in" : "query",
           "description" : "A product to filter the institutions based on whether the institution has an ACTIVE onboarding on the specified product.",
@@ -577,23 +585,14 @@
     "/v1/institutions/onboarding/" : {
       "get" : {
         "tags" : [ "institutions" ],
-        "summary" : "getInstitutionOnboardingInfo",
+        "summary" : "getInstitutionOnboardingInfoById",
         "description" : "The service retrieves the institutions Manager and institution informations",
-        "operationId" : "getInstitutionOnboardingInfoUsingGET",
+        "operationId" : "getInstitutionOnboardingInfoByIdUsingGET",
         "parameters" : [ {
-          "name" : "taxCode",
+          "name" : "institutionId",
           "in" : "query",
-          "description" : "Institution's taxCode",
+          "description" : "Institution's unique internal Id",
           "required" : true,
-          "style" : "form",
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "subunitCode",
-          "in" : "query",
-          "description" : "Institution's subunitCode",
-          "required" : false,
           "style" : "form",
           "schema" : {
             "type" : "string"
@@ -995,7 +994,7 @@
         "tags" : [ "institutions" ],
         "summary" : "getInstitutionOnboardingInfo",
         "description" : "The service retrieves the institutions Manager and institution informations",
-        "operationId" : "getInstitutionOnboardingInfoUsingGET_1",
+        "operationId" : "getInstitutionOnboardingInfoUsingGET",
         "parameters" : [ {
           "name" : "externalInstitutionId",
           "in" : "path",
