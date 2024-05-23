@@ -587,7 +587,7 @@
         "tags" : [ "institutions" ],
         "summary" : "getInstitutionOnboardingInfoById",
         "description" : "The service retrieves the institutions Manager and institution informations",
-        "operationId" : "getInstitutionOnboardingInfoByIdUsingGET",
+        "operationId" : "getInstitutionOnboardingInfoUsingGET",
         "parameters" : [ {
           "name" : "institutionId",
           "in" : "query",
@@ -994,7 +994,7 @@
         "tags" : [ "institutions" ],
         "summary" : "getInstitutionOnboardingInfo",
         "description" : "The service retrieves the institutions Manager and institution informations",
-        "operationId" : "getInstitutionOnboardingInfoUsingGET",
+        "operationId" : "getInstitutionOnboardingInfoUsingGET_1",
         "parameters" : [ {
           "name" : "externalInstitutionId",
           "in" : "path",
