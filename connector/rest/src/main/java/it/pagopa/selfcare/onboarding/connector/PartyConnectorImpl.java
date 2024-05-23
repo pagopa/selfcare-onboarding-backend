@@ -226,6 +226,18 @@ class PartyConnectorImpl implements PartyConnector {
     }
 
     @Override
+    public Institution getInstitutionById(String institutionId) {
+        log.trace("getInstitutionById start");
+        log.debug("getInstitutionById institutionId = {}", institutionId);
+        Assert.hasText(institutionId, REQUIRED_INSTITUTION_ID_MESSAGE);
+        InstitutionResponse institutionResponse = restClient.getInstitutionById(institutionId);
+        Institution result = institutionMapper.toEntity(institutionResponse);
+        log.debug("getInstitutionById result = {}", result);
+        log.trace("getInstitutionById end");
+        return result;
+    }
+
+    @Override
     public List<OnboardingResource> getOnboardings(String institutionId, String productId) {
         log.trace("getOnboardings start");
         log.debug("getOnboardings institutionId = {}", institutionId);
