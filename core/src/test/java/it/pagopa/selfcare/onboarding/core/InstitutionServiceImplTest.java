@@ -7,10 +7,7 @@ import it.pagopa.selfcare.onboarding.connector.api.*;
 import it.pagopa.selfcare.onboarding.connector.exceptions.ResourceNotFoundException;
 import it.pagopa.selfcare.onboarding.connector.model.InstitutionLegalAddressData;
 import it.pagopa.selfcare.onboarding.connector.model.InstitutionOnboardingData;
-import it.pagopa.selfcare.onboarding.connector.model.institutions.Attribute;
-import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
-import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionInfo;
-import it.pagopa.selfcare.onboarding.connector.model.institutions.MatchInfoResult;
+import it.pagopa.selfcare.onboarding.connector.model.institutions.*;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.infocamere.BusinessInfoIC;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.infocamere.InstitutionInfoIC;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.*;
@@ -24,16 +21,15 @@ import it.pagopa.selfcare.onboarding.connector.model.registry_proxy.Organization
 import it.pagopa.selfcare.onboarding.connector.model.user.SaveUserDto;
 import it.pagopa.selfcare.onboarding.connector.model.user.UserId;
 import it.pagopa.selfcare.onboarding.core.exception.OnboardingNotAllowedException;
+import it.pagopa.selfcare.onboarding.core.mapper.InstitutionInfoMapper;
+import it.pagopa.selfcare.onboarding.core.mapper.InstitutionInfoMapperImpl;
 import it.pagopa.selfcare.onboarding.core.strategy.OnboardingValidationStrategy;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
+import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -81,6 +77,9 @@ class InstitutionServiceImplTest {
 
     @Captor
     private ArgumentCaptor<UserInfo.UserInfoFilter> userInfoFilterCaptor;
+
+    @Spy
+    InstitutionInfoMapper institutionInfoMapper = new InstitutionInfoMapperImpl();
 
 
     private final static User dummyManager;
@@ -1148,6 +1147,86 @@ class InstitutionServiceImplTest {
         assertDoesNotThrow(executable);
         verify(msExternalInterceptorConnector, times(1)).checkOrganization(productId, fiscalCode, vatNumber);
         verifyNoMoreInteractions(msExternalInterceptorConnector);
+    }
+
+    @Test
+    void getInstitutionOnboardingDataById_nullInstitutionId() {
+        //given
+        String institutionId = null;
+        String productId = "productId";
+        //when
+        Executable executable = () -> institutionService.getInstitutionOnboardingDataById(institutionId, productId);
+        //then
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, executable);
+        assertEquals(REQUIRED_INSTITUTION_ID_MESSAGE, e.getMessage());
+        verifyNoInteractions(partyConnectorMock, productsConnectorMock, userConnectorMock);
+    }
+    @Test
+    void getInstitutionOnboardingDataById_nullProductId() {
+        //given
+        String institutionId = "institutionId";
+        String productId = null;
+        //when
+        Executable executable = () -> institutionService.getInstitutionOnboardingDataById(institutionId, productId);
+        //then
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, executable);
+        assertEquals(A_PRODUCT_ID_IS_REQUIRED, e.getMessage());
+        verifyNoInteractions(partyConnectorMock, productsConnectorMock, userConnectorMock);
+    }
+    @Test
+    void getInstitutionOnboardingDataById_onboardingsNotFound() {
+        //given
+        String institutionId = "institutionId";
+        String productId = "productId";
+
+        //when
+        Executable executable = () -> institutionService.getInstitutionOnboardingDataById(institutionId, productId);
+        //then
+        ResourceNotFoundException e = assertThrows(ResourceNotFoundException.class, executable);
+        assertEquals(String.format("Onboarding for institutionId %s not found", institutionId), e.getMessage());
+
+        verify(partyConnectorMock, times(1))
+                .getOnboardings(institutionId, productId);
+
+        verifyNoMoreInteractions(partyConnectorMock, userConnectorMock);
+        verifyNoInteractions(productsConnectorMock);
+    }
+
+    @Test
+    void getInstitutionOnboardingDataById() {
+        //given
+        String institutionId = "institutionId";
+        String productId = "productId";
+
+        OnboardingResource onboardingResource = new OnboardingResource();
+        onboardingResource.setProductId(productId);
+        when(partyConnectorMock.getOnboardings(institutionId, productId))
+                .thenReturn(List.of(onboardingResource));
+
+        Institution institutionMock = mockInstance(new Institution());
+        institutionMock.setGeographicTaxonomies(List.of(new GeographicTaxonomy()));
+        when(partyConnectorMock.getInstitutionById(institutionId))
+                .thenReturn(institutionMock);
+        //when
+        InstitutionOnboardingData institutionOnboardingData = institutionService.getInstitutionOnboardingDataById(institutionId, productId);
+        //then
+        assertNotNull(institutionOnboardingData);
+
+        assertNotNull(institutionOnboardingData.getInstitution());
+        assertEquals(institutionMock.getInstitutionType(), institutionOnboardingData.getInstitution().getInstitutionType());
+        assertEquals(institutionMock.getTaxCode(), institutionOnboardingData.getInstitution().getTaxCode());
+        assertEquals(institutionMock.getZipCode(), institutionOnboardingData.getInstitution().getZipCode());
+        assertEquals(institutionMock.getDescription(), institutionOnboardingData.getInstitution().getDescription());
+        assertEquals(institutionMock.getGeographicTaxonomies().get(0).getCode(), institutionOnboardingData.getGeographicTaxonomies().get(0).getCode());
+        assertEquals(institutionMock.getGeographicTaxonomies().get(0).getDesc(), institutionOnboardingData.getGeographicTaxonomies().get(0).getDesc());
+
+        verify(partyConnectorMock, times(1))
+                .getOnboardings(institutionId, productId);
+
+        verify(partyConnectorMock, times(1))
+                .getInstitutionById(institutionId);
+        verifyNoMoreInteractions(partyConnectorMock, userConnectorMock);
+        verifyNoInteractions(productsConnectorMock);
     }
 
     @Test

@@ -209,12 +209,12 @@ class InstitutionControllerTest {
 
         InstitutionOnboardingData institutionOnboardingData = new InstitutionOnboardingData();
         institutionOnboardingData.setInstitution(institutionInfo);
-        when(institutionServiceMock.getInstitutionOnboardingData(institutionInfo.getTaxCode(),null,productId))
+        when(institutionServiceMock.getInstitutionOnboardingDataById(institutionInfo.getId(),productId))
                 .thenReturn(institutionOnboardingData);
         //when
         MvcResult result = mvc.perform(MockMvcRequestBuilders
                         .get(BASE_URL + "/onboarding/")
-                        .queryParam("taxCode", institutionInfo.getTaxCode())
+                        .queryParam("institutionId", institutionInfo.getId())
                         .queryParam("productId", productId)
                         .contentType(APPLICATION_JSON_VALUE)
                         .accept(APPLICATION_JSON_VALUE))
