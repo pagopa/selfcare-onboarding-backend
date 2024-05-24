@@ -2675,13 +2675,13 @@
             "description" : "Institution's type",
             "enum" : [ "AS", "CON", "GSP", "PA", "PG", "PSP", "PT", "REC", "SA", "SCP" ]
           },
-          "ivassCode" : {
-            "type" : "string",
-            "description" : "Institution's details ivass code for AS"
-          },
           "origin" : {
             "type" : "string",
             "description" : "Institution data origin"
+          },
+          "originId" : {
+            "type" : "string",
+            "description" : "Institution's details origin Id"
           },
           "pricingPlan" : {
             "type" : "string",

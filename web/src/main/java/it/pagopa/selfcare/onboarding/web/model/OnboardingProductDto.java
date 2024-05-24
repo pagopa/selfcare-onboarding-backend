@@ -31,6 +31,9 @@ public class OnboardingProductDto {
     @ApiModelProperty(value = "${swagger.onboarding.institutions.model.origin}")
     private String origin;
 
+    @ApiModelProperty(value = "${swagger.onboarding.institutions.model.originId}")
+    private String originId;
+
     @ApiModelProperty(value = "${swagger.onboarding.institutions.model.pricingPlan}")
     private String pricingPlan;
 
@@ -62,9 +65,6 @@ public class OnboardingProductDto {
 
     @ApiModelProperty(value = "${swagger.onboarding.institutions.model.subunitType}")
     private String subunitType;
-
-    @ApiModelProperty(value = "${swagger.onboarding.institutions.model.ivassCode}")
-    private String ivassCode;
 
     @ApiModelProperty(value = "${swagger.onboarding.institutions.model.additionalInformations}")
     private AdditionalInformationsDto additionalInformations;
