@@ -1,8 +1,8 @@
 package it.pagopa.selfcare.onboarding.core;
 
 import it.pagopa.selfcare.commons.base.logging.LogUtils;
-import it.pagopa.selfcare.commons.base.security.PartyRole;
-import it.pagopa.selfcare.commons.base.utils.InstitutionType;
+import it.pagopa.selfcare.onboarding.common.PartyRole;
+import it.pagopa.selfcare.onboarding.common.InstitutionType;
 import it.pagopa.selfcare.commons.base.utils.Origin;
 import it.pagopa.selfcare.onboarding.connector.api.*;
 import it.pagopa.selfcare.onboarding.connector.exceptions.ResourceNotFoundException;
@@ -17,9 +17,9 @@ import it.pagopa.selfcare.onboarding.connector.model.onboarding.GeographicTaxono
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.InstitutionLocation;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.User;
-import it.pagopa.selfcare.onboarding.connector.model.product.Product;
-import it.pagopa.selfcare.onboarding.connector.model.product.ProductRoleInfo;
-import it.pagopa.selfcare.onboarding.connector.model.product.ProductStatus;
+import it.pagopa.selfcare.product.entity.Product;
+import it.pagopa.selfcare.product.entity.ProductRoleInfo;
+import it.pagopa.selfcare.product.entity.ProductStatus;
 import it.pagopa.selfcare.onboarding.connector.model.registry_proxy.GeographicTaxonomies;
 import it.pagopa.selfcare.onboarding.connector.model.registry_proxy.HomogeneousOrganizationalArea;
 import it.pagopa.selfcare.onboarding.connector.model.registry_proxy.InstitutionProxyInfo;
@@ -205,7 +205,7 @@ class InstitutionServiceImpl implements InstitutionService {
     }
 
     private void checkIfProductIsActiveAndSetUserProductRole(Product product, OnboardingData onboardingData) {
-        EnumMap<PartyRole, ProductRoleInfo> roleMappings;
+        Map<PartyRole, ProductRoleInfo> roleMappings;
         if (product.getParentId() != null) {
             final Product baseProduct = productsConnector.getProduct(product.getParentId(), null);
             if(baseProduct.getStatus() == ProductStatus.PHASE_OUT){
@@ -231,7 +231,7 @@ class InstitutionServiceImpl implements InstitutionService {
         validateProductRole(onboardingData.getUsers(), roleMappings);
     }
 
-    private void validateProductRole(List<User> users, EnumMap<PartyRole, ProductRoleInfo> roleMappings) {
+    private void validateProductRole(List<User> users, Map<PartyRole, ProductRoleInfo> roleMappings) {
         Assert.notNull(roleMappings, "Role mappings is required");
         users.forEach(userInfo -> {
             Assert.notNull(roleMappings.get(userInfo.getRole()),
@@ -480,7 +480,7 @@ class InstitutionServiceImpl implements InstitutionService {
     private void setLocationInfo(InstitutionInfo institutionInfo){
         if (institutionInfo.getInstitutionLocation().getCity()==null && Origin.IPA.getValue().equals(institutionInfo.getOrigin())){
             try {
-                GeographicTaxonomies geographicTaxonomies = null;
+                GeographicTaxonomies geographicTaxonomies;
                 if (institutionInfo.getSubunitType() != null) {
                     geographicTaxonomies = switch (Objects.requireNonNull(institutionInfo.getSubunitType())) {
                         case "UO" -> {

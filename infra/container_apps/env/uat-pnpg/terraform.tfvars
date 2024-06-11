@@ -69,10 +69,6 @@ app_settings = [
     value = "http://selc-u-pnpg-party-reg-proxy-ca"
   },
   {
-    name  = "MS_PRODUCT_URL"
-    value = "http://selc-u-pnpg-product-ca"
-  },
-  {
     name  = "USERVICE_USER_REGISTRY_URL"
     value = "https://api.uat.pdv.pagopa.it/user-registry/v1"
   },
@@ -87,11 +83,16 @@ app_settings = [
   {
     name  = "MS_USER_URL"
     value = "http://selc-u-pnpg-user-ms-ca"
-  }
+  },
+  {
+      name  = "PRODUCT_STORAGE_CONTAINER"
+      value = "selc-u-product"
+    }
 ]
 
 secrets_names = {
   "USERVICE_USER_REGISTRY_API_KEY"        = "user-registry-api-key"
   "APPLICATIONINSIGHTS_CONNECTION_STRING" = "appinsights-connection-string"
   "JWT_TOKEN_PUBLIC_KEY"                  = "jwt-public-key"
+  "BLOB_STORAGE_PRODUCT_CONNECTION_STRING"  = "blob-storage-product-connection-string"
 }

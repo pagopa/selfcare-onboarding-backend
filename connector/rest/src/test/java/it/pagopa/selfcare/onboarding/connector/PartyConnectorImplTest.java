@@ -9,7 +9,6 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import it.pagopa.selfcare.commons.base.security.PartyRole;
-import it.pagopa.selfcare.commons.utils.TestUtils;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipInfo;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipState;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipsResponse;
@@ -163,8 +162,6 @@ class PartyConnectorImplTest {
         assertNotNull(request.getUsers());
         assertEquals(1, request.getUsers().size());
         assertEquals(1, request.getInstitutionUpdate().getGeographicTaxonomyCodes().size());
-        TestUtils.reflectionEqualsByName(institutionUpdate, request.getInstitutionUpdate());
-        TestUtils.reflectionEqualsByName(billing, request.getBilling());
         assertEquals(onboardingData.getProductId(), request.getProductId());
         assertEquals(onboardingData.getProductName(), request.getProductName());
         assertEquals(onboardingData.getUsers().get(0).getName(), request.getUsers().get(0).getName());

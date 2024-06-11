@@ -1,7 +1,7 @@
 package it.pagopa.selfcare.onboarding.connector.api;
 
-import it.pagopa.selfcare.commons.base.utils.InstitutionType;
-import it.pagopa.selfcare.onboarding.connector.model.product.Product;
+import it.pagopa.selfcare.onboarding.common.InstitutionType;
+import it.pagopa.selfcare.product.entity.Product;
 
 public interface ProductsConnector {
 

@@ -1,8 +1,9 @@
 package it.pagopa.selfcare.onboarding.web.model.mapper;
 
 import it.pagopa.selfcare.commons.utils.TestUtils;
-import it.pagopa.selfcare.onboarding.connector.model.product.Product;
+import it.pagopa.selfcare.product.entity.Product;
 import it.pagopa.selfcare.onboarding.web.model.ProductResource;
+import it.pagopa.selfcare.product.entity.ProductStatus;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -13,7 +14,10 @@ class ProductMapperTest {
     @Test
     void toResource_notNull() {
         //given
-        Product product = TestUtils.mockInstance(new Product(), "setProductOperations");
+        Product product = new Product();
+        product.setId("id");
+        product.setTitle("title");
+        product.setStatus(ProductStatus.ACTIVE);
         // when
         ProductResource productResource = ProductMapper.toResource(product);
         // then

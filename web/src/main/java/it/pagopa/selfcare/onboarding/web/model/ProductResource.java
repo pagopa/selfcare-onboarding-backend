@@ -1,7 +1,7 @@
 package it.pagopa.selfcare.onboarding.web.model;
 
 import io.swagger.annotations.ApiModelProperty;
-import it.pagopa.selfcare.onboarding.connector.model.product.ProductStatus;
+import it.pagopa.selfcare.product.entity.ProductStatus;
 import lombok.Data;
 
 @Data
