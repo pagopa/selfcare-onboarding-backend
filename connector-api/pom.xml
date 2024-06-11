@@ -10,6 +10,19 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>selc-onboarding-connector-api</artifactId>
-
+    <dependencies>
+        <dependency>
+            <groupId>it.pagopa.selfcare</groupId>
+            <artifactId>onboarding-sdk-product</artifactId>
+            <version>0.1.12</version>
+        </dependency>
+    </dependencies>
+    <repositories>
+        <repository>
+            <id>selfcare-onboarding</id>
+            <name>Selfcare Onboarding SDK</name>
+            <url>https://maven.pkg.github.com/pagopa/selfcare-onboarding</url>
+        </repository>
+    </repositories>
 
 </project>

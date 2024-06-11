@@ -1,7 +1,7 @@
 package it.pagopa.selfcare.onboarding.connector;
 
 import io.github.resilience4j.retry.annotation.Retry;
-import it.pagopa.selfcare.commons.base.utils.InstitutionType;
+import it.pagopa.selfcare.onboarding.common.InstitutionType;
 import it.pagopa.selfcare.onboarding.connector.api.OnboardingMsConnector;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
 import it.pagopa.selfcare.onboarding.connector.rest.client.MsOnboardingApiClient;

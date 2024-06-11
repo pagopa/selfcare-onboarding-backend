@@ -1,11 +1,10 @@
 package it.pagopa.selfcare.onboarding.web.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import it.pagopa.selfcare.commons.utils.TestUtils;
-import it.pagopa.selfcare.onboarding.connector.model.product.Product;
 import it.pagopa.selfcare.onboarding.core.ProductService;
 import it.pagopa.selfcare.onboarding.web.config.WebTestConfig;
 import it.pagopa.selfcare.onboarding.web.model.ProductResource;
+import it.pagopa.selfcare.product.entity.Product;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -43,8 +42,8 @@ class ProductControllerTest {
     void getProduct() throws Exception {
         //given
         String productId = "productId";
-        Mockito.when(productServiceMock.getProduct(Mockito.anyString(), any()))
-                .thenReturn(TestUtils.mockInstance(new Product(), "setProductOperations"));
+        Mockito.when(productServiceMock.getProduct(Mockito.any(), any()))
+                .thenReturn(new Product());
         //when
         MvcResult result = mvc.perform(MockMvcRequestBuilders
                         .get(BASE_URL + "/{id}", productId)

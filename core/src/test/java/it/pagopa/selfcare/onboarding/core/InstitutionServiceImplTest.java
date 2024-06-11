@@ -1,7 +1,7 @@
 package it.pagopa.selfcare.onboarding.core;
 
-import it.pagopa.selfcare.commons.base.security.PartyRole;
-import it.pagopa.selfcare.commons.base.utils.InstitutionType;
+import it.pagopa.selfcare.onboarding.common.PartyRole;
+import it.pagopa.selfcare.onboarding.common.InstitutionType;
 import it.pagopa.selfcare.commons.base.utils.Origin;
 import it.pagopa.selfcare.onboarding.connector.api.*;
 import it.pagopa.selfcare.onboarding.connector.exceptions.ResourceNotFoundException;
@@ -11,9 +11,11 @@ import it.pagopa.selfcare.onboarding.connector.model.institutions.*;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.infocamere.BusinessInfoIC;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.infocamere.InstitutionInfoIC;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.*;
-import it.pagopa.selfcare.onboarding.connector.model.product.Product;
-import it.pagopa.selfcare.onboarding.connector.model.product.ProductRoleInfo;
-import it.pagopa.selfcare.onboarding.connector.model.product.ProductStatus;
+import it.pagopa.selfcare.product.entity.Product;
+import it.pagopa.selfcare.product.entity.ProductRole;
+import it.pagopa.selfcare.product.entity.ProductRoleInfo;
+import it.pagopa.selfcare.product.entity.ProductStatus;
+import it.pagopa.selfcare.onboarding.common.ProductId;
 import it.pagopa.selfcare.onboarding.connector.model.registry_proxy.GeographicTaxonomies;
 import it.pagopa.selfcare.onboarding.connector.model.registry_proxy.HomogeneousOrganizationalArea;
 import it.pagopa.selfcare.onboarding.connector.model.registry_proxy.InstitutionProxyInfo;
@@ -37,7 +39,7 @@ import javax.validation.ValidationException;
 import java.util.*;
 
 import static it.pagopa.selfcare.commons.utils.TestUtils.mockInstance;
-import static it.pagopa.selfcare.onboarding.connector.model.product.ProductId.PROD_INTEROP;
+
 import static it.pagopa.selfcare.onboarding.connector.model.user.User.Fields.*;
 import static it.pagopa.selfcare.onboarding.core.InstitutionServiceImpl.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -161,11 +163,11 @@ class InstitutionServiceImplTest {
         onboardingData.setOrigin("IPA");
 
         ProductRoleInfo productRoleInfo1 = mockInstance(new ProductRoleInfo(), 1, "setRoles");
-        ProductRoleInfo.ProductRole productRole1 = mockInstance(new ProductRoleInfo.ProductRole(), 1);
+        ProductRole productRole1 = mockInstance(new ProductRole(), 1);
         productRole1.setCode(productRole);
         productRoleInfo1.setRoles(List.of(productRole1));
         ProductRoleInfo productRoleInfo2 = mockInstance(new ProductRoleInfo(), 2, "setRoles");
-        ProductRoleInfo.ProductRole productRole2 = mockInstance(new ProductRoleInfo.ProductRole(), 2);
+        ProductRole productRole2 = mockInstance(new ProductRole(), 2);
         productRole2.setCode(productRole);
         productRoleInfo2.setRoles(List.of(productRole2));
         EnumMap<PartyRole, ProductRoleInfo> roleMappings = new EnumMap<>(PartyRole.class) {{
@@ -240,11 +242,11 @@ class InstitutionServiceImplTest {
         onboardingData.setUsers(List.of(dummyManager, dummyDelegate));
 
         ProductRoleInfo productRoleInfo1 = mockInstance(new ProductRoleInfo(), 1, "setRoles");
-        ProductRoleInfo.ProductRole productRole1 = mockInstance(new ProductRoleInfo.ProductRole(), 1);
+        ProductRole productRole1 = mockInstance(new ProductRole(), 1);
         productRole1.setCode(productRole);
         productRoleInfo1.setRoles(List.of(productRole1));
         ProductRoleInfo productRoleInfo2 = mockInstance(new ProductRoleInfo(), 2, "setRoles");
-        ProductRoleInfo.ProductRole productRole2 = mockInstance(new ProductRoleInfo.ProductRole(), 2);
+        ProductRole productRole2 = mockInstance(new ProductRole(), 2);
         productRole2.setCode(productRole);
         productRoleInfo2.setRoles(List.of(productRole2));
         EnumMap<PartyRole, ProductRoleInfo> roleMappings = new EnumMap<>(PartyRole.class) {{
@@ -318,11 +320,11 @@ class InstitutionServiceImplTest {
         onboardingData.setOrigin("IPA");
 
         ProductRoleInfo productRoleInfo1 = mockInstance(new ProductRoleInfo(), 1, "setRoles");
-        ProductRoleInfo.ProductRole productRole1 = mockInstance(new ProductRoleInfo.ProductRole(), 1);
+        ProductRole productRole1 = mockInstance(new ProductRole(), 1);
         productRole1.setCode(productRole);
         productRoleInfo1.setRoles(List.of(productRole1));
         ProductRoleInfo productRoleInfo2 = mockInstance(new ProductRoleInfo(), 2, "setRoles");
-        ProductRoleInfo.ProductRole productRole2 = mockInstance(new ProductRoleInfo.ProductRole(), 2);
+        ProductRole productRole2 = mockInstance(new ProductRole(), 2);
         productRole2.setCode(productRole);
         productRoleInfo2.setRoles(List.of(productRole2));
         EnumMap<PartyRole, ProductRoleInfo> roleMappings = new EnumMap<>(PartyRole.class) {{
@@ -362,11 +364,11 @@ class InstitutionServiceImplTest {
         onboardingData.setUsers(List.of(dummyManager, dummyDelegate));
 
         ProductRoleInfo productRoleInfo1 = mockInstance(new ProductRoleInfo(), 1, "setRoles");
-        ProductRoleInfo.ProductRole productRole1 = mockInstance(new ProductRoleInfo.ProductRole(), 1);
+        ProductRole productRole1 = mockInstance(new ProductRole(), 1);
         productRole1.setCode(productRole);
         productRoleInfo1.setRoles(List.of(productRole1));
         ProductRoleInfo productRoleInfo2 = mockInstance(new ProductRoleInfo(), 2, "setRoles");
-        ProductRoleInfo.ProductRole productRole2 = mockInstance(new ProductRoleInfo.ProductRole(), 2);
+        ProductRole productRole2 = mockInstance(new ProductRole(), 2);
         productRole2.setCode(productRole);
         productRoleInfo2.setRoles(List.of(productRole2));
         EnumMap<PartyRole, ProductRoleInfo> roleMappings = new EnumMap<>(PartyRole.class) {{
@@ -403,7 +405,7 @@ class InstitutionServiceImplTest {
 
         OnboardingData onboardingData = mockInstance(new OnboardingData(), "setInstitutionType", "setUsers");
         onboardingData.setInstitutionType(InstitutionType.PT);
-        onboardingData.setProductId(PROD_INTEROP.getValue());
+        onboardingData.setProductId(ProductId.PROD_INTEROP.getValue());
         onboardingData.setUsers(List.of(dummyManager, dummyDelegate));
         onboardingData.setOrigin("IPA");
 
@@ -426,21 +428,21 @@ class InstitutionServiceImplTest {
         onboardingData.setInstitutionType(InstitutionType.PA);
         onboardingData.setUsers(List.of(dummyManager, dummyDelegate));
         onboardingData.setOrigin("IPA");
-        Product productMock = mockInstance(new Product(), "setRoleMappings", "setParentId", "setId", "setProductOperations");
+        Product productMock = new Product();
         productMock.setId(onboardingData.getProductId());
-        ProductRoleInfo productRoleInfo1 = mockInstance(new ProductRoleInfo(), 1, "setRoles");
-        ProductRoleInfo.ProductRole productRole1 = mockInstance(new ProductRoleInfo.ProductRole(), 1);
+        ProductRoleInfo productRoleInfo1 = mockInstance(new ProductRoleInfo());
+        ProductRole productRole1 = new ProductRole();
         productRole1.setCode(productRole);
         productRoleInfo1.setRoles(List.of(productRole1));
-        ProductRoleInfo productRoleInfo2 = mockInstance(new ProductRoleInfo(), 2, "setRoles");
-        ProductRoleInfo.ProductRole productRole2 = mockInstance(new ProductRoleInfo.ProductRole(), 2);
+        ProductRoleInfo productRoleInfo2 = mockInstance(new ProductRoleInfo());
+        ProductRole productRole2 = new ProductRole();
         productRole2.setCode(productRole);
         productRoleInfo2.setRoles(List.of(productRole2));
         EnumMap<PartyRole, ProductRoleInfo> roleMappings = new EnumMap<>(PartyRole.class) {{
             put(PartyRole.MANAGER, productRoleInfo1);
             put(PartyRole.DELEGATE, productRoleInfo2);
         }};
-        Institution institution = mockInstance(new Institution());
+        Institution institution = new Institution();
         institution.setId(UUID.randomUUID().toString());
         when(partyConnectorMock.getInstitutionsByTaxCodeAndSubunitCode(anyString(), anyString()))
                 .thenThrow(ResourceNotFoundException.class);
@@ -496,14 +498,14 @@ class InstitutionServiceImplTest {
         onboardingData.setInstitutionType(InstitutionType.SA);
         onboardingData.setOrigin("ANAC");
         onboardingData.setUsers(List.of(dummyManager, dummyDelegate));
-        Product productMock = mockInstance(new Product(), "setRoleMappings", "setParentId", "setId", "setProductOperations");
+        Product productMock = new Product();
         productMock.setId(onboardingData.getProductId());
-        ProductRoleInfo productRoleInfo1 = mockInstance(new ProductRoleInfo(), 1, "setRoles");
-        ProductRoleInfo.ProductRole productRole1 = mockInstance(new ProductRoleInfo.ProductRole(), 1);
+        ProductRoleInfo productRoleInfo1 = new ProductRoleInfo();
+        ProductRole productRole1 = new ProductRole();
         productRole1.setCode(productRole);
         productRoleInfo1.setRoles(List.of(productRole1));
-        ProductRoleInfo productRoleInfo2 = mockInstance(new ProductRoleInfo(), 2, "setRoles");
-        ProductRoleInfo.ProductRole productRole2 = mockInstance(new ProductRoleInfo.ProductRole(), 2);
+        ProductRoleInfo productRoleInfo2 = new ProductRoleInfo();
+        ProductRole productRole2 = new ProductRole();
         productRole2.setCode(productRole);
         productRoleInfo2.setRoles(List.of(productRole2));
         EnumMap<PartyRole, ProductRoleInfo> roleMappings = new EnumMap<>(PartyRole.class) {{
@@ -566,14 +568,14 @@ class InstitutionServiceImplTest {
         onboardingData.setInstitutionType(InstitutionType.AS);
         onboardingData.setOrigin("IVASS");
         onboardingData.setUsers(List.of(dummyManager, dummyDelegate));
-        Product productMock = mockInstance(new Product(), "setRoleMappings", "setParentId", "setId", "setProductOperations");
+        Product productMock = new Product();
         productMock.setId(onboardingData.getProductId());
-        ProductRoleInfo productRoleInfo1 = mockInstance(new ProductRoleInfo(), 1, "setRoles");
-        ProductRoleInfo.ProductRole productRole1 = mockInstance(new ProductRoleInfo.ProductRole(), 1);
+        ProductRoleInfo productRoleInfo1 = new ProductRoleInfo();
+        ProductRole productRole1 = new ProductRole();
         productRole1.setCode(productRole);
         productRoleInfo1.setRoles(List.of(productRole1));
-        ProductRoleInfo productRoleInfo2 = mockInstance(new ProductRoleInfo(), 2, "setRoles");
-        ProductRoleInfo.ProductRole productRole2 = mockInstance(new ProductRoleInfo.ProductRole(), 2);
+        ProductRoleInfo productRoleInfo2 = new ProductRoleInfo();
+        ProductRole productRole2 = new ProductRole();
         productRole2.setCode(productRole);
         productRoleInfo2.setRoles(List.of(productRole2));
         EnumMap<PartyRole, ProductRoleInfo> roleMappings = new EnumMap<>(PartyRole.class) {{
@@ -636,14 +638,14 @@ class InstitutionServiceImplTest {
         onboardingData.setInstitutionType(InstitutionType.SA);
         onboardingData.setOrigin("IPA");
         onboardingData.setUsers(List.of(dummyManager, dummyDelegate));
-        Product productMock = mockInstance(new Product(), "setRoleMappings", "setParentId", "setId", "setProductOperations");
+        Product productMock = new Product();
         productMock.setId(onboardingData.getProductId());
-        ProductRoleInfo productRoleInfo1 = mockInstance(new ProductRoleInfo(), 1, "setRoles");
-        ProductRoleInfo.ProductRole productRole1 = mockInstance(new ProductRoleInfo.ProductRole(), 1);
+        ProductRoleInfo productRoleInfo1 = new ProductRoleInfo();
+        ProductRole productRole1 = new ProductRole();
         productRole1.setCode(productRole);
         productRoleInfo1.setRoles(List.of(productRole1));
-        ProductRoleInfo productRoleInfo2 = mockInstance(new ProductRoleInfo(), 2, "setRoles");
-        ProductRoleInfo.ProductRole productRole2 = mockInstance(new ProductRoleInfo.ProductRole(), 2);
+        ProductRoleInfo productRoleInfo2 = new ProductRoleInfo();
+        ProductRole productRole2 = new ProductRole();
         productRole2.setCode(productRole);
         productRoleInfo2.setRoles(List.of(productRole2));
         EnumMap<PartyRole, ProductRoleInfo> roleMappings = new EnumMap<>(PartyRole.class) {{
@@ -705,14 +707,14 @@ class InstitutionServiceImplTest {
         onboardingData.setOrigin("IPA");
         onboardingData.setSubunitType("AOO");
         onboardingData.setUsers(List.of(dummyManager, dummyDelegate));
-        Product productMock = mockInstance(new Product(), "setRoleMappings", "setParentId", "setId", "setProductOperations");
+        Product productMock = new Product();
         productMock.setId(onboardingData.getProductId());
-        ProductRoleInfo productRoleInfo1 = mockInstance(new ProductRoleInfo(), 1, "setRoles");
-        ProductRoleInfo.ProductRole productRole1 = mockInstance(new ProductRoleInfo.ProductRole(), 1);
+        ProductRoleInfo productRoleInfo1 = new ProductRoleInfo();
+        ProductRole productRole1 = new ProductRole();
         productRole1.setCode(productRole);
         productRoleInfo1.setRoles(List.of(productRole1));
-        ProductRoleInfo productRoleInfo2 = mockInstance(new ProductRoleInfo(), 2, "setRoles");
-        ProductRoleInfo.ProductRole productRole2 = mockInstance(new ProductRoleInfo.ProductRole(), 2);
+        ProductRoleInfo productRoleInfo2 = new ProductRoleInfo();
+        ProductRole productRole2 = new ProductRole();
         productRole2.setCode(productRole);
         productRoleInfo2.setRoles(List.of(productRole2));
         EnumMap<PartyRole, ProductRoleInfo> roleMappings = new EnumMap<>(PartyRole.class) {{
@@ -779,14 +781,14 @@ class InstitutionServiceImplTest {
         onboardingData.setOrigin("IPA");
         onboardingData.setSubunitType("UO");
         onboardingData.setUsers(List.of(dummyManager, dummyDelegate));
-        Product productMock = mockInstance(new Product(), "setRoleMappings", "setParentId", "setId", "setProductOperations");
+        Product productMock = new Product();
         productMock.setId(onboardingData.getProductId());
-        ProductRoleInfo productRoleInfo1 = mockInstance(new ProductRoleInfo(), 1, "setRoles");
-        ProductRoleInfo.ProductRole productRole1 = mockInstance(new ProductRoleInfo.ProductRole(), 1);
+        ProductRoleInfo productRoleInfo1 = new ProductRoleInfo();
+        ProductRole productRole1 = new ProductRole();
         productRole1.setCode(productRole);
         productRoleInfo1.setRoles(List.of(productRole1));
-        ProductRoleInfo productRoleInfo2 = mockInstance(new ProductRoleInfo(), 2, "setRoles");
-        ProductRoleInfo.ProductRole productRole2 = mockInstance(new ProductRoleInfo.ProductRole(), 2);
+        ProductRoleInfo productRoleInfo2 = new ProductRoleInfo();
+        ProductRole productRole2 = new ProductRole();
         productRole2.setCode(productRole);
         productRoleInfo2.setRoles(List.of(productRole2));
         EnumMap<PartyRole, ProductRoleInfo> roleMappings = new EnumMap<>(PartyRole.class) {{
