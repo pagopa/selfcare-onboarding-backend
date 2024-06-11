@@ -22,7 +22,9 @@ public class ProductsConnectorImpl implements ProductsConnector {
 
     @Override
     public Product getProduct(String id, InstitutionType institutionType) {
-        log.debug(LogUtils.CONFIDENTIAL_MARKER, "getProduct id = {}", id);
+        if (id.matches("\\w*")) {
+            log.debug(LogUtils.CONFIDENTIAL_MARKER, "getProduct id = {}", id);
+        }
         Assert.hasText(id, "A productId is required");
         Product product = productService.getProduct(id);
         if (Objects.nonNull(product.getInstitutionContractMappings()) && product.getInstitutionContractMappings().containsKey(institutionType)) {
@@ -35,7 +37,9 @@ public class ProductsConnectorImpl implements ProductsConnector {
     }
     @Override
     public Product getProductValid(String id) {
-        log.debug(LogUtils.CONFIDENTIAL_MARKER, "getProductValid id = {}", id);
+        if (id.matches("\\w*")) {
+            log.debug(LogUtils.CONFIDENTIAL_MARKER, "getProductValid id = {}", id);
+        }
         Assert.hasText(id, "A productId is required");
         Product result = productService.getProductIsValid(id);
         log.debug(LogUtils.CONFIDENTIAL_MARKER, "getProductValid result = {}", result);
