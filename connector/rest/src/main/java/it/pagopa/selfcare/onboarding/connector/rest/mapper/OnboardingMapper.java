@@ -115,4 +115,6 @@ public interface OnboardingMapper {
     @Mapping(target = "institutionUpdate", source = "institution")
     @Mapping(target = "institutionUpdate.additionalInformations", source = "additionalInformations")
     OnboardingData toOnboardingData(OnboardingGet onboardingGet);
+
+    OnboardingUserRequest toOnboardingUsersRequest(OnboardingData onboardingData);
 }

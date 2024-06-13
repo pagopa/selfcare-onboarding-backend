@@ -244,4 +244,27 @@ public class OnboardingMsConnectorImplTest {
                 ._v1TokensOnboardingIdContractGet(onboardingId);
         verifyNoMoreInteractions(msOnboardingTokenApiClient);
     }
+
+    @Test
+    void onboardingUsers() {
+        // given
+        final String origin = "origin";
+        final String originId = "originId";
+        OnboardingData onboardingData = new OnboardingData();
+        onboardingData.setOrigin(origin);
+        onboardingData.setOriginId(originId);
+        OnboardingUserRequest request = new OnboardingUserRequest();
+        request.setOrigin(origin);
+        request.setOriginId(originId);
+        OnboardingResponse resource = Mockito.mock(OnboardingResponse.class);
+        when(msOnboardingApiClient._v1OnboardingUsersPost(request))
+                .thenReturn(ResponseEntity.of(Optional.of(resource)));
+        // when
+        final Executable executable = () -> onboardingMsConnector.onboardingUsers(onboardingData);
+        // then
+        assertDoesNotThrow(executable);
+        verify(msOnboardingApiClient, times(1))
+                ._v1OnboardingUsersPost(request);
+        verifyNoMoreInteractions(msOnboardingApiClient);
+    }
 }
