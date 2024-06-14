@@ -75,7 +75,7 @@ public class TokenServiceImpl implements TokenService {
     public void completeOnboardingUsers(String onboardingId, MultipartFile contract) {
         log.trace("completeOnboardingUsersAsync start");
         log.debug("completeOnboardingUsersAsync id = {}", onboardingId);
-        Assert.notNull(onboardingId, "TokenId is required");
+        Assert.notNull(onboardingId, "onboardingId is required");
         onboardingMsConnector.onboardingUsersComplete(onboardingId, contract);
         log.debug("completeOnboardingUsersAsync result = success");
         log.trace("completeOnboardingUsersAsync end");
