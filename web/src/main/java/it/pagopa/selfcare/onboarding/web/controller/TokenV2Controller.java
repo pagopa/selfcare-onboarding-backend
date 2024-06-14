@@ -69,8 +69,8 @@ public class TokenV2Controller {
     /**
      * The function perform complete operation of an onboarding request receiving onboarding id and contract signed by hte institution.
      * It checks the contract's signature and upload the contract on an azure storage
-     * At the end, function triggers async activities related to complete onboarding
-     * that consist of create the institution, activate the onboarding and sending data to notification queue
+     * At the end, function triggers async activities related to complete users onboarding
+     * that consist of create userInstitution and userInfo records, activate the onboarding for users and sending data to notification queue
      *
      * @param onboardingId String
      * @param contract MultipartFile
