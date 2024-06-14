@@ -61,7 +61,6 @@ public class TokenServiceImpl implements TokenService {
         return onboardingData;
     }
 
-
     @Override
     public void completeTokenV2(String onboardingId, MultipartFile contract) {
         log.trace("completeTokenAsync start");
@@ -70,6 +69,16 @@ public class TokenServiceImpl implements TokenService {
         onboardingMsConnector.onboardingTokenComplete(onboardingId, contract);
         log.debug("completeTokenAsync result = success");
         log.trace("completeTokenAsync end");
+    }
+
+    @Override
+    public void completeOnboardingUsers(String onboardingId, MultipartFile contract) {
+        log.trace("completeOnboardingUsersAsync start");
+        log.debug("completeOnboardingUsersAsync id = {}", onboardingId);
+        Assert.notNull(onboardingId, "TokenId is required");
+        onboardingMsConnector.onboardingUsersComplete(onboardingId, contract);
+        log.debug("completeOnboardingUsersAsync result = success");
+        log.trace("completeOnboardingUsersAsync end");
     }
 
     @Override

@@ -159,6 +159,21 @@ public class OnboardingMsConnectorImplTest {
     }
 
     @Test
+    void onboardingUsersComplete() throws IOException {
+        // given
+        final String tokenId = "tokenId";
+        final MockMultipartFile mockMultipartFile =
+                new MockMultipartFile("example", new ByteArrayInputStream("example".getBytes(StandardCharsets.UTF_8)));
+        // when
+        final Executable executable = () -> msOnboardingApiClient._v1OnboardingOnboardingIdCompleteOnboardingUsersPut(tokenId, mockMultipartFile);
+        // then
+        assertDoesNotThrow(executable);
+        verify(msOnboardingApiClient, times(1))
+                ._v1OnboardingOnboardingIdCompleteOnboardingUsersPut(tokenId, mockMultipartFile);
+        verifyNoMoreInteractions(msOnboardingApiClient);
+    }
+
+    @Test
     void onboardingPending() {
         // given
         final String onboardingId = "onboardingId";

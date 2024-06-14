@@ -1621,6 +1621,99 @@
         } ]
       }
     },
+    "/v2/tokens/{onboardingId}/completeOnboardingUsers" : {
+      "post" : {
+        "tags" : [ "tokens" ],
+        "summary" : "Complete an onboarding users request",
+        "description" : "Complete an onboarding users request",
+        "operationId" : "completeOnboardingUsersUsingPOST",
+        "parameters" : [ {
+          "name" : "onboardingId",
+          "in" : "path",
+          "description" : "Onboarding's unique identifier",
+          "required" : true,
+          "style" : "simple",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "multipart/form-data" : {
+              "schema" : {
+                "required" : [ "contract" ],
+                "type" : "object",
+                "properties" : {
+                  "contract" : {
+                    "type" : "string",
+                    "description" : "contract",
+                    "format" : "binary"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses" : {
+          "204" : {
+            "description" : "No Content"
+          },
+          "400" : {
+            "description" : "Bad Request",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Unauthorized",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "Not Found",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "409" : {
+            "description" : "Conflict",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "Internal Server Error",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ "global" ]
+        } ]
+      }
+    },
     "/v2/tokens/{onboardingId}/contract" : {
       "get" : {
         "tags" : [ "tokens" ],

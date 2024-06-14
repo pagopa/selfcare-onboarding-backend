@@ -15,5 +15,7 @@ public interface TokenService {
 
     void completeTokenV2(String onboardingId, MultipartFile contract);
 
+    void completeOnboardingUsers(String onboardingId, MultipartFile contract);
+
     Resource getContract(String onboardingId);
 }

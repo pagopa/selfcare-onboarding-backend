@@ -57,6 +57,28 @@ public class TokenServiceImplTest {
     }
 
     @Test
+    void shouldNotCompleteOnboardingUsersWhenIdIsNull() {
+        Executable executable = () -> tokenService.completeOnboardingUsers(null, null);
+        //then
+        Exception e = Assertions.assertThrows(IllegalArgumentException.class, executable);
+        Assertions.assertEquals("TokenId is required", e.getMessage());
+        Mockito.verifyNoInteractions(partyConnector);
+    }
+
+    @Test
+    void shouldCompleteOnboardingUsers() throws IOException {
+        //given
+        String tokenId = "example";
+        MockMultipartFile mockMultipartFile = new MockMultipartFile("example", new ByteArrayInputStream("example".getBytes(StandardCharsets.UTF_8)));
+        doNothing().when(onboardingMsConnector).onboardingUsersComplete(anyString(), any());
+        // when
+        tokenService.completeOnboardingUsers(tokenId, mockMultipartFile);
+        //then
+        Mockito.verify(onboardingMsConnector, Mockito.times(1))
+                .onboardingUsersComplete(tokenId, mockMultipartFile);
+    }
+
+    @Test
     void verifyOnboarding() {
         //given
         final String onboardingId = "onboardingId";
