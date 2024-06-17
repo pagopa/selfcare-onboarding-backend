@@ -1,9 +1,11 @@
 package it.pagopa.selfcare.onboarding.web.controller;
 
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
 import it.pagopa.selfcare.onboarding.core.UserService;
 import it.pagopa.selfcare.onboarding.core.exception.InvalidUserFieldsException;
 import it.pagopa.selfcare.onboarding.web.config.WebTestConfig;
 import it.pagopa.selfcare.onboarding.web.handler.OnboardingExceptionHandler;
+import it.pagopa.selfcare.onboarding.web.model.mapper.OnboardingResourceMapperImpl;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,12 +22,15 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import static org.hamcrest.Matchers.emptyString;
 import static org.hamcrest.Matchers.not;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(value = {UserController.class}, excludeAutoConfiguration = SecurityAutoConfiguration.class)
 @ContextConfiguration(classes = {
         UserController.class,
+        OnboardingResourceMapperImpl.class,
         WebTestConfig.class,
         OnboardingExceptionHandler.class
 })
@@ -61,7 +66,6 @@ class UserControllerTest {
     @Test
     void validate_conflict(@Value("classpath:stubs/userDataValidationDto.json") Resource userDataValidationDto) throws Exception {
         //given
-        String productId = "productId";
         Mockito.doThrow(InvalidUserFieldsException.class)
                 .when(userServiceMock)
                 .validate(any());
@@ -78,6 +82,22 @@ class UserControllerTest {
         Mockito.verify(userServiceMock, Mockito.times(1))
                 .validate(any());
         Mockito.verifyNoMoreInteractions(userServiceMock);
+    }
+
+    @Test
+    void onboardingUsers(@Value("classpath:stubs/onboardingUsers.json") Resource onboardinUserDto) throws Exception {
+        // when
+        mvc.perform(MockMvcRequestBuilders
+                        .post(BASE_URL + "/onboarding")
+                        .content(onboardinUserDto.getInputStream().readAllBytes())
+                        .contentType(APPLICATION_JSON_VALUE)
+                        .accept(APPLICATION_JSON_VALUE))
+                .andExpect(status().isCreated())
+                .andExpect(content().string(emptyString()));
+        // then
+        verify(userServiceMock, times(1))
+                .onboardingUsers(any(OnboardingData.class));
+        verifyNoMoreInteractions(userServiceMock);
     }
 
 }

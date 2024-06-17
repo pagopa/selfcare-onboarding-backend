@@ -19,8 +19,6 @@ import org.springframework.web.multipart.MultipartFile;
 @Slf4j
 public class OnboardingMsConnectorImpl implements OnboardingMsConnector {
 
-
-
     private final MsOnboardingApiClient msOnboardingApiClient;
 
     private final MsOnboardingTokenApiClient msOnboardingTokenApiClient;
@@ -43,6 +41,12 @@ public class OnboardingMsConnectorImpl implements OnboardingMsConnector {
         } else {
             msOnboardingApiClient._v1OnboardingPost(onboardingMapper.toOnboardingDefaultRequest(onboardingData));
         }
+    }
+
+    @Override
+    @Retry(name = "retryTimeout")
+    public void onboardingUsers(OnboardingData onboardingData) {
+        msOnboardingApiClient._v1OnboardingUsersPost(onboardingMapper.toOnboardingUsersRequest(onboardingData));
     }
 
 
