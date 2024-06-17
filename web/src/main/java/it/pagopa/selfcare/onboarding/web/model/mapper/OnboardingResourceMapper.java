@@ -66,6 +66,8 @@ public interface OnboardingResourceMapper {
     @Mapping(source = "taxCode", target = "fiscalCode")
     OnboardingRequestResource.UserInfo toUserInfo(User user);
 
+    OnboardingData toEntity(OnboardingUserDto onboardingUser);
+
     InstitutionLegalAddressResource toResource(InstitutionLegalAddressData model);
 
     @Named("toManager")

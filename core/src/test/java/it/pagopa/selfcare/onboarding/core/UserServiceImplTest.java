@@ -1,7 +1,9 @@
 package it.pagopa.selfcare.onboarding.core;
 
 import it.pagopa.selfcare.commons.utils.TestUtils;
+import it.pagopa.selfcare.onboarding.connector.api.OnboardingMsConnector;
 import it.pagopa.selfcare.onboarding.connector.api.UserRegistryConnector;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.User;
 import it.pagopa.selfcare.onboarding.connector.model.user.Certification;
 import it.pagopa.selfcare.onboarding.connector.model.user.CertifiedField;
@@ -30,6 +32,9 @@ class UserServiceImplTest {
 
     @Mock
     private UserRegistryConnector userRegistryConnectorMock;
+
+    @Mock
+    private OnboardingMsConnector onboardingMsConnector;
 
 
     @Test
@@ -134,6 +139,19 @@ class UserServiceImplTest {
         verify(userRegistryConnectorMock, times(1))
                 .search(user.getTaxCode(), EnumSet.of(name, familyName));
         verifyNoMoreInteractions(userRegistryConnectorMock);
+    }
+
+    @Test
+    void onboardingUsers() {
+        // given
+        OnboardingData onboardingData = new OnboardingData();
+        doNothing().when(onboardingMsConnector).onboardingUsers(any());
+        // when
+        userService.onboardingUsers(onboardingData);
+        // then
+        verify(onboardingMsConnector, times(1))
+                .onboardingUsers(onboardingData);
+        verifyNoMoreInteractions(onboardingMsConnector);
     }
 
 }

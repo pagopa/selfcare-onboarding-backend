@@ -1,7 +1,9 @@
 package it.pagopa.selfcare.onboarding.core;
 
 import it.pagopa.selfcare.commons.base.logging.LogUtils;
+import it.pagopa.selfcare.onboarding.connector.api.OnboardingMsConnector;
 import it.pagopa.selfcare.onboarding.connector.api.UserRegistryConnector;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.User;
 import it.pagopa.selfcare.onboarding.connector.model.user.Certification;
 import it.pagopa.selfcare.onboarding.connector.model.user.CertifiedField;
@@ -24,15 +26,15 @@ public class UserServiceImpl implements UserService {
 
     private static final EnumSet<it.pagopa.selfcare.onboarding.connector.model.user.User.Fields> FIELD_LIST = EnumSet.of(name, familyName);
     private static final String INVALID_FIELD_REASON = "the value does not match with the certified data";
-
     private final UserRegistryConnector userRegistryConnector;
-
+    private final OnboardingMsConnector onboardingMsConnector;
 
     @Autowired
-    public UserServiceImpl(UserRegistryConnector userRegistryConnector) {
+    public UserServiceImpl(UserRegistryConnector userRegistryConnector,
+                           OnboardingMsConnector onboardingMsConnector) {
         this.userRegistryConnector = userRegistryConnector;
+        this.onboardingMsConnector = onboardingMsConnector;
     }
-
 
     @Override
     public void validate(User user) {
@@ -56,6 +58,13 @@ public class UserServiceImpl implements UserService {
         log.trace("validate end");
     }
 
+    @Override
+    public void onboardingUsers(OnboardingData onboardingData) {
+        log.trace("onboardingUsers start");
+        log.debug("onboardingUsers onboardingData = {}", onboardingData);
+        onboardingMsConnector.onboardingUsers(onboardingData);
+        log.trace("onboardingUsers end");
+    }
 
     private <T> boolean isValid(T field, CertifiedField<T> certifiedField) {
         return certifiedField == null
