@@ -187,7 +187,7 @@ public class TokenV2Controller {
                                        @PathVariable(value = "onboardingId") String onboardingId) {
         log.trace("delete Token start");
         log.debug("delete Token tokenId = {}", onboardingId);
-        tokenService.rejectOnboarding(onboardingId, null);
+        tokenService.rejectOnboarding(onboardingId, "REJECTED_BY_USER");
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
