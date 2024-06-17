@@ -67,6 +67,31 @@ public class TokenV2Controller {
     }
 
     /**
+     * The function perform complete operation of an onboarding request receiving onboarding id and contract signed by hte institution.
+     * It checks the contract's signature and upload the contract on an azure storage
+     * At the end, function triggers async activities related to complete users onboarding
+     * that consist of create userInstitution and userInfo records, activate the onboarding for users and sending data to notification queue
+     *
+     * @param onboardingId String
+     * @param contract MultipartFile
+     * @return no content
+     * * Code: 204, Message: successful operation, DataType: TokenId
+     * * Code: 400, Message: Invalid ID supplied, DataType: Problem
+     * * Code: 404, Message: Not found, DataType: Problem
+     */
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ApiOperation(value = "${swagger.tokens.completeOnboardingUsers}", notes = "${swagger.tokens.completeOnboardingUsers}")
+    @PostMapping(value = "/{onboardingId}/completeOnboardingUsers")
+    public ResponseEntity<Void> completeOnboardingUsers(@ApiParam("${swagger.tokens.onboardingId}")
+                                         @PathVariable(value = "onboardingId") String onboardingId,
+                                         @RequestPart MultipartFile contract) {
+        log.trace("complete Onboarding Users start");
+        log.debug(LogUtils.CONFIDENTIAL_MARKER, "complete Onboarding Users tokenId = {}, contract = {}", onboardingId, contract);
+        tokenService.completeOnboardingUsers(onboardingId, contract);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    /**
      * The verifyOnboarding function is used to verify the onboarding has already consumed.
      * It takes in a String onboarding and returns a Token object.
      *

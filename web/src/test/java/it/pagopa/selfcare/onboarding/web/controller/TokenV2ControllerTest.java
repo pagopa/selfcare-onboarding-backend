@@ -65,6 +65,21 @@ public class TokenV2ControllerTest {
     }
 
     /**
+     * Method under test: {@link TokenV2Controller#completeOnboardingUsers(String, MultipartFile)}
+     */
+    @Test
+    void shouldCompleteOnboardingUsers() throws Exception {
+
+        MockMultipartFile file = new MockMultipartFile("contract", "".getBytes());
+        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
+                .multipart("/v2/tokens/{tokenId}/completeOnboardingUsers",
+                        "42")
+                .file(file);
+        mvc.perform(requestBuilder)
+                .andExpect(MockMvcResultMatchers.status().isNoContent());
+    }
+
+    /**
      * Method under test: {@link TokenV2Controller#verifyOnboarding(String)}
      */
     @Test

@@ -64,6 +64,12 @@ public class OnboardingMsConnectorImpl implements OnboardingMsConnector {
 
     @Override
     @Retry(name = "retryTimeout")
+    public void onboardingUsersComplete(String onboardingId, MultipartFile contract) {
+        msOnboardingApiClient._v1OnboardingOnboardingIdCompleteOnboardingUsersPut(onboardingId, contract);
+    }
+
+    @Override
+    @Retry(name = "retryTimeout")
     public void onboardingPending(String onboardingId) {
         msOnboardingApiClient._v1OnboardingOnboardingIdPendingGet(onboardingId);
     }

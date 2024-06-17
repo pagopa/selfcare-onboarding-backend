@@ -14,6 +14,8 @@ public interface OnboardingMsConnector {
 
     void onboardingTokenComplete(String onboardingId, MultipartFile contract);
 
+    void onboardingUsersComplete(String onboardingId, MultipartFile contract);
+
     void onboardingPending(String onboardingId);
 
     void approveOnboarding(String onboardingId);
