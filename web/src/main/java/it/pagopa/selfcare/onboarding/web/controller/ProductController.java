@@ -14,15 +14,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
-
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
-@RequestMapping(value = "/v1/product", produces = MediaType.APPLICATION_JSON_VALUE)
 @Api(tags = "product")
 public class ProductController {
-
 
     private final ProductService productService;
 
@@ -31,7 +30,7 @@ public class ProductController {
         this.productService = productService;
     }
 
-    @GetMapping("/{id}")
+    @GetMapping(value = "/v1/product/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "", notes = "${swagger.onboarding.product.api.getProduct}")
     public ProductResource getProduct(@ApiParam("${swagger.onboarding.product.model.id}")
@@ -49,5 +48,17 @@ public class ProductController {
         return resource;
     }
 
-
+    @GetMapping(value = "/v1/products",  produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "", notes = "${swagger.onboarding.product.api.getProducts}")
+    public List<ProductResource> getProducts() {
+        log.trace("getProductsAdmin start");
+        final List<Product> products = productService.getProducts();
+        List<ProductResource> resources = products.stream()
+                .map(ProductMapper::toResource)
+                .collect(Collectors.toList());
+        log.debug("getProductsAdmin result = {}", resources);
+        log.trace("getProductsAdmin end");
+        return resources;
+    }
 }

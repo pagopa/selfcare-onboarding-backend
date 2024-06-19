@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
+import java.util.List;
+
 @Slf4j
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -39,5 +41,14 @@ public class ProductServiceImpl implements ProductService {
         log.debug("getProductValid result = {}", product);
         log.trace("getProductValid end");
         return product;
+    }
+
+    @Override
+    public List<Product> getProducts() {
+        log.trace("getProductsAdmin start");
+        List<Product> products = productsConnector.getProducts();
+        log.debug("getProductsAdmin result = {}", products);
+        log.trace("getProductsAdmin end");
+        return products;
     }
 }
