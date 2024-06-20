@@ -1,6 +1,7 @@
 package it.pagopa.selfcare.onboarding.connector;
 
 import it.pagopa.selfcare.onboarding.common.InstitutionType;
+import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.*;
 import it.pagopa.selfcare.onboarding.connector.rest.client.MsOnboardingApiClient;
 import it.pagopa.selfcare.onboarding.connector.rest.client.MsOnboardingTokenApiClient;
@@ -280,6 +281,42 @@ class OnboardingMsConnectorImplTest {
         assertDoesNotThrow(executable);
         verify(msOnboardingApiClient, times(1))
                 ._v1OnboardingUsersPost(request);
+        verifyNoMoreInteractions(msOnboardingApiClient);
+    }
+
+    @Test
+    void onboardingPaAggregation() {
+        // given
+        OnboardingData onboardingData = new OnboardingData();
+        onboardingData.setProductId("produictId");
+        onboardingData.setTaxCode("taxCode");
+        onboardingData.setInstitutionType(InstitutionType.PG);
+        InstitutionUpdate institutionUpdate = new InstitutionUpdate();
+        institutionUpdate.setTaxCode("taxCode");
+        institutionUpdate.setDescription("description");
+        onboardingData.setUsers(List.of(mockInstance(new User())));
+        onboardingData.setInstitutionUpdate(institutionUpdate);
+        Institution institution = new Institution();
+        institution.setTaxCode("taxCode");
+        institution.setDescription("description");
+        onboardingData.setAggregates(List.of(institution));
+        onboardingData.setIsAggregator(Boolean.TRUE);
+        // when
+        onboardingMsConnector.onboardingPaAggregation(onboardingData);
+        // then
+        ArgumentCaptor<OnboardingPaRequest> onboardingRequestCaptor = ArgumentCaptor.forClass(OnboardingPaRequest.class);
+        verify(msOnboardingApiClient, times(1))
+                ._v1OnboardingPaAggregationPost(onboardingRequestCaptor.capture());
+        OnboardingPaRequest actual = onboardingRequestCaptor.getValue();
+        assertEquals(actual.getProductId(), onboardingData.getProductId());
+        assertEquals(actual.getAggregates().size(), onboardingData.getAggregates().size());
+        assertEquals(actual.getAggregates().get(0).getTaxCode(), onboardingData.getAggregates().get(0).getTaxCode());
+        assertEquals(actual.getAggregates().get(0).getDescription(), onboardingData.getAggregates().get(0).getDescription());
+        assertEquals(actual.getInstitution().getTaxCode(), onboardingData.getTaxCode());
+        assertEquals(actual.getInstitution().getTaxCode(), onboardingData.getInstitutionUpdate().getTaxCode() );
+        assertEquals(actual.getInstitution().getDescription(), onboardingData.getInstitutionUpdate().getDescription());
+        assertEquals(actual.getUsers().size(), onboardingData.getUsers().size());
+
         verifyNoMoreInteractions(msOnboardingApiClient);
     }
 }

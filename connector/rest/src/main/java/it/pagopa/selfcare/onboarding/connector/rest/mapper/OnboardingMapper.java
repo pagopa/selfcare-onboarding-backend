@@ -117,4 +117,7 @@ public interface OnboardingMapper {
     OnboardingData toOnboardingData(OnboardingGet onboardingGet);
 
     OnboardingUserRequest toOnboardingUsersRequest(OnboardingData onboardingData);
+
+    @Mapping(target = "institution", source = ".", qualifiedByName = "toInstitutionBase")
+    OnboardingPaRequest toOnboardingPaAggregationRequest(OnboardingData onboardingData);
 }

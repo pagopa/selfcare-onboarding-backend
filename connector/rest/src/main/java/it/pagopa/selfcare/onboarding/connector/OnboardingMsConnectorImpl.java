@@ -109,4 +109,10 @@ public class OnboardingMsConnectorImpl implements OnboardingMsConnector {
     public Resource getContract(String onboardingId) {
         return msOnboardingTokenApiClient._v1TokensOnboardingIdContractGet(onboardingId).getBody();
     }
+
+    @Override
+    @Retry(name = "retryTimeout")
+    public void onboardingPaAggregation(OnboardingData onboardingData) {
+        msOnboardingApiClient._v1OnboardingPaAggregationPost(onboardingMapper.toOnboardingPaAggregationRequest(onboardingData));
+    }
 }

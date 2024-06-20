@@ -27,4 +27,6 @@ public interface OnboardingMsConnector {
     OnboardingData getOnboardingWithUserInfo(String onboardingId);
 
     Resource getContract(String onboardingId);
+
+    void onboardingPaAggregation(OnboardingData onboardingData);
 }

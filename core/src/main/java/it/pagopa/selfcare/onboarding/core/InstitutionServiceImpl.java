@@ -39,6 +39,7 @@ import org.owasp.encoder.Encode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
+import org.springframework.util.CollectionUtils;
 
 import javax.validation.ValidationException;
 import java.util.*;
@@ -63,6 +64,8 @@ class InstitutionServiceImpl implements InstitutionService {
     private static final String ONBOARDING_NOT_ALLOWED_ERROR_MESSAGE_TEMPLATE = "Institution with external id '%s' is not allowed to onboard '%s' product";
     public static final String UNABLE_TO_COMPLETE_THE_ONBOARDING_FOR_INSTITUTION_FOR_PRODUCT_DISMISSED = "Unable to complete the onboarding for institution with taxCode '%s' to product '%s', the product is dismissed.";
     public static final String FIELD_PSP_DATA_IS_REQUIRED_FOR_PSP_INSTITUTION_ONBOARDING = "Field 'pspData' is required for PSP institution onboarding";
+
+    private static final String REQUIRED_AGGREGATE_INSTITUTIONS = "Aggregate institutions are required if given institution is an Aggregator";
     static final String DESCRIPTION_TO_REPLACE_REGEX = " - COMUNE";
     private final OnboardingMsConnector onboardingMsConnector;
     private final PartyConnector partyConnector;
@@ -100,6 +103,18 @@ class InstitutionServiceImpl implements InstitutionService {
         onboardingMsConnector.onboarding(onboardingData);
         log.trace("onboarding end");
     }
+
+
+    @Override
+    public void onboardingPaAggregator(OnboardingData onboardingData) {
+        log.trace("onboardingPaAggregator start");
+        if(CollectionUtils.isEmpty(onboardingData.getAggregates())){
+            throw new ValidationException(REQUIRED_AGGREGATE_INSTITUTIONS);
+        }
+        onboardingMsConnector.onboardingPaAggregation(onboardingData);
+        log.trace("onboarding end");
+    }
+
     @Override
     public void onboardingCompanyV2(OnboardingData onboardingData) {
         log.trace("onboardingProductAsync start");

@@ -153,6 +153,54 @@ class InstitutionServiceImplTest {
     }
 
     @Test
+    void onboardingPaAggregator() {
+        // given
+        OnboardingData onboardingData = mockInstance(new OnboardingData(), "setInstitutionType", "setUsers", "isAggregator", "aggregates");
+        onboardingData.setInstitutionType(InstitutionType.PG);
+        onboardingData.setUsers(List.of(dummyManager, dummyDelegate));
+        onboardingData.setIsAggregator(Boolean.TRUE);
+        Institution institution = mock(Institution.class);
+        onboardingData.setAggregates(List.of(institution));
+        // when
+        institutionService.onboardingPaAggregator(onboardingData);
+        // then
+        verify(onboardingMsConnector, times(1))
+                .onboardingPaAggregation(any());
+    }
+
+    @Test
+    void onboardingPaAggregatorWithEmptyAggregateList() {
+        // given
+        OnboardingData onboardingData = mockInstance(new OnboardingData(), "setInstitutionType", "setUsers", "isAggregator", "aggregates");
+        onboardingData.setInstitutionType(InstitutionType.PG);
+        onboardingData.setUsers(List.of(dummyManager, dummyDelegate));
+        onboardingData.setIsAggregator(Boolean.TRUE);
+        onboardingData.setAggregates(Collections.emptyList());
+        // when
+        Assertions.assertThrows(ValidationException.class,
+                () -> institutionService.onboardingPaAggregator(onboardingData),
+                "Aggregate institutions is request if given institution is an Aggregator");
+        // then
+        verifyNoInteractions(onboardingMsConnector);
+    }
+
+    @Test
+    void onboardingPaAggregatorWithNullAggregateList() {
+        // given
+        OnboardingData onboardingData = mockInstance(new OnboardingData(), "setInstitutionType", "setUsers", "isAggregator", "aggregates");
+        onboardingData.setInstitutionType(InstitutionType.PG);
+        onboardingData.setUsers(List.of(dummyManager, dummyDelegate));
+        onboardingData.setIsAggregator(Boolean.TRUE);
+        // when
+        Assertions.assertThrows(ValidationException.class,
+                () -> institutionService.onboardingPaAggregator(onboardingData),
+                "Aggregate institutions is request if given institution is an Aggregator");
+        // then
+        verifyNoInteractions(onboardingMsConnector);
+    }
+
+
+    @Test
     void shouldOnboardingProductInstitutionNotPa() {
         // given
         String productRole = "role";
