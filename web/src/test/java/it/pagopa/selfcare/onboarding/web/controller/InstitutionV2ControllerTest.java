@@ -54,6 +54,25 @@ public class InstitutionV2ControllerTest {
         verifyNoMoreInteractions(institutionServiceMock);
     }
 
+    @Test
+    void onboardingProductForAggregatorAsync(@Value("classpath:stubs/onboardingProductsDtoWithAggregates.json") Resource onboardingDto) throws Exception {
+        // given
+        String institutionId = "institutionId";
+        String productId = "productId";
+        // when
+        mvc.perform(MockMvcRequestBuilders
+                        .post(BASE_URL + "/onboarding", institutionId, productId)
+                        .content(onboardingDto.getInputStream().readAllBytes())
+                        .contentType(APPLICATION_JSON_VALUE)
+                        .accept(APPLICATION_JSON_VALUE))
+                .andExpect(status().isCreated())
+                .andExpect(content().string(emptyString()));
+        // then
+        verify(institutionServiceMock, times(1))
+                .onboardingProductV2(any(OnboardingData.class));
+        verifyNoMoreInteractions(institutionServiceMock);
+    }
+
 
     @Test
     void onboardingCompany(@Value("classpath:stubs/onboardingCompanyDto.json") Resource onboardingDto) throws Exception {
