@@ -2210,6 +2210,44 @@
           }
         }
       },
+      "AggregateInstitution" : {
+        "title" : "AggregateInstitution",
+        "required" : [ "description", "taxCode" ],
+        "type" : "object",
+        "properties" : {
+          "address" : {
+            "type" : "string"
+          },
+          "description" : {
+            "type" : "string"
+          },
+          "geographicTaxonomies" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/GeographicTaxonomy"
+            }
+          },
+          "origin" : {
+            "type" : "string",
+            "enum" : [ "ADE", "ANAC", "INFOCAMERE", "IPA", "IVASS", "MOCK", "SELC", "UNKNOWN" ]
+          },
+          "originId" : {
+            "type" : "string"
+          },
+          "subunitCode" : {
+            "type" : "string"
+          },
+          "subunitType" : {
+            "type" : "string"
+          },
+          "taxCode" : {
+            "type" : "string"
+          },
+          "zipCode" : {
+            "type" : "string"
+          }
+        }
+      },
       "AssistanceContactsDto" : {
         "title" : "AssistanceContactsDto",
         "type" : "object",
@@ -2509,6 +2547,18 @@
             "description" : "DPO's PEC",
             "format" : "email",
             "example" : "email@example.com"
+          }
+        }
+      },
+      "GeographicTaxonomy" : {
+        "title" : "GeographicTaxonomy",
+        "type" : "object",
+        "properties" : {
+          "code" : {
+            "type" : "string"
+          },
+          "desc" : {
+            "type" : "string"
           }
         }
       },
@@ -2825,6 +2875,13 @@
             "description" : "GSP institution's additional informations",
             "$ref" : "#/components/schemas/AdditionalInformationsDto"
           },
+          "aggregates" : {
+            "type" : "array",
+            "description" : "List of Aggregate Institutions, not empty only if isAggregator field's value is True",
+            "items" : {
+              "$ref" : "#/components/schemas/AggregateInstitution"
+            }
+          },
           "assistanceContacts" : {
             "description" : "Institution's assistance contacts",
             "$ref" : "#/components/schemas/AssistanceContactsDto"
@@ -2852,6 +2909,11 @@
             "type" : "string",
             "description" : "Institution's type",
             "enum" : [ "AS", "CON", "GSP", "PA", "PG", "PSP", "PT", "REC", "SA", "SCP" ]
+          },
+          "isAggregator" : {
+            "type" : "boolean",
+            "description" : "specified if given institution is an Aggregator",
+            "example" : false
           },
           "origin" : {
             "type" : "string",

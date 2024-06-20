@@ -68,4 +68,10 @@ public class OnboardingProductDto {
 
     @ApiModelProperty(value = "${swagger.onboarding.institutions.model.additionalInformations}")
     private AdditionalInformationsDto additionalInformations;
+
+    @ApiModelProperty(value = "${swagger.onboarding.institutions.model.isAggregator}")
+    private Boolean isAggregator;
+
+    @ApiModelProperty(value = "${swagger.onboarding.institutions.model.aggregates}")
+    private List<AggregateInstitution> aggregates;
 }
