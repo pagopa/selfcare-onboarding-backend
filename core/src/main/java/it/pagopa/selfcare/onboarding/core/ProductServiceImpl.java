@@ -3,6 +3,7 @@ package it.pagopa.selfcare.onboarding.core;
 import it.pagopa.selfcare.onboarding.common.InstitutionType;
 import it.pagopa.selfcare.onboarding.connector.api.ProductsConnector;
 import it.pagopa.selfcare.product.entity.Product;
+import it.pagopa.selfcare.product.entity.ProductStatus;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -47,8 +48,11 @@ public class ProductServiceImpl implements ProductService {
     public List<Product> getProducts() {
         log.trace("getProducts start");
         List<Product> products = productsConnector.getProducts();
-        log.debug("getProducts result = {}", products);
+        List<Product> activeProducts = products.stream()
+                .filter(product -> ProductStatus.ACTIVE.equals(product.getStatus()))
+                .toList();
+        log.debug("getProducts result = {}", activeProducts);
         log.trace("getProducts end");
-        return products;
+        return activeProducts;
     }
 }

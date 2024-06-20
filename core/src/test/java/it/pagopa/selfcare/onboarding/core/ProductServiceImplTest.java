@@ -3,6 +3,7 @@ package it.pagopa.selfcare.onboarding.core;
 import it.pagopa.selfcare.onboarding.common.InstitutionType;
 import it.pagopa.selfcare.onboarding.connector.api.ProductsConnector;
 import it.pagopa.selfcare.product.entity.Product;
+import it.pagopa.selfcare.product.entity.ProductStatus;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -102,8 +103,12 @@ class ProductServiceImplTest {
     @Test
     void getProducts() {
         //when
+        Product product1 = new Product();
+        product1.setStatus(ProductStatus.TESTING);
+        Product product2 = new Product();
+        product2.setStatus(ProductStatus.ACTIVE);
         Mockito.when(productsConnectorMock.getProducts())
-                .thenReturn(List.of(new Product()));
+                .thenReturn(List.of(product1, product2));
         List<Product> products = productService.getProducts();
         //then
         Assertions.assertNotNull(products);
