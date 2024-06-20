@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
+import java.util.List;
 import java.util.Objects;
 
 @Slf4j
@@ -43,6 +44,13 @@ public class ProductsConnectorImpl implements ProductsConnector {
         Assert.hasText(id, "A productId is required");
         Product result = productService.getProductIsValid(id);
         log.debug(LogUtils.CONFIDENTIAL_MARKER, "getProductValid result = {}", result);
+        return result;
+    }
+
+    @Override
+    public List<Product> getProducts() {
+        List<Product> result = productService.getProducts(false, true);
+        log.debug(LogUtils.CONFIDENTIAL_MARKER, "getProducts result = {}", result);
         return result;
     }
 
