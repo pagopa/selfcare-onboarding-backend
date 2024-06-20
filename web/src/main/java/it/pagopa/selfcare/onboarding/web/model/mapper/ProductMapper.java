@@ -13,6 +13,8 @@ public class ProductMapper {
             resource.setTitle(model.getTitle());
             resource.setParentId(model.getParentId());
             resource.setStatus(model.getStatus());
+            resource.setLogo(model.getLogo());
+            resource.setLogoBgColor(model.getLogoBgColor());
         }
         return resource;
     }

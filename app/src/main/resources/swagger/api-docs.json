@@ -3108,6 +3108,14 @@
             "type" : "string",
             "description" : "Product's unique identifier"
           },
+          "logo" : {
+            "type" : "string",
+            "description" : "Product's logo"
+          },
+          "logoBgColor" : {
+            "type" : "string",
+            "description" : "Product logo's background color"
+          },
           "parentId" : {
             "type" : "string",
             "description" : "Product's parent's Id"

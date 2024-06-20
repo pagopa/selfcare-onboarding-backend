@@ -17,6 +17,8 @@ class ProductMapperTest {
         Product product = new Product();
         product.setId("id");
         product.setTitle("title");
+        product.setLogo("logo");
+        product.setLogoBgColor("logoBgColor");
         product.setStatus(ProductStatus.ACTIVE);
         // when
         ProductResource productResource = ProductMapper.toResource(product);
@@ -24,7 +26,8 @@ class ProductMapperTest {
         assertEquals(product.getId(), productResource.getId());
         assertEquals(product.getTitle(), productResource.getTitle());
         assertEquals(product.getStatus(), productResource.getStatus());
-
+        assertEquals(product.getLogo(), productResource.getLogo());
+        assertEquals(product.getLogoBgColor(), productResource.getLogoBgColor());
         TestUtils.reflectionEqualsByName(productResource, product);
     }
 

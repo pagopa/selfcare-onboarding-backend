@@ -19,4 +19,10 @@ public class ProductResource {
     @ApiModelProperty(value = "${swagger.onboarding.product.model.status}")
     private ProductStatus status;
 
+    @ApiModelProperty(value = "${swagger.onboarding.product.model.logo}")
+    private String logo;
+
+    @ApiModelProperty(value = "${swagger.onboarding.product.model.logoBgColor}")
+    private String logoBgColor;
+
 }

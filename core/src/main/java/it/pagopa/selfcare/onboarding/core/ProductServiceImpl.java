@@ -45,10 +45,10 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public List<Product> getProducts() {
-        log.trace("getProductsAdmin start");
+        log.trace("getProducts start");
         List<Product> products = productsConnector.getProducts();
-        log.debug("getProductsAdmin result = {}", products);
-        log.trace("getProductsAdmin end");
+        log.debug("getProducts result = {}", products);
+        log.trace("getProducts end");
         return products;
     }
 }
