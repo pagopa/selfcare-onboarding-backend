@@ -1,5 +1,6 @@
 package it.pagopa.selfcare.onboarding.web.controller;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.pagopa.selfcare.onboarding.core.ProductService;
 import it.pagopa.selfcare.onboarding.web.config.WebTestConfig;
@@ -19,6 +20,9 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import java.util.List;
+import java.util.Optional;
+
 import static org.mockito.ArgumentMatchers.any;
 
 @WebMvcTest(value = {ProductController.class}, excludeAutoConfiguration = SecurityAutoConfiguration.class)
@@ -27,6 +31,7 @@ import static org.mockito.ArgumentMatchers.any;
         WebTestConfig.class
 })
 class ProductControllerTest {
+
     private static final String BASE_URL = "/v1/product";
 
     @Autowired
@@ -38,10 +43,13 @@ class ProductControllerTest {
     @Autowired
     protected ObjectMapper objectMapper;
 
+    /**
+     * Method under test: {@link ProductController#getProduct(String, Optional)}
+     */
     @Test
     void getProduct() throws Exception {
         //given
-        String productId = "productId";
+        final String productId = "productId";
         Mockito.when(productServiceMock.getProduct(Mockito.any(), any()))
                 .thenReturn(new Product());
         //when
@@ -58,6 +66,31 @@ class ProductControllerTest {
         Assertions.assertNotNull(response);
         Mockito.verify(productServiceMock, Mockito.times(1))
                 .getProduct(Mockito.anyString(), any());
+        Mockito.verifyNoMoreInteractions(productServiceMock);
+    }
+
+    /**
+     * Method under test: {@link ProductController#getProducts()}
+     */
+    @Test
+    void getProducts() throws Exception {
+        //given
+        Mockito.when(productServiceMock.getProducts())
+                .thenReturn(List.of(new Product()));
+        //when
+        MvcResult result = mvc.perform(MockMvcRequestBuilders
+                        .get("/v1/products")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .accept(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+        //then
+        List<ProductResource> response = objectMapper.readValue(
+                result.getResponse().getContentAsString(),
+                new TypeReference<>(){});
+        Assertions.assertNotNull(response);
+        Mockito.verify(productServiceMock, Mockito.times(1))
+                .getProducts();
         Mockito.verifyNoMoreInteractions(productServiceMock);
     }
 }

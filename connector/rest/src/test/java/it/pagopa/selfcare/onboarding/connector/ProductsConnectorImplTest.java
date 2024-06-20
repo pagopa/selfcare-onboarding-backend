@@ -12,6 +12,8 @@ import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.Instant;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -73,6 +75,15 @@ class ProductsConnectorImplTest {
         when(productService.getProductIsValid(any())).thenReturn(product);
         assertSame(product, productConnector.getProductValid("42"));
         verify(productService).getProductIsValid(any());
+    }
+
+    @Test
+    void getProducts() {
+        Product product = dummyProduct();
+        List<Product> products = Arrays.asList(product);
+        when(productService.getProducts(anyBoolean(), anyBoolean())).thenReturn(products);
+        assertSame(products, productConnector.getProducts());
+        verify(productService).getProducts(anyBoolean(), anyBoolean());
     }
 
     private Product dummyProduct(){

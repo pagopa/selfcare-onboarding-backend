@@ -3,6 +3,7 @@ package it.pagopa.selfcare.onboarding.core;
 import it.pagopa.selfcare.onboarding.common.InstitutionType;
 import it.pagopa.selfcare.onboarding.connector.api.ProductsConnector;
 import it.pagopa.selfcare.product.entity.Product;
+import it.pagopa.selfcare.product.entity.ProductStatus;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -11,6 +12,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
 class ProductServiceImplTest {
@@ -94,6 +97,22 @@ class ProductServiceImplTest {
         Assertions.assertSame(productMock, product);
         Mockito.verify(productsConnectorMock, Mockito.times(1))
                 .getProductValid(productId);
+        Mockito.verifyNoMoreInteractions(productsConnectorMock);
+    }
+
+    @Test
+    void getProducts() {
+        //when
+        Product product1 = new Product();
+        product1.setStatus(ProductStatus.TESTING);
+        Product product2 = new Product();
+        product2.setStatus(ProductStatus.ACTIVE);
+        Mockito.when(productsConnectorMock.getProducts())
+                .thenReturn(List.of(product1, product2));
+        List<Product> products = productService.getProducts();
+        //then
+        Assertions.assertNotNull(products);
+        Assertions.assertEquals(1, products.size());
         Mockito.verifyNoMoreInteractions(productsConnectorMock);
     }
 
