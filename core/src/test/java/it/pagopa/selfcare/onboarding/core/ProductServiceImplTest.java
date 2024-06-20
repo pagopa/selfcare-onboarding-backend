@@ -12,6 +12,8 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
+
 @ExtendWith(MockitoExtension.class)
 class ProductServiceImplTest {
 
@@ -94,6 +96,18 @@ class ProductServiceImplTest {
         Assertions.assertSame(productMock, product);
         Mockito.verify(productsConnectorMock, Mockito.times(1))
                 .getProductValid(productId);
+        Mockito.verifyNoMoreInteractions(productsConnectorMock);
+    }
+
+    @Test
+    void getProducts() {
+        //when
+        Mockito.when(productsConnectorMock.getProducts())
+                .thenReturn(List.of(new Product()));
+        List<Product> products = productService.getProducts();
+        //then
+        Assertions.assertNotNull(products);
+        Assertions.assertEquals(1, products.size());
         Mockito.verifyNoMoreInteractions(productsConnectorMock);
     }
 
