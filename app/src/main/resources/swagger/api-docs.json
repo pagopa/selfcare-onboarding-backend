@@ -2290,7 +2290,7 @@
           "geographicTaxonomies" : {
             "type" : "array",
             "items" : {
-              "$ref" : "#/components/schemas/GeographicTaxonomy"
+              "$ref" : "#/components/schemas/GeographicTaxonomyDto"
             }
           },
           "origin" : {
@@ -2613,18 +2613,6 @@
             "description" : "DPO's PEC",
             "format" : "email",
             "example" : "email@example.com"
-          }
-        }
-      },
-      "GeographicTaxonomy" : {
-        "title" : "GeographicTaxonomy",
-        "type" : "object",
-        "properties" : {
-          "code" : {
-            "type" : "string"
-          },
-          "desc" : {
-            "type" : "string"
           }
         }
       },

@@ -1,7 +1,6 @@
 package it.pagopa.selfcare.onboarding.web.model;
 
 import it.pagopa.selfcare.onboarding.common.Origin;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.GeographicTaxonomy;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;
@@ -18,7 +17,7 @@ public class AggregateInstitution {
 
     private String subunitCode;
     private String subunitType;
-    private List<GeographicTaxonomy> geographicTaxonomies;
+    private List<GeographicTaxonomyDto> geographicTaxonomies;
     private String address;
     private String zipCode;
     private String originId;

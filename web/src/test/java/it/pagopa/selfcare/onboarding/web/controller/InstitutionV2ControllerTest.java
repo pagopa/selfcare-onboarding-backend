@@ -69,7 +69,7 @@ public class InstitutionV2ControllerTest {
                 .andExpect(content().string(emptyString()));
         // then
         verify(institutionServiceMock, times(1))
-                .onboardingProductV2(any(OnboardingData.class));
+                .onboardingPaAggregator(any(OnboardingData.class));
         verifyNoMoreInteractions(institutionServiceMock);
     }
 

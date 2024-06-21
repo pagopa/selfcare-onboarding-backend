@@ -21,6 +21,8 @@ public interface InstitutionService {
 
     void onboardingProduct(OnboardingData onboardingData);
 
+    void onboardingPaAggregator(OnboardingData entity);
+
     Collection<InstitutionInfo> getInstitutions(String productId, String userId);
 
     InstitutionOnboardingData getInstitutionOnboardingDataById(String institutionId, String productId);

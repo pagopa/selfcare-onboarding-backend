@@ -13,6 +13,7 @@
 package it.pagopa.selfcare.onboarding.connector.model.onboarding;
 
 import it.pagopa.selfcare.onboarding.common.InstitutionType;
+import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -48,6 +49,8 @@ public class OnboardingData {
     private LocalDateTime updatedAt;
     private LocalDateTime expiringDate;
     private String reasonForReject;
+    private Boolean isAggregator;
+    private List<Institution> aggregates;
     public List<User> getUsers() {
         return Optional.ofNullable(users).orElse(Collections.emptyList());
     }

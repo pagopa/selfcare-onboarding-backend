@@ -25,7 +25,7 @@
       "taxCode": "string"
     }
   ],
-  "isAggregate": true,
+  "isAggregator": true,
   "aggregates": [
     {
       "taxCode": "taxCode",
