@@ -89,7 +89,7 @@ public class InstitutionV2Controller {
             })
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    @ApiOperation(value = "", notes = "${swagger.onboarding.institutions.api.onboarding.subunit}")
+    @ApiOperation(value = "", notes = "${swagger.onboarding.institutions.api.onboarding.subunit}", nickname = "v2GetInstitutionByFilters")
     public InstitutionResource getInstitution(@ApiParam("${swagger.onboarding.institutions.model.productFilter}")
                                               @RequestParam(value = "productId")
                                               String productId,
