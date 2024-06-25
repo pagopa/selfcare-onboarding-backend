@@ -1,8 +1,9 @@
 package it.pagopa.selfcare.onboarding.core;
 
-import it.pagopa.selfcare.onboarding.common.PartyRole;
-import it.pagopa.selfcare.onboarding.common.InstitutionType;
 import it.pagopa.selfcare.commons.base.utils.Origin;
+import it.pagopa.selfcare.onboarding.common.InstitutionType;
+import it.pagopa.selfcare.onboarding.common.PartyRole;
+import it.pagopa.selfcare.onboarding.common.ProductId;
 import it.pagopa.selfcare.onboarding.connector.api.*;
 import it.pagopa.selfcare.onboarding.connector.exceptions.ResourceNotFoundException;
 import it.pagopa.selfcare.onboarding.connector.model.InstitutionLegalAddressData;
@@ -11,12 +12,6 @@ import it.pagopa.selfcare.onboarding.connector.model.institutions.*;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.infocamere.BusinessInfoIC;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.infocamere.InstitutionInfoIC;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.*;
-import it.pagopa.selfcare.onboarding.core.exception.TooManyResourceFoundException;
-import it.pagopa.selfcare.product.entity.Product;
-import it.pagopa.selfcare.product.entity.ProductRole;
-import it.pagopa.selfcare.product.entity.ProductRoleInfo;
-import it.pagopa.selfcare.product.entity.ProductStatus;
-import it.pagopa.selfcare.onboarding.common.ProductId;
 import it.pagopa.selfcare.onboarding.connector.model.registry_proxy.GeographicTaxonomies;
 import it.pagopa.selfcare.onboarding.connector.model.registry_proxy.HomogeneousOrganizationalArea;
 import it.pagopa.selfcare.onboarding.connector.model.registry_proxy.InstitutionProxyInfo;
@@ -27,6 +22,10 @@ import it.pagopa.selfcare.onboarding.core.exception.OnboardingNotAllowedExceptio
 import it.pagopa.selfcare.onboarding.core.mapper.InstitutionInfoMapper;
 import it.pagopa.selfcare.onboarding.core.mapper.InstitutionInfoMapperImpl;
 import it.pagopa.selfcare.onboarding.core.strategy.OnboardingValidationStrategy;
+import it.pagopa.selfcare.product.entity.Product;
+import it.pagopa.selfcare.product.entity.ProductRole;
+import it.pagopa.selfcare.product.entity.ProductRoleInfo;
+import it.pagopa.selfcare.product.entity.ProductStatus;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -40,7 +39,6 @@ import javax.validation.ValidationException;
 import java.util.*;
 
 import static it.pagopa.selfcare.commons.utils.TestUtils.mockInstance;
-
 import static it.pagopa.selfcare.onboarding.connector.model.user.User.Fields.*;
 import static it.pagopa.selfcare.onboarding.core.InstitutionServiceImpl.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -930,8 +928,6 @@ class InstitutionServiceImplTest {
 
     @Test
     void getInstitutionByExternalId_nullInstitutionId() {
-        //given
-        String institutionId = null;
         //when
         Executable executable = () -> institutionService.getInstitutionByExternalId(null);
         //then
@@ -1200,11 +1196,11 @@ class InstitutionServiceImplTest {
         institutionUpdate.setDescription("description");
         onboardingData.setInstitutionUpdate(institutionUpdate);
         when(onboardingMsConnector.getByFilters(productId, taxCode, null, null, subunitCode))
-                .thenReturn(List.of(onboardingData, onboardingData));
+                .thenReturn(List.of());
         //when
         Executable executable = () -> institutionService.getByFilters(productId, taxCode, null, null, subunitCode);
         //then
-        assertThrows(TooManyResourceFoundException.class, executable);
+        assertThrows(ResourceNotFoundException.class, executable);
     }
 
     @Test
@@ -1426,7 +1422,7 @@ class InstitutionServiceImplTest {
         String loggedUser = "loggedUser";
         UserInfo userInfoMock = mockInstance(new UserInfo(), "setId", "setRole");
         userInfoMock.setId(loggedUser);
-        final InstitutionInfo institutionInfoMock = createInstitutionInfoMock(false);
+        final InstitutionInfo institutionInfoMock = createInstitutionInfoMock();
         Billing billingMock = mockInstance(new Billing());
         institutionInfoMock.setBilling(billingMock);
         when(partyConnectorMock.getInstitutionBillingData(anyString(), anyString()))
@@ -1458,7 +1454,7 @@ class InstitutionServiceImplTest {
         String loggedUser = "loggedUser";
         UserInfo userInfoMock = mockInstance(new UserInfo(), "setId", "setRole");
         userInfoMock.setId(loggedUser);
-        final InstitutionInfo institutionInfoMock = createInstitutionInfoMock(false);
+        final InstitutionInfo institutionInfoMock = createInstitutionInfoMock();
         Billing billingMock = mockInstance(new Billing());
         institutionInfoMock.setBilling(billingMock);
         when(partyConnectorMock.getInstitutionBillingData(anyString(), anyString()))
@@ -1490,7 +1486,7 @@ class InstitutionServiceImplTest {
         String loggedUser = "loggedUser";
         UserInfo userInfoMock = mockInstance(new UserInfo(), "setId", "setRole");
         userInfoMock.setId(loggedUser);
-        final InstitutionInfo institutionInfoMock = createInstitutionInfoMock(false);
+        final InstitutionInfo institutionInfoMock = createInstitutionInfoMock();
         Billing billingMock = mockInstance(new Billing());
         institutionInfoMock.setBilling(billingMock);
         when(partyConnectorMock.getInstitutionBillingData(anyString(), anyString()))
@@ -1519,7 +1515,7 @@ class InstitutionServiceImplTest {
         String loggedUser = "loggedUser";
         UserInfo userInfoMock = mockInstance(new UserInfo(), "setId", "setRole");
         userInfoMock.setId(loggedUser);
-        final InstitutionInfo institutionInfoMock = createInstitutionInfoMock(false);
+        final InstitutionInfo institutionInfoMock = createInstitutionInfoMock();
         Billing billingMock = mockInstance(new Billing());
         institutionInfoMock.setBilling(billingMock);
         when(partyConnectorMock.getInstitutionBillingData(anyString(), anyString()))
@@ -1550,7 +1546,7 @@ class InstitutionServiceImplTest {
         String loggedUser = "loggedUser";
         UserInfo userInfoMock = mockInstance(new UserInfo(), "setId", "setRole");
         userInfoMock.setId(loggedUser);
-        final InstitutionInfo institutionInfoMock = createInstitutionInfoMock(false);
+        final InstitutionInfo institutionInfoMock = createInstitutionInfoMock();
         Billing billingMock = mockInstance(new Billing());
         institutionInfoMock.setBilling(billingMock);
         when(partyConnectorMock.getInstitutionBillingData(anyString(), anyString()))
@@ -1609,7 +1605,7 @@ class InstitutionServiceImplTest {
     }
 
 
-    private static InstitutionInfo createInstitutionInfoMock(boolean withLocation) {
-        return withLocation ? mockInstance(new InstitutionInfo()) : mockInstance(new InstitutionInfo(), "setInstitutionLocation");
+    private static InstitutionInfo createInstitutionInfoMock() {
+        return false ? mockInstance(new InstitutionInfo()) : mockInstance(new InstitutionInfo(), "setInstitutionLocation");
     }
 }

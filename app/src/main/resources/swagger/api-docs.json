@@ -1077,7 +1077,7 @@
         "tags" : [ "institutions" ],
         "summary" : "getInstitution",
         "description" : "The service allows the onboarding of Users to a subunit of an Institution",
-        "operationId" : "getInstitutionUsingGET",
+        "operationId" : "v2GetInstitutionByFilters",
         "parameters" : [ {
           "name" : "productId",
           "in" : "query",

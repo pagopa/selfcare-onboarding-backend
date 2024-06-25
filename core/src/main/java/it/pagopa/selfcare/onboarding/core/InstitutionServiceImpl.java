@@ -28,7 +28,6 @@ import it.pagopa.selfcare.onboarding.connector.model.user.WorkContact;
 import it.pagopa.selfcare.onboarding.connector.model.user.mapper.CertifiedFieldMapper;
 import it.pagopa.selfcare.onboarding.connector.model.user.mapper.UserMapper;
 import it.pagopa.selfcare.onboarding.core.exception.OnboardingNotAllowedException;
-import it.pagopa.selfcare.onboarding.core.exception.TooManyResourceFoundException;
 import it.pagopa.selfcare.onboarding.core.exception.UpdateNotAllowedException;
 import it.pagopa.selfcare.onboarding.core.mapper.InstitutionInfoMapper;
 import it.pagopa.selfcare.onboarding.core.strategy.OnboardingValidationStrategy;
@@ -436,8 +435,8 @@ class InstitutionServiceImpl implements InstitutionService {
         log.trace("getByFilters start");
         List<OnboardingData> result = onboardingMsConnector.getByFilters(productId, taxCode, origin, originId, subunitCode);
         log.debug(LogUtils.CONFIDENTIAL_MARKER, "getByFilters result = {}", result);
-        if(Objects.nonNull(result) && result.size() > 1) {
-            throw new TooManyResourceFoundException();
+        if(Objects.isNull(result) || result.isEmpty()) {
+            throw new ResourceNotFoundException();
         }
         log.trace("getByFilters end");
         return institutionMapper.toInstitution(result.get(0).getInstitutionUpdate());

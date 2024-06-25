@@ -110,6 +110,8 @@ public class InstitutionV2Controller {
             throw new ValidationException("At least one of taxCode, origin or originId must be present");
         } else if (StringUtils.hasText(subunitCode) && !StringUtils.hasText(taxCode)) {
             throw new ValidationException("TaxCode is required if subunitCode is present");
+        } else if (!StringUtils.hasText(subunitCode) && StringUtils.hasText(taxCode)) {
+            throw new ValidationException("SubunitCode is required if taxCode is present");
         }
         Institution institution = institutionService.getByFilters(productId, taxCode, origin, originId, subunitCode);
         InstitutionResource result = InstitutionMapper.toResource(institution);
