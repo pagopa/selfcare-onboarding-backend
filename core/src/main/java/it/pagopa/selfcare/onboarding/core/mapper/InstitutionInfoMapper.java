@@ -2,6 +2,7 @@ package it.pagopa.selfcare.onboarding.core.mapper;
 
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionInfo;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.InstitutionUpdate;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
@@ -14,4 +15,6 @@ public interface InstitutionInfoMapper {
             @Mapping(source = "county", target = "institutionLocation.county"),
             @Mapping(source = "country", target = "institutionLocation.country")})
     InstitutionInfo toInstitutionInfo(Institution institution);
+
+    Institution toInstitution(InstitutionUpdate institution);
 }

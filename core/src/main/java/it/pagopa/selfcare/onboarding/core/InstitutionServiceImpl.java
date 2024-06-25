@@ -1,9 +1,9 @@
 package it.pagopa.selfcare.onboarding.core;
 
 import it.pagopa.selfcare.commons.base.logging.LogUtils;
-import it.pagopa.selfcare.onboarding.common.PartyRole;
-import it.pagopa.selfcare.onboarding.common.InstitutionType;
 import it.pagopa.selfcare.commons.base.utils.Origin;
+import it.pagopa.selfcare.onboarding.common.InstitutionType;
+import it.pagopa.selfcare.onboarding.common.PartyRole;
 import it.pagopa.selfcare.onboarding.connector.api.*;
 import it.pagopa.selfcare.onboarding.connector.exceptions.ResourceNotFoundException;
 import it.pagopa.selfcare.onboarding.connector.model.InstitutionLegalAddressData;
@@ -17,9 +17,6 @@ import it.pagopa.selfcare.onboarding.connector.model.onboarding.GeographicTaxono
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.InstitutionLocation;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.User;
-import it.pagopa.selfcare.product.entity.Product;
-import it.pagopa.selfcare.product.entity.ProductRoleInfo;
-import it.pagopa.selfcare.product.entity.ProductStatus;
 import it.pagopa.selfcare.onboarding.connector.model.registry_proxy.GeographicTaxonomies;
 import it.pagopa.selfcare.onboarding.connector.model.registry_proxy.HomogeneousOrganizationalArea;
 import it.pagopa.selfcare.onboarding.connector.model.registry_proxy.InstitutionProxyInfo;
@@ -31,9 +28,13 @@ import it.pagopa.selfcare.onboarding.connector.model.user.WorkContact;
 import it.pagopa.selfcare.onboarding.connector.model.user.mapper.CertifiedFieldMapper;
 import it.pagopa.selfcare.onboarding.connector.model.user.mapper.UserMapper;
 import it.pagopa.selfcare.onboarding.core.exception.OnboardingNotAllowedException;
+import it.pagopa.selfcare.onboarding.core.exception.TooManyResourceFoundException;
 import it.pagopa.selfcare.onboarding.core.exception.UpdateNotAllowedException;
 import it.pagopa.selfcare.onboarding.core.mapper.InstitutionInfoMapper;
 import it.pagopa.selfcare.onboarding.core.strategy.OnboardingValidationStrategy;
+import it.pagopa.selfcare.product.entity.Product;
+import it.pagopa.selfcare.product.entity.ProductRoleInfo;
+import it.pagopa.selfcare.product.entity.ProductStatus;
 import lombok.extern.slf4j.Slf4j;
 import org.owasp.encoder.Encode;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -428,6 +429,18 @@ class InstitutionServiceImpl implements InstitutionService {
         log.debug(LogUtils.CONFIDENTIAL_MARKER, "getInstitutionsByUserId result = {}", result);
         log.trace("getInstitutionsByUserId end");
         return result;
+    }
+
+    @Override
+    public Institution getByFilters(String productId, String taxCode, String origin, String originId, String subunitCode) {
+        log.trace("getByFilters start");
+        List<OnboardingData> result = onboardingMsConnector.getByFilters(productId, taxCode, origin, originId, subunitCode);
+        log.debug(LogUtils.CONFIDENTIAL_MARKER, "getByFilters result = {}", result);
+        if(Objects.nonNull(result) && result.size() > 1) {
+            throw new TooManyResourceFoundException();
+        }
+        log.trace("getByFilters end");
+        return institutionMapper.toInstitution(result.get(0).getInstitutionUpdate());
     }
 
     @Override
