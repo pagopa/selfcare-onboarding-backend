@@ -93,16 +93,16 @@ public class InstitutionV2Controller {
     public InstitutionResource getInstitution(@ApiParam("${swagger.onboarding.institutions.model.productFilter}")
                                               @RequestParam(value = "productId")
                                               String productId,
-                                              @ApiParam("${swagger.onboarding.institutions.model.productFilter}")
+                                              @ApiParam("${swagger.onboarding.institutions.model.taxCode}")
                                               @RequestParam(value = "taxCode", required = false)
                                               String taxCode,
-                                              @ApiParam("${swagger.onboarding.institutions.model.productFilter}")
+                                              @ApiParam("${swagger.onboarding.institutions.model.origin}")
                                               @RequestParam(value = "origin", required = false)
                                               String origin,
-                                              @ApiParam("${swagger.onboarding.institutions.model.productFilter}")
+                                              @ApiParam("${swagger.onboarding.institutions.model.originId}")
                                               @RequestParam(value = "originId", required = false)
                                               String originId,
-                                              @ApiParam("${swagger.onboarding.institutions.model.productFilter}")
+                                              @ApiParam("${swagger.onboarding.institutions.model.subunitCode}")
                                               @RequestParam(value = "subunitCode", required = false)
                                               String subunitCode) {
         log.trace("getInstitution start");

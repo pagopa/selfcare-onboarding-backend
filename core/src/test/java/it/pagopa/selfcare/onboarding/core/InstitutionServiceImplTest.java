@@ -11,6 +11,7 @@ import it.pagopa.selfcare.onboarding.connector.model.institutions.*;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.infocamere.BusinessInfoIC;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.infocamere.InstitutionInfoIC;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.*;
+import it.pagopa.selfcare.onboarding.core.exception.TooManyResourceFoundException;
 import it.pagopa.selfcare.product.entity.Product;
 import it.pagopa.selfcare.product.entity.ProductRole;
 import it.pagopa.selfcare.product.entity.ProductRoleInfo;
@@ -1163,6 +1164,47 @@ class InstitutionServiceImplTest {
                 .matchInstitutionAndUser(externalId, taxCode);
         verifyNoMoreInteractions(partyRegistryProxyConnectorMock);
 
+    }
+
+    @Test
+    void getByFilters() {
+        //given
+        final String subunitCode = "subunitCode";
+        final String taxCode = "taxCode";
+        final String productId = "productId";
+        OnboardingData onboardingData = new OnboardingData();
+        InstitutionUpdate institutionUpdate = new InstitutionUpdate();
+        institutionUpdate.setDescription("description");
+        onboardingData.setInstitutionUpdate(institutionUpdate);
+        when(onboardingMsConnector.getByFilters(productId, taxCode, null, null, subunitCode))
+                .thenReturn(List.of(onboardingData));
+        //when
+        Institution result = institutionService.getByFilters(productId, taxCode, null, null, subunitCode);
+        //then
+        assertNotNull(result);
+        assertEquals(result.getDescription(), institutionUpdate.getDescription());
+        verify(onboardingMsConnector, times(1))
+                .getByFilters(productId, taxCode, null, null, subunitCode);
+        verifyNoMoreInteractions(onboardingMsConnector);
+
+    }
+
+    @Test
+    void getByFiltersTooManyResource() {
+        //given
+        final String subunitCode = "subunitCode";
+        final String taxCode = "taxCode";
+        final String productId = "productId";
+        OnboardingData onboardingData = new OnboardingData();
+        InstitutionUpdate institutionUpdate = new InstitutionUpdate();
+        institutionUpdate.setDescription("description");
+        onboardingData.setInstitutionUpdate(institutionUpdate);
+        when(onboardingMsConnector.getByFilters(productId, taxCode, null, null, subunitCode))
+                .thenReturn(List.of(onboardingData, onboardingData));
+        //when
+        Executable executable = () -> institutionService.getByFilters(productId, taxCode, null, null, subunitCode);
+        //then
+        assertThrows(TooManyResourceFoundException.class, executable);
     }
 
     @Test
