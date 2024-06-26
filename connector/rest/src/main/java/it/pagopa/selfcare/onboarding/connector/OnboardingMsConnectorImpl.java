@@ -5,9 +5,12 @@ import it.pagopa.selfcare.onboarding.common.InstitutionType;
 import it.pagopa.selfcare.onboarding.connector.api.OnboardingMsConnector;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
 import it.pagopa.selfcare.onboarding.connector.rest.client.MsOnboardingApiClient;
+import it.pagopa.selfcare.onboarding.connector.rest.client.MsOnboardingSupportApiClient;
 import it.pagopa.selfcare.onboarding.connector.rest.client.MsOnboardingTokenApiClient;
 import it.pagopa.selfcare.onboarding.connector.rest.mapper.OnboardingMapper;
 import it.pagopa.selfcare.onboarding.generated.openapi.v1.dto.OnboardingGet;
+import it.pagopa.selfcare.onboarding.generated.openapi.v1.dto.OnboardingResponse;
+import it.pagopa.selfcare.onboarding.generated.openapi.v1.dto.OnboardingStatus;
 import it.pagopa.selfcare.onboarding.generated.openapi.v1.dto.ReasonRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
@@ -15,19 +18,26 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+import java.util.Objects;
+
 @Service
 @Slf4j
 public class OnboardingMsConnectorImpl implements OnboardingMsConnector {
 
     private final MsOnboardingApiClient msOnboardingApiClient;
-
+    private final MsOnboardingSupportApiClient msOnboardingSupportApiClient;
     private final MsOnboardingTokenApiClient msOnboardingTokenApiClient;
 
     private final OnboardingMapper onboardingMapper;
 
-    public OnboardingMsConnectorImpl(MsOnboardingApiClient msOnboardingApiClient, MsOnboardingTokenApiClient msOnboardingTokenApiClient, OnboardingMapper onboardingMapper) {
+    public OnboardingMsConnectorImpl(MsOnboardingApiClient msOnboardingApiClient,
+                                     MsOnboardingTokenApiClient msOnboardingTokenApiClient,
+                                     MsOnboardingSupportApiClient msOnboardingSupportApiClient,
+                                     OnboardingMapper onboardingMapper) {
         this.msOnboardingApiClient = msOnboardingApiClient;
         this.msOnboardingTokenApiClient = msOnboardingTokenApiClient;
+        this.msOnboardingSupportApiClient = msOnboardingSupportApiClient;
         this.onboardingMapper = onboardingMapper;
     }
 
@@ -114,5 +124,14 @@ public class OnboardingMsConnectorImpl implements OnboardingMsConnector {
     @Retry(name = "retryTimeout")
     public void onboardingPaAggregation(OnboardingData onboardingData) {
         msOnboardingApiClient._v1OnboardingPaAggregationPost(onboardingMapper.toOnboardingPaAggregationRequest(onboardingData));
+    }
+
+    @Override
+    public List<OnboardingData> getByFilters(String productId, String taxCode, String origin, String originId, String subunitCode) {
+        List<OnboardingResponse> result = msOnboardingSupportApiClient._v1OnboardingInstitutionOnboardingsGet(origin, originId, OnboardingStatus.COMPLETED, subunitCode, taxCode).getBody();
+        return Objects.nonNull(result) ? result.stream()
+                .filter(onboardingResponse -> onboardingResponse.getProductId().equals(productId))
+                .map(onboardingMapper::toOnboardingData)
+                .toList() : List.of();
     }
 }

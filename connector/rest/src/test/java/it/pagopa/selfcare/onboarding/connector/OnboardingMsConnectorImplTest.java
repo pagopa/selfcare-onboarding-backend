@@ -4,6 +4,7 @@ import it.pagopa.selfcare.onboarding.common.InstitutionType;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.*;
 import it.pagopa.selfcare.onboarding.connector.rest.client.MsOnboardingApiClient;
+import it.pagopa.selfcare.onboarding.connector.rest.client.MsOnboardingSupportApiClient;
 import it.pagopa.selfcare.onboarding.connector.rest.client.MsOnboardingTokenApiClient;
 import it.pagopa.selfcare.onboarding.connector.rest.mapper.OnboardingMapper;
 import it.pagopa.selfcare.onboarding.connector.rest.mapper.OnboardingMapperImpl;
@@ -32,11 +33,15 @@ class OnboardingMsConnectorImplTest {
 
     @InjectMocks
     private OnboardingMsConnectorImpl onboardingMsConnector;
+
     @Mock
     private MsOnboardingApiClient msOnboardingApiClient;
 
     @Mock
     private MsOnboardingTokenApiClient msOnboardingTokenApiClient;
+
+    @Mock
+    private MsOnboardingSupportApiClient msOnboardingSupportApiClient;
 
     @Spy
     private OnboardingMapper onboardingMapper = new OnboardingMapperImpl();
@@ -318,5 +323,24 @@ class OnboardingMsConnectorImplTest {
         assertEquals(actual.getUsers().size(), onboardingData.getUsers().size());
 
         verifyNoMoreInteractions(msOnboardingApiClient);
+    }
+
+    @Test
+    void getOnboardingByFilters() {
+        // given
+        final String origin = "origin";
+        final String originId = "originId";
+        final String productId = "productId";
+        OnboardingResponse resource = new OnboardingResponse();
+        resource.setProductId("productId");
+        when(msOnboardingSupportApiClient._v1OnboardingInstitutionOnboardingsGet(origin, originId, OnboardingStatus.COMPLETED, null, null))
+                .thenReturn(ResponseEntity.ok(List.of(resource)));
+        // when
+        final Executable executable = () -> onboardingMsConnector.getByFilters(productId, null, origin, originId, null);
+        // then
+        assertDoesNotThrow(executable);
+        verify(msOnboardingSupportApiClient, times(1))
+                ._v1OnboardingInstitutionOnboardingsGet(origin, originId, OnboardingStatus.COMPLETED, null, null);
+        verifyNoMoreInteractions(msOnboardingSupportApiClient);
     }
 }

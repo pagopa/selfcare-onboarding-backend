@@ -4,6 +4,8 @@ import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
 import org.springframework.core.io.Resource;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 public interface OnboardingMsConnector {
 
     void onboarding(OnboardingData onboardingData);
@@ -29,4 +31,6 @@ public interface OnboardingMsConnector {
     Resource getContract(String onboardingId);
 
     void onboardingPaAggregation(OnboardingData onboardingData);
+
+    List<OnboardingData> getByFilters(String productId, String taxCode, String origin, String originId, String subunitCode);
 }
