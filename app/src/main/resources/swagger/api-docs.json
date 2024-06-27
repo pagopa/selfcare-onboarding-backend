@@ -2144,7 +2144,7 @@
       "post" : {
         "tags" : [ "user" ],
         "summary" : "checkManager",
-        "description" : "The service allows the onboarding of Users",
+        "description" : "Returns true if current manager and previous one are the same",
         "operationId" : "checkManager",
         "requestBody" : {
           "content" : {
@@ -2161,7 +2161,10 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "type" : "boolean"
+                  "type" : "object",
+                  "additionalProperties" : {
+                    "type" : "boolean"
+                  }
                 }
               }
             }
