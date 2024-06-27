@@ -82,7 +82,6 @@ public class UserController {
     @ApiOperation(value = "", notes = "${swagger.onboarding.users.api.onboarding}", nickname = "checkManager")
     public Boolean checkManager(@RequestBody @Valid OnboardingUserDto request) {
         log.trace("onboarding start");
-        log.debug("onboarding request = {}", request);
         boolean checkManager =  userService.checkManager(onboardingResourceMapper.toEntity(request));
         log.trace("onboarding end");
         return checkManager;
