@@ -17,7 +17,9 @@ public class OnboardingFunctionsConnectorImpl implements OnboardingFunctionsConn
     @Override
     public void checkOrganization(String fiscalCode, String vatNumber) {
         log.trace("checkOrganization start");
-        log.debug("checkOrganization fiscalCode = {}, vatNumber = {}", fiscalCode, vatNumber );
+        if (fiscalCode.matches("\\w*") && vatNumber.matches("\\w*")) {
+            log.debug("checkOrganization fiscalCode = {}, vatNumber = {}", fiscalCode, vatNumber );
+        }
         onboardingFunctionsApiClient._checkOrganization(fiscalCode, vatNumber);
         log.trace("checkOrganization end");
     }
