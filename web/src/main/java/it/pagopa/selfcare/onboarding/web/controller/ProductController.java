@@ -15,6 +15,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Slf4j
@@ -49,15 +50,30 @@ public class ProductController {
 
     @GetMapping(value = "/v1/products",  produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    @ApiOperation(value = "", notes = "${swagger.onboarding.product.api.getProducts}")
+    @ApiOperation(value = "", notes = "${swagger.onboarding.product.api.getProducts}", nickname = "getProducts")
     public List<ProductResource> getProducts() {
         log.trace("getProducts start");
-        final List<Product> products = productService.getProducts();
+        final List<Product> products = productService.getProducts(false);
         List<ProductResource> resources = products.stream()
                 .map(ProductMapper::toResource)
                 .toList();
         log.debug("getProducts result = {}", resources);
         log.trace("getProducts end");
+        return resources;
+    }
+
+    @GetMapping(value = "/v1/products/admin",  produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "", notes = "${swagger.onboarding.product.api.getProductsAdmin}", nickname = "getProductsAdmin")
+    public List<ProductResource> getProductsAdmin() {
+        log.trace("getProductsAdmin start");
+        final List<Product> products = productService.getProducts(true);
+        List<ProductResource> resources = products.stream()
+                .filter(product -> Objects.nonNull(product.getUserContractTemplatePath()))
+                .map(ProductMapper::toResource)
+                .toList();
+        log.debug("getProductsAdmin result = {}", resources);
+        log.trace("getProductsAdmin end");
         return resources;
     }
 }

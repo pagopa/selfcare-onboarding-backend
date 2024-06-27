@@ -19,6 +19,8 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Collections;
+import java.util.Map;
 
 import static org.springframework.http.MediaType.APPLICATION_PROBLEM_JSON_VALUE;
 
@@ -69,6 +71,22 @@ public class UserController {
         log.debug("onboarding request = {}", request);
         userService.onboardingUsers(onboardingResourceMapper.toEntity(request));
         log.trace("onboarding end");
+    }
+
+    @ApiResponse(responseCode = "403",
+            description = "Forbidden",
+            content = {
+                    @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE,
+                            schema = @Schema(implementation = Problem.class))
+            })
+    @PostMapping(value = "/check-manager")
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "", notes = "${swagger.onboarding.users.api.check-manager}", nickname = "checkManager")
+    public Map<String, Boolean> checkManager(@RequestBody @Valid OnboardingUserDto request) {
+        log.trace("onboarding start");
+        boolean checkManager =  userService.checkManager(onboardingResourceMapper.toEntity(request));
+        log.trace("onboarding end");
+        return Collections.singletonMap("result", checkManager);
     }
 
 }

@@ -139,4 +139,10 @@ public class OnboardingMsConnectorImpl implements OnboardingMsConnector {
     public VerifyAggregateResult verifyAggregatesCsv(MultipartFile file) {
         return onboardingMapper.toVerifyAggregateResult(msOnboardingAggregatesApiClient._v1AggregatesVerificationPost(file).getBody());
     }
+
+    @Override
+    public boolean checkManager(OnboardingData onboardingData) {
+      String result =  msOnboardingApiClient._v1OnboardingCheckManagerPost(onboardingMapper.toOnboardingUsersRequest(onboardingData)).getBody();
+      return Boolean.parseBoolean(result);
+    }
 }

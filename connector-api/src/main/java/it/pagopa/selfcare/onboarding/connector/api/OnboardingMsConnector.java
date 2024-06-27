@@ -35,5 +35,7 @@ public interface OnboardingMsConnector {
 
     List<OnboardingData> getByFilters(String productId, String taxCode, String origin, String originId, String subunitCode);
 
+    boolean checkManager(OnboardingData onboardingData);
+
     VerifyAggregateResult verifyAggregatesCsv(MultipartFile file);
 }
