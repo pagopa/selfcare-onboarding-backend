@@ -75,7 +75,7 @@ class ProductControllerTest {
     @Test
     void getProducts() throws Exception {
         //given
-        Mockito.when(productServiceMock.getProducts())
+        Mockito.when(productServiceMock.getProducts(false))
                 .thenReturn(List.of(new Product()));
         //when
         MvcResult result = mvc.perform(MockMvcRequestBuilders
@@ -90,7 +90,7 @@ class ProductControllerTest {
                 new TypeReference<>(){});
         Assertions.assertNotNull(response);
         Mockito.verify(productServiceMock, Mockito.times(1))
-                .getProducts();
+                .getProducts(false);
         Mockito.verifyNoMoreInteractions(productServiceMock);
     }
 
@@ -102,7 +102,7 @@ class ProductControllerTest {
         //given
         Product product = new Product();
         product.setUserContractTemplatePath("test");
-        Mockito.when(productServiceMock.getProducts())
+        Mockito.when(productServiceMock.getProducts(true))
                 .thenReturn(List.of(product));
         //when
         MvcResult result = mvc.perform(MockMvcRequestBuilders
@@ -118,7 +118,7 @@ class ProductControllerTest {
         Assertions.assertNotNull(response);
         Assertions.assertEquals(1, response.size());
         Mockito.verify(productServiceMock, Mockito.times(1))
-                .getProducts();
+                .getProducts(true);
         Mockito.verifyNoMoreInteractions(productServiceMock);
     }
 }

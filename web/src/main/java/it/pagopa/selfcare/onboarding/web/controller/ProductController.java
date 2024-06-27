@@ -53,7 +53,7 @@ public class ProductController {
     @ApiOperation(value = "", notes = "${swagger.onboarding.product.api.getProducts}", nickname = "getProducts")
     public List<ProductResource> getProducts() {
         log.trace("getProducts start");
-        final List<Product> products = productService.getProducts();
+        final List<Product> products = productService.getProducts(false);
         List<ProductResource> resources = products.stream()
                 .map(ProductMapper::toResource)
                 .toList();
@@ -67,7 +67,7 @@ public class ProductController {
     @ApiOperation(value = "", notes = "${swagger.onboarding.product.api.getProductsAdmin}", nickname = "getProductsAdmin")
     public List<ProductResource> getProductsAdmin() {
         log.trace("getProductsAdmin start");
-        final List<Product> products = productService.getProducts();
+        final List<Product> products = productService.getProducts(true);
         List<ProductResource> resources = products.stream()
                 .filter(product -> Objects.nonNull(product.getUserContractTemplatePath()))
                 .map(ProductMapper::toResource)

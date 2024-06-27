@@ -107,9 +107,9 @@ class ProductServiceImplTest {
         product1.setStatus(ProductStatus.TESTING);
         Product product2 = new Product();
         product2.setStatus(ProductStatus.ACTIVE);
-        Mockito.when(productsConnectorMock.getProducts())
+        Mockito.when(productsConnectorMock.getProducts(true))
                 .thenReturn(List.of(product1, product2));
-        List<Product> products = productService.getProducts();
+        List<Product> products = productService.getProducts(true);
         //then
         Assertions.assertNotNull(products);
         Assertions.assertEquals(1, products.size());

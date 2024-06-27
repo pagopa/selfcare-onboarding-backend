@@ -45,9 +45,9 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<Product> getProducts() {
+    public List<Product> getProducts(boolean rootOnly) {
         log.trace("getProducts start");
-        List<Product> products = productsConnector.getProducts();
+        List<Product> products = productsConnector.getProducts(rootOnly);
         List<Product> activeProducts = products.stream()
                 .filter(product -> ProductStatus.ACTIVE.equals(product.getStatus()))
                 .toList();

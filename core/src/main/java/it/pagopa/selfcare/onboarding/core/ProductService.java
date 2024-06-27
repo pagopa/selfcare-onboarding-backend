@@ -11,5 +11,5 @@ public interface ProductService {
 
     Product getProductValid(String id);
 
-    List<Product> getProducts();
+    List<Product> getProducts(boolean rootOnly);
 }
