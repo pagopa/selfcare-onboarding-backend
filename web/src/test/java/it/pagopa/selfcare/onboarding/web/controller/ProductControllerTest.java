@@ -93,4 +93,32 @@ class ProductControllerTest {
                 .getProducts();
         Mockito.verifyNoMoreInteractions(productServiceMock);
     }
+
+    /**
+     * Method under test: {@link ProductController#getProductsAdmin()}
+     */
+    @Test
+    void getProductsAdmin() throws Exception {
+        //given
+        Product product = new Product();
+        product.setUserContractTemplatePath("test");
+        Mockito.when(productServiceMock.getProducts())
+                .thenReturn(List.of(product));
+        //when
+        MvcResult result = mvc.perform(MockMvcRequestBuilders
+                        .get("/v1/products/admin")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .accept(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+        //then
+        List<ProductResource> response = objectMapper.readValue(
+                result.getResponse().getContentAsString(),
+                new TypeReference<>(){});
+        Assertions.assertNotNull(response);
+        Assertions.assertEquals(1, response.size());
+        Mockito.verify(productServiceMock, Mockito.times(1))
+                .getProducts();
+        Mockito.verifyNoMoreInteractions(productServiceMock);
+    }
 }

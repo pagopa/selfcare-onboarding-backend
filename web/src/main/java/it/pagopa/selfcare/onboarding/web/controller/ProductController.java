@@ -15,6 +15,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Slf4j
@@ -58,6 +59,21 @@ public class ProductController {
                 .toList();
         log.debug("getProducts result = {}", resources);
         log.trace("getProducts end");
+        return resources;
+    }
+
+    @GetMapping(value = "/v1/products/admin",  produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "", notes = "${swagger.onboarding.product.api.getProductsAdmin}")
+    public List<ProductResource> getProductsAdmin() {
+        log.trace("getProductsAdmin start");
+        final List<Product> products = productService.getProducts();
+        List<ProductResource> resources = products.stream()
+                .filter(product -> Objects.nonNull(product.getUserContractTemplatePath()))
+                .map(ProductMapper::toResource)
+                .toList();
+        log.debug("getProductsAdmin result = {}", resources);
+        log.trace("getProductsAdmin end");
         return resources;
     }
 }
