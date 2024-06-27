@@ -8,11 +8,13 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import it.pagopa.selfcare.commons.base.logging.LogUtils;
 import it.pagopa.selfcare.commons.web.model.Problem;
+import it.pagopa.selfcare.onboarding.common.InstitutionType;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
 import it.pagopa.selfcare.onboarding.core.InstitutionService;
 import it.pagopa.selfcare.onboarding.web.model.CompanyOnboardingDto;
 import it.pagopa.selfcare.onboarding.web.model.InstitutionResource;
 import it.pagopa.selfcare.onboarding.web.model.OnboardingProductDto;
+import it.pagopa.selfcare.onboarding.web.model.VerifyAggregatesResponse;
 import it.pagopa.selfcare.onboarding.web.model.mapper.InstitutionMapper;
 import it.pagopa.selfcare.onboarding.web.model.mapper.OnboardingResourceMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +23,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import javax.validation.ValidationException;
@@ -118,6 +121,18 @@ public class InstitutionV2Controller {
         log.debug(LogUtils.CONFIDENTIAL_MARKER, "getInstitution result = {}", result);
         log.trace("getInstitution end");
         return result;
+    }
+
+    @PostMapping(value = "/onboarding/aggregation/verification")
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "", notes = "${swagger.onboarding.institutions.api.onboarding.subunit}")
+    public VerifyAggregatesResponse verifyAggregatesCsv(@RequestParam("aggregates") MultipartFile file,
+                                                        @RequestParam("institutionType") InstitutionType institutionType) {
+        log.trace("Verify Aggregates Csv start");
+        log.debug("Verify Aggregates Csv start for product {} and institutionType {}", institutionType);
+        VerifyAggregatesResponse response = onboardingResourceMapper.toVerifyAggregatesResponse(institutionService.validateAggregatesCsv(file));
+        log.trace("Verify Aggregates Csv end");
+        return response;
     }
 
 }
