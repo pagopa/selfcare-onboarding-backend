@@ -5,6 +5,7 @@ import it.pagopa.selfcare.onboarding.core.UserService;
 import it.pagopa.selfcare.onboarding.core.exception.InvalidUserFieldsException;
 import it.pagopa.selfcare.onboarding.web.config.WebTestConfig;
 import it.pagopa.selfcare.onboarding.web.handler.OnboardingExceptionHandler;
+import it.pagopa.selfcare.onboarding.web.model.OnboardingUserDto;
 import it.pagopa.selfcare.onboarding.web.model.mapper.OnboardingResourceMapperImpl;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -97,6 +98,24 @@ class UserControllerTest {
         // then
         verify(userServiceMock, times(1))
                 .onboardingUsers(any(OnboardingData.class));
+        verifyNoMoreInteractions(userServiceMock);
+    }
+
+    /**
+     * Method under test: {@link UserController#checkManager(OnboardingUserDto)}
+     */
+    @Test
+    void checkManager(@Value("classpath:stubs/onboardingUsers.json") Resource onboardinUserDto) throws Exception {
+        // when
+        mvc.perform(MockMvcRequestBuilders
+                        .post(BASE_URL + "/check-manager")
+                        .content(onboardinUserDto.getInputStream().readAllBytes())
+                        .contentType(APPLICATION_JSON_VALUE)
+                        .accept(APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk());
+        // then
+        verify(userServiceMock, times(1))
+                .checkManager(any(OnboardingData.class));
         verifyNoMoreInteractions(userServiceMock);
     }
 

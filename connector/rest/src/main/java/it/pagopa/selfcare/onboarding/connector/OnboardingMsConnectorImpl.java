@@ -134,4 +134,10 @@ public class OnboardingMsConnectorImpl implements OnboardingMsConnector {
                 .map(onboardingMapper::toOnboardingData)
                 .toList() : List.of();
     }
+
+    @Override
+    public boolean checkManager(OnboardingData onboardingData) {
+      String result =  msOnboardingApiClient._v1OnboardingCheckManagerPost(onboardingMapper.toOnboardingUsersRequest(onboardingData)).getBody();
+      return Boolean.parseBoolean(result);
+    }
 }

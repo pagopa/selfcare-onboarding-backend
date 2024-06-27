@@ -154,4 +154,18 @@ class UserServiceImplTest {
         verifyNoMoreInteractions(onboardingMsConnector);
     }
 
+    @Test
+    void checkManager() {
+        // given
+        OnboardingData onboardingData = new OnboardingData();
+        when(onboardingMsConnector.checkManager(any())).thenReturn(true);
+        // when
+        userService.checkManager(onboardingData);
+        // then
+        verify(onboardingMsConnector, times(1))
+                .checkManager(onboardingData);
+        verifyNoMoreInteractions(onboardingMsConnector);
+    }
+
+
 }
