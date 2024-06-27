@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -80,11 +81,11 @@ public class UserController {
     @PostMapping(value = "/check-manager")
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "", notes = "${swagger.onboarding.users.api.onboarding}", nickname = "checkManager")
-    public Boolean checkManager(@RequestBody @Valid OnboardingUserDto request) {
+    public ResponseEntity<Boolean> checkManager(@RequestBody @Valid OnboardingUserDto request) {
         log.trace("onboarding start");
         boolean checkManager =  userService.checkManager(onboardingResourceMapper.toEntity(request));
         log.trace("onboarding end");
-        return checkManager;
+        return ResponseEntity.ok(checkManager);
     }
 
 }
