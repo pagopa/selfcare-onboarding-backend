@@ -80,9 +80,9 @@ class ProductsConnectorImplTest {
     @Test
     void getProducts() {
         Product product = dummyProduct();
-        List<Product> products = Arrays.asList(product);
+        List<Product> products = List.of(product);
         when(productService.getProducts(anyBoolean(), anyBoolean())).thenReturn(products);
-        assertSame(products, productConnector.getProducts());
+        assertSame(products, productConnector.getProducts(true));
         verify(productService).getProducts(anyBoolean(), anyBoolean());
     }
 

@@ -48,8 +48,8 @@ public class ProductsConnectorImpl implements ProductsConnector {
     }
 
     @Override
-    public List<Product> getProducts() {
-        List<Product> result = productService.getProducts(false, true);
+    public List<Product> getProducts(boolean rootOnly) {
+        List<Product> result = productService.getProducts(rootOnly, true);
         log.debug(LogUtils.CONFIDENTIAL_MARKER, "getProducts result = {}", result);
         return result;
     }

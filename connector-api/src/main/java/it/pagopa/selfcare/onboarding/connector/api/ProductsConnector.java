@@ -11,6 +11,6 @@ public interface ProductsConnector {
 
     Product getProductValid(String id);
 
-    List<Product> getProducts();
+    List<Product> getProducts(boolean rootOnly);
 
 }
