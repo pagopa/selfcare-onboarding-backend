@@ -343,4 +343,26 @@ class OnboardingMsConnectorImplTest {
                 ._v1OnboardingInstitutionOnboardingsGet(origin, originId, OnboardingStatus.COMPLETED, null, null);
         verifyNoMoreInteractions(msOnboardingSupportApiClient);
     }
+
+    @Test
+    void checkManager() {
+        // given
+        final String origin = "origin";
+        final String originId = "originId";
+        OnboardingData onboardingData = new OnboardingData();
+        onboardingData.setOrigin(origin);
+        onboardingData.setOriginId(originId);
+        OnboardingUserRequest request = new OnboardingUserRequest();
+        request.setOrigin(origin);
+        request.setOriginId(originId);
+        when(msOnboardingApiClient._v1OnboardingCheckManagerPost(request))
+                .thenReturn(ResponseEntity.of(Optional.of(true)));
+        // when
+        final Executable executable = () -> onboardingMsConnector.checkManager(onboardingData);
+        // then
+        assertDoesNotThrow(executable);
+        verify(msOnboardingApiClient, times(1))
+                ._v1OnboardingCheckManagerPost(request);
+        verifyNoMoreInteractions(msOnboardingApiClient);
+    }
 }

@@ -33,4 +33,6 @@ public interface OnboardingMsConnector {
     void onboardingPaAggregation(OnboardingData onboardingData);
 
     List<OnboardingData> getByFilters(String productId, String taxCode, String origin, String originId, String subunitCode);
+
+    boolean checkManager(OnboardingData onboardingData);
 }

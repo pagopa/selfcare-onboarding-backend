@@ -71,4 +71,21 @@ public class UserController {
         log.trace("onboarding end");
     }
 
+    @ApiResponse(responseCode = "403",
+            description = "Forbidden",
+            content = {
+                    @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE,
+                            schema = @Schema(implementation = Problem.class))
+            })
+    @PostMapping(value = "/check-manager")
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "", notes = "${swagger.onboarding.users.api.onboarding}", nickname = "checkManager")
+    public Boolean checkManager(@RequestBody @Valid OnboardingUserDto request) {
+        log.trace("onboarding start");
+        log.debug("onboarding request = {}", request);
+        boolean checkManager =  userService.checkManager(onboardingResourceMapper.toEntity(request));
+        log.trace("onboarding end");
+        return checkManager;
+    }
+
 }

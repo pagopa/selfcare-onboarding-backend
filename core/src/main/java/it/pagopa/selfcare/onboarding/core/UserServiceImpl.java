@@ -66,6 +66,15 @@ public class UserServiceImpl implements UserService {
         log.trace("onboardingUsers end");
     }
 
+    @Override
+    public boolean  checkManager(OnboardingData onboardingData) {
+        log.trace("checkManager start");
+        log.debug("checkManager onboardingData = {}", onboardingData);
+        boolean checkManager =  onboardingMsConnector.checkManager(onboardingData);
+        log.trace("checkManager end");
+        return checkManager;
+    }
+
     private <T> boolean isValid(T field, CertifiedField<T> certifiedField) {
         return certifiedField == null
                 || !Certification.isCertified(certifiedField.getCertification())
