@@ -198,7 +198,7 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "type": "boolean"
+                  "type": "string"
                 }
               }
             }

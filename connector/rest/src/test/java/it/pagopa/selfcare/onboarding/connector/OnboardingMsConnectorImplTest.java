@@ -356,7 +356,7 @@ class OnboardingMsConnectorImplTest {
         request.setOrigin(origin);
         request.setOriginId(originId);
         when(msOnboardingApiClient._v1OnboardingCheckManagerPost(request))
-                .thenReturn(ResponseEntity.of(Optional.of(true)));
+                .thenReturn(ResponseEntity.of(Optional.of("true")));
         // when
         final Executable executable = () -> onboardingMsConnector.checkManager(onboardingData);
         // then
