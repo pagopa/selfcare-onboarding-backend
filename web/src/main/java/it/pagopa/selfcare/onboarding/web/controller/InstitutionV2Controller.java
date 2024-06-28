@@ -108,8 +108,6 @@ public class InstitutionV2Controller {
         log.trace("getInstitution start");
         if (!StringUtils.hasText(taxCode) && !StringUtils.hasText(originId) && !StringUtils.hasText(origin)) {
             throw new ValidationException("At least one of taxCode, origin or originId must be present");
-        } else if (StringUtils.hasText(subunitCode) && !StringUtils.hasText(taxCode)) {
-            throw new ValidationException("TaxCode is required if subunitCode is present");
         }
         final List<InstitutionResource> institutions = institutionService.getByFilters(productId, taxCode, origin, originId, subunitCode)
                 .stream()

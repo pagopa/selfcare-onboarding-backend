@@ -5,16 +5,16 @@ import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionInf
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.InstitutionUpdate;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.Mappings;
 
 
 @Mapper(componentModel = "spring")
 public interface InstitutionInfoMapper {
 
-    @Mappings({@Mapping(source = "city", target = "institutionLocation.city"),
-            @Mapping(source = "county", target = "institutionLocation.county"),
-            @Mapping(source = "country", target = "institutionLocation.country")})
+    @Mapping(source = "city", target = "institutionLocation.city")
+    @Mapping(source = "county", target = "institutionLocation.county")
+    @Mapping(source = "country", target = "institutionLocation.country")
     InstitutionInfo toInstitutionInfo(Institution institution);
+
 
     Institution toInstitution(InstitutionUpdate institution);
 }

@@ -164,20 +164,10 @@ class InstitutionV2ControllerTest {
      * Method under test: {@link InstitutionV2Controller#getInstitution(String, String, String, String, String)}
      */
     @Test
-    void getByFiltersValidationException(){
+    void getByFiltersValidationException() {
         Assertions.assertThrows(ValidationException.class,
                 () -> institutionController.getInstitution(null, null, null, null, null),
                 "At least one of taxCode, origin or originId must be present");
-    }
-
-    /**
-     * Method under test: {@link InstitutionV2Controller#getInstitution(String, String, String, String, String)}
-     */
-    @Test
-    void getByFiltersValidationExceptionTaxCodeNull(){
-        Assertions.assertThrows(ValidationException.class,
-                () -> institutionController.getInstitution(null, null, null, null, "subunitCode"),
-                "TaxCode is required if subunitCode is present");
     }
 
 }
