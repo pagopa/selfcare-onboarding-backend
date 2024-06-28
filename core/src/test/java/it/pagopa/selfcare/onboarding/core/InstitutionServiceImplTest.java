@@ -83,8 +83,8 @@ class InstitutionServiceImplTest {
     InstitutionInfoMapper institutionInfoMapper = new InstitutionInfoMapperImpl();
 
 
-    private final static User dummyManager;
-    private final static User dummyDelegate;
+    private static final User dummyManager;
+    private static final User dummyDelegate;
 
     static {
         dummyManager = new User();

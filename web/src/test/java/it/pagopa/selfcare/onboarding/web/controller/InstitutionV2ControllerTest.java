@@ -37,7 +37,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 @WebMvcTest(value = {InstitutionV2Controller.class}, excludeAutoConfiguration = SecurityAutoConfiguration.class)
 @ContextConfiguration(classes = {InstitutionV2Controller.class, WebTestConfig.class, OnboardingResourceMapperImpl.class, OnboardingInstitutionInfoMapperImpl.class, GeographicTaxonomyMapperImpl.class})
-public class InstitutionV2ControllerTest {
+class InstitutionV2ControllerTest {
 
     private static final String BASE_URL = "/v2/institutions";
 

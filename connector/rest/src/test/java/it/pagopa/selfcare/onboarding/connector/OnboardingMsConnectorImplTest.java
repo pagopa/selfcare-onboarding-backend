@@ -370,6 +370,30 @@ class OnboardingMsConnectorImplTest {
     }
 
     @Test
+    void getOnboardingByFiltersWithAOO() {
+        // given
+        final String origin = "origin";
+        final String originId = "originId";
+        final String productId = "productId";
+        OnboardingResponse resource = new OnboardingResponse();
+        InstitutionResponse institution = new InstitutionResponse();
+        institution.setSubunitType(InstitutionPaSubunitType.AOO);
+        resource.setInstitution(institution);
+
+        resource.setProductId("productId");
+        when(msOnboardingSupportApiClient._v1OnboardingInstitutionOnboardingsGet(origin, originId, OnboardingStatus.COMPLETED, null, null))
+                .thenReturn(ResponseEntity.ok(List.of(resource)));
+        // when
+        List<OnboardingData> result = onboardingMsConnector.getByFilters(productId, null, origin, originId, null);
+        // then
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+        verify(msOnboardingSupportApiClient, times(1))
+                ._v1OnboardingInstitutionOnboardingsGet(origin, originId, OnboardingStatus.COMPLETED, null, null);
+        verifyNoMoreInteractions(msOnboardingSupportApiClient);
+    }
+
+    @Test
     void checkManager() {
         // given
         final String origin = "origin";
