@@ -9,7 +9,6 @@ import it.pagopa.selfcare.onboarding.web.config.WebTestConfig;
 import it.pagopa.selfcare.onboarding.web.model.mapper.GeographicTaxonomyMapperImpl;
 import it.pagopa.selfcare.onboarding.web.model.mapper.OnboardingInstitutionInfoMapperImpl;
 import it.pagopa.selfcare.onboarding.web.model.mapper.OnboardingResourceMapperImpl;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +22,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import javax.validation.ValidationException;
 import java.util.List;
 import java.util.UUID;
 
@@ -158,16 +156,6 @@ class InstitutionV2ControllerTest {
                         .accept(APPLICATION_JSON_VALUE))
                 .andExpect(status().isBadRequest());
 
-    }
-
-    /**
-     * Method under test: {@link InstitutionV2Controller#getInstitution(String, String, String, String, String)}
-     */
-    @Test
-    void getByFiltersValidationException() {
-        Assertions.assertThrows(ValidationException.class,
-                () -> institutionController.getInstitution(null, null, null, null, null),
-                "At least one of taxCode, origin or originId must be present");
     }
 
 }

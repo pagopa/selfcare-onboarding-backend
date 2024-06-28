@@ -18,11 +18,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import javax.validation.ValidationException;
 import java.util.List;
 
 import static org.springframework.http.MediaType.APPLICATION_PROBLEM_JSON_VALUE;
@@ -106,9 +104,6 @@ public class InstitutionV2Controller {
                                                     @RequestParam(value = "subunitCode", required = false)
                                                     String subunitCode) {
         log.trace("getInstitution start");
-        if (!StringUtils.hasText(taxCode) && !StringUtils.hasText(originId) && !StringUtils.hasText(origin)) {
-            throw new ValidationException("At least one of taxCode, origin or originId must be present");
-        }
         final List<InstitutionResource> institutions = institutionService.getByFilters(productId, taxCode, origin, originId, subunitCode)
                 .stream()
                 .map(InstitutionMapper::toResource)
