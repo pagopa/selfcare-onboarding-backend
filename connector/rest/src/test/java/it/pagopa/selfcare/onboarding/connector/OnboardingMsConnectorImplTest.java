@@ -332,6 +332,7 @@ class OnboardingMsConnectorImplTest {
         final String originId = "originId";
         final String productId = "productId";
         OnboardingResponse resource = new OnboardingResponse();
+        resource.setInstitution(new InstitutionResponse());
         resource.setProductId("productId");
         when(msOnboardingSupportApiClient._v1OnboardingInstitutionOnboardingsGet(origin, originId, OnboardingStatus.COMPLETED, null, null))
                 .thenReturn(ResponseEntity.ok(List.of(resource)));
@@ -339,6 +340,30 @@ class OnboardingMsConnectorImplTest {
         final Executable executable = () -> onboardingMsConnector.getByFilters(productId, null, origin, originId, null);
         // then
         assertDoesNotThrow(executable);
+        verify(msOnboardingSupportApiClient, times(1))
+                ._v1OnboardingInstitutionOnboardingsGet(origin, originId, OnboardingStatus.COMPLETED, null, null);
+        verifyNoMoreInteractions(msOnboardingSupportApiClient);
+    }
+
+    @Test
+    void getOnboardingByFiltersWithUO() {
+        // given
+        final String origin = "origin";
+        final String originId = "originId";
+        final String productId = "productId";
+        OnboardingResponse resource = new OnboardingResponse();
+        InstitutionResponse institution = new InstitutionResponse();
+        institution.setSubunitType(InstitutionPaSubunitType.UO);
+        resource.setInstitution(institution);
+
+        resource.setProductId("productId");
+        when(msOnboardingSupportApiClient._v1OnboardingInstitutionOnboardingsGet(origin, originId, OnboardingStatus.COMPLETED, null, null))
+                .thenReturn(ResponseEntity.ok(List.of(resource)));
+        // when
+        List<OnboardingData> result = onboardingMsConnector.getByFilters(productId, null, origin, originId, null);
+        // then
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
         verify(msOnboardingSupportApiClient, times(1))
                 ._v1OnboardingInstitutionOnboardingsGet(origin, originId, OnboardingStatus.COMPLETED, null, null);
         verifyNoMoreInteractions(msOnboardingSupportApiClient);

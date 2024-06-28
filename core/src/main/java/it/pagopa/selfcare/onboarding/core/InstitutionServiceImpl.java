@@ -84,7 +84,7 @@ class InstitutionServiceImpl implements InstitutionService {
                            PartyRegistryProxyConnector partyRegistryProxyConnector,
                            OnboardingValidationStrategy onboardingValidationStrategy,
                            InstitutionInfoMapper institutionMapper
-                           ) {
+    ) {
         this.onboardingMsConnector = onboardingMsConnector;
         this.partyConnector = partyConnector;
         this.externalInterceptorConnector = externalInterceptorConnector;
@@ -431,15 +431,18 @@ class InstitutionServiceImpl implements InstitutionService {
     }
 
     @Override
-    public Institution getByFilters(String productId, String taxCode, String origin, String originId, String subunitCode) {
+    public List<Institution> getByFilters(String productId, String taxCode, String origin, String originId, String subunitCode) {
         log.trace("getByFilters start");
         List<OnboardingData> result = onboardingMsConnector.getByFilters(productId, taxCode, origin, originId, subunitCode);
-        log.debug(LogUtils.CONFIDENTIAL_MARKER, "getByFilters result = {}", result);
         if(Objects.isNull(result) || result.isEmpty()) {
             throw new ResourceNotFoundException();
         }
         log.trace("getByFilters end");
-        return institutionMapper.toInstitution(result.get(0).getInstitutionUpdate());
+        List<Institution> institutions = result.stream()
+                .map(OnboardingData::getInstitutionUpdate)
+                .map(institutionMapper::toInstitution).toList();
+        log.debug(LogUtils.CONFIDENTIAL_MARKER, "getByFilters result = {}", institutions);
+        return institutions;
     }
 
     @Override
