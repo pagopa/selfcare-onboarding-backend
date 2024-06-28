@@ -9,6 +9,7 @@ import java.util.List;
 @Data
 public class InstitutionUpdate {
 
+    private String id;
     private InstitutionType institutionType;
     private String description;
     private String digitalAddress;
