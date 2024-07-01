@@ -71,7 +71,7 @@ class InstitutionServiceImpl implements InstitutionService {
     private final PartyConnector partyConnector;
     private final ProductsConnector productsConnector;
     private final UserRegistryConnector userConnector;
-    private final MsExternalInterceptorConnector externalInterceptorConnector;
+    private final OnboardingFunctionsConnector onboardingFunctionsConnector;
     private final OnboardingValidationStrategy onboardingValidationStrategy;
     private final PartyRegistryProxyConnector partyRegistryProxyConnector;
     private final InstitutionInfoMapper institutionMapper;
@@ -80,14 +80,14 @@ class InstitutionServiceImpl implements InstitutionService {
     InstitutionServiceImpl(OnboardingMsConnector onboardingMsConnector, PartyConnector partyConnector,
                            ProductsConnector productsConnector,
                            UserRegistryConnector userConnector,
-                           MsExternalInterceptorConnector externalInterceptorConnector,
+                           OnboardingFunctionsConnector onboardingFunctionsConnector,
                            PartyRegistryProxyConnector partyRegistryProxyConnector,
                            OnboardingValidationStrategy onboardingValidationStrategy,
                            InstitutionInfoMapper institutionMapper
     ) {
         this.onboardingMsConnector = onboardingMsConnector;
         this.partyConnector = partyConnector;
-        this.externalInterceptorConnector = externalInterceptorConnector;
+        this.onboardingFunctionsConnector = onboardingFunctionsConnector;
         this.partyRegistryProxyConnector = partyRegistryProxyConnector;
         this.productsConnector = productsConnector;
         this.userConnector = userConnector;
@@ -408,7 +408,7 @@ class InstitutionServiceImpl implements InstitutionService {
     public void checkOrganization(String productId, String fiscalCode, String vatNumber) {
         log.trace("checkOrganization start");
         log.debug("checkOrganization productId = {}, fiscalCode = {}, vatNumber = {}", productId, fiscalCode, vatNumber );
-        externalInterceptorConnector.checkOrganization(productId, fiscalCode, vatNumber);
+        onboardingFunctionsConnector.checkOrganization(fiscalCode, vatNumber);
         log.trace("checkOrganization end");
     }
 
