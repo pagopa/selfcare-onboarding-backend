@@ -83,8 +83,8 @@ class InstitutionServiceImplTest {
     InstitutionInfoMapper institutionInfoMapper = new InstitutionInfoMapperImpl();
 
 
-    private final static User dummyManager;
-    private final static User dummyDelegate;
+    private static final User dummyManager;
+    private static final User dummyDelegate;
 
     static {
         dummyManager = new User();
@@ -1175,10 +1175,10 @@ class InstitutionServiceImplTest {
         when(onboardingMsConnector.getByFilters(productId, taxCode, null, null, subunitCode))
                 .thenReturn(List.of(onboardingData));
         //when
-        Institution result = institutionService.getByFilters(productId, taxCode, null, null, subunitCode);
+        List<Institution> result = institutionService.getByFilters(productId, taxCode, null, null, subunitCode);
         //then
         assertNotNull(result);
-        assertEquals(result.getDescription(), institutionUpdate.getDescription());
+        assertEquals(result.get(0).getDescription(), institutionUpdate.getDescription());
         verify(onboardingMsConnector, times(1))
                 .getByFilters(productId, taxCode, null, null, subunitCode);
         verifyNoMoreInteractions(onboardingMsConnector);

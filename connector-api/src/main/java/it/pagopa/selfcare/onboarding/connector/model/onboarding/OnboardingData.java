@@ -27,6 +27,7 @@ import java.util.Optional;
 @NoArgsConstructor
 public class OnboardingData {
 
+    private String id;
     private String institutionExternalId;
     private String taxCode;
     private String subunitCode;

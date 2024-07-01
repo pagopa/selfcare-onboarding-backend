@@ -1,6 +1,7 @@
 package it.pagopa.selfcare.onboarding.connector;
 
 import io.github.resilience4j.retry.annotation.Retry;
+import it.pagopa.selfcare.onboarding.common.InstitutionPaSubunitType;
 import it.pagopa.selfcare.onboarding.common.InstitutionType;
 import it.pagopa.selfcare.onboarding.connector.api.OnboardingMsConnector;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
@@ -130,6 +131,14 @@ public class OnboardingMsConnectorImpl implements OnboardingMsConnector {
     public List<OnboardingData> getByFilters(String productId, String taxCode, String origin, String originId, String subunitCode) {
         List<OnboardingResponse> result = msOnboardingSupportApiClient._v1OnboardingInstitutionOnboardingsGet(origin, originId, OnboardingStatus.COMPLETED, subunitCode, taxCode).getBody();
         return Objects.nonNull(result) ? result.stream()
+                // TODO this filter should be into query
+                .filter(onboardingResponse -> {
+                    if(Objects.isNull(subunitCode) && Objects.nonNull(onboardingResponse.getInstitution().getSubunitType())) {
+                        return !onboardingResponse.getInstitution().getSubunitType().name().equals(InstitutionPaSubunitType.UO.name())
+                                && !onboardingResponse.getInstitution().getSubunitType().name().equals(InstitutionPaSubunitType.AOO.name());
+                    }
+                    return true;
+                })
                 .filter(onboardingResponse -> onboardingResponse.getProductId().equals(productId))
                 .map(onboardingMapper::toOnboardingData)
                 .toList() : List.of();

@@ -46,5 +46,5 @@ public interface InstitutionService {
 
     InstitutionInfoIC getInstitutionsByUser(String taxCode);
 
-    Institution getByFilters(String productId, String taxCode, String origin, String originId, String subunitCode);
+    List<Institution> getByFilters(String productId, String taxCode, String origin, String originId, String subunitCode);
 }
