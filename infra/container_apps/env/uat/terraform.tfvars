@@ -55,10 +55,6 @@ app_settings = [
     value = "http://selc-u-ms-core-ca"
   },
   {
-    name  = "MS_EXTERNAL_INTERCEPTOR_URL"
-    value = "http://selc.internal.uat.selfcare.pagopa.it/ms-external-interceptor/v1"
-  },
-  {
     name  = "USERVICE_PARTY_PROCESS_URL"
     value = "http://selc-u-ms-core-ca"
   },
