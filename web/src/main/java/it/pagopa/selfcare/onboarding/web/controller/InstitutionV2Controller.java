@@ -9,7 +9,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import it.pagopa.selfcare.commons.base.logging.LogUtils;
 import it.pagopa.selfcare.commons.web.model.Problem;
 import it.pagopa.selfcare.onboarding.common.InstitutionType;
-import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
 import it.pagopa.selfcare.onboarding.core.InstitutionService;
 import it.pagopa.selfcare.onboarding.web.model.CompanyOnboardingDto;
 import it.pagopa.selfcare.onboarding.web.model.InstitutionResource;
@@ -123,7 +122,7 @@ public class InstitutionV2Controller {
     public VerifyAggregatesResponse verifyAggregatesCsv(@RequestParam("aggregates") MultipartFile file,
                                                         @RequestParam("institutionType") InstitutionType institutionType) {
         log.trace("Verify Aggregates Csv start");
-        log.debug("Verify Aggregates Csv start for product {} and institutionType {}", institutionType);
+        log.debug("Verify Aggregates Csv start for institutionType {}", institutionType);
         VerifyAggregatesResponse response = onboardingResourceMapper.toVerifyAggregatesResponse(institutionService.validateAggregatesCsv(file));
         log.trace("Verify Aggregates Csv end");
         return response;
