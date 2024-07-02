@@ -1,6 +1,6 @@
 locals {
-  apim_name    = format("selc-%s-apim", var.env_short)
-  apim_rg      = format("selc-%s-api-rg", var.env_short)
+  apim_name    = format("selc-%s-apim-v2", var.env_short)
+  apim_rg      = format("selc-%s-api-v2-rg", var.env_short)
   api_name     = var.is_pnpg ? format("selc-%s-pnpg-api-bff-onboarding", var.env_short) : format("selc-%s-api-bff-onboarding", var.env_short)
   display_name = var.is_pnpg ? "BFF PNPG Onboarding API" : "BFF Onboarding API"
   base_path    = var.is_pnpg ? "imprese/onboarding" : "onboarding"
