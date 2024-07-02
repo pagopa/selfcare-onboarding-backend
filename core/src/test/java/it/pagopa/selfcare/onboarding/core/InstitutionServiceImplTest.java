@@ -68,7 +68,7 @@ class InstitutionServiceImplTest {
     private UserRegistryConnector userConnectorMock;
 
     @Mock
-    private MsExternalInterceptorConnector msExternalInterceptorConnector;
+    private OnboardingFunctionsConnector onboardingFunctionsConnector;
 
     @Mock
     private PartyRegistryProxyConnector partyRegistryProxyConnectorMock;
@@ -86,8 +86,8 @@ class InstitutionServiceImplTest {
     InstitutionInfoMapper institutionInfoMapper = new InstitutionInfoMapperImpl();
 
 
-    private final static User dummyManager;
-    private final static User dummyDelegate;
+    private static final User dummyManager;
+    private static final User dummyDelegate;
 
     static {
         dummyManager = new User();
@@ -1178,10 +1178,10 @@ class InstitutionServiceImplTest {
         when(onboardingMsConnector.getByFilters(productId, taxCode, null, null, subunitCode))
                 .thenReturn(List.of(onboardingData));
         //when
-        Institution result = institutionService.getByFilters(productId, taxCode, null, null, subunitCode);
+        List<Institution> result = institutionService.getByFilters(productId, taxCode, null, null, subunitCode);
         //then
         assertNotNull(result);
-        assertEquals(result.getDescription(), institutionUpdate.getDescription());
+        assertEquals(result.get(0).getDescription(), institutionUpdate.getDescription());
         verify(onboardingMsConnector, times(1))
                 .getByFilters(productId, taxCode, null, null, subunitCode);
         verifyNoMoreInteractions(onboardingMsConnector);
@@ -1228,16 +1228,15 @@ class InstitutionServiceImplTest {
     @Test
     void checkOrganization() {
         //given
-        final String productId = "productId";
         final String fiscalCode = "fiscalCode";
         final String vatNumber = "vatNumber";
 
         //when
-        Executable executable = () -> institutionService.checkOrganization(productId, fiscalCode, vatNumber);
+        Executable executable = () -> institutionService.checkOrganization(null, fiscalCode, vatNumber);
         //then
         assertDoesNotThrow(executable);
-        verify(msExternalInterceptorConnector, times(1)).checkOrganization(productId, fiscalCode, vatNumber);
-        verifyNoMoreInteractions(msExternalInterceptorConnector);
+        verify(onboardingFunctionsConnector, times(1)).checkOrganization(fiscalCode, vatNumber);
+        verifyNoMoreInteractions(onboardingFunctionsConnector);
     }
 
     @Test

@@ -1,5 +1,6 @@
 package it.pagopa.selfcare.onboarding.web.controller;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.pagopa.selfcare.onboarding.common.InstitutionType;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
@@ -9,7 +10,6 @@ import it.pagopa.selfcare.onboarding.web.config.WebTestConfig;
 import it.pagopa.selfcare.onboarding.web.model.mapper.GeographicTaxonomyMapperImpl;
 import it.pagopa.selfcare.onboarding.web.model.mapper.OnboardingInstitutionInfoMapperImpl;
 import it.pagopa.selfcare.onboarding.web.model.mapper.OnboardingResourceMapperImpl;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +26,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.validation.ValidationException;
+import java.util.List;
 import java.util.UUID;
 
 import static org.hamcrest.Matchers.emptyString;
@@ -39,7 +39,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 @WebMvcTest(value = {InstitutionV2Controller.class}, excludeAutoConfiguration = SecurityAutoConfiguration.class)
 @ContextConfiguration(classes = {InstitutionV2Controller.class, WebTestConfig.class, OnboardingResourceMapperImpl.class, OnboardingInstitutionInfoMapperImpl.class, GeographicTaxonomyMapperImpl.class})
-public class InstitutionV2ControllerTest {
+class InstitutionV2ControllerTest {
 
     private static final String BASE_URL = "/v2/institutions";
 
@@ -126,7 +126,7 @@ public class InstitutionV2ControllerTest {
         institution.setDescription("description");
         institution.setId(UUID.randomUUID().toString());
         when(institutionServiceMock.getByFilters(productId, null, origin, originId, null))
-                .thenReturn(institution);
+                .thenReturn(List.of(institution));
         // when
         MvcResult result = mvc.perform(MockMvcRequestBuilders
                         .get(BASE_URL + "?origin={origin}&originId={originId}&productId={productId}", origin, originId, productId)
@@ -134,13 +134,15 @@ public class InstitutionV2ControllerTest {
                         .accept(APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk())
                 .andReturn();
+
         // then
-        Institution response = objectMapper.readValue(
+        List<Institution> response = objectMapper.readValue(
                 result.getResponse().getContentAsString(),
-                Institution.class);
+                new TypeReference<>() {});
         assertNotNull(response);
-        assertEquals(institution.getDescription(), response.getDescription());
-        assertEquals(institution.getId(), response.getId());
+        assertEquals(1, response.size());
+        assertEquals(institution.getDescription(), response.get(0).getDescription());
+        assertEquals(institution.getId(), response.get(0).getId());
     }
 
     /**

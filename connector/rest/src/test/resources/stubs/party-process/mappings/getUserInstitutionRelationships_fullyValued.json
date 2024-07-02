@@ -19,6 +19,9 @@
         "state": "PENDING",
         "pricingPlan": "string",
         "institutionUpdate": {
+          "id" : "id",
+          "origin": "IPA",
+          "originId": "test",
           "institutionType": "PA",
           "description": "AGENCY X",
           "digitalAddress": "email@pec.mail.org",

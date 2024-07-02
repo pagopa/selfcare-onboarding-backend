@@ -119,7 +119,13 @@ public interface OnboardingMapper {
 
     @Mapping(target = "institutionUpdate", source = "institution")
     @Mapping(target = "institutionUpdate.additionalInformations", source = "additionalInformations")
+    @Mapping(target = "institutionUpdate.origin", source = "institution.origin", qualifiedByName = "setOrigin")
     OnboardingData toOnboardingData(OnboardingResponse onboardingResponse);
+
+    @Named("setOrigin")
+    default String setOrigin(Origin origin) {
+       return Objects.nonNull(origin) ? origin.name() : null;
+    }
 
     OnboardingUserRequest toOnboardingUsersRequest(OnboardingData onboardingData);
 

@@ -9,12 +9,15 @@ import java.util.List;
 @Data
 public class InstitutionUpdate {
 
+    private String id;
     private InstitutionType institutionType;
     private String description;
     private String digitalAddress;
     private String address;
     private String taxCode;
     private String zipCode;
+    private String origin;
+    private String originId;
     private PaymentServiceProvider paymentServiceProvider;
     private DataProtectionOfficer dataProtectionOfficer;
     private List<GeographicTaxonomy> geographicTaxonomies;

@@ -1130,7 +1130,10 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/InstitutionResource"
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/InstitutionResource"
+                  }
                 }
               }
             }
