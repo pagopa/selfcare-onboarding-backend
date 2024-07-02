@@ -1364,6 +1364,106 @@
         } ]
       }
     },
+    "/v2/institutions/onboarding/aggregation/verification" : {
+      "post" : {
+        "tags" : [ "institutions" ],
+        "summary" : "verifyAggregatesCsv",
+        "description" : "The service allows the onboarding of Users to a subunit of an Institution",
+        "operationId" : "verifyAggregatesCsvUsingPOST",
+        "parameters" : [ {
+          "name" : "institutionType",
+          "in" : "query",
+          "description" : "institutionType",
+          "required" : true,
+          "style" : "form",
+          "schema" : {
+            "type" : "string",
+            "enum" : [ "AS", "CON", "GSP", "PA", "PG", "PSP", "PT", "REC", "SA", "SCP" ]
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "type" : "string",
+                "format" : "binary"
+              }
+            },
+            "application/octet-stream" : {
+              "schema" : {
+                "type" : "string",
+                "format" : "binary"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/VerifyAggregatesResponse"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad Request",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Unauthorized",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "Not Found",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "409" : {
+            "description" : "Conflict",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "Internal Server Error",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ "global" ]
+        } ]
+      }
+    },
     "/v1/product/{id}" : {
       "get" : {
         "tags" : [ "product" ],
@@ -2597,6 +2697,18 @@
           }
         }
       },
+      "AssistanceContacts" : {
+        "title" : "AssistanceContacts",
+        "type" : "object",
+        "properties" : {
+          "supportEmail" : {
+            "type" : "string"
+          },
+          "supportPhone" : {
+            "type" : "string"
+          }
+        }
+      },
       "AssistanceContactsDto" : {
         "title" : "AssistanceContactsDto",
         "type" : "object",
@@ -2624,6 +2736,21 @@
           "supportPhone" : {
             "type" : "string",
             "description" : "Institution's support phone contact"
+          }
+        }
+      },
+      "Attribute" : {
+        "title" : "Attribute",
+        "type" : "object",
+        "properties" : {
+          "code" : {
+            "type" : "string"
+          },
+          "description" : {
+            "type" : "string"
+          },
+          "origin" : {
+            "type" : "string"
           }
         }
       },
@@ -2758,6 +2885,21 @@
           }
         }
       },
+      "CompanyInformations" : {
+        "title" : "CompanyInformations",
+        "type" : "object",
+        "properties" : {
+          "businessRegisterPlace" : {
+            "type" : "string"
+          },
+          "rea" : {
+            "type" : "string"
+          },
+          "shareCapital" : {
+            "type" : "string"
+          }
+        }
+      },
       "CompanyInformationsDto" : {
         "title" : "CompanyInformationsDto",
         "type" : "object",
@@ -2853,6 +2995,21 @@
           }
         }
       },
+      "DataProtectionOfficer" : {
+        "title" : "DataProtectionOfficer",
+        "type" : "object",
+        "properties" : {
+          "address" : {
+            "type" : "string"
+          },
+          "email" : {
+            "type" : "string"
+          },
+          "pec" : {
+            "type" : "string"
+          }
+        }
+      },
       "DpoData" : {
         "title" : "DpoData",
         "required" : [ "address", "email", "pec" ],
@@ -2899,6 +3056,18 @@
           }
         }
       },
+      "GeographicTaxonomy" : {
+        "title" : "GeographicTaxonomy",
+        "type" : "object",
+        "properties" : {
+          "code" : {
+            "type" : "string"
+          },
+          "desc" : {
+            "type" : "string"
+          }
+        }
+      },
       "GeographicTaxonomyDto" : {
         "title" : "GeographicTaxonomyDto",
         "required" : [ "code", "desc" ],
@@ -2925,6 +3094,85 @@
           "desc" : {
             "type" : "string",
             "description" : "Institution's geographic taxonomy extended name"
+          }
+        }
+      },
+      "Institution" : {
+        "title" : "Institution",
+        "type" : "object",
+        "properties" : {
+          "address" : {
+            "type" : "string"
+          },
+          "aooParentCode" : {
+            "type" : "string"
+          },
+          "assistanceContacts" : {
+            "$ref" : "#/components/schemas/AssistanceContacts"
+          },
+          "attributes" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/Attribute"
+            }
+          },
+          "city" : {
+            "type" : "string"
+          },
+          "companyInformations" : {
+            "$ref" : "#/components/schemas/CompanyInformations"
+          },
+          "country" : {
+            "type" : "string"
+          },
+          "county" : {
+            "type" : "string"
+          },
+          "dataProtectionOfficer" : {
+            "$ref" : "#/components/schemas/DataProtectionOfficer"
+          },
+          "description" : {
+            "type" : "string"
+          },
+          "digitalAddress" : {
+            "type" : "string"
+          },
+          "externalId" : {
+            "type" : "string"
+          },
+          "geographicTaxonomies" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/GeographicTaxonomy"
+            }
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "institutionType" : {
+            "type" : "string",
+            "enum" : [ "AS", "CON", "GSP", "PA", "PG", "PSP", "PT", "REC", "SA", "SCP" ]
+          },
+          "origin" : {
+            "type" : "string"
+          },
+          "originId" : {
+            "type" : "string"
+          },
+          "paymentServiceProvider" : {
+            "$ref" : "#/components/schemas/PaymentServiceProvider"
+          },
+          "subunitCode" : {
+            "type" : "string"
+          },
+          "subunitType" : {
+            "type" : "string"
+          },
+          "taxCode" : {
+            "type" : "string"
+          },
+          "zipCode" : {
+            "type" : "string"
           }
         }
       },
@@ -3396,6 +3644,27 @@
           }
         }
       },
+      "PaymentServiceProvider" : {
+        "title" : "PaymentServiceProvider",
+        "type" : "object",
+        "properties" : {
+          "abiCode" : {
+            "type" : "string"
+          },
+          "businessRegisterNumber" : {
+            "type" : "string"
+          },
+          "legalRegisterName" : {
+            "type" : "string"
+          },
+          "legalRegisterNumber" : {
+            "type" : "string"
+          },
+          "vatNumberGroup" : {
+            "type" : "boolean"
+          }
+        }
+      },
       "Problem" : {
         "title" : "Problem",
         "required" : [ "status", "title" ],
@@ -3534,6 +3803,22 @@
           }
         }
       },
+      "RowErrorResponse" : {
+        "title" : "RowErrorResponse",
+        "type" : "object",
+        "properties" : {
+          "cf" : {
+            "type" : "string"
+          },
+          "reason" : {
+            "type" : "string"
+          },
+          "row" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }
+      },
       "UserDataValidationDto" : {
         "title" : "UserDataValidationDto",
         "required" : [ "taxCode" ],
@@ -3629,6 +3914,24 @@
           },
           "userDto" : {
             "$ref" : "#/components/schemas/UserDto"
+          }
+        }
+      },
+      "VerifyAggregatesResponse" : {
+        "title" : "VerifyAggregatesResponse",
+        "type" : "object",
+        "properties" : {
+          "aggregates" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/Institution"
+            }
+          },
+          "errors" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/RowErrorResponse"
+            }
           }
         }
       }

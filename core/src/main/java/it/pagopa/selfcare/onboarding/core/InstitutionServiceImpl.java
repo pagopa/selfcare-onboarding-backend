@@ -8,10 +8,7 @@ import it.pagopa.selfcare.onboarding.connector.api.*;
 import it.pagopa.selfcare.onboarding.connector.exceptions.ResourceNotFoundException;
 import it.pagopa.selfcare.onboarding.connector.model.InstitutionLegalAddressData;
 import it.pagopa.selfcare.onboarding.connector.model.InstitutionOnboardingData;
-import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
-import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionInfo;
-import it.pagopa.selfcare.onboarding.connector.model.institutions.MatchInfoResult;
-import it.pagopa.selfcare.onboarding.connector.model.institutions.OnboardingResource;
+import it.pagopa.selfcare.onboarding.connector.model.institutions.*;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.infocamere.InstitutionInfoIC;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.GeographicTaxonomy;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.InstitutionLocation;
@@ -40,6 +37,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.ValidationException;
 import java.util.*;
@@ -464,6 +462,18 @@ class InstitutionServiceImpl implements InstitutionService {
         log.trace("getInstitutionLegalAddress end");
         return result;
     }
+
+    @Override
+    public VerifyAggregateResult validateAggregatesCsv(MultipartFile file) {
+        VerifyAggregateResult verifyAggregateResult = onboardingMsConnector.verifyAggregatesCsv(file);
+        if(CollectionUtils.isEmpty(verifyAggregateResult.getErrors())) {
+            verifyAggregateResult.setErrors(Collections.emptyList());
+        }else{
+            verifyAggregateResult.setAggregates(Collections.emptyList());
+        }
+        return verifyAggregateResult;
+    }
+
 
     @Override
     public InstitutionOnboardingData getInstitutionOnboardingData(String externalInstitutionId, String productId) {
