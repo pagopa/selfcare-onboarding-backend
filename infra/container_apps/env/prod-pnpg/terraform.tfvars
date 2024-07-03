@@ -76,10 +76,6 @@ app_settings = [
     value = "http://selc-p-pnpg-ms-core-ca"
   },
   {
-    name  = "MS_EXTERNAL_INTERCEPTOR_URL"
-    value = "http://selc-p-pnpg-ext-interceptor-ca"
-  },
-  {
     name  = "USERVICE_PARTY_PROCESS_URL"
     value = "http://selc-p-pnpg-ms-core-ca"
   },
