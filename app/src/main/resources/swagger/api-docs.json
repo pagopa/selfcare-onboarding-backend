@@ -3141,6 +3141,10 @@
             "type" : "string",
             "description" : "Institution's details origin Id"
           },
+          "parentDescription" : {
+            "type" : "string",
+            "description" : "Institution's parent description"
+          },
           "taxCode" : {
             "type" : "string",
             "description" : "Institution's taxCode"
