@@ -1,5 +1,6 @@
 package it.pagopa.selfcare.onboarding.connector.api;
 
+import it.pagopa.selfcare.onboarding.connector.model.institutions.VerifyAggregateResult;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
 import org.springframework.core.io.Resource;
 import org.springframework.web.multipart.MultipartFile;
@@ -35,4 +36,6 @@ public interface OnboardingMsConnector {
     List<OnboardingData> getByFilters(String productId, String taxCode, String origin, String originId, String subunitCode);
 
     boolean checkManager(OnboardingData onboardingData);
+
+    VerifyAggregateResult verifyAggregatesCsv(MultipartFile file);
 }

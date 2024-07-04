@@ -76,10 +76,6 @@ app_settings = [
     value = "http://selc-p-pnpg-ms-core-ca"
   },
   {
-    name  = "MS_EXTERNAL_INTERCEPTOR_URL"
-    value = "http://selc-p-pnpg-ext-interceptor-ca"
-  },
-  {
     name  = "USERVICE_PARTY_PROCESS_URL"
     value = "http://selc-p-pnpg-ms-core-ca"
   },
@@ -96,9 +92,13 @@ app_settings = [
     value = "http://selc-p-pnpg-user-ms-ca"
   },
   {
-      name  = "PRODUCT_STORAGE_CONTAINER"
-      value = "selc-p-product"
-    }
+    name  = "PRODUCT_STORAGE_CONTAINER"
+    value = "selc-p-product"
+  },
+  {
+    name  = "ONBOARDING_FUNCTIONS_URL"
+    value = "https://selc-p-pnpg-onboarding-fn.azurewebsites.net"
+  }
 ]
 
 secrets_names = {
@@ -106,4 +106,5 @@ secrets_names = {
   "APPLICATIONINSIGHTS_CONNECTION_STRING"  = "appinsights-connection-string"
   "JWT_TOKEN_PUBLIC_KEY"                   = "jwt-public-key"
   "BLOB_STORAGE_PRODUCT_CONNECTION_STRING" = "blob-storage-product-connection-string"
+  "ONBOARDING-FUNCTIONS-API-KEY"           = "fn-onboarding-primary-key"
 }

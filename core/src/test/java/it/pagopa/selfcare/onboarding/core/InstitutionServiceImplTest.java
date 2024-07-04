@@ -33,7 +33,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.ValidationException;
 import java.util.*;
@@ -65,7 +68,7 @@ class InstitutionServiceImplTest {
     private UserRegistryConnector userConnectorMock;
 
     @Mock
-    private MsExternalInterceptorConnector msExternalInterceptorConnector;
+    private OnboardingFunctionsConnector onboardingFunctionsConnector;
 
     @Mock
     private PartyRegistryProxyConnector partyRegistryProxyConnectorMock;
@@ -1225,16 +1228,15 @@ class InstitutionServiceImplTest {
     @Test
     void checkOrganization() {
         //given
-        final String productId = "productId";
         final String fiscalCode = "fiscalCode";
         final String vatNumber = "vatNumber";
 
         //when
-        Executable executable = () -> institutionService.checkOrganization(productId, fiscalCode, vatNumber);
+        Executable executable = () -> institutionService.checkOrganization(null, fiscalCode, vatNumber);
         //then
         assertDoesNotThrow(executable);
-        verify(msExternalInterceptorConnector, times(1)).checkOrganization(productId, fiscalCode, vatNumber);
-        verifyNoMoreInteractions(msExternalInterceptorConnector);
+        verify(onboardingFunctionsConnector, times(1)).checkOrganization(fiscalCode, vatNumber);
+        verifyNoMoreInteractions(onboardingFunctionsConnector);
     }
 
     @Test
@@ -1602,6 +1604,41 @@ class InstitutionServiceImplTest {
                 .getInstitutionByExternalId(institutionId);
         verifyNoMoreInteractions(partyConnectorMock, userConnectorMock);
         verifyNoInteractions(productsConnectorMock);
+    }
+
+    @Test
+    void validateAggregatesCsvReturnsValidResultWhenNoErrors() {
+
+        MultipartFile file = new MockMultipartFile("file", "hello.txt", MediaType.TEXT_PLAIN_VALUE, "Hello, World!".getBytes());
+        VerifyAggregateResult expected = new VerifyAggregateResult();
+        expected.setAggregates(Arrays.asList(new Institution(), new Institution()));
+        expected.setErrors(Collections.emptyList());
+        when(onboardingMsConnector.verifyAggregatesCsv(any(MultipartFile.class))).thenReturn(expected);
+
+        // When
+        VerifyAggregateResult result = institutionService.validateAggregatesCsv(file);
+
+        // Then
+        assertEquals(0, result.getErrors().size());
+        verify(onboardingMsConnector, times(1)).verifyAggregatesCsv(any(MultipartFile.class));
+        verifyNoMoreInteractions(onboardingMsConnector);
+    }
+
+    @Test
+    void validateAggregatesCsvReturnsValidResultWhenErrorsExist() {
+        // Given
+        MultipartFile file = new MockMultipartFile("file", "hello.txt", MediaType.TEXT_PLAIN_VALUE, "Hello, World!".getBytes());
+        VerifyAggregateResult expected = new VerifyAggregateResult();
+        expected.setErrors(Arrays.asList(new RowError(), new RowError()));
+        when(onboardingMsConnector.verifyAggregatesCsv(any(MultipartFile.class))).thenReturn(expected);
+
+        // When
+        VerifyAggregateResult result = institutionService.validateAggregatesCsv(file);
+
+        // Then
+        assertEquals(0, result.getAggregates().size());
+        verify(onboardingMsConnector, times(1)).verifyAggregatesCsv(any(MultipartFile.class));
+        verifyNoMoreInteractions(onboardingMsConnector);
     }
 
 

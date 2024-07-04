@@ -5,10 +5,12 @@ import it.pagopa.selfcare.onboarding.connector.model.InstitutionOnboardingData;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionInfo;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.MatchInfoResult;
+import it.pagopa.selfcare.onboarding.connector.model.institutions.VerifyAggregateResult;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.infocamere.InstitutionInfoIC;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.GeographicTaxonomy;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.User;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Collection;
 import java.util.List;
@@ -47,4 +49,6 @@ public interface InstitutionService {
     InstitutionInfoIC getInstitutionsByUser(String taxCode);
 
     List<Institution> getByFilters(String productId, String taxCode, String origin, String originId, String subunitCode);
+
+    VerifyAggregateResult validateAggregatesCsv(MultipartFile file);
 }
