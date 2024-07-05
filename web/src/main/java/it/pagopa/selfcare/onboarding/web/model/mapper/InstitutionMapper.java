@@ -74,6 +74,7 @@ public class InstitutionMapper {
                 resource.setId(UUID.fromString(model.getId()));
             }
             resource.setDescription(model.getDescription());
+            resource.setParentDescription(model.getParentDescription());
             resource.setExternalId(model.getExternalId());
             resource.setAddress(model.getAddress());
             resource.setOriginId(model.getOriginId());
