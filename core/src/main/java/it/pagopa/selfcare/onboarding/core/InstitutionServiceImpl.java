@@ -8,10 +8,7 @@ import it.pagopa.selfcare.onboarding.connector.api.*;
 import it.pagopa.selfcare.onboarding.connector.exceptions.ResourceNotFoundException;
 import it.pagopa.selfcare.onboarding.connector.model.InstitutionLegalAddressData;
 import it.pagopa.selfcare.onboarding.connector.model.InstitutionOnboardingData;
-import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
-import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionInfo;
-import it.pagopa.selfcare.onboarding.connector.model.institutions.MatchInfoResult;
-import it.pagopa.selfcare.onboarding.connector.model.institutions.OnboardingResource;
+import it.pagopa.selfcare.onboarding.connector.model.institutions.*;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.infocamere.InstitutionInfoIC;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.GeographicTaxonomy;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.InstitutionLocation;
@@ -40,6 +37,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.ValidationException;
 import java.util.*;
@@ -71,7 +69,7 @@ class InstitutionServiceImpl implements InstitutionService {
     private final PartyConnector partyConnector;
     private final ProductsConnector productsConnector;
     private final UserRegistryConnector userConnector;
-    private final MsExternalInterceptorConnector externalInterceptorConnector;
+    private final OnboardingFunctionsConnector onboardingFunctionsConnector;
     private final OnboardingValidationStrategy onboardingValidationStrategy;
     private final PartyRegistryProxyConnector partyRegistryProxyConnector;
     private final InstitutionInfoMapper institutionMapper;
@@ -80,14 +78,14 @@ class InstitutionServiceImpl implements InstitutionService {
     InstitutionServiceImpl(OnboardingMsConnector onboardingMsConnector, PartyConnector partyConnector,
                            ProductsConnector productsConnector,
                            UserRegistryConnector userConnector,
-                           MsExternalInterceptorConnector externalInterceptorConnector,
+                           OnboardingFunctionsConnector onboardingFunctionsConnector,
                            PartyRegistryProxyConnector partyRegistryProxyConnector,
                            OnboardingValidationStrategy onboardingValidationStrategy,
                            InstitutionInfoMapper institutionMapper
     ) {
         this.onboardingMsConnector = onboardingMsConnector;
         this.partyConnector = partyConnector;
-        this.externalInterceptorConnector = externalInterceptorConnector;
+        this.onboardingFunctionsConnector = onboardingFunctionsConnector;
         this.partyRegistryProxyConnector = partyRegistryProxyConnector;
         this.productsConnector = productsConnector;
         this.userConnector = userConnector;
@@ -408,7 +406,7 @@ class InstitutionServiceImpl implements InstitutionService {
     public void checkOrganization(String productId, String fiscalCode, String vatNumber) {
         log.trace("checkOrganization start");
         log.debug("checkOrganization productId = {}, fiscalCode = {}, vatNumber = {}", productId, fiscalCode, vatNumber );
-        externalInterceptorConnector.checkOrganization(productId, fiscalCode, vatNumber);
+        onboardingFunctionsConnector.checkOrganization(fiscalCode, vatNumber);
         log.trace("checkOrganization end");
     }
 
@@ -464,6 +462,18 @@ class InstitutionServiceImpl implements InstitutionService {
         log.trace("getInstitutionLegalAddress end");
         return result;
     }
+
+    @Override
+    public VerifyAggregateResult validateAggregatesCsv(MultipartFile file) {
+        VerifyAggregateResult verifyAggregateResult = onboardingMsConnector.verifyAggregatesCsv(file);
+        if(CollectionUtils.isEmpty(verifyAggregateResult.getErrors())) {
+            verifyAggregateResult.setErrors(Collections.emptyList());
+        }else{
+            verifyAggregateResult.setAggregates(Collections.emptyList());
+        }
+        return verifyAggregateResult;
+    }
+
 
     @Override
     public InstitutionOnboardingData getInstitutionOnboardingData(String externalInstitutionId, String productId) {

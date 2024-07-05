@@ -57,10 +57,6 @@ app_settings = [
     value = "http://selc-u-pnpg-ms-core-ca"
   },
   {
-    name  = "MS_EXTERNAL_INTERCEPTOR_URL"
-    value = "http://selc-u-pnpg-ext-interceptor-ca"
-  },
-  {
     name  = "USERVICE_PARTY_PROCESS_URL"
     value = "http://selc-u-pnpg-ms-core-ca"
   },
@@ -85,14 +81,19 @@ app_settings = [
     value = "http://selc-u-pnpg-user-ms-ca"
   },
   {
-      name  = "PRODUCT_STORAGE_CONTAINER"
-      value = "selc-u-product"
-    }
+    name  = "PRODUCT_STORAGE_CONTAINER"
+    value = "selc-u-product"
+  },
+  {
+    name  = "ONBOARDING_FUNCTIONS_URL"
+    value = "https://selc-u-pnpg-onboarding-fn.azurewebsites.net"
+  }
 ]
 
 secrets_names = {
-  "USERVICE_USER_REGISTRY_API_KEY"        = "user-registry-api-key"
-  "APPLICATIONINSIGHTS_CONNECTION_STRING" = "appinsights-connection-string"
-  "JWT_TOKEN_PUBLIC_KEY"                  = "jwt-public-key"
-  "BLOB_STORAGE_PRODUCT_CONNECTION_STRING"  = "blob-storage-product-connection-string"
+  "USERVICE_USER_REGISTRY_API_KEY"         = "user-registry-api-key"
+  "APPLICATIONINSIGHTS_CONNECTION_STRING"  = "appinsights-connection-string"
+  "JWT_TOKEN_PUBLIC_KEY"                   = "jwt-public-key"
+  "BLOB_STORAGE_PRODUCT_CONNECTION_STRING" = "blob-storage-product-connection-string"
+  "ONBOARDING-FUNCTIONS-API-KEY"           = "fn-onboarding-primary-key"
 }
