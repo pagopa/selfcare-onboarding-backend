@@ -12,6 +12,7 @@ public class InstitutionUpdate {
     private String id;
     private InstitutionType institutionType;
     private String description;
+    private String parentDescription;
     private String digitalAddress;
     private String address;
     private String taxCode;

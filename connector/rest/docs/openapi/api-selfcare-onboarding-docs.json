@@ -1592,6 +1592,9 @@
           "zipCode" : {
             "type" : "string"
           },
+          "parentDescription" : {
+            "type" : "string"
+          },
           "geographicTaxonomies" : {
             "type" : "array",
             "items" : {
@@ -1970,7 +1973,7 @@
         "type" : "string"
       },
       "OnboardingUserRequest" : {
-        "required" : [ "productId", "origin", "originId", "users" ],
+        "required" : [ "productId", "users" ],
         "type" : "object",
         "properties" : {
           "productId" : {
@@ -1984,11 +1987,9 @@
             "type" : "string"
           },
           "origin" : {
-            "minLength" : 1,
             "type" : "string"
           },
           "originId" : {
-            "minLength" : 1,
             "type" : "string"
           },
           "taxCode" : {

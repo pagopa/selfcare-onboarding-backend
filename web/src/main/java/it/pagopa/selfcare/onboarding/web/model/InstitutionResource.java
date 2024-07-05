@@ -16,6 +16,9 @@ public class InstitutionResource {
     @ApiModelProperty(value = "${swagger.onboarding.institutions.model.name}")
     private String description;
 
+    @ApiModelProperty(value = "${swagger.onboarding.institutions.model.parentDescription}")
+    private String parentDescription;
+
     @ApiModelProperty(value = "${swagger.onboarding.institutions.model.externalId}")
     private String externalId;
 

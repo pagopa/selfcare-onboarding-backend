@@ -24,6 +24,7 @@
           "originId": "test",
           "institutionType": "PA",
           "description": "AGENCY X",
+          "parentDescription": "test",
           "digitalAddress": "email@pec.mail.org",
           "address": "via del campo",
           "taxCode": "string",

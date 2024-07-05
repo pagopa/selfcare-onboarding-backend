@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import it.pagopa.selfcare.commons.base.logging.LogUtils;
 import it.pagopa.selfcare.commons.web.model.Problem;
 import it.pagopa.selfcare.onboarding.common.InstitutionType;
+
 import it.pagopa.selfcare.onboarding.core.InstitutionService;
 import it.pagopa.selfcare.onboarding.web.model.CompanyOnboardingDto;
 import it.pagopa.selfcare.onboarding.web.model.InstitutionResource;
