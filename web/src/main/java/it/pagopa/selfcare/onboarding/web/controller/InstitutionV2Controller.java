@@ -11,10 +11,7 @@ import it.pagopa.selfcare.commons.web.model.Problem;
 import it.pagopa.selfcare.onboarding.common.InstitutionType;
 
 import it.pagopa.selfcare.onboarding.core.InstitutionService;
-import it.pagopa.selfcare.onboarding.web.model.CompanyOnboardingDto;
-import it.pagopa.selfcare.onboarding.web.model.InstitutionResource;
-import it.pagopa.selfcare.onboarding.web.model.OnboardingProductDto;
-import it.pagopa.selfcare.onboarding.web.model.VerifyAggregatesResponse;
+import it.pagopa.selfcare.onboarding.web.model.*;
 import it.pagopa.selfcare.onboarding.web.model.mapper.InstitutionMapper;
 import it.pagopa.selfcare.onboarding.web.model.mapper.OnboardingResourceMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +25,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 import static org.springframework.http.MediaType.APPLICATION_PROBLEM_JSON_VALUE;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.HEAD;
 
 @Slf4j
@@ -130,14 +128,15 @@ public class InstitutionV2Controller {
         return response;
     }
 
-    @RequestMapping(method = HEAD, value = "/onboarding/recipientCode/verification")
+    @RequestMapping(method = GET, value = "/onboarding/recipientCode/verification")
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "", notes = "${swagger.onboarding.institutions.api.onboarding.checkRecipientCode}")
-    public boolean checkRecipientCode(@RequestParam(value = "originId") String originId,
-                                      @RequestParam(value = "subunitCode") String subunitCode) {
+    public RecipientCodeStatus checkRecipientCode(@RequestParam(value = "originId") String originId,
+                                                  @RequestParam(value = "subunitCode") String subunitCode,
+                                                  @RequestParam(value = "recipientCode") String recipientCode) {
         log.trace("Check recipientCode start");
-        log.debug("Check recipientCode start for institution with originId {} and subunitCode {}", originId, subunitCode);
-        boolean response = institutionService.checkRecipientCode(originId, subunitCode);
+        log.debug("Check recipientCode start for institution with originId {}, subunitCode {} and recipientCode {}", originId, subunitCode, recipientCode);
+        RecipientCodeStatus response = onboardingResourceMapper.toRecipientCodeStatus(institutionService.checkRecipientCode(originId, subunitCode, recipientCode));
         log.trace("Check recipientCode start");
         return response;
     }

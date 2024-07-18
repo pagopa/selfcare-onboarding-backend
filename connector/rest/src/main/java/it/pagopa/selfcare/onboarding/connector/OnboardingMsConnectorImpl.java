@@ -4,6 +4,7 @@ import io.github.resilience4j.retry.annotation.Retry;
 import it.pagopa.selfcare.onboarding.common.InstitutionPaSubunitType;
 import it.pagopa.selfcare.onboarding.common.InstitutionType;
 import it.pagopa.selfcare.onboarding.connector.api.OnboardingMsConnector;
+import it.pagopa.selfcare.onboarding.connector.model.RecipientCodeStatusResult;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.VerifyAggregateResult;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
 import it.pagopa.selfcare.onboarding.connector.rest.client.MsOnboardingAggregatesApiClient;
@@ -158,9 +159,10 @@ public class OnboardingMsConnectorImpl implements OnboardingMsConnector {
 
     // TODO : This method should invoke onboardingMs to check recipientCode
     @Override
-    public boolean checkRecipientCode(String originId, String subunitCode) {
+    public RecipientCodeStatusResult checkRecipientCode(String originId, String subunitCode, String recipientCode) {
         Random random = new Random();
-        // Genera un booleano casuale
-        return random.nextBoolean();
+        RecipientCodeStatusResult[] statuses = RecipientCodeStatusResult.values();
+        int randomIndex = random.nextInt(statuses.length);
+        return statuses[randomIndex];
     }
 }

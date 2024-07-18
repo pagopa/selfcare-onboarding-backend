@@ -8,6 +8,7 @@ import it.pagopa.selfcare.onboarding.connector.api.*;
 import it.pagopa.selfcare.onboarding.connector.exceptions.ResourceNotFoundException;
 import it.pagopa.selfcare.onboarding.connector.model.InstitutionLegalAddressData;
 import it.pagopa.selfcare.onboarding.connector.model.InstitutionOnboardingData;
+import it.pagopa.selfcare.onboarding.connector.model.RecipientCodeStatusResult;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.*;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.infocamere.InstitutionInfoIC;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.GeographicTaxonomy;
@@ -475,10 +476,10 @@ class InstitutionServiceImpl implements InstitutionService {
     }
 
     @Override
-    public boolean checkRecipientCode(String originId, String subunitCode) {
+    public RecipientCodeStatusResult checkRecipientCode(String originId, String subunitCode, String recipientCode) {
         log.trace("checkRecipientCode start");
-        log.debug("checkRecipientCode for institution with originId {} and subunitCode {}", originId, subunitCode);
-        boolean result = onboardingMsConnector.checkRecipientCode(originId, subunitCode);
+        log.debug("checkRecipientCode for institution with originId {}, subunitCode {} and recipientCode {}", originId, subunitCode, recipientCode);
+        RecipientCodeStatusResult result = onboardingMsConnector.checkRecipientCode(originId, subunitCode, recipientCode);
         log.debug("checkRecipientCode result = {}", result);
         log.trace("checkRecipientCode end");
         return result;

@@ -2,6 +2,7 @@ package it.pagopa.selfcare.onboarding.core;
 
 import it.pagopa.selfcare.onboarding.connector.model.InstitutionLegalAddressData;
 import it.pagopa.selfcare.onboarding.connector.model.InstitutionOnboardingData;
+import it.pagopa.selfcare.onboarding.connector.model.RecipientCodeStatusResult;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionInfo;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.MatchInfoResult;
@@ -52,5 +53,5 @@ public interface InstitutionService {
 
     VerifyAggregateResult validateAggregatesCsv(MultipartFile file);
 
-    boolean checkRecipientCode(String originId, String subunitCode);
+    RecipientCodeStatusResult checkRecipientCode(String originId, String subunitCode, String recipientCode);
 }

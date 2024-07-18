@@ -8,6 +8,7 @@ import it.pagopa.selfcare.onboarding.connector.api.*;
 import it.pagopa.selfcare.onboarding.connector.exceptions.ResourceNotFoundException;
 import it.pagopa.selfcare.onboarding.connector.model.InstitutionLegalAddressData;
 import it.pagopa.selfcare.onboarding.connector.model.InstitutionOnboardingData;
+import it.pagopa.selfcare.onboarding.connector.model.RecipientCodeStatusResult;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.*;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.infocamere.BusinessInfoIC;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.infocamere.InstitutionInfoIC;
@@ -1644,14 +1645,14 @@ class InstitutionServiceImplTest {
     @Test
     void checkRecipientCode() {
         // Given
-        when(onboardingMsConnector.checkRecipientCode(any(), anyString())).thenReturn(true);
+        when(onboardingMsConnector.checkRecipientCode(any(), any(), any())).thenReturn(RecipientCodeStatusResult.ACCEPTED);
 
         // When
-        boolean result = institutionService.checkRecipientCode("originId", "subunitCode");
+        RecipientCodeStatusResult result = institutionService.checkRecipientCode("originId", "subunitCode", "recipientCode");
 
         // Then
-        assertTrue(result);
-        verify(onboardingMsConnector, times(1)).checkRecipientCode(any(), any());
+        assertEquals(result, RecipientCodeStatusResult.ACCEPTED);
+        verify(onboardingMsConnector, times(1)).checkRecipientCode(any(), any(), any());
         verifyNoMoreInteractions(onboardingMsConnector);
     }
 

@@ -205,17 +205,19 @@ class InstitutionV2ControllerTest {
         // Given
         String originId = "originId";
         String subunitCode = "subunitCode";
+        String recipientCode = "recipientCode";
 
         // When
         mvc.perform(MockMvcRequestBuilders
-                        .head(BASE_URL + "/onboarding/recipientCode/verification")
+                        .get(BASE_URL + "/onboarding/recipientCode/verification")
                         .queryParam("originId", originId)
                         .queryParam( "subunitCode", subunitCode)
+                        .queryParam("recipientCode", recipientCode)
                         .contentType(APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk());
 
         // Then
-        verify(institutionServiceMock, times(1)).checkRecipientCode(any(), any());
+        verify(institutionServiceMock, times(1)).checkRecipientCode(any(), any(), any());
         verifyNoMoreInteractions(institutionServiceMock);
     }
 }

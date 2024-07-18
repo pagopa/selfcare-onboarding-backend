@@ -1465,11 +1465,11 @@
       }
     },
     "/v2/institutions/onboarding/recipientCode/verification" : {
-      "head" : {
+      "get" : {
         "tags" : [ "institutions" ],
         "summary" : "checkRecipientCode",
         "description" : "The service allows to verify if recipientCode is valid or not",
-        "operationId" : "checkRecipientCodeUsingHEAD",
+        "operationId" : "checkRecipientCodeUsingGET",
         "parameters" : [ {
           "name" : "originId",
           "in" : "query",
@@ -1488,6 +1488,15 @@
           "schema" : {
             "type" : "string"
           }
+        }, {
+          "name" : "recipientCode",
+          "in" : "query",
+          "description" : "recipientCode",
+          "required" : true,
+          "style" : "form",
+          "schema" : {
+            "type" : "string"
+          }
         } ],
         "responses" : {
           "200" : {
@@ -1495,7 +1504,8 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "type" : "boolean"
+                  "type" : "string",
+                  "enum" : [ "ACCEPTED", "DENID_NO_ASSOCIATION", "DENID_NO_BILLING" ]
                 }
               }
             }

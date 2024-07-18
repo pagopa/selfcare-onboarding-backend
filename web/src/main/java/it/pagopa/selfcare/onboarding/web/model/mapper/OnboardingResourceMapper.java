@@ -2,6 +2,7 @@ package it.pagopa.selfcare.onboarding.web.model.mapper;
 
 import it.pagopa.selfcare.commons.base.security.PartyRole;
 import it.pagopa.selfcare.onboarding.connector.model.InstitutionLegalAddressData;
+import it.pagopa.selfcare.onboarding.connector.model.RecipientCodeStatusResult;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.VerifyAggregateResult;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
@@ -91,4 +92,6 @@ public interface OnboardingResourceMapper {
     }
 
     VerifyAggregatesResponse toVerifyAggregatesResponse(VerifyAggregateResult verifyAggregateResult);
+
+    RecipientCodeStatus toRecipientCodeStatus (RecipientCodeStatusResult recipientCodeStatusResult);
 }

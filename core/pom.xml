@@ -16,6 +16,12 @@
             <groupId>it.pagopa.selfcare</groupId>
             <artifactId>selc-onboarding-connector-api</artifactId>
         </dependency>
+        <dependency>
+            <groupId>it.pagopa.selfcare</groupId>
+            <artifactId>onboarding-sdk-common</artifactId>
+            <version>0.1.18</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 
 </project>
