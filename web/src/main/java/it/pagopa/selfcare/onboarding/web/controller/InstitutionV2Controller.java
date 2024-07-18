@@ -28,6 +28,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 import static org.springframework.http.MediaType.APPLICATION_PROBLEM_JSON_VALUE;
+import static org.springframework.web.bind.annotation.RequestMethod.HEAD;
 
 @Slf4j
 @RestController
@@ -126,6 +127,18 @@ public class InstitutionV2Controller {
         log.debug("Verify Aggregates Csv start for institutionType {}", institutionType);
         VerifyAggregatesResponse response = onboardingResourceMapper.toVerifyAggregatesResponse(institutionService.validateAggregatesCsv(file));
         log.trace("Verify Aggregates Csv end");
+        return response;
+    }
+
+    @RequestMapping(method = HEAD, value = "/onboarding/recipientCode/verification")
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "", notes = "${swagger.onboarding.institutions.api.onboarding.checkRecipientCode}")
+    public boolean checkRecipientCode(@RequestParam(value = "originId") String originId,
+                                      @RequestParam(value = "subunitCode") String subunitCode) {
+        log.trace("Check recipientCode start");
+        log.debug("Check recipientCode start for institution with originId {} and subunitCode {}", originId, subunitCode);
+        boolean response = institutionService.checkRecipientCode(originId, subunitCode);
+        log.trace("Check recipientCode start");
         return response;
     }
 

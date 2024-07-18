@@ -20,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Random;
 
 @Service
 @Slf4j
@@ -153,5 +154,13 @@ public class OnboardingMsConnectorImpl implements OnboardingMsConnector {
     public boolean checkManager(OnboardingData onboardingData) {
       String result =  msOnboardingApiClient._v1OnboardingCheckManagerPost(onboardingMapper.toOnboardingUsersRequest(onboardingData)).getBody();
       return Boolean.parseBoolean(result);
+    }
+
+    // TODO : This method should invoke onboardingMs to check recipientCode
+    @Override
+    public boolean checkRecipientCode(String originId, String subunitCode) {
+        Random random = new Random();
+        // Genera un booleano casuale
+        return random.nextBoolean();
     }
 }

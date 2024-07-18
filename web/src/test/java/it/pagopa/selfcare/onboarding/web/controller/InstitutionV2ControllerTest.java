@@ -199,4 +199,23 @@ class InstitutionV2ControllerTest {
         verify(institutionServiceMock, times(1)).validateAggregatesCsv(any(MultipartFile.class));
         verifyNoMoreInteractions(institutionServiceMock);
     }
+
+    @Test
+    void verifyRecipientCode() throws Exception {
+        // Given
+        String originId = "originId";
+        String subunitCode = "subunitCode";
+
+        // When
+        mvc.perform(MockMvcRequestBuilders
+                        .head(BASE_URL + "/onboarding/recipientCode/verification")
+                        .queryParam("originId", originId)
+                        .queryParam( "subunitCode", subunitCode)
+                        .contentType(APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk());
+
+        // Then
+        verify(institutionServiceMock, times(1)).checkRecipientCode(any(), any());
+        verifyNoMoreInteractions(institutionServiceMock);
+    }
 }

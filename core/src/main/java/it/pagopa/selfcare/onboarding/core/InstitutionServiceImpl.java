@@ -474,6 +474,15 @@ class InstitutionServiceImpl implements InstitutionService {
         return verifyAggregateResult;
     }
 
+    @Override
+    public boolean checkRecipientCode(String originId, String subunitCode) {
+        log.trace("checkRecipientCode start");
+        log.debug("checkRecipientCode for institution with originId {} and subunitCode {}", originId, subunitCode);
+        boolean result = onboardingMsConnector.checkRecipientCode(originId, subunitCode);
+        log.debug("checkRecipientCode result = {}", result);
+        log.trace("checkRecipientCode end");
+        return result;
+    }
 
     @Override
     public InstitutionOnboardingData getInstitutionOnboardingData(String externalInstitutionId, String productId) {

@@ -416,4 +416,18 @@ class OnboardingMsConnectorImplTest {
                 ._v1OnboardingCheckManagerPost(request);
         verifyNoMoreInteractions(msOnboardingApiClient);
     }
+
+    // TODO : implement unit test for checkRecipientCode
+    @Test
+    void checkRecipientCode() {
+        // given
+        final String subunitCode = "subunitCode";
+        final String originId = "originId";
+
+        // when
+        final Executable executable = () -> onboardingMsConnector.checkRecipientCode(originId, subunitCode);
+        // then
+        assertDoesNotThrow(executable);
+
+    }
 }

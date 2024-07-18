@@ -38,4 +38,6 @@ public interface OnboardingMsConnector {
     boolean checkManager(OnboardingData onboardingData);
 
     VerifyAggregateResult verifyAggregatesCsv(MultipartFile file);
+
+    boolean checkRecipientCode(String originId, String subunitCode);
 }

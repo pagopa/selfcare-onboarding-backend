@@ -1641,6 +1641,20 @@ class InstitutionServiceImplTest {
         verifyNoMoreInteractions(onboardingMsConnector);
     }
 
+    @Test
+    void checkRecipientCode() {
+        // Given
+        when(onboardingMsConnector.checkRecipientCode(any(), anyString())).thenReturn(true);
+
+        // When
+        boolean result = institutionService.checkRecipientCode("originId", "subunitCode");
+
+        // Then
+        assertTrue(result);
+        verify(onboardingMsConnector, times(1)).checkRecipientCode(any(), any());
+        verifyNoMoreInteractions(onboardingMsConnector);
+    }
+
 
     private static InstitutionInfo createInstitutionInfoMock() {
         return false ? mockInstance(new InstitutionInfo()) : mockInstance(new InstitutionInfo(), "setInstitutionLocation");
