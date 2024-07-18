@@ -1645,14 +1645,14 @@ class InstitutionServiceImplTest {
     @Test
     void checkRecipientCode() {
         // Given
-        when(onboardingMsConnector.checkRecipientCode(any(), any(), any())).thenReturn(RecipientCodeStatusResult.ACCEPTED);
+        when(onboardingMsConnector.checkRecipientCode(any())).thenReturn(RecipientCodeStatusResult.ACCEPTED);
 
         // When
-        RecipientCodeStatusResult result = institutionService.checkRecipientCode("originId", "subunitCode", "recipientCode");
+        RecipientCodeStatusResult result = institutionService.checkRecipientCode("subunitCode");
 
         // Then
         assertEquals(result, RecipientCodeStatusResult.ACCEPTED);
-        verify(onboardingMsConnector, times(1)).checkRecipientCode(any(), any(), any());
+        verify(onboardingMsConnector, times(1)).checkRecipientCode(any());
         verifyNoMoreInteractions(onboardingMsConnector);
     }
 

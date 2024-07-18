@@ -203,21 +203,17 @@ class InstitutionV2ControllerTest {
     @Test
     void verifyRecipientCode() throws Exception {
         // Given
-        String originId = "originId";
         String subunitCode = "subunitCode";
-        String recipientCode = "recipientCode";
 
         // When
         mvc.perform(MockMvcRequestBuilders
                         .get(BASE_URL + "/onboarding/recipientCode/verification")
-                        .queryParam("originId", originId)
                         .queryParam( "subunitCode", subunitCode)
-                        .queryParam("recipientCode", recipientCode)
                         .contentType(APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk());
 
         // Then
-        verify(institutionServiceMock, times(1)).checkRecipientCode(any(), any(), any());
+        verify(institutionServiceMock, times(1)).checkRecipientCode(any());
         verifyNoMoreInteractions(institutionServiceMock);
     }
 }

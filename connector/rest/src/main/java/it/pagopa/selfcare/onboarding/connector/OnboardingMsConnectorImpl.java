@@ -159,7 +159,7 @@ public class OnboardingMsConnectorImpl implements OnboardingMsConnector {
 
     // TODO : This method should invoke onboardingMs to check recipientCode
     @Override
-    public RecipientCodeStatusResult checkRecipientCode(String originId, String subunitCode, String recipientCode) {
+    public RecipientCodeStatusResult checkRecipientCode(String subunitCode) {
         Random random = new Random();
         RecipientCodeStatusResult[] statuses = RecipientCodeStatusResult.values();
         int randomIndex = random.nextInt(statuses.length);

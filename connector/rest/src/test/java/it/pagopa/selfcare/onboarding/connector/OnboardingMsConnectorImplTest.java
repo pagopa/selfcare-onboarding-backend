@@ -422,11 +422,9 @@ class OnboardingMsConnectorImplTest {
     void checkRecipientCode() {
         // given
         final String subunitCode = "subunitCode";
-        final String originId = "originId";
-        final String recipientCode = "recipientCode";
 
         // when
-        final Executable executable = () -> onboardingMsConnector.checkRecipientCode(originId, subunitCode, recipientCode);
+        final Executable executable = () -> onboardingMsConnector.checkRecipientCode(subunitCode);
         // then
         assertDoesNotThrow(executable);
 
