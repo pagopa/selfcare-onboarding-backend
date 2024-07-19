@@ -476,10 +476,10 @@ class InstitutionServiceImpl implements InstitutionService {
     }
 
     @Override
-    public RecipientCodeStatusResult  checkRecipientCode(String subunitCode) {
+    public RecipientCodeStatusResult  checkRecipientCode(String recipientCode, String originId) {
         log.trace("checkRecipientCode start");
-        log.debug("checkRecipientCode for institution with subunitCode {}",subunitCode);
-        RecipientCodeStatusResult result = onboardingMsConnector.checkRecipientCode(subunitCode);
+        log.debug("checkRecipientCode for institution with originId {} and recipientCode {}", originId, recipientCode);
+        RecipientCodeStatusResult result = onboardingMsConnector.checkRecipientCode(recipientCode, originId);
         log.debug("checkRecipientCode result = {}", result);
         log.trace("checkRecipientCode end");
         return result;

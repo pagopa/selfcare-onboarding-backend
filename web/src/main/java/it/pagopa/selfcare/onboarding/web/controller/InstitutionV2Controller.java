@@ -131,11 +131,12 @@ public class InstitutionV2Controller {
     @RequestMapping(method = GET, value = "/onboarding/recipientCode/verification")
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "", notes = "${swagger.onboarding.institutions.api.onboarding.checkRecipientCode}")
-    public RecipientCodeStatus checkRecipientCode(@RequestParam(value = "subunitCode") String subunitCode) {
-        log.trace("Check recipientCode start");
-        log.debug("Check recipientCode start for institution with subunitCode {}", subunitCode);
-        RecipientCodeStatus response = onboardingResourceMapper.toRecipientCodeStatus(institutionService.checkRecipientCode(subunitCode));
-        log.trace("Check recipientCode start");
+    public RecipientCodeStatus checkRecipientCode(@RequestParam(value = "recipientCode") String recipientCode,
+                                                  @RequestParam(value = "originId") String originId) {
+        log.trace("Check originId start");
+        log.debug("Check originId start for institution with originId {} and recipientCode {}", originId, recipientCode);
+        RecipientCodeStatus response = onboardingResourceMapper.toRecipientCodeStatus(institutionService.checkRecipientCode(recipientCode, originId));
+        log.trace("Check originId start");
         return response;
     }
 

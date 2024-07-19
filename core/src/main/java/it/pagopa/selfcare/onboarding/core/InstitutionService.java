@@ -53,5 +53,5 @@ public interface InstitutionService {
 
     VerifyAggregateResult validateAggregatesCsv(MultipartFile file);
 
-    RecipientCodeStatusResult checkRecipientCode(String subunitCode);
+    RecipientCodeStatusResult checkRecipientCode(String recipientCode, String originId);
 }

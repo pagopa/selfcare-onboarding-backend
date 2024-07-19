@@ -1471,9 +1471,18 @@
         "description" : "The service allows to verify if recipientCode is valid or not",
         "operationId" : "checkRecipientCodeUsingGET",
         "parameters" : [ {
-          "name" : "subunitCode",
+          "name" : "recipientCode",
           "in" : "query",
-          "description" : "subunitCode",
+          "description" : "recipientCode",
+          "required" : true,
+          "style" : "form",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "originId",
+          "in" : "query",
+          "description" : "originId",
           "required" : true,
           "style" : "form",
           "schema" : {
