@@ -1,5 +1,6 @@
 package it.pagopa.selfcare.onboarding.connector.api;
 
+import it.pagopa.selfcare.onboarding.connector.model.RecipientCodeStatusResult;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.VerifyAggregateResult;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
 import org.springframework.core.io.Resource;
@@ -38,4 +39,6 @@ public interface OnboardingMsConnector {
     boolean checkManager(OnboardingData onboardingData);
 
     VerifyAggregateResult verifyAggregatesCsv(MultipartFile file);
+
+    RecipientCodeStatusResult checkRecipientCode(String originId, String recipientCode);
 }

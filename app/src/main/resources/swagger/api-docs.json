@@ -1464,6 +1464,89 @@
         } ]
       }
     },
+    "/v2/institutions/onboarding/recipientCode/verification" : {
+      "get" : {
+        "tags" : [ "institutions" ],
+        "summary" : "checkRecipientCode",
+        "description" : "The service allows to verify if recipientCode is valid or not",
+        "operationId" : "checkRecipientCodeUsingGET",
+        "parameters" : [ {
+          "name" : "originId",
+          "in" : "query",
+          "description" : "originId",
+          "required" : true,
+          "style" : "form",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "recipientCode",
+          "in" : "query",
+          "description" : "recipientCode",
+          "required" : true,
+          "style" : "form",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "string",
+                  "enum" : [ "ACCEPTED", "DENIED_NO_ASSOCIATION", "DENIED_NO_BILLING" ]
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad Request",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Unauthorized",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "Not Found",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "Internal Server Error",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ "global" ]
+        } ]
+      }
+    },
     "/v1/product/{id}" : {
       "get" : {
         "tags" : [ "product" ],

@@ -1,6 +1,7 @@
 package it.pagopa.selfcare.onboarding.connector;
 
 import it.pagopa.selfcare.onboarding.common.InstitutionType;
+import it.pagopa.selfcare.onboarding.connector.model.RecipientCodeStatusResult;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.*;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.DataProtectionOfficer;
@@ -415,5 +416,31 @@ class OnboardingMsConnectorImplTest {
         verify(msOnboardingApiClient, times(1))
                 ._v1OnboardingCheckManagerPost(request);
         verifyNoMoreInteractions(msOnboardingApiClient);
+    }
+
+    @Test
+    void checkRecipientCode() {
+        // given
+        final String recipientCode = "recipientCode";
+        final String originId = "originId";
+        RecipientCodeStatus expectedStatusResult = RecipientCodeStatus.ACCEPTED;
+        ResponseEntity<RecipientCodeStatus> responseEntity = ResponseEntity.ok(expectedStatusResult);
+
+        when(msOnboardingApiClient._v1OnboardingCheckRecipientCodeGet(recipientCode, originId))
+                .thenReturn(responseEntity);
+        when(onboardingMapper.toRecipientCodeStatusResult(responseEntity.getBody()))
+                .thenReturn(RecipientCodeStatusResult.ACCEPTED);
+
+        // when
+        final Executable executable = () -> onboardingMsConnector.checkRecipientCode(recipientCode, originId);
+
+        // then
+        assertDoesNotThrow(executable);
+        verify(msOnboardingApiClient, times(1))
+                ._v1OnboardingCheckRecipientCodeGet(recipientCode, originId);
+        verify(onboardingMapper, times(1))
+                .toRecipientCodeStatusResult(responseEntity.getBody());
+        verifyNoMoreInteractions(msOnboardingApiClient);
+        verifyNoMoreInteractions(onboardingMapper);
     }
 }

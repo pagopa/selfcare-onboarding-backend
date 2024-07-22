@@ -11,10 +11,7 @@ import it.pagopa.selfcare.commons.web.model.Problem;
 import it.pagopa.selfcare.onboarding.common.InstitutionType;
 
 import it.pagopa.selfcare.onboarding.core.InstitutionService;
-import it.pagopa.selfcare.onboarding.web.model.CompanyOnboardingDto;
-import it.pagopa.selfcare.onboarding.web.model.InstitutionResource;
-import it.pagopa.selfcare.onboarding.web.model.OnboardingProductDto;
-import it.pagopa.selfcare.onboarding.web.model.VerifyAggregatesResponse;
+import it.pagopa.selfcare.onboarding.web.model.*;
 import it.pagopa.selfcare.onboarding.web.model.mapper.InstitutionMapper;
 import it.pagopa.selfcare.onboarding.web.model.mapper.OnboardingResourceMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -126,6 +123,18 @@ public class InstitutionV2Controller {
         log.debug("Verify Aggregates Csv start for institutionType {}", institutionType);
         VerifyAggregatesResponse response = onboardingResourceMapper.toVerifyAggregatesResponse(institutionService.validateAggregatesCsv(file));
         log.trace("Verify Aggregates Csv end");
+        return response;
+    }
+
+    @GetMapping(value = "/onboarding/recipientCode/verification")
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "", notes = "${swagger.onboarding.institutions.api.onboarding.checkRecipientCode}")
+    public RecipientCodeStatus checkRecipientCode(@RequestParam(value = "originId") String originId,
+                                                  @RequestParam(value = "recipientCode") String recipientCode) {
+        log.trace("Check recipientCode start");
+        log.debug("Check originId start for institution with originId {} and recipientCode {}", originId, recipientCode);
+        RecipientCodeStatus response = onboardingResourceMapper.toRecipientCodeStatus(institutionService.checkRecipientCode(originId, recipientCode));
+        log.trace("Check recipientCode end");
         return response;
     }
 

@@ -4,6 +4,7 @@ import io.github.resilience4j.retry.annotation.Retry;
 import it.pagopa.selfcare.onboarding.common.InstitutionPaSubunitType;
 import it.pagopa.selfcare.onboarding.common.InstitutionType;
 import it.pagopa.selfcare.onboarding.connector.api.OnboardingMsConnector;
+import it.pagopa.selfcare.onboarding.connector.model.RecipientCodeStatusResult;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.VerifyAggregateResult;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
 import it.pagopa.selfcare.onboarding.connector.rest.client.MsOnboardingAggregatesApiClient;
@@ -153,5 +154,10 @@ public class OnboardingMsConnectorImpl implements OnboardingMsConnector {
     public boolean checkManager(OnboardingData onboardingData) {
       String result =  msOnboardingApiClient._v1OnboardingCheckManagerPost(onboardingMapper.toOnboardingUsersRequest(onboardingData)).getBody();
       return Boolean.parseBoolean(result);
+    }
+
+    @Override
+    public RecipientCodeStatusResult checkRecipientCode(String originId, String recipientCode) {
+        return onboardingMapper.toRecipientCodeStatusResult(msOnboardingApiClient._v1OnboardingCheckRecipientCodeGet(originId, recipientCode).getBody());
     }
 }

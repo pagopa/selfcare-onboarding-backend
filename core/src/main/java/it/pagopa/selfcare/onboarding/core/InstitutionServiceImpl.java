@@ -8,6 +8,7 @@ import it.pagopa.selfcare.onboarding.connector.api.*;
 import it.pagopa.selfcare.onboarding.connector.exceptions.ResourceNotFoundException;
 import it.pagopa.selfcare.onboarding.connector.model.InstitutionLegalAddressData;
 import it.pagopa.selfcare.onboarding.connector.model.InstitutionOnboardingData;
+import it.pagopa.selfcare.onboarding.connector.model.RecipientCodeStatusResult;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.*;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.infocamere.InstitutionInfoIC;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.GeographicTaxonomy;
@@ -474,6 +475,15 @@ class InstitutionServiceImpl implements InstitutionService {
         return verifyAggregateResult;
     }
 
+    @Override
+    public RecipientCodeStatusResult  checkRecipientCode(String originId, String recipientCode) {
+        log.trace("checkRecipientCode start");
+        log.debug("checkRecipientCode for institution with originId {} and recipientCode {}", originId, recipientCode);
+        RecipientCodeStatusResult result = onboardingMsConnector.checkRecipientCode(originId, recipientCode);
+        log.debug("checkRecipientCode result = {}", result);
+        log.trace("checkRecipientCode end");
+        return result;
+    }
 
     @Override
     public InstitutionOnboardingData getInstitutionOnboardingData(String externalInstitutionId, String productId) {

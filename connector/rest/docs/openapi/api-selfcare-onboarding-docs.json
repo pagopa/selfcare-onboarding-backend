@@ -23,6 +23,46 @@
     "name" : "support"
   } ],
   "paths" : {
+    "/v1/onboarding/checkRecipientCode" : {
+      "get" : {
+        "tags" : [ "Onboarding Controller" ],
+        "summary" : "check if recipientCode is valid or not",
+        "parameters" : [ {
+          "name" : "originId",
+          "in" : "query",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "recipientCode",
+          "in" : "query",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/RecipientCodeStatus"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Not Authorized"
+          },
+          "403" : {
+            "description" : "Not Allowed"
+          }
+        },
+        "security" : [ {
+          "SecurityScheme" : [ ]
+        } ]
+      }
+    },
     "/v1/aggregates/verification" : {
       "post" : {
         "tags" : [ "Aggregates Controller" ],
@@ -1633,6 +1673,26 @@
         "type" : "string",
         "example" : "2022-03-10T12:15:50"
       },
+      "RecipientCodeStatus" : {
+        "enum" : [ "DENIED_NO_BILLING", "DENIED_NO_ASSOCIATION", "ACCEPTED" ],
+        "type" : "string"
+      },
+      "RowError" : {
+        "required" : [ "row" ],
+        "type" : "object",
+        "properties" : {
+          "row" : {
+            "format" : "int32",
+            "type" : "integer"
+          },
+          "cf" : {
+            "type" : "string"
+          },
+          "reason" : {
+            "type" : "string"
+          }
+        }
+      },
       "OnboardingDefaultRequest" : {
         "required" : [ "productId", "users", "institution" ],
         "type" : "object",
@@ -2056,22 +2116,6 @@
         "type" : "object",
         "properties" : {
           "reasonForReject" : {
-            "type" : "string"
-          }
-        }
-      },
-      "RowError" : {
-        "required" : [ "row", "cf" ],
-        "type" : "object",
-        "properties" : {
-          "row" : {
-            "format" : "int32",
-            "type" : "integer"
-          },
-          "cf" : {
-            "type" : "string"
-          },
-          "reason" : {
             "type" : "string"
           }
         }
