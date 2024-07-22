@@ -26,7 +26,6 @@ import java.util.List;
 
 import static org.springframework.http.MediaType.APPLICATION_PROBLEM_JSON_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.HEAD;
 
 @Slf4j
 @RestController
@@ -131,12 +130,12 @@ public class InstitutionV2Controller {
     @RequestMapping(method = GET, value = "/onboarding/recipientCode/verification")
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "", notes = "${swagger.onboarding.institutions.api.onboarding.checkRecipientCode}")
-    public RecipientCodeStatus checkRecipientCode(@RequestParam(value = "recipientCode") String recipientCode,
-                                                  @RequestParam(value = "originId") String originId) {
-        log.trace("Check originId start");
+    public RecipientCodeStatus checkRecipientCode(@RequestParam(value = "originId") String originId,
+                                                  @RequestParam(value = "recipientCode") String recipientCode) {
+        log.trace("Check recipientCode start");
         log.debug("Check originId start for institution with originId {} and recipientCode {}", originId, recipientCode);
-        RecipientCodeStatus response = onboardingResourceMapper.toRecipientCodeStatus(institutionService.checkRecipientCode(recipientCode, originId));
-        log.trace("Check originId start");
+        RecipientCodeStatus response = onboardingResourceMapper.toRecipientCodeStatus(institutionService.checkRecipientCode(originId, recipientCode));
+        log.trace("Check recipientCode end");
         return response;
     }
 

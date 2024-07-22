@@ -21,7 +21,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.Random;
 
 @Service
 @Slf4j
@@ -157,12 +156,8 @@ public class OnboardingMsConnectorImpl implements OnboardingMsConnector {
       return Boolean.parseBoolean(result);
     }
 
-    // TODO : This method should invoke onboardingMs to check recipientCode
     @Override
-    public RecipientCodeStatusResult checkRecipientCode(String recipientCode, String originId) {
-        Random random = new Random();
-        RecipientCodeStatusResult[] statuses = RecipientCodeStatusResult.values();
-        int randomIndex = random.nextInt(statuses.length);
-        return statuses[randomIndex];
+    public RecipientCodeStatusResult checkRecipientCode(String originId, String recipientCode) {
+        return onboardingMapper.toRecipientCodeStatusResult(msOnboardingApiClient._v1OnboardingCheckRecipientCodeGet(originId, recipientCode).getBody());
     }
 }
