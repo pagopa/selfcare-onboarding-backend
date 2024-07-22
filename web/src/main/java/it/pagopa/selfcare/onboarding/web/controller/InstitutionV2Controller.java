@@ -25,7 +25,6 @@ import javax.validation.Valid;
 import java.util.List;
 
 import static org.springframework.http.MediaType.APPLICATION_PROBLEM_JSON_VALUE;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 @Slf4j
 @RestController
@@ -127,7 +126,7 @@ public class InstitutionV2Controller {
         return response;
     }
 
-    @RequestMapping(method = GET, value = "/onboarding/recipientCode/verification")
+    @GetMapping(value = "/onboarding/recipientCode/verification")
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "", notes = "${swagger.onboarding.institutions.api.onboarding.checkRecipientCode}")
     public RecipientCodeStatus checkRecipientCode(@RequestParam(value = "originId") String originId,
