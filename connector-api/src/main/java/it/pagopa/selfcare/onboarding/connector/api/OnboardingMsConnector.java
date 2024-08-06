@@ -41,4 +41,6 @@ public interface OnboardingMsConnector {
     VerifyAggregateResult verifyAggregatesCsv(MultipartFile file);
 
     RecipientCodeStatusResult checkRecipientCode(String originId, String recipientCode);
+
+    void verifyOnboarding(String productId, String taxCode, String origin, String originId, String subunitCode);
 }

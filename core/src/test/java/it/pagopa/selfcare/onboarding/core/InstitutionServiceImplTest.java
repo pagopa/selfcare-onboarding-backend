@@ -1079,18 +1079,17 @@ class InstitutionServiceImplTest {
         final String taxCode = "taxCode";
         final String subunitCode = "subunitCode";
         final String productId = "productId";
-        final String externalId = "externalId";
         final String origin = "origin";
         final String originId = "originId";
         // when
-        final Executable executable = () -> institutionService.verifyOnboarding(productId, externalId, taxCode, origin, originId, subunitCode);
+        final Executable executable = () -> institutionService.verifyOnboarding(productId, taxCode, origin, originId, subunitCode);
         // then
         final Exception e = assertThrows(OnboardingNotAllowedException.class, executable);
         assertEquals("Institution with external id '" + taxCode + "' is not allowed to onboard '" + productId + "' product", e.getMessage());
         verify(onboardingValidationStrategyMock, times(1))
                 .validate(productId, taxCode);
         verifyNoMoreInteractions(onboardingValidationStrategyMock);
-        verifyNoInteractions(productsConnectorMock, userConnectorMock, partyConnectorMock);
+        verifyNoInteractions(productsConnectorMock, userConnectorMock, onboardingMsConnector);
     }
 
     @Test
@@ -1099,20 +1098,19 @@ class InstitutionServiceImplTest {
         final String taxCode = "taxCode";
         final String subunitCode = "subunitCode";
         final String productId = "productId";
-        final String externalId = "externalId";
         final String origin = "origin";
         final String originId = "originId";
         when(onboardingValidationStrategyMock.validate(productId, taxCode))
                 .thenReturn(true);
         // when
-        final Executable executable = () -> institutionService.verifyOnboarding(productId, externalId, taxCode, origin, originId, subunitCode);
+        final Executable executable = () -> institutionService.verifyOnboarding(productId, taxCode, origin, originId, subunitCode);
         // then
         assertDoesNotThrow(executable);
         verify(onboardingValidationStrategyMock, times(1))
                 .validate(productId, taxCode);
-        verify(partyConnectorMock, times(1))
-                .verifyOnboarding(productId, externalId, taxCode, origin, originId, subunitCode);
-        verifyNoMoreInteractions(onboardingValidationStrategyMock, partyConnectorMock);
+        verify(onboardingMsConnector, times(1))
+                .verifyOnboarding(productId, taxCode, origin, originId, subunitCode);
+        verifyNoMoreInteractions(onboardingValidationStrategyMock, onboardingMsConnector);
         verifyNoInteractions(productsConnectorMock, userConnectorMock);
     }
 

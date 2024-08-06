@@ -210,9 +210,6 @@ public class InstitutionController {
                                  @ApiParam("${swagger.onboarding.product.model.id}")
                                  @RequestParam("productId")
                                  String productId,
-                                 @ApiParam("${swagger.onboarding.institutions.model.externalId}")
-                                 @RequestParam(value = "externalId", required = false)
-                                 String externalId,
                                  @ApiParam("${swagger.onboarding.institutions.model.origin}")
                                  @RequestParam(value = "origin", required = false)
                                  String origin,
@@ -228,7 +225,7 @@ public class InstitutionController {
         if (VerifyType.EXTERNAL.equals(type) && vatNumber.isPresent() && (PROD_FD.getValue().equals(productId) || PROD_FD_GARANTITO.getValue().equals(productId))) {
             institutionService.checkOrganization(productId, taxCode, vatNumber.get());
         } else
-            institutionService.verifyOnboarding(productId, externalId, taxCode, origin, originId, subunitCode);
+            institutionService.verifyOnboarding(productId, taxCode, origin, originId, subunitCode);
         log.trace("verifyOnboarding end");
     }
 

@@ -40,7 +40,7 @@ public interface InstitutionService {
 
     void verifyOnboarding(String externalInstitutionId, String productId);
 
-    void verifyOnboarding(String productId, String externalId, String taxCode, String origin, String originId, String subunitCode);
+    void verifyOnboarding(String productId, String taxCode, String origin, String originId, String subunitCode);
 
     void checkOrganization(String productId, String fiscalCode, String vatNumber);
     MatchInfoResult matchInstitutionAndUser(String externalInstitutionId, User user);
