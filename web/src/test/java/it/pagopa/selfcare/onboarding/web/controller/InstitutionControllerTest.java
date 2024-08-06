@@ -344,14 +344,12 @@ class InstitutionControllerTest {
         String productId = "prod-fd";
         String taxCode = "taxCode";
         String subunitCode = "subunitCode";
-        String externalId = "externalId";
         String origin = "origin";
         String originId = "originId";
         //when
         mvc.perform(MockMvcRequestBuilders
                         .head(BASE_URL + "/onboarding")
                         .queryParam("productId", productId)
-                        .queryParam("externalId", externalId)
                         .queryParam("taxCode", taxCode)
                         .queryParam("origin", origin)
                         .queryParam("originId", originId)
@@ -361,7 +359,7 @@ class InstitutionControllerTest {
                         .accept(APPLICATION_JSON_VALUE))
                 .andExpect(status().isNoContent());
         //then
-        verify(institutionServiceMock, times(1)).verifyOnboarding(productId, externalId, taxCode, origin, originId, subunitCode);
+        verify(institutionServiceMock, times(1)).verifyOnboarding(productId, taxCode, origin, originId, subunitCode);
     }
     @Test
     void getInstitutionsByUserId() throws Exception {

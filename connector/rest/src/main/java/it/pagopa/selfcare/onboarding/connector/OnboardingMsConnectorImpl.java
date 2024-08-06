@@ -16,6 +16,7 @@ import it.pagopa.selfcare.onboarding.generated.openapi.v1.dto.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -31,6 +32,7 @@ public class OnboardingMsConnectorImpl implements OnboardingMsConnector {
     private final MsOnboardingTokenApiClient msOnboardingTokenApiClient;
     private final MsOnboardingAggregatesApiClient msOnboardingAggregatesApiClient;
     private final OnboardingMapper onboardingMapper;
+    protected static final String REQUIRED_PRODUCT_ID_MESSAGE = "A product Id is required";
 
     public OnboardingMsConnectorImpl(MsOnboardingApiClient msOnboardingApiClient,
                                      MsOnboardingTokenApiClient msOnboardingTokenApiClient,
@@ -159,5 +161,12 @@ public class OnboardingMsConnectorImpl implements OnboardingMsConnector {
     @Override
     public RecipientCodeStatusResult checkRecipientCode(String originId, String recipientCode) {
         return onboardingMapper.toRecipientCodeStatusResult(msOnboardingApiClient._v1OnboardingCheckRecipientCodeGet(originId, recipientCode).getBody());
+    }
+
+    public void verifyOnboarding(String productId, String taxCode, String origin, String originId, String subunitCode) {
+        log.trace("verifyOnboarding start");
+        Assert.hasText(productId, REQUIRED_PRODUCT_ID_MESSAGE);
+        msOnboardingApiClient._v1OnboardingVerifyHead(origin, originId, productId, subunitCode, taxCode);
+        log.trace("verifyOnboarding end");
     }
 }

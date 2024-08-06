@@ -395,11 +395,11 @@ class InstitutionServiceImpl implements InstitutionService {
 
 
     @Override
-    public void verifyOnboarding(String productId, String externalId, String taxCode, String origin, String originId, String subunitCode) {
+    public void verifyOnboarding(String productId, String taxCode, String origin, String originId, String subunitCode) {
         log.trace("verifyOnboardingSubunit start");
         log.debug("verifyOnboardingSubunit taxCode = {}", taxCode);
         validateOnboarding(taxCode, productId);
-        partyConnector.verifyOnboarding(productId, externalId, taxCode, origin, originId, subunitCode);
+        onboardingMsConnector.verifyOnboarding(productId, taxCode, origin, originId, subunitCode);
         log.trace("verifyOnboardingSubunit end");
     }
 

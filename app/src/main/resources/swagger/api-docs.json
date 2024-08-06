@@ -476,15 +476,6 @@
             "type" : "string"
           }
         }, {
-          "name" : "externalId",
-          "in" : "query",
-          "description" : "Institution's unique external identifier",
-          "required" : false,
-          "style" : "form",
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
           "name" : "origin",
           "in" : "query",
           "description" : "Institution data origin",

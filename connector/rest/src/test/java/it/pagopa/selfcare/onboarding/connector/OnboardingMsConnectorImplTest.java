@@ -443,4 +443,21 @@ class OnboardingMsConnectorImplTest {
         verifyNoMoreInteractions(msOnboardingApiClient);
         verifyNoMoreInteractions(onboardingMapper);
     }
+
+    @Test
+    void verifyOnboardingSubunitCode() {
+        // given
+        final String taxCode = "taxCode";
+        final String subunitCode = "subunitCode";
+        final String productId = "productId";
+        final String origin = "origin";
+        final String originId = "originId";
+        // when
+        final Executable executable = () -> onboardingMsConnector.verifyOnboarding(productId, taxCode, origin, originId, subunitCode);
+        // then
+        assertDoesNotThrow(executable);
+        verify(msOnboardingApiClient, times(1))
+                ._v1OnboardingVerifyHead( origin, originId, productId, subunitCode, taxCode);
+        verifyNoMoreInteractions(msOnboardingApiClient);
+    }
 }
