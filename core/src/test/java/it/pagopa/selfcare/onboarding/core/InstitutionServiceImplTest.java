@@ -5,6 +5,7 @@ import it.pagopa.selfcare.onboarding.common.InstitutionType;
 import it.pagopa.selfcare.onboarding.common.PartyRole;
 import it.pagopa.selfcare.onboarding.common.ProductId;
 import it.pagopa.selfcare.onboarding.connector.api.*;
+import it.pagopa.selfcare.onboarding.connector.exceptions.InvalidRequestException;
 import it.pagopa.selfcare.onboarding.connector.exceptions.ResourceNotFoundException;
 import it.pagopa.selfcare.onboarding.connector.model.InstitutionLegalAddressData;
 import it.pagopa.selfcare.onboarding.connector.model.InstitutionOnboardingData;
@@ -32,6 +33,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
@@ -41,6 +45,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.ValidationException;
 import java.util.*;
+import java.util.stream.Stream;
 
 import static it.pagopa.selfcare.commons.utils.TestUtils.mockInstance;
 import static it.pagopa.selfcare.onboarding.connector.model.user.User.Fields.*;
@@ -1090,6 +1095,27 @@ class InstitutionServiceImplTest {
                 .validate(productId, taxCode);
         verifyNoMoreInteractions(onboardingValidationStrategyMock);
         verifyNoInteractions(productsConnectorMock, userConnectorMock, onboardingMsConnector);
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideParametersNotAllowed")
+    void verifyOnboardingInfo_notAllowedParameter(String taxCode, String originId, String origin, String subunitCode) {
+        // given
+        final String productId = "productId";
+
+        // when
+        final Executable executable = () -> institutionService.verifyOnboarding(productId, taxCode, originId, origin, subunitCode);
+
+        // then
+        final Exception e = assertThrows(InvalidRequestException.class, executable);
+        verifyNoInteractions(productsConnectorMock, userConnectorMock, onboardingMsConnector);
+    }
+
+    static Stream<Arguments> provideParametersNotAllowed() {
+        return Stream.of(
+                Arguments.of("", "", "", ""),
+                Arguments.of(null, null, null, null)
+        );
     }
 
     @Test
