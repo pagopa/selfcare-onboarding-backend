@@ -5,6 +5,7 @@ import it.pagopa.selfcare.commons.base.utils.Origin;
 import it.pagopa.selfcare.onboarding.common.InstitutionType;
 import it.pagopa.selfcare.onboarding.common.PartyRole;
 import it.pagopa.selfcare.onboarding.connector.api.*;
+import it.pagopa.selfcare.onboarding.connector.exceptions.InvalidRequestException;
 import it.pagopa.selfcare.onboarding.connector.exceptions.ResourceNotFoundException;
 import it.pagopa.selfcare.onboarding.connector.model.InstitutionLegalAddressData;
 import it.pagopa.selfcare.onboarding.connector.model.InstitutionOnboardingData;
@@ -43,6 +44,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.validation.ValidationException;
 import java.util.*;
 
+import static io.netty.util.internal.StringUtil.isNullOrEmpty;
 import static it.pagopa.selfcare.onboarding.connector.model.user.User.Fields.*;
 
 @Slf4j
@@ -63,6 +65,7 @@ class InstitutionServiceImpl implements InstitutionService {
     private static final String ONBOARDING_NOT_ALLOWED_ERROR_MESSAGE_TEMPLATE = "Institution with external id '%s' is not allowed to onboard '%s' product";
     public static final String UNABLE_TO_COMPLETE_THE_ONBOARDING_FOR_INSTITUTION_FOR_PRODUCT_DISMISSED = "Unable to complete the onboarding for institution with taxCode '%s' to product '%s', the product is dismissed.";
     public static final String FIELD_PSP_DATA_IS_REQUIRED_FOR_PSP_INSTITUTION_ONBOARDING = "Field 'pspData' is required for PSP institution onboarding";
+    public static final String ONE_OTHER_PARAMETER_PROVIDED = "At least one other parameter must be provided along with productId";
 
     private static final String REQUIRED_AGGREGATE_INSTITUTIONS = "Aggregate institutions are required if given institution is an Aggregator";
     static final String DESCRIPTION_TO_REPLACE_REGEX = " - COMUNE";
@@ -397,10 +400,18 @@ class InstitutionServiceImpl implements InstitutionService {
     @Override
     public void verifyOnboarding(String productId, String taxCode, String origin, String originId, String subunitCode) {
         log.trace("verifyOnboardingSubunit start");
+        validateParameter(taxCode, origin, originId, subunitCode);
         log.debug("verifyOnboardingSubunit taxCode = {}", taxCode);
         validateOnboarding(taxCode, productId);
         onboardingMsConnector.verifyOnboarding(productId, taxCode, origin, originId, subunitCode);
         log.trace("verifyOnboardingSubunit end");
+    }
+
+    private void validateParameter(String taxCode, String origin, String originId, String subunitCode) {
+        if (isNullOrEmpty(taxCode) && isNullOrEmpty(origin) && isNullOrEmpty(originId) && isNullOrEmpty(subunitCode)) {
+            log.error("other parameters are missing while only productId is provided");
+            throw new InvalidRequestException(String.format(ONE_OTHER_PARAMETER_PROVIDED));
+        }
     }
 
     @Override
