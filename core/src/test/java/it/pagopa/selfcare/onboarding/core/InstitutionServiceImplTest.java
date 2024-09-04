@@ -1122,6 +1122,37 @@ class InstitutionServiceImplTest {
         );
     }
 
+    @ParameterizedTest
+    @MethodSource("provideParametersAllowed")
+    void verifyOnboardingInfo_allowedParameter(String taxCode, String origin, String originId, String subunitCode) {
+        // given
+        final String productId = "productId";
+        when(onboardingValidationStrategyMock.validate(productId, taxCode))
+                .thenReturn(true);
+
+        // when
+        final Executable executable = () -> institutionService.verifyOnboarding(productId, taxCode, originId, origin, subunitCode);
+
+        // then
+        assertDoesNotThrow(executable);
+        verify(onboardingValidationStrategyMock, times(1))
+                .validate(productId, taxCode);
+        verify(onboardingMsConnector, times(1))
+                .verifyOnboarding(productId, taxCode, originId, origin, subunitCode);
+        verifyNoMoreInteractions(onboardingValidationStrategyMock, onboardingMsConnector);
+        verifyNoInteractions(productsConnectorMock, userConnectorMock);
+    }
+
+    static Stream<Arguments> provideParametersAllowed() {
+        return Stream.of(
+                Arguments.of("taxCode", "", "", ""),
+                Arguments.of("", "origin", "", ""),
+                Arguments.of("", "", "originId", ""),
+                Arguments.of("", "", "", "subunitCode")
+
+        );
+    }
+
     @Test
     void verifyOnboardingInfo_allowed() {
         // given
