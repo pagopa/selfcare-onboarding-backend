@@ -1114,6 +1114,10 @@ class InstitutionServiceImplTest {
     static Stream<Arguments> provideParametersNotAllowed() {
         return Stream.of(
                 Arguments.of("", "", "", ""),
+                Arguments.of(null, "", "", ""),
+                Arguments.of("", null, "", ""),
+                Arguments.of("", "", null, ""),
+                Arguments.of("", "", "", null),
                 Arguments.of(null, null, null, null)
         );
     }
