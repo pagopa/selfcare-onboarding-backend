@@ -2119,7 +2119,7 @@
         }
       },
       "Origin" : {
-        "enum" : [ "MOCK", "IPA", "SELC", "ANAC", "UNKNOWN", "ADE", "INFOCAMERE", "IVASS" ],
+        "enum" : [ "MOCK", "IPA", "SELC", "ANAC", "UNKNOWN", "ADE", "INFOCAMERE", "IVASS", "PDND_INFOCAMERE" ],
         "type" : "string"
       },
       "PartyRole" : {
