@@ -7,6 +7,8 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import it.pagopa.selfcare.commons.base.logging.LogUtils;
+import it.pagopa.selfcare.commons.base.utils.InstitutionType;
+import it.pagopa.selfcare.commons.base.utils.ProductId;
 import it.pagopa.selfcare.commons.web.model.Problem;
 import it.pagopa.selfcare.onboarding.common.InstitutionType;
 
@@ -14,6 +16,7 @@ import it.pagopa.selfcare.onboarding.core.InstitutionService;
 import it.pagopa.selfcare.onboarding.web.model.*;
 import it.pagopa.selfcare.onboarding.web.model.mapper.InstitutionMapper;
 import it.pagopa.selfcare.onboarding.web.model.mapper.OnboardingResourceMapper;
+import it.pagopa.selfcare.product.entity.Product;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -118,9 +121,11 @@ public class InstitutionV2Controller {
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "", notes = "${swagger.onboarding.institutions.api.onboarding.subunit}")
     public VerifyAggregatesResponse verifyAggregatesCsv(@RequestParam("aggregates") MultipartFile file,
-                                                        @RequestParam("institutionType") InstitutionType institutionType) {
+                                                        @RequestParam("institutionType") InstitutionType institutionType,
+                                                        @RequestParam("productId") ProductId productId) {
         log.trace("Verify Aggregates Csv start");
         log.debug("Verify Aggregates Csv start for institutionType {}", institutionType);
+
         VerifyAggregatesResponse response = onboardingResourceMapper.toVerifyAggregatesResponse(institutionService.validateAggregatesCsv(file));
         log.trace("Verify Aggregates Csv end");
         return response;
