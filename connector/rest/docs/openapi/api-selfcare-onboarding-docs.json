@@ -20,111 +20,20 @@
   }, {
     "name" : "Onboarding Controller"
   }, {
+    "name" : "internal-v1"
+  }, {
     "name" : "support"
   } ],
   "paths" : {
-    "/v1/onboarding/checkRecipientCode" : {
-      "get" : {
-        "tags" : [ "Onboarding Controller" ],
-        "summary" : "check if recipientCode is valid or not",
-        "parameters" : [ {
-          "name" : "originId",
-          "in" : "query",
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "recipientCode",
-          "in" : "query",
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/RecipientCodeStatus"
-                }
-              }
-            }
-          },
-          "401" : {
-            "description" : "Not Authorized"
-          },
-          "403" : {
-            "description" : "Not Allowed"
-          }
-        },
-        "security" : [ {
-          "SecurityScheme" : [ ]
-        } ]
-      }
-    },
-    "/v1/onboarding/verify" : {
-      "head" : {
-        "tags" : [ "Onboarding Controller" ],
-        "summary" : "Verify if the onboarded product is already onboarded for the institution",
-        "parameters" : [ {
-          "name" : "origin",
-          "in" : "query",
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "originId",
-          "in" : "query",
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "productId",
-          "in" : "query",
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "subunitCode",
-          "in" : "query",
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "taxCode",
-          "in" : "query",
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "application/json" : { }
-            }
-          },
-          "401" : {
-            "description" : "Not Authorized"
-          },
-          "403" : {
-            "description" : "Not Allowed"
-          }
-        },
-        "security" : [ {
-          "SecurityScheme" : [ ]
-        } ]
-      }
-    },
-    "/v1/aggregates/verification" : {
+    "/v1/aggregates/verification/prod-io" : {
       "post" : {
         "tags" : [ "Aggregates Controller" ],
-        "summary" : "",
+        "summary" : "Validate the data related to the aggregated entities present in a CSV file",
         "requestBody" : {
           "content" : {
             "multipart/form-data" : {
               "schema" : {
+                "required" : [ "aggregates" ],
                 "type" : "object",
                 "properties" : {
                   "aggregates" : {
@@ -143,6 +52,92 @@
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/VerifyAggregateResponse"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Not Authorized"
+          },
+          "403" : {
+            "description" : "Not Allowed"
+          }
+        },
+        "security" : [ {
+          "SecurityScheme" : [ ]
+        } ]
+      }
+    },
+    "/v1/aggregates/verification/prod-pagopa" : {
+      "post" : {
+        "tags" : [ "Aggregates Controller" ],
+        "summary" : "Validate the data related to the aggregated entities present in a CSV file",
+        "requestBody" : {
+          "content" : {
+            "multipart/form-data" : {
+              "schema" : {
+                "required" : [ "aggregates" ],
+                "type" : "object",
+                "properties" : {
+                  "aggregates" : {
+                    "format" : "binary",
+                    "type" : "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/VerifyAggregateResponse"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Not Authorized"
+          },
+          "403" : {
+            "description" : "Not Allowed"
+          }
+        },
+        "security" : [ {
+          "SecurityScheme" : [ ]
+        } ]
+      }
+    },
+    "/v1/aggregates/verification/prod-pn" : {
+      "post" : {
+        "tags" : [ "Aggregates Controller" ],
+        "summary" : "Validate the data related to the aggregated entities present in a CSV file",
+        "requestBody" : {
+          "content" : {
+            "multipart/form-data" : {
+              "schema" : {
+                "required" : [ "aggregates" ],
+                "type" : "object",
+                "properties" : {
+                  "aggregates" : {
+                    "format" : "binary",
+                    "type" : "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/VerifyAggregateSendResponse"
                 }
               }
             }
@@ -246,6 +241,12 @@
             "type" : "string"
           }
         }, {
+          "name" : "subunitCode",
+          "in" : "query",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
           "name" : "taxCode",
           "in" : "query",
           "schema" : {
@@ -315,44 +316,116 @@
         } ]
       }
     },
-    "/v1/onboarding/check-manager": {
-      "post": {
-        "tags": [
-          "Onboarding Controller"
-        ],
-        "summary": "In the addition administrator flow, it checks if the new manager is equal from old one, returning true ",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/OnboardingUserRequest"
+    "/v1/onboarding/aggregation/completion" : {
+      "post" : {
+        "tags" : [ "Onboarding Controller" ],
+        "summary" : "Perform onboarding aggregation as /onboarding but completing the onboarding request to COMPLETED phase. The operation will be performed async due to the possible amount of time the process could take.",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/OnboardingDefaultRequest"
               }
             }
           }
         },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string"
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/OnboardingResponse"
                 }
               }
             }
           },
-          "401": {
-            "description": "Not Authorized"
+          "401" : {
+            "description" : "Not Authorized"
           },
-          "403": {
-            "description": "Not Allowed"
+          "403" : {
+            "description" : "Not Allowed"
           }
         },
-        "security": [
-          {
-            "SecurityScheme": []
+        "security" : [ {
+          "SecurityScheme" : [ ]
+        } ]
+      }
+    },
+    "/v1/onboarding/check-manager" : {
+      "post" : {
+        "tags" : [ "Onboarding Controller" ],
+        "summary" : "In the addition administrator flow, it checks if the new manager is equal from old one, returning true ",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/OnboardingUserRequest"
+              }
+            }
           }
-        ]
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "text/plain" : {
+                "schema" : {
+                  "type" : "boolean"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Not Authorized"
+          },
+          "403" : {
+            "description" : "Not Allowed"
+          }
+        },
+        "security" : [ {
+          "SecurityScheme" : [ ]
+        } ]
+      }
+    },
+    "/v1/onboarding/checkRecipientCode" : {
+      "get" : {
+        "tags" : [ "Onboarding Controller" ],
+        "summary" : "check if recipientCode is valid or not",
+        "parameters" : [ {
+          "name" : "originId",
+          "in" : "query",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "recipientCode",
+          "in" : "query",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/RecipientCodeStatus"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Not Authorized"
+          },
+          "403" : {
+            "description" : "Not Allowed"
+          }
+        },
+        "security" : [ {
+          "SecurityScheme" : [ ]
+        } ]
       }
     },
     "/v1/onboarding/completion" : {
@@ -395,6 +468,7 @@
       "get" : {
         "tags" : [ "support", "Onboarding" ],
         "summary" : "Returns onboardings record by institution taxCode/subunitCode/origin/originId",
+        "operationId" : "onboardingInstitutionUsingGET",
         "parameters" : [ {
           "name" : "origin",
           "in" : "query",
@@ -739,6 +813,60 @@
         } ]
       }
     },
+    "/v1/onboarding/verify" : {
+      "head" : {
+        "tags" : [ "Onboarding Controller" ],
+        "summary" : "Verify if the onboarded product is already onboarded for the institution",
+        "parameters" : [ {
+          "name" : "origin",
+          "in" : "query",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "originId",
+          "in" : "query",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "productId",
+          "in" : "query",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "subunitCode",
+          "in" : "query",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "taxCode",
+          "in" : "query",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : { }
+            }
+          },
+          "401" : {
+            "description" : "Not Authorized"
+          },
+          "403" : {
+            "description" : "Not Allowed"
+          }
+        },
+        "security" : [ {
+          "SecurityScheme" : [ ]
+        } ]
+      }
+    },
     "/v1/onboarding/{onboardingId}" : {
       "get" : {
         "tags" : [ "Onboarding Controller" ],
@@ -807,8 +935,9 @@
     },
     "/v1/onboarding/{onboardingId}/complete" : {
       "put" : {
-        "tags" : [ "Onboarding Controller" ],
+        "tags" : [ "internal-v1" ],
         "summary" : "Perform complete operation of an onboarding request receiving onboarding id and contract signed by the institution.It checks the contract's signature and upload the contract on an azure storageAt the end, function triggers async activities related to complete onboarding that consist of create the institution, activate the onboarding and sending data to notification queue.",
+        "operationId" : "completeOnboardingUsingPUT",
         "parameters" : [ {
           "name" : "onboardingId",
           "in" : "path",
@@ -901,8 +1030,9 @@
     },
     "/v1/onboarding/{onboardingId}/consume" : {
       "put" : {
-        "tags" : [ "support", "Onboarding" ],
+        "tags" : [ "support", "internal-v1", "Onboarding"],
         "summary" : "Perform complete operation of an onboarding request as /complete but without signature verification of the contract",
+        "operationId" : "completeOnboardingTokenConsume",
         "parameters" : [ {
           "name" : "onboardingId",
           "in" : "path",
@@ -1023,8 +1153,9 @@
     },
     "/v1/onboarding/{onboardingId}/update" : {
       "put" : {
-        "tags" : [ "Onboarding Controller" ],
+        "tags" : [ "support", "Onboarding" ],
         "summary" : "Update onboarding request receiving onboarding id.Function can change some values. ",
+        "operationId" : "updateOnboardiUsingPUT",
         "parameters" : [ {
           "name" : "onboardingId",
           "in" : "path",
@@ -1243,6 +1374,73 @@
           },
           "origin" : {
             "$ref" : "#/components/schemas/Origin"
+          },
+          "users" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/UserRequest"
+            }
+          }
+        }
+      },
+      "AggregateSend" : {
+        "type" : "object",
+        "properties" : {
+          "description" : {
+            "type" : "string"
+          },
+          "pec" : {
+            "type" : "string"
+          },
+          "taxCode" : {
+            "type" : "string"
+          },
+          "vatNumber" : {
+            "type" : "string"
+          },
+          "codeSDI" : {
+            "type" : "string"
+          },
+          "address" : {
+            "type" : "string"
+          },
+          "city" : {
+            "type" : "string"
+          },
+          "province" : {
+            "type" : "string"
+          },
+          "subunitType" : {
+            "type" : "string"
+          },
+          "subunitCode" : {
+            "type" : "string"
+          },
+          "users" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/AggregateUser"
+            }
+          }
+        }
+      },
+      "AggregateUser" : {
+        "type" : "object",
+        "properties" : {
+          "name" : {
+            "type" : "string"
+          },
+          "surname" : {
+            "type" : "string"
+          },
+          "taxCode" : {
+            "type" : "string"
+          },
+          "email" : {
+            "type" : "string"
+          },
+          "role" : {
+            "type" : "string"
           }
         }
       },
@@ -1372,6 +1570,9 @@
             "type" : "string"
           },
           "county" : {
+            "type" : "string"
+          },
+          "istatCode" : {
             "type" : "string"
           },
           "description" : {
@@ -1559,7 +1760,7 @@
         }
       },
       "InstitutionPaSubunitType" : {
-        "enum" : [ "AOO", "UO" ],
+        "enum" : [ "AOO", "UO", "EC" ],
         "type" : "string"
       },
       "InstitutionPspRequest" : {
@@ -1727,26 +1928,6 @@
         "type" : "string",
         "example" : "2022-03-10T12:15:50"
       },
-      "RecipientCodeStatus" : {
-        "enum" : [ "DENIED_NO_BILLING", "DENIED_NO_ASSOCIATION", "ACCEPTED" ],
-        "type" : "string"
-      },
-      "RowError" : {
-        "required" : [ "row" ],
-        "type" : "object",
-        "properties" : {
-          "row" : {
-            "format" : "int32",
-            "type" : "integer"
-          },
-          "cf" : {
-            "type" : "string"
-          },
-          "reason" : {
-            "type" : "string"
-          }
-        }
-      },
       "OnboardingDefaultRequest" : {
         "required" : [ "productId", "users", "institution" ],
         "type" : "object",
@@ -1851,6 +2032,9 @@
             "type" : "string"
           },
           "onboardingId" : {
+            "type" : "string"
+          },
+          "subunitCode" : {
             "type" : "string"
           },
           "taxCode" : {
@@ -1968,6 +2152,9 @@
           },
           "billing" : {
             "$ref" : "#/components/schemas/BillingPaRequest"
+          },
+          "additionalInformations" : {
+            "$ref" : "#/components/schemas/AdditionalInformationsDto"
           }
         }
       },
@@ -2174,6 +2361,26 @@
           }
         }
       },
+      "RecipientCodeStatus" : {
+        "enum" : [ "DENIED_NO_BILLING", "DENIED_NO_ASSOCIATION", "ACCEPTED" ],
+        "type" : "string"
+      },
+      "RowError" : {
+        "required" : [ "row" ],
+        "type" : "object",
+        "properties" : {
+          "row" : {
+            "format" : "int32",
+            "type" : "integer"
+          },
+          "cf" : {
+            "type" : "string"
+          },
+          "reason" : {
+            "type" : "string"
+          }
+        }
+      },
       "TokenResponse" : {
         "type" : "object",
         "properties" : {
@@ -2213,7 +2420,7 @@
         }
       },
       "TokenType" : {
-        "enum" : [ "INSTITUTION", "LEGALS" ],
+        "enum" : [ "INSTITUTION", "LEGALS", "USER" ],
         "type" : "string"
       },
       "UserOnboardingResponse" : {
@@ -2286,6 +2493,23 @@
             "type" : "array",
             "items" : {
               "$ref" : "#/components/schemas/Institution"
+            }
+          },
+          "errors" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/RowError"
+            }
+          }
+        }
+      },
+      "VerifyAggregateSendResponse" : {
+        "type" : "object",
+        "properties" : {
+          "aggregates" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/AggregateSend"
             }
           },
           "errors" : {

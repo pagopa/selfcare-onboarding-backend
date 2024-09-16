@@ -159,11 +159,11 @@ class OnboardingMsConnectorImplTest {
         final MockMultipartFile mockMultipartFile =
                 new MockMultipartFile("example", new ByteArrayInputStream("example".getBytes(StandardCharsets.UTF_8)));
         // when
-        final Executable executable = () -> msOnboardingApiClient._v1OnboardingOnboardingIdCompletePut(tokenId, mockMultipartFile);
+        final Executable executable = () -> msOnboardingSupportApiClient._completeOnboardingTokenConsume(tokenId, mockMultipartFile);
         // then
         assertDoesNotThrow(executable);
-        verify(msOnboardingApiClient, times(1))
-                ._v1OnboardingOnboardingIdCompletePut(tokenId, mockMultipartFile);
+        verify(msOnboardingSupportApiClient, times(1))
+                ._completeOnboardingTokenConsume(tokenId, mockMultipartFile);
         verifyNoMoreInteractions(msOnboardingApiClient);
     }
 
@@ -337,14 +337,14 @@ class OnboardingMsConnectorImplTest {
         OnboardingResponse resource = new OnboardingResponse();
         resource.setInstitution(new InstitutionResponse());
         resource.setProductId("productId");
-        when(msOnboardingSupportApiClient._v1OnboardingInstitutionOnboardingsGet(origin, originId, OnboardingStatus.COMPLETED, null, null))
+        when(msOnboardingSupportApiClient._onboardingInstitutionUsingGET(origin, originId, OnboardingStatus.COMPLETED, null, null))
                 .thenReturn(ResponseEntity.ok(List.of(resource)));
         // when
         final Executable executable = () -> onboardingMsConnector.getByFilters(productId, null, origin, originId, null);
         // then
         assertDoesNotThrow(executable);
         verify(msOnboardingSupportApiClient, times(1))
-                ._v1OnboardingInstitutionOnboardingsGet(origin, originId, OnboardingStatus.COMPLETED, null, null);
+                ._onboardingInstitutionUsingGET(origin, originId, OnboardingStatus.COMPLETED, null, null);
         verifyNoMoreInteractions(msOnboardingSupportApiClient);
     }
 
@@ -360,7 +360,7 @@ class OnboardingMsConnectorImplTest {
         resource.setInstitution(institution);
 
         resource.setProductId("productId");
-        when(msOnboardingSupportApiClient._v1OnboardingInstitutionOnboardingsGet(origin, originId, OnboardingStatus.COMPLETED, null, null))
+        when(msOnboardingSupportApiClient._onboardingInstitutionUsingGET(origin, originId, OnboardingStatus.COMPLETED, null, null))
                 .thenReturn(ResponseEntity.ok(List.of(resource)));
         // when
         List<OnboardingData> result = onboardingMsConnector.getByFilters(productId, null, origin, originId, null);
@@ -368,7 +368,7 @@ class OnboardingMsConnectorImplTest {
         assertNotNull(result);
         assertTrue(result.isEmpty());
         verify(msOnboardingSupportApiClient, times(1))
-                ._v1OnboardingInstitutionOnboardingsGet(origin, originId, OnboardingStatus.COMPLETED, null, null);
+                ._onboardingInstitutionUsingGET(origin, originId, OnboardingStatus.COMPLETED, null, null);
         verifyNoMoreInteractions(msOnboardingSupportApiClient);
     }
 
@@ -384,7 +384,7 @@ class OnboardingMsConnectorImplTest {
         resource.setInstitution(institution);
 
         resource.setProductId("productId");
-        when(msOnboardingSupportApiClient._v1OnboardingInstitutionOnboardingsGet(origin, originId, OnboardingStatus.COMPLETED, null, null))
+        when(msOnboardingSupportApiClient._onboardingInstitutionUsingGET(origin, originId, OnboardingStatus.COMPLETED, null, null))
                 .thenReturn(ResponseEntity.ok(List.of(resource)));
         // when
         List<OnboardingData> result = onboardingMsConnector.getByFilters(productId, null, origin, originId, null);
@@ -392,7 +392,7 @@ class OnboardingMsConnectorImplTest {
         assertNotNull(result);
         assertTrue(result.isEmpty());
         verify(msOnboardingSupportApiClient, times(1))
-                ._v1OnboardingInstitutionOnboardingsGet(origin, originId, OnboardingStatus.COMPLETED, null, null);
+                ._onboardingInstitutionUsingGET(origin, originId, OnboardingStatus.COMPLETED, null, null);
         verifyNoMoreInteractions(msOnboardingSupportApiClient);
     }
 
@@ -408,7 +408,7 @@ class OnboardingMsConnectorImplTest {
         request.setOrigin(origin);
         request.setOriginId(originId);
         when(msOnboardingApiClient._v1OnboardingCheckManagerPost(request))
-                .thenReturn(ResponseEntity.of(Optional.of("true")));
+                .thenReturn(ResponseEntity.of(Optional.of(Boolean.TRUE)));
         // when
         final Executable executable = () -> onboardingMsConnector.checkManager(onboardingData);
         // then

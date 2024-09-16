@@ -73,7 +73,7 @@ public class OnboardingMsConnectorImpl implements OnboardingMsConnector {
     @Override
     @Retry(name = "retryTimeout")
     public void onboardingTokenComplete(String onboardingId, MultipartFile contract) {
-        msOnboardingApiClient._v1OnboardingOnboardingIdCompletePut(onboardingId, contract);
+        msOnboardingSupportApiClient._completeOnboardingTokenConsume(onboardingId, contract);
     }
 
     @Override
@@ -132,7 +132,7 @@ public class OnboardingMsConnectorImpl implements OnboardingMsConnector {
 
     @Override
     public List<OnboardingData> getByFilters(String productId, String taxCode, String origin, String originId, String subunitCode) {
-        List<OnboardingResponse> result = msOnboardingSupportApiClient._v1OnboardingInstitutionOnboardingsGet(origin, originId, OnboardingStatus.COMPLETED, subunitCode, taxCode).getBody();
+        List<OnboardingResponse> result = msOnboardingSupportApiClient._onboardingInstitutionUsingGET(origin, originId, OnboardingStatus.COMPLETED, subunitCode, taxCode).getBody();
         return Objects.nonNull(result) ? result.stream()
                 // TODO this filter should be into query
                 .filter(onboardingResponse -> {
@@ -149,13 +149,15 @@ public class OnboardingMsConnectorImpl implements OnboardingMsConnector {
 
     @Override
     public VerifyAggregateResult verifyAggregatesCsv(MultipartFile file) {
-        return onboardingMapper.toVerifyAggregateResult(msOnboardingAggregatesApiClient._v1AggregatesVerificationPost(file).getBody());
+        //TODO: replaced in SELC-5471
+       // return onboardingMapper.toVerifyAggregateResult(msOnboardingAggregatesApiClient._v1AggregatesVerificationPost(file).getBody());
+        return null;
     }
 
     @Override
     public boolean checkManager(OnboardingData onboardingData) {
-      String result =  msOnboardingApiClient._v1OnboardingCheckManagerPost(onboardingMapper.toOnboardingUsersRequest(onboardingData)).getBody();
-      return Boolean.parseBoolean(result);
+      return Boolean.TRUE.equals(Objects.requireNonNull(msOnboardingApiClient._v1OnboardingCheckManagerPost(onboardingMapper.toOnboardingUsersRequest(onboardingData)))
+              .getBody());
     }
 
     @Override
