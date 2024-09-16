@@ -1,11 +1,15 @@
 package it.pagopa.selfcare.onboarding.connector;
 
+import it.pagopa.selfcare.commons.base.utils.ProductId;
 import it.pagopa.selfcare.onboarding.common.InstitutionType;
+import it.pagopa.selfcare.onboarding.connector.exceptions.InvalidRequestException;
 import it.pagopa.selfcare.onboarding.connector.model.RecipientCodeStatusResult;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.*;
+import it.pagopa.selfcare.onboarding.connector.model.institutions.VerifyAggregateResult;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.DataProtectionOfficer;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.PaymentServiceProvider;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.*;
+import it.pagopa.selfcare.onboarding.connector.rest.client.MsOnboardingAggregatesApiClient;
 import it.pagopa.selfcare.onboarding.connector.rest.client.MsOnboardingApiClient;
 import it.pagopa.selfcare.onboarding.connector.rest.client.MsOnboardingSupportApiClient;
 import it.pagopa.selfcare.onboarding.connector.rest.client.MsOnboardingTokenApiClient;
@@ -20,6 +24,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.test.context.ContextConfiguration;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -31,9 +36,12 @@ import static it.pagopa.selfcare.commons.utils.TestUtils.mockInstance;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+@ContextConfiguration(classes = {OnboardingMsConnectorImpl.class})
 @ExtendWith(MockitoExtension.class)
 class OnboardingMsConnectorImplTest {
 
+    @Mock
+    private MsOnboardingAggregatesApiClient msOnboardingAggregatesApiClient;
     @InjectMocks
     private OnboardingMsConnectorImpl onboardingMsConnector;
 
@@ -126,6 +134,74 @@ class OnboardingMsConnectorImplTest {
         verifyNoMoreInteractions(msOnboardingApiClient);
     }
     @Test
+    void aggregatesVerification_withProdIO_shouldReturnValidResult() {
+        // given
+        MockMultipartFile file = new MockMultipartFile("file", "content".getBytes());
+        VerifyAggregateResult expectedResult = new VerifyAggregateResult();
+        when(msOnboardingAggregatesApiClient._v1AggregatesVerificationProdIoPost(file))
+                .thenReturn(ResponseEntity.ok(new VerifyAggregateResponse()));
+        when(onboardingMapper.toVerifyAggregateResult(any())).thenReturn(expectedResult);
+
+        // when
+        VerifyAggregateResult result = onboardingMsConnector.aggregatesVerification(file, "prod-io");
+
+        // then
+        assertEquals(expectedResult, result);
+        verify(msOnboardingAggregatesApiClient, times(1))._v1AggregatesVerificationProdIoPost(file);
+        verify(onboardingMapper, times(1)).toVerifyAggregateResult(any());
+    }
+
+    @Test
+    void aggregatesVerification_withProdPagoPa_shouldReturnValidResult() {
+        // given
+        MockMultipartFile file = new MockMultipartFile("file", "content".getBytes());
+        VerifyAggregateResult expectedResult = new VerifyAggregateResult();
+        when(msOnboardingAggregatesApiClient._v1AggregatesVerificationProdPagopaPost(file))
+                .thenReturn(ResponseEntity.ok(new VerifyAggregateResponse()));
+        when(onboardingMapper.toVerifyAggregateResult(any())).thenReturn(expectedResult);
+
+        // when
+        VerifyAggregateResult result = onboardingMsConnector.aggregatesVerification(file, "prod-pagopa");
+
+        // then
+        assertEquals(expectedResult, result);
+        verify(msOnboardingAggregatesApiClient, times(1))._v1AggregatesVerificationProdPagopaPost(file);
+        verify(onboardingMapper, times(1)).toVerifyAggregateResult(any());
+    }
+
+    @Test
+    void aggregatesVerification_withProdPN_shouldReturnValidResult() {
+        // given
+        MockMultipartFile file = new MockMultipartFile("file", "content".getBytes());
+        VerifyAggregateResult expectedResult = new VerifyAggregateResult();
+        when(msOnboardingAggregatesApiClient._v1AggregatesVerificationProdPnPost(file))
+                .thenReturn(ResponseEntity.ok(new VerifyAggregateSendResponse()));
+        when(onboardingMapper.toVerifyAggregateSendResponse(any())).thenReturn(expectedResult);
+
+        // when
+        VerifyAggregateResult result = onboardingMsConnector.aggregatesVerification(file, "prod-pn");
+
+        // then
+        assertEquals(expectedResult, result);
+        verify(msOnboardingAggregatesApiClient, times(1))._v1AggregatesVerificationProdPnPost(file);
+        verify(onboardingMapper, times(1)).toVerifyAggregateSendResponse(any());
+    }
+
+    @Test
+    void aggregatesVerification_withUnsupportedProductId_shouldThrowInvalidRequestException() {
+        // given
+        MockMultipartFile file = new MockMultipartFile("file", "content".getBytes());
+
+
+        // when & then
+        InvalidRequestException exception = assertThrows(InvalidRequestException.class, () ->
+                onboardingMsConnector.aggregatesVerification(file, "prod-fd"));
+        assertEquals("400 BAD_REQUEST Unsupported productId: prod-fd", exception.getMessage());
+        verify(msOnboardingAggregatesApiClient, never())._v1AggregatesVerificationProdIoPost(any());
+        verify(msOnboardingAggregatesApiClient, never())._v1AggregatesVerificationProdPagopaPost(any());
+        verify(msOnboardingAggregatesApiClient, never())._v1AggregatesVerificationProdPnPost(any());
+    }
+    @Test
     void onboardingCompany() {
         // given
         OnboardingData onboardingData = new OnboardingData();
@@ -159,11 +235,11 @@ class OnboardingMsConnectorImplTest {
         final MockMultipartFile mockMultipartFile =
                 new MockMultipartFile("example", new ByteArrayInputStream("example".getBytes(StandardCharsets.UTF_8)));
         // when
-        final Executable executable = () -> msOnboardingApiClient._v1OnboardingOnboardingIdCompletePut(tokenId, mockMultipartFile);
+        final Executable executable = () -> msOnboardingSupportApiClient._completeOnboardingTokenConsume(tokenId, mockMultipartFile);
         // then
         assertDoesNotThrow(executable);
-        verify(msOnboardingApiClient, times(1))
-                ._v1OnboardingOnboardingIdCompletePut(tokenId, mockMultipartFile);
+        verify(msOnboardingSupportApiClient, times(1))
+                ._completeOnboardingTokenConsume(tokenId, mockMultipartFile);
         verifyNoMoreInteractions(msOnboardingApiClient);
     }
 
@@ -337,14 +413,14 @@ class OnboardingMsConnectorImplTest {
         OnboardingResponse resource = new OnboardingResponse();
         resource.setInstitution(new InstitutionResponse());
         resource.setProductId("productId");
-        when(msOnboardingSupportApiClient._v1OnboardingInstitutionOnboardingsGet(origin, originId, OnboardingStatus.COMPLETED, null, null))
+        when(msOnboardingSupportApiClient._onboardingInstitutionUsingGET(origin, originId, OnboardingStatus.COMPLETED, null, null))
                 .thenReturn(ResponseEntity.ok(List.of(resource)));
         // when
         final Executable executable = () -> onboardingMsConnector.getByFilters(productId, null, origin, originId, null);
         // then
         assertDoesNotThrow(executable);
         verify(msOnboardingSupportApiClient, times(1))
-                ._v1OnboardingInstitutionOnboardingsGet(origin, originId, OnboardingStatus.COMPLETED, null, null);
+                ._onboardingInstitutionUsingGET(origin, originId, OnboardingStatus.COMPLETED, null, null);
         verifyNoMoreInteractions(msOnboardingSupportApiClient);
     }
 
@@ -360,7 +436,7 @@ class OnboardingMsConnectorImplTest {
         resource.setInstitution(institution);
 
         resource.setProductId("productId");
-        when(msOnboardingSupportApiClient._v1OnboardingInstitutionOnboardingsGet(origin, originId, OnboardingStatus.COMPLETED, null, null))
+        when(msOnboardingSupportApiClient._onboardingInstitutionUsingGET(origin, originId, OnboardingStatus.COMPLETED, null, null))
                 .thenReturn(ResponseEntity.ok(List.of(resource)));
         // when
         List<OnboardingData> result = onboardingMsConnector.getByFilters(productId, null, origin, originId, null);
@@ -368,7 +444,7 @@ class OnboardingMsConnectorImplTest {
         assertNotNull(result);
         assertTrue(result.isEmpty());
         verify(msOnboardingSupportApiClient, times(1))
-                ._v1OnboardingInstitutionOnboardingsGet(origin, originId, OnboardingStatus.COMPLETED, null, null);
+                ._onboardingInstitutionUsingGET(origin, originId, OnboardingStatus.COMPLETED, null, null);
         verifyNoMoreInteractions(msOnboardingSupportApiClient);
     }
 
@@ -384,7 +460,7 @@ class OnboardingMsConnectorImplTest {
         resource.setInstitution(institution);
 
         resource.setProductId("productId");
-        when(msOnboardingSupportApiClient._v1OnboardingInstitutionOnboardingsGet(origin, originId, OnboardingStatus.COMPLETED, null, null))
+        when(msOnboardingSupportApiClient._onboardingInstitutionUsingGET(origin, originId, OnboardingStatus.COMPLETED, null, null))
                 .thenReturn(ResponseEntity.ok(List.of(resource)));
         // when
         List<OnboardingData> result = onboardingMsConnector.getByFilters(productId, null, origin, originId, null);
@@ -392,7 +468,7 @@ class OnboardingMsConnectorImplTest {
         assertNotNull(result);
         assertTrue(result.isEmpty());
         verify(msOnboardingSupportApiClient, times(1))
-                ._v1OnboardingInstitutionOnboardingsGet(origin, originId, OnboardingStatus.COMPLETED, null, null);
+                ._onboardingInstitutionUsingGET(origin, originId, OnboardingStatus.COMPLETED, null, null);
         verifyNoMoreInteractions(msOnboardingSupportApiClient);
     }
 
@@ -408,7 +484,7 @@ class OnboardingMsConnectorImplTest {
         request.setOrigin(origin);
         request.setOriginId(originId);
         when(msOnboardingApiClient._v1OnboardingCheckManagerPost(request))
-                .thenReturn(ResponseEntity.of(Optional.of("true")));
+                .thenReturn(ResponseEntity.of(Optional.of(Boolean.TRUE)));
         // when
         final Executable executable = () -> onboardingMsConnector.checkManager(onboardingData);
         // then
