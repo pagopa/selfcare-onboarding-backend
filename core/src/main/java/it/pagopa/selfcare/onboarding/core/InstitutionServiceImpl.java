@@ -476,13 +476,19 @@ class InstitutionServiceImpl implements InstitutionService {
     }
 
     @Override
-    public VerifyAggregateResult validateAggregatesCsv(MultipartFile file) {
-        VerifyAggregateResult verifyAggregateResult = onboardingMsConnector.verifyAggregatesCsv(file);
-        if(CollectionUtils.isEmpty(verifyAggregateResult.getErrors())) {
+    public VerifyAggregateResult validateAggregatesCsv(MultipartFile file, String productId) {
+        log.trace("validateAggregatesCsv start");
+        log.debug("validateAggregatesCsv productId = {}", productId);
+        VerifyAggregateResult verifyAggregateResult = onboardingMsConnector.aggregatesVerification(file, productId);
+        if (CollectionUtils.isEmpty(verifyAggregateResult.getErrors())) {
+            log.debug("No errors found for {} aggregates:", productId);
             verifyAggregateResult.setErrors(Collections.emptyList());
-        }else{
+        } else {
+            log.debug("Errors found for {} aggregates: {}", productId, verifyAggregateResult.getErrors());
             verifyAggregateResult.setAggregates(Collections.emptyList());
         }
+        log.debug("validateAggregatesCsv result = {}", verifyAggregateResult);
+        log.trace("validateAggregatesCsv end");
         return verifyAggregateResult;
     }
 

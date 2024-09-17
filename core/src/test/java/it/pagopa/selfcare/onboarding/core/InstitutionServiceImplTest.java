@@ -1,9 +1,9 @@
 package it.pagopa.selfcare.onboarding.core;
 
 import it.pagopa.selfcare.commons.base.utils.Origin;
+import it.pagopa.selfcare.commons.base.utils.ProductId;
 import it.pagopa.selfcare.onboarding.common.InstitutionType;
 import it.pagopa.selfcare.onboarding.common.PartyRole;
-import it.pagopa.selfcare.onboarding.common.ProductId;
 import it.pagopa.selfcare.onboarding.connector.api.*;
 import it.pagopa.selfcare.onboarding.connector.exceptions.InvalidRequestException;
 import it.pagopa.selfcare.onboarding.connector.exceptions.ResourceNotFoundException;
@@ -1666,38 +1666,88 @@ class InstitutionServiceImplTest {
         verifyNoInteractions(productsConnectorMock);
     }
 
-    @Test
-    void validateAggregatesCsvReturnsValidResultWhenNoErrors() {
 
+    @Test
+    void validateAggregatesCsvReturnsValidResultWhenNoErrorsAndProductIdIsPROD_IO() {
         MultipartFile file = new MockMultipartFile("file", "hello.txt", MediaType.TEXT_PLAIN_VALUE, "Hello, World!".getBytes());
         VerifyAggregateResult expected = new VerifyAggregateResult();
         expected.setAggregates(Arrays.asList(new Institution(), new Institution()));
         expected.setErrors(Collections.emptyList());
-        when(onboardingMsConnector.verifyAggregatesCsv(any(MultipartFile.class))).thenReturn(expected);
+        when(onboardingMsConnector.aggregatesVerification(any(MultipartFile.class), eq("prod-io"))).thenReturn(expected);
 
         // When
-        VerifyAggregateResult result = institutionService.validateAggregatesCsv(file);
+        VerifyAggregateResult result = institutionService.validateAggregatesCsv(file, "prod-io");
 
         // Then
         assertEquals(0, result.getErrors().size());
-        verify(onboardingMsConnector, times(1)).verifyAggregatesCsv(any(MultipartFile.class));
+        verify(onboardingMsConnector, times(1)).aggregatesVerification(any(MultipartFile.class), eq("prod-io"));
+        verifyNoMoreInteractions(onboardingMsConnector);
+    }
+
+    @Test
+    void validateAggregatesCsvReturnsValidResultWhenNoErrorsAndProductIdIsPROD_PAGOPA() {
+        MultipartFile file = new MockMultipartFile("file", "hello.txt", MediaType.TEXT_PLAIN_VALUE, "Hello, World!".getBytes());
+        VerifyAggregateResult expected = new VerifyAggregateResult();
+        expected.setAggregates(Arrays.asList(new Institution(), new Institution()));
+        expected.setErrors(Collections.emptyList());
+        when(onboardingMsConnector.aggregatesVerification(any(MultipartFile.class), eq("prod-pagopa"))).thenReturn(expected);
+
+        // When
+        VerifyAggregateResult result = institutionService.validateAggregatesCsv(file, "prod-pagopa");
+
+        // Then
+        assertEquals(0, result.getErrors().size());
+        verify(onboardingMsConnector, times(1)).aggregatesVerification(any(MultipartFile.class), eq("prod-pagopa"));
+        verifyNoMoreInteractions(onboardingMsConnector);
+    }
+
+    @Test
+    void validateAggregatesCsvReturnsValidResultWhenNoErrorsAndProductIdIsPROD_PN() {
+        MultipartFile file = new MockMultipartFile("file", "hello.txt", MediaType.TEXT_PLAIN_VALUE, "Hello, World!".getBytes());
+        VerifyAggregateResult expected = new VerifyAggregateResult();
+        expected.setAggregates(Arrays.asList(new Institution(), new Institution()));
+        expected.setErrors(Collections.emptyList());
+        when(onboardingMsConnector.aggregatesVerification(any(MultipartFile.class), eq("prod-pn"))).thenReturn(expected);
+
+        // When
+        VerifyAggregateResult result = institutionService.validateAggregatesCsv(file, "prod-pn");
+
+        // Then
+        assertEquals(0, result.getErrors().size());
+        verify(onboardingMsConnector, times(1)).aggregatesVerification(any(MultipartFile.class), eq("prod-pn"));
+        verifyNoMoreInteractions(onboardingMsConnector);
+    }
+
+    @Test
+    void validateAggregatesCsvReturnsValidResultWhenNoErrorsAndProductIdIsDifferentCase() {
+        MultipartFile file = new MockMultipartFile("file", "hello.txt", MediaType.TEXT_PLAIN_VALUE, "Hello, World!".getBytes());
+        VerifyAggregateResult expected = new VerifyAggregateResult();
+        expected.setAggregates(Arrays.asList(new Institution(), new Institution()));
+        expected.setErrors(Collections.emptyList());
+        when(onboardingMsConnector.aggregatesVerification(any(MultipartFile.class), eq("prod-fd"))).thenReturn(expected);
+
+        // When
+        VerifyAggregateResult result = institutionService.validateAggregatesCsv(file, "prod-fd");
+
+        // Then
+        assertEquals(0, result.getErrors().size());
+        verify(onboardingMsConnector, times(1)).aggregatesVerification(any(MultipartFile.class), eq("prod-fd"));
         verifyNoMoreInteractions(onboardingMsConnector);
     }
 
     @Test
     void validateAggregatesCsvReturnsValidResultWhenErrorsExist() {
-        // Given
         MultipartFile file = new MockMultipartFile("file", "hello.txt", MediaType.TEXT_PLAIN_VALUE, "Hello, World!".getBytes());
         VerifyAggregateResult expected = new VerifyAggregateResult();
         expected.setErrors(Arrays.asList(new RowError(), new RowError()));
-        when(onboardingMsConnector.verifyAggregatesCsv(any(MultipartFile.class))).thenReturn(expected);
+        when(onboardingMsConnector.aggregatesVerification(any(MultipartFile.class), anyString())).thenReturn(expected);
 
         // When
-        VerifyAggregateResult result = institutionService.validateAggregatesCsv(file);
+        VerifyAggregateResult result = institutionService.validateAggregatesCsv(file, "prod-pagopa");
 
         // Then
         assertEquals(0, result.getAggregates().size());
-        verify(onboardingMsConnector, times(1)).verifyAggregatesCsv(any(MultipartFile.class));
+        verify(onboardingMsConnector, times(1)).aggregatesVerification(any(MultipartFile.class), anyString());
         verifyNoMoreInteractions(onboardingMsConnector);
     }
 

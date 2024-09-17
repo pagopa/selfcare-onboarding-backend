@@ -38,9 +38,9 @@ public interface OnboardingMsConnector {
 
     boolean checkManager(OnboardingData onboardingData);
 
-    VerifyAggregateResult verifyAggregatesCsv(MultipartFile file);
-
     RecipientCodeStatusResult checkRecipientCode(String originId, String recipientCode);
+
+    VerifyAggregateResult aggregatesVerification(MultipartFile file, String productId);
 
     void verifyOnboarding(String productId, String taxCode, String origin, String originId, String subunitCode);
 }

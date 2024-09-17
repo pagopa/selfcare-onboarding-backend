@@ -51,7 +51,7 @@ public interface InstitutionService {
 
     List<Institution> getByFilters(String productId, String taxCode, String origin, String originId, String subunitCode);
 
-    VerifyAggregateResult validateAggregatesCsv(MultipartFile file);
+    VerifyAggregateResult validateAggregatesCsv(MultipartFile file, String productId);
 
     RecipientCodeStatusResult checkRecipientCode(String originId, String recipientCode);
 }
