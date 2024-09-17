@@ -4,6 +4,7 @@ import io.github.resilience4j.retry.annotation.Retry;
 import it.pagopa.selfcare.onboarding.common.InstitutionPaSubunitType;
 import it.pagopa.selfcare.onboarding.common.InstitutionType;
 import it.pagopa.selfcare.onboarding.connector.api.OnboardingMsConnector;
+import it.pagopa.selfcare.onboarding.connector.exceptions.InvalidRequestException;
 import it.pagopa.selfcare.onboarding.connector.model.RecipientCodeStatusResult;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.VerifyAggregateResult;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
@@ -12,9 +13,13 @@ import it.pagopa.selfcare.onboarding.connector.rest.client.MsOnboardingApiClient
 import it.pagopa.selfcare.onboarding.connector.rest.client.MsOnboardingSupportApiClient;
 import it.pagopa.selfcare.onboarding.connector.rest.client.MsOnboardingTokenApiClient;
 import it.pagopa.selfcare.onboarding.connector.rest.mapper.OnboardingMapper;
-import it.pagopa.selfcare.onboarding.generated.openapi.v1.dto.*;
+import it.pagopa.selfcare.onboarding.generated.openapi.v1.dto.OnboardingGet;
+import it.pagopa.selfcare.onboarding.generated.openapi.v1.dto.OnboardingResponse;
+import it.pagopa.selfcare.onboarding.generated.openapi.v1.dto.OnboardingStatus;
+import it.pagopa.selfcare.onboarding.generated.openapi.v1.dto.ReasonRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
@@ -27,6 +32,9 @@ import java.util.Objects;
 @Slf4j
 public class OnboardingMsConnectorImpl implements OnboardingMsConnector {
 
+    public static final String PROD_IO = "prod-io";
+    public static final String PROD_PAGOPA = "prod-pagopa";
+    public static final String PROD_PN = "prod-pn";
     private final MsOnboardingApiClient msOnboardingApiClient;
     private final MsOnboardingSupportApiClient msOnboardingSupportApiClient;
     private final MsOnboardingTokenApiClient msOnboardingTokenApiClient;
@@ -54,6 +62,26 @@ public class OnboardingMsConnectorImpl implements OnboardingMsConnector {
             msOnboardingApiClient._v1OnboardingPspPost(onboardingMapper.toOnboardingPspRequest(onboardingData));
         } else {
             msOnboardingApiClient._v1OnboardingPost(onboardingMapper.toOnboardingDefaultRequest(onboardingData));
+        }
+    }
+
+    @Override
+    public VerifyAggregateResult aggregatesVerification(MultipartFile file, String productId) {
+        log.info("validateAggregatesCsv for product: {}", productId);
+        switch (productId) {
+            case PROD_IO -> {
+                return onboardingMapper.toVerifyAggregateResult(msOnboardingAggregatesApiClient._v1AggregatesVerificationProdIoPost(file).getBody());
+            }
+            case PROD_PAGOPA -> {
+                return onboardingMapper.toVerifyAggregateResult(msOnboardingAggregatesApiClient._v1AggregatesVerificationProdPagopaPost(file).getBody());
+            }
+            case PROD_PN -> {
+                return onboardingMapper.toVerifyAggregateSendResponse(msOnboardingAggregatesApiClient._v1AggregatesVerificationProdPnPost(file).getBody());
+            }
+            default -> {
+                log.error("Unsupported productId: {}", productId);
+                throw new InvalidRequestException(String.format("%s Unsupported productId: %s", HttpStatus.BAD_REQUEST, productId));
+            }
         }
     }
 
@@ -145,13 +173,6 @@ public class OnboardingMsConnectorImpl implements OnboardingMsConnector {
                 .filter(onboardingResponse -> onboardingResponse.getProductId().equals(productId))
                 .map(onboardingMapper::toOnboardingData)
                 .toList() : List.of();
-    }
-
-    @Override
-    public VerifyAggregateResult verifyAggregatesCsv(MultipartFile file) {
-        //TODO: replaced in SELC-5471
-       // return onboardingMapper.toVerifyAggregateResult(msOnboardingAggregatesApiClient._v1AggregatesVerificationPost(file).getBody());
-        return null;
     }
 
     @Override

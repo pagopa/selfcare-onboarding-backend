@@ -2,6 +2,7 @@ package it.pagopa.selfcare.onboarding.web.controller;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import it.pagopa.selfcare.commons.base.utils.ProductId;
 import it.pagopa.selfcare.onboarding.common.InstitutionType;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
@@ -166,17 +167,16 @@ class InstitutionV2ControllerTest {
     void verifyAggregatesCsvSuccess() throws Exception {
         // Given
         MultipartFile file = new MockMultipartFile("file", "hello.txt", MediaType.TEXT_PLAIN_VALUE, "Hello, World!".getBytes());
-        InstitutionType institutionType = InstitutionType.PA;
 
         // When
         mvc.perform(MockMvcRequestBuilders.multipart(BASE_URL + "/onboarding/aggregation/verification")
                         .file("aggregates", file.getBytes())
-                        .param("institutionType", institutionType.name())
+                        .param("productId", ProductId.PROD_PAGOPA.name())
                         .contentType(MediaType.MULTIPART_FORM_DATA_VALUE))
                 .andExpect(status().isOk());
 
         // Then
-        verify(institutionServiceMock, times(1)).validateAggregatesCsv(any(MultipartFile.class));
+        verify(institutionServiceMock, times(1)).validateAggregatesCsv(any(MultipartFile.class), anyString());
         verifyNoMoreInteractions(institutionServiceMock);
     }
 
@@ -184,19 +184,18 @@ class InstitutionV2ControllerTest {
     void verifyAggregatesCsvFailure() throws Exception {
         // Given
         MultipartFile file = new MockMultipartFile("file", "hello.txt", MediaType.TEXT_PLAIN_VALUE, "Hello, World!".getBytes());
-        InstitutionType institutionType = InstitutionType.PA;
 
-        doThrow(new RuntimeException()).when(institutionServiceMock).validateAggregatesCsv(any(MultipartFile.class));
+        doThrow(new RuntimeException()).when(institutionServiceMock).validateAggregatesCsv(any(MultipartFile.class),anyString());
 
         // When
         mvc.perform(MockMvcRequestBuilders.multipart(BASE_URL + "/onboarding/aggregation/verification")
                         .file("aggregates", file.getBytes())
-                        .param("institutionType", institutionType.name())
+                        .param("productId", ProductId.PROD_PAGOPA.name())
                         .contentType(MediaType.MULTIPART_FORM_DATA_VALUE))
                 .andExpect(status().isInternalServerError());
 
         // Then
-        verify(institutionServiceMock, times(1)).validateAggregatesCsv(any(MultipartFile.class));
+        verify(institutionServiceMock, times(1)).validateAggregatesCsv(any(MultipartFile.class), anyString());
         verifyNoMoreInteractions(institutionServiceMock);
     }
 
