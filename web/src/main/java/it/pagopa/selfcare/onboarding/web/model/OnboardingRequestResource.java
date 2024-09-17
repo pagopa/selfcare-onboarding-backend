@@ -2,7 +2,6 @@ package it.pagopa.selfcare.onboarding.web.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModelProperty;
-import it.pagopa.selfcare.commons.base.utils.InstitutionType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -55,7 +54,7 @@ public class OnboardingRequestResource {
 
         @ApiModelProperty(value = "${swagger.onboarding.institutions.model.institutionType}", required = true)
         @JsonProperty(required = true)
-        private InstitutionType institutionType;
+        private String institutionType;
 
         @ApiModelProperty(value = "${swagger.onboarding.institutions.model.address}", required = true)
         @JsonProperty(required = true)

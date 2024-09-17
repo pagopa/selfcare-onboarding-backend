@@ -1560,7 +1560,7 @@
           "style" : "form",
           "schema" : {
             "type" : "string",
-            "enum" : [ "AS", "CON", "GSP", "PA", "PG", "PSP", "PT", "REC", "SA", "SCP" ]
+            "enum" : [ "AS", "CON", "GSP", "PA", "PG", "PRV", "PSP", "PT", "REC", "SA", "SCP" ]
           }
         } ],
         "responses" : {
@@ -2751,7 +2751,7 @@
           },
           "origin" : {
             "type" : "string",
-            "enum" : [ "ADE", "ANAC", "INFOCAMERE", "IPA", "IVASS", "MOCK", "SELC", "UNKNOWN" ]
+            "enum" : [ "ADE", "ANAC", "INFOCAMERE", "IPA", "IVASS", "MOCK", "PDND_INFOCAMERE", "SELC", "UNKNOWN" ]
           },
           "originId" : {
             "type" : "string"
@@ -3021,7 +3021,7 @@
           "institutionType" : {
             "type" : "string",
             "description" : "Institution's type",
-            "enum" : [ "AS", "CON", "GSP", "PA", "PG", "PSP", "PT", "REC", "SA", "SCP" ]
+            "enum" : [ "AS", "CON", "GSP", "PA", "PG", "PRV", "PSP", "PT", "REC", "SA", "SCP" ]
           },
           "productId" : {
             "type" : "string",
@@ -3333,8 +3333,7 @@
           },
           "institutionType" : {
             "type" : "string",
-            "description" : "Institution's type",
-            "enum" : [ "AS", "CON", "GSP", "PA", "PG", "PRV", "PSP", "PT", "REC", "SA", "SCP" ]
+            "description" : "Institution's type"
           },
           "mailAddress" : {
             "type" : "string",
@@ -3454,8 +3453,7 @@
           },
           "institutionType" : {
             "type" : "string",
-            "description" : "Institution's type",
-            "enum" : [ "AS", "CON", "GSP", "PA", "PG", "PRV", "PSP", "PT", "REC", "SA", "SCP" ]
+            "description" : "Institution's type"
           },
           "origin" : {
             "type" : "string",
@@ -3573,7 +3571,7 @@
           "institutionType" : {
             "type" : "string",
             "description" : "Institution's type",
-            "enum" : [ "AS", "CON", "GSP", "PA", "PG", "PSP", "PT", "REC", "SA", "SCP" ]
+            "enum" : [ "AS", "CON", "GSP", "PA", "PG", "PRV", "PSP", "PT", "REC", "SA", "SCP" ]
           },
           "isAggregator" : {
             "type" : "boolean",
@@ -3673,7 +3671,7 @@
           "institutionType" : {
             "type" : "string",
             "description" : "Institution's type",
-            "enum" : [ "AS", "CON", "GSP", "PA", "PG", "PSP", "PT", "REC", "SA", "SCP" ]
+            "enum" : [ "AS", "CON", "GSP", "PA", "PG", "PRV", "PSP", "PT", "REC", "SA", "SCP" ]
           },
           "origin" : {
             "type" : "string",

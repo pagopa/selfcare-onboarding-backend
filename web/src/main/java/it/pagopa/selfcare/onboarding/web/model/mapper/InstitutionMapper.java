@@ -78,7 +78,7 @@ public class InstitutionMapper {
             resource.setExternalId(model.getExternalId());
             resource.setAddress(model.getAddress());
             resource.setOriginId(model.getOriginId());
-            resource.setInstitutionType(model.getInstitutionType());
+            resource.setInstitutionType(model.getInstitutionType().name());
             resource.setDigitalAddress(model.getDigitalAddress());
             resource.setTaxCode(model.getTaxCode());
             resource.setZipCode(model.getZipCode());

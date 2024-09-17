@@ -3,7 +3,6 @@ package it.pagopa.selfcare.onboarding.web.controller;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.pagopa.selfcare.commons.base.utils.ProductId;
-import it.pagopa.selfcare.onboarding.common.InstitutionType;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
 import it.pagopa.selfcare.onboarding.core.InstitutionService;
@@ -125,6 +124,7 @@ class InstitutionV2ControllerTest {
         final String productId = "productId";
         Institution institution = new Institution();
         institution.setDescription("description");
+        institution.setInstitutionType(it.pagopa.selfcare.commons.base.utils.InstitutionType.PA);
         institution.setId(UUID.randomUUID().toString());
         when(institutionServiceMock.getByFilters(productId, null, origin, originId, null))
                 .thenReturn(List.of(institution));
