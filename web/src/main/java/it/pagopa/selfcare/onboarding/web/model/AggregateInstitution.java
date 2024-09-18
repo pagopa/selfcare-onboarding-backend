@@ -22,5 +22,6 @@ public class AggregateInstitution {
     private String zipCode;
     private String originId;
     private Origin origin;
+    private List<UserDto> users;
 
 }
