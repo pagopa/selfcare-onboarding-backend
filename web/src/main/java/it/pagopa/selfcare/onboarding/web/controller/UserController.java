@@ -16,11 +16,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.Collections;
-import java.util.Map;
 
 import static org.springframework.http.MediaType.APPLICATION_PROBLEM_JSON_VALUE;
 
@@ -79,14 +78,14 @@ public class UserController {
                     @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE,
                             schema = @Schema(implementation = Problem.class))
             })
-    @PostMapping(value = "/check-manager")
+    @PostMapping(value = "/check-manager", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "", notes = "${swagger.onboarding.users.api.check-manager}", nickname = "checkManager")
-    public Map<String, Boolean> checkManager(@RequestBody @Valid OnboardingUserDto request) {
+    public ResponseEntity<Boolean> checkManager(@RequestBody @Valid OnboardingUserDto request) {
         log.trace("onboarding start");
-        boolean checkManager =  userService.checkManager(onboardingResourceMapper.toEntity(request));
+        boolean checkManager = userService.checkManager(onboardingResourceMapper.toEntity(request));
         log.trace("onboarding end");
-        return Collections.singletonMap("result", checkManager);
+        return ResponseEntity.ok(checkManager);
     }
 
 }

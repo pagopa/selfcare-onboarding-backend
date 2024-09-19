@@ -177,8 +177,8 @@ public class OnboardingMsConnectorImpl implements OnboardingMsConnector {
 
     @Override
     public boolean checkManager(OnboardingData onboardingData) {
-        String result = String.valueOf(msOnboardingApiClient._v1OnboardingCheckManagerPost(onboardingMapper.toOnboardingUsersRequest(onboardingData)).getBody());
-        return Boolean.parseBoolean(result);
+        return Boolean.TRUE.equals(Objects.requireNonNull(msOnboardingApiClient._v1OnboardingCheckManagerPost(onboardingMapper.toOnboardingUsersRequest(onboardingData)))
+                .getBody());
     }
 
     @Override
