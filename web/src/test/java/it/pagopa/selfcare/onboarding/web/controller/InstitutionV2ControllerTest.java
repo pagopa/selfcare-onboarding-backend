@@ -171,7 +171,7 @@ class InstitutionV2ControllerTest {
         // When
         mvc.perform(MockMvcRequestBuilders.multipart(BASE_URL + "/onboarding/aggregation/verification")
                         .file("aggregates", file.getBytes())
-                        .param("productId", ProductId.PROD_PAGOPA.name())
+                        .param("productId", ProductId.PROD_PAGOPA.getValue())
                         .contentType(MediaType.MULTIPART_FORM_DATA_VALUE))
                 .andExpect(status().isOk());
 

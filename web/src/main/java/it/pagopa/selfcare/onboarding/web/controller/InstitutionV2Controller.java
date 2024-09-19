@@ -116,6 +116,7 @@ public class InstitutionV2Controller {
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "", notes = "${swagger.onboarding.institutions.api.onboarding.verifyAggregatesCsv}")
     public VerifyAggregatesResponse verifyAggregatesCsv(@RequestParam("aggregates") MultipartFile file,
+                                                        @RequestParam(value = "institutionType", required = false) String institutionType,
                                                         @RequestParam("productId") String productId){
         log.trace("Verify Aggregates Csv start");
         log.debug("Verify Aggregates Csv start for productId {}", productId);

@@ -1362,6 +1362,15 @@
         "description" : "The service allows to verify if the given csv contains valid aggregate institutions",
         "operationId" : "verifyAggregatesCsvUsingPOST",
         "parameters" : [ {
+          "name" : "institutionType",
+          "in" : "query",
+          "description" : "institutionType",
+          "required" : false,
+          "style" : "form",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
           "name" : "productId",
           "in" : "query",
           "description" : "productId",
@@ -2765,6 +2774,12 @@
           "taxCode" : {
             "type" : "string"
           },
+          "users" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/UserDto"
+            }
+          },
           "zipCode" : {
             "type" : "string"
           }
@@ -3246,6 +3261,12 @@
           },
           "taxCode" : {
             "type" : "string"
+          },
+          "users" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/User"
+            }
           },
           "zipCode" : {
             "type" : "string"
@@ -3894,6 +3915,34 @@
           "riga" : {
             "type" : "integer",
             "format" : "int32"
+          }
+        }
+      },
+      "User" : {
+        "title" : "User",
+        "type" : "object",
+        "properties" : {
+          "email" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "productRole" : {
+            "type" : "string"
+          },
+          "role" : {
+            "type" : "string",
+            "enum" : [ "ADMIN_EA", "DELEGATE", "MANAGER", "OPERATOR", "SUB_DELEGATE" ]
+          },
+          "surname" : {
+            "type" : "string"
+          },
+          "taxCode" : {
+            "type" : "string"
           }
         }
       },

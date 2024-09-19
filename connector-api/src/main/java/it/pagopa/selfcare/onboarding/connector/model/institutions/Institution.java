@@ -4,6 +4,7 @@ import it.pagopa.selfcare.commons.base.utils.InstitutionType;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.DataProtectionOfficer;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.GeographicTaxonomy;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.PaymentServiceProvider;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.User;
 import lombok.Data;
 
 import java.util.List;
@@ -34,4 +35,5 @@ public class Institution {
     private List<GeographicTaxonomy> geographicTaxonomies;
     private CompanyInformations companyInformations;
     private AssistanceContacts assistanceContacts;
+    private List<User> users;
 }
