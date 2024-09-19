@@ -3354,8 +3354,7 @@
           },
           "institutionType" : {
             "type" : "string",
-            "description" : "Institution's type",
-            "enum" : [ "AS", "CON", "GSP", "PA", "PG", "PRV", "PSP", "PT", "REC", "SA", "SCP" ]
+            "description" : "Institution's type"
           },
           "mailAddress" : {
             "type" : "string",
@@ -3475,8 +3474,7 @@
           },
           "institutionType" : {
             "type" : "string",
-            "description" : "Institution's type",
-            "enum" : [ "AS", "CON", "GSP", "PA", "PG", "PRV", "PSP", "PT", "REC", "SA", "SCP" ]
+            "description" : "Institution's type"
           },
           "origin" : {
             "type" : "string",

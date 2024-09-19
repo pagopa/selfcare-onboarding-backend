@@ -2,7 +2,6 @@ package it.pagopa.selfcare.onboarding.web.model;
 
 import io.swagger.annotations.ApiModelProperty;
 import it.pagopa.selfcare.commons.base.security.SelfCareAuthority;
-import it.pagopa.selfcare.commons.base.utils.InstitutionType;
 import lombok.Data;
 
 import java.util.UUID;
@@ -26,7 +25,7 @@ public class InstitutionResource {
     private String originId;
 
     @ApiModelProperty(value = "${swagger.onboarding.institutions.model.institutionType}")
-    private InstitutionType institutionType;
+    private String institutionType;
 
     @ApiModelProperty(value = "${swagger.onboarding.institutions.model.digitalAddress}")
     private String digitalAddress;

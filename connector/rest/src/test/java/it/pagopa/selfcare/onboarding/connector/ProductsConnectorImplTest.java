@@ -12,7 +12,6 @@ import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.Instant;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -36,7 +35,7 @@ class ProductsConnectorImplTest {
         contractStorage.setContractTemplateUpdatedAt(Instant.now());
         contractStorage.setContractTemplatePath("contractTemplatePath");
         contractStorage.setContractTemplateVersion("contractTemplateVersion");
-        final Map<InstitutionType, ContractStorage> contractStorageMap = Map.of(InstitutionType.PA,contractStorage);
+        final Map<String, ContractStorage> contractStorageMap = Map.of(InstitutionType.PA.name(),contractStorage);
         product.setInstitutionContractMappings(contractStorageMap);
         final String productId = "productId";
         when(productService.getProduct(anyString())).thenReturn(product);
@@ -56,7 +55,7 @@ class ProductsConnectorImplTest {
         contractStorage.setContractTemplateUpdatedAt(Instant.now());
         contractStorage.setContractTemplatePath("contractTemplatePath");
         contractStorage.setContractTemplateVersion("contractTemplateVersion");
-        final Map<InstitutionType, ContractStorage> contractStorageMap = Map.of(InstitutionType.PA,contractStorage);
+        final Map<String, ContractStorage> contractStorageMap = Map.of(InstitutionType.PA.name(),contractStorage);
         product.setInstitutionContractMappings(contractStorageMap);
         final String productId = "productId";
         when(productService.getProduct(anyString())).thenReturn(product);

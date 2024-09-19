@@ -3,7 +3,6 @@ package it.pagopa.selfcare.onboarding.web.controller;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.pagopa.selfcare.commons.base.utils.ProductId;
-import it.pagopa.selfcare.onboarding.common.InstitutionType;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
 import it.pagopa.selfcare.onboarding.core.InstitutionService;
@@ -25,6 +24,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import it.pagopa.selfcare.commons.base.utils.InstitutionType;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -125,6 +125,7 @@ class InstitutionV2ControllerTest {
         final String productId = "productId";
         Institution institution = new Institution();
         institution.setDescription("description");
+        institution.setInstitutionType(InstitutionType.PA);
         institution.setId(UUID.randomUUID().toString());
         when(institutionServiceMock.getByFilters(productId, null, origin, originId, null))
                 .thenReturn(List.of(institution));
