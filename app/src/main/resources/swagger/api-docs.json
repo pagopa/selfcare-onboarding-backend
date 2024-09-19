@@ -2412,10 +2412,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "type" : "object",
-                  "additionalProperties" : {
-                    "type" : "boolean"
-                  }
+                  "type" : "boolean"
                 }
               }
             }
