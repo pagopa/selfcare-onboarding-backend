@@ -15,6 +15,7 @@ import it.pagopa.selfcare.onboarding.web.model.*;
 import it.pagopa.selfcare.onboarding.web.model.mapper.InstitutionMapper;
 import it.pagopa.selfcare.onboarding.web.model.mapper.OnboardingResourceMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.owasp.encoder.Encode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -76,7 +77,7 @@ public class InstitutionV2Controller {
     @ApiOperation(value = "", notes = "${swagger.onboarding.institutions.api.onboarding.subunit}")
     public void onboarding(@RequestBody @Valid CompanyOnboardingDto request, Principal principal) {
         log.trace(ONBOARDING_START);
-        log.debug("onboarding request = {}", request);
+        log.debug("onboarding request = {}", Encode.forJava(request.toString()));
         JwtAuthenticationToken jwtAuthenticationToken = (JwtAuthenticationToken) principal;
         SelfCareUser selfCareUser = (SelfCareUser) jwtAuthenticationToken.getPrincipal();
         institutionService.onboardingCompanyV2(onboardingResourceMapper.toEntity(request), selfCareUser.getFiscalCode());
