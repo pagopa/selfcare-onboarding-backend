@@ -68,6 +68,8 @@ class InstitutionServiceImpl implements InstitutionService {
     public static final String ONE_OTHER_PARAMETER_PROVIDED = "At least one other parameter must be provided along with productId";
 
     private static final String REQUIRED_AGGREGATE_INSTITUTIONS = "Aggregate institutions are required if given institution is an Aggregator";
+
+    private static final String ONBOARDING_COMPANY_NOT_ALLOWED = "The selected business does not belong to the user";
     static final String DESCRIPTION_TO_REPLACE_REGEX = " - COMUNE";
     private final OnboardingMsConnector onboardingMsConnector;
     private final PartyConnector partyConnector;
@@ -121,20 +123,51 @@ class InstitutionServiceImpl implements InstitutionService {
     public void onboardingCompanyV2(OnboardingData onboardingData, String userFiscalCode) {
         log.trace("onboardingProductAsync start");
         log.debug("onboardingProductAsync onboardingData = {}", onboardingData);
-        InstitutionInfoIC userBusinesses = partyRegistryProxyConnector.getInstitutionsByUserFiscalCode(userFiscalCode);
-        if(businessIsNotRelatedToUser(userBusinesses, onboardingData.getTaxCode())){
-            throw new OnboardingNotAllowedException("The selected business does not belong to the user");
-        }
+        verifyIfUserIsManagerOfBusiness(onboardingData.getTaxCode(), userFiscalCode, onboardingData.getOrigin());
         onboardingMsConnector.onboardingCompany(onboardingData);
         log.trace("onboarding end");
     }
 
-    private boolean businessIsNotRelatedToUser(InstitutionInfoIC institutionInfoIC, String businessTaxCode) {
-        return institutionInfoIC == null
-                || CollectionUtils.isEmpty(institutionInfoIC.getBusinesses())
-                || institutionInfoIC.getBusinesses()
+    private void verifyIfUserIsManagerOfBusiness(String businessTaxCode, String userFiscalCode, String origin) {
+        switch (Origin.fromValue(origin)) {
+            case INFOCAMERE:
+                verifyIfUserIsManagerOfBusinessOnInfocamere(businessTaxCode, userFiscalCode);
+                break;
+            case ADE:
+                verifyIfUserIsManagerOfBusinessOnAde(businessTaxCode, userFiscalCode);
+                break;
+            default:
+                log.error("Origin {} is not supported", origin);
+                throw new InvalidRequestException("Origin not supported");
+        }
+    }
+
+    private void verifyIfUserIsManagerOfBusinessOnInfocamere(String businessTaxCode, String userFiscalCode) {
+        log.debug(LogUtils.CONFIDENTIAL_MARKER, "Checking if user with fiscal code {} is manager of business with tax code {} on Infocamere",
+                userFiscalCode, businessTaxCode);
+        InstitutionInfoIC userBusinesses = partyRegistryProxyConnector.getInstitutionsByUserFiscalCode(userFiscalCode);
+        if (!isICBusinessRelatedToUser(userBusinesses, businessTaxCode)) {
+            log.error("User is not authorized to onboard business with tax code {}", businessTaxCode);
+            throw new OnboardingNotAllowedException(ONBOARDING_COMPANY_NOT_ALLOWED);
+        }
+    }
+
+    private boolean isICBusinessRelatedToUser(InstitutionInfoIC institutionInfoIC, String businessTaxCode) {
+        return institutionInfoIC != null
+                && !CollectionUtils.isEmpty(institutionInfoIC.getBusinesses())
+                && institutionInfoIC.getBusinesses()
                 .stream()
-                .noneMatch(business -> business.getBusinessTaxId().equals(businessTaxCode));
+                .anyMatch(business -> Objects.equals(business.getBusinessTaxId(), businessTaxCode));
+    }
+
+    private void verifyIfUserIsManagerOfBusinessOnAde(String businessTaxCode, String userFiscalCode) {
+        log.debug(LogUtils.CONFIDENTIAL_MARKER, "Checking if user with fiscal code {} is manager of business with tax code {} on ADE",
+                userFiscalCode, businessTaxCode);
+        MatchInfoResult matchInfoResult = partyRegistryProxyConnector.matchInstitutionAndUser(businessTaxCode, userFiscalCode);
+        if (Objects.isNull(matchInfoResult) || !matchInfoResult.isVerificationResult()) {
+            log.error("User is not authorized to onboard business with tax code {}", businessTaxCode);
+            throw new OnboardingNotAllowedException(ONBOARDING_COMPANY_NOT_ALLOWED);
+        }
     }
 
     @Override
