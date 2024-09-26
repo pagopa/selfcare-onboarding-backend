@@ -154,9 +154,10 @@ class InstitutionServiceImplTest {
         onboardingData.setOrigin(Origin.INFOCAMERE.getValue());
         onboardingData.setInstitutionType(InstitutionType.PG);
         onboardingData.setUsers(List.of(dummyManager, dummyDelegate));
+        String managerTaxCode = dummyManager.getTaxCode();
 
         InstitutionInfoIC institutionInfoIC = new InstitutionInfoIC();
-        institutionInfoIC.setLegalTaxId(dummyManager.getTaxCode());
+        institutionInfoIC.setLegalTaxId(managerTaxCode);
         BusinessInfoIC businessInfoIC = new BusinessInfoIC();
         businessInfoIC.setBusinessName("businessName");
         businessInfoIC.setBusinessTaxId(onboardingData.getTaxCode());
@@ -165,12 +166,12 @@ class InstitutionServiceImplTest {
         when(partyRegistryProxyConnectorMock.getInstitutionsByUserFiscalCode(anyString()))
                 .thenReturn(institutionInfoIC);
         // when
-        institutionService.onboardingCompanyV2(onboardingData, dummyManager.getTaxCode());
+        institutionService.onboardingCompanyV2(onboardingData, managerTaxCode);
         // then
         verify(partyRegistryProxyConnectorMock, times(1))
-                .getInstitutionsByUserFiscalCode(dummyManager.getTaxCode());
+                .getInstitutionsByUserFiscalCode(managerTaxCode);
         verify(partyRegistryProxyConnectorMock, times(0))
-                .matchInstitutionAndUser(onboardingData.getTaxCode(), dummyManager.getTaxCode());
+                .matchInstitutionAndUser(onboardingData.getTaxCode(), managerTaxCode);
         verify(onboardingMsConnector, times(1))
                 .onboardingCompany(any());
     }
@@ -182,18 +183,19 @@ class InstitutionServiceImplTest {
         onboardingData.setOrigin(Origin.ADE.getValue());
         onboardingData.setInstitutionType(InstitutionType.PG);
         onboardingData.setUsers(List.of(dummyManager, dummyDelegate));
+        String managerTaxCode = dummyManager.getTaxCode();
 
         MatchInfoResult matchInfoResult = new MatchInfoResult();
         matchInfoResult.setVerificationResult(true);
-        when(partyRegistryProxyConnectorMock.matchInstitutionAndUser(onboardingData.getTaxCode(), dummyManager.getTaxCode()))
+        when(partyRegistryProxyConnectorMock.matchInstitutionAndUser(onboardingData.getTaxCode(), managerTaxCode))
                 .thenReturn(matchInfoResult);
         // when
-        institutionService.onboardingCompanyV2(onboardingData, dummyManager.getTaxCode());
+        institutionService.onboardingCompanyV2(onboardingData, managerTaxCode);
         // then
         verify(partyRegistryProxyConnectorMock, times(0))
-                .getInstitutionsByUserFiscalCode(dummyManager.getTaxCode());
+                .getInstitutionsByUserFiscalCode(managerTaxCode);
         verify(partyRegistryProxyConnectorMock, times(1))
-                .matchInstitutionAndUser(onboardingData.getTaxCode(), dummyManager.getTaxCode());
+                .matchInstitutionAndUser(onboardingData.getTaxCode(), managerTaxCode);
         verify(onboardingMsConnector, times(1))
                 .onboardingCompany(any());
     }
@@ -205,16 +207,17 @@ class InstitutionServiceImplTest {
         onboardingData.setOrigin(Origin.INFOCAMERE.getValue());
         onboardingData.setInstitutionType(InstitutionType.PG);
         onboardingData.setUsers(List.of(dummyManager, dummyDelegate));
+        String managerTaxCode = dummyManager.getTaxCode();
 
-        when(partyRegistryProxyConnectorMock.getInstitutionsByUserFiscalCode(dummyManager.getTaxCode()))
+        when(partyRegistryProxyConnectorMock.getInstitutionsByUserFiscalCode(managerTaxCode))
                 .thenReturn(new InstitutionInfoIC());
         // when
-        Assertions.assertThrows(OnboardingNotAllowedException.class, () -> institutionService.onboardingCompanyV2(onboardingData, dummyManager.getTaxCode()));
+        Assertions.assertThrows(OnboardingNotAllowedException.class, () -> institutionService.onboardingCompanyV2(onboardingData, managerTaxCode));
         // then
         verify(partyRegistryProxyConnectorMock, times(1))
-                .getInstitutionsByUserFiscalCode(dummyManager.getTaxCode());
+                .getInstitutionsByUserFiscalCode(managerTaxCode);
         verify(partyRegistryProxyConnectorMock, times(0))
-                .matchInstitutionAndUser(onboardingData.getTaxCode(), dummyManager.getTaxCode());
+                .matchInstitutionAndUser(onboardingData.getTaxCode(), managerTaxCode);
         verify(onboardingMsConnector, times(0))
                 .onboardingCompany(any());
     }
@@ -226,16 +229,17 @@ class InstitutionServiceImplTest {
         onboardingData.setOrigin(Origin.ADE.getValue());
         onboardingData.setInstitutionType(InstitutionType.PG);
         onboardingData.setUsers(List.of(dummyManager, dummyDelegate));
+        String managerTaxCode = dummyManager.getTaxCode();
 
-        when(partyRegistryProxyConnectorMock.matchInstitutionAndUser(onboardingData.getTaxCode(), dummyManager.getTaxCode()))
+        when(partyRegistryProxyConnectorMock.matchInstitutionAndUser(onboardingData.getTaxCode(), managerTaxCode))
                 .thenReturn(new MatchInfoResult());
         // when
-        Assertions.assertThrows(OnboardingNotAllowedException.class, () -> institutionService.onboardingCompanyV2(onboardingData, dummyManager.getTaxCode()));
+        Assertions.assertThrows(OnboardingNotAllowedException.class, () -> institutionService.onboardingCompanyV2(onboardingData, managerTaxCode));
         // then
         verify(partyRegistryProxyConnectorMock, times(0))
-                .getInstitutionsByUserFiscalCode(dummyManager.getTaxCode());
+                .getInstitutionsByUserFiscalCode(managerTaxCode);
         verify(partyRegistryProxyConnectorMock, times(1))
-                .matchInstitutionAndUser(onboardingData.getTaxCode(), dummyManager.getTaxCode());
+                .matchInstitutionAndUser(onboardingData.getTaxCode(), managerTaxCode);
         verify(onboardingMsConnector, times(0))
                 .onboardingCompany(any());
     }
