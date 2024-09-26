@@ -7,12 +7,15 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import it.pagopa.selfcare.commons.base.logging.LogUtils;
+import it.pagopa.selfcare.commons.base.security.SelfCareUser;
 import it.pagopa.selfcare.commons.web.model.Problem;
+import it.pagopa.selfcare.commons.web.security.JwtAuthenticationToken;
 import it.pagopa.selfcare.onboarding.core.InstitutionService;
 import it.pagopa.selfcare.onboarding.web.model.*;
 import it.pagopa.selfcare.onboarding.web.model.mapper.InstitutionMapper;
 import it.pagopa.selfcare.onboarding.web.model.mapper.OnboardingResourceMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.owasp.encoder.Encode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -20,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.security.Principal;
 import java.util.List;
 
 import static org.springframework.http.MediaType.APPLICATION_PROBLEM_JSON_VALUE;
@@ -71,10 +75,12 @@ public class InstitutionV2Controller {
     @PostMapping(value = "/company/onboarding")
     @ResponseStatus(HttpStatus.CREATED)
     @ApiOperation(value = "", notes = "${swagger.onboarding.institutions.api.onboarding.subunit}")
-    public void onboarding(@RequestBody @Valid CompanyOnboardingDto request) {
+    public void onboarding(@RequestBody @Valid CompanyOnboardingDto request, Principal principal) {
         log.trace(ONBOARDING_START);
-        log.debug("onboarding request = {}", request);
-        institutionService.onboardingCompanyV2(onboardingResourceMapper.toEntity(request));
+        log.debug("onboarding request = {}", Encode.forJava(request.toString()));
+        JwtAuthenticationToken jwtAuthenticationToken = (JwtAuthenticationToken) principal;
+        SelfCareUser selfCareUser = (SelfCareUser) jwtAuthenticationToken.getPrincipal();
+        institutionService.onboardingCompanyV2(onboardingResourceMapper.toEntity(request), selfCareUser.getFiscalCode());
         log.trace(ONBOARDING_END);
     }
 

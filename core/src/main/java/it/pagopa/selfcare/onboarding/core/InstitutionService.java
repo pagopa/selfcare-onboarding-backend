@@ -20,7 +20,7 @@ public interface InstitutionService {
 
     void onboardingProductV2(OnboardingData onboardingData);
 
-    void onboardingCompanyV2(OnboardingData onboardingData);
+    void onboardingCompanyV2(OnboardingData onboardingData, String userFiscalCode);
 
     void onboardingProduct(OnboardingData onboardingData);
 
