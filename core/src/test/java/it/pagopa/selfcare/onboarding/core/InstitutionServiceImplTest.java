@@ -148,15 +148,45 @@ class InstitutionServiceImplTest {
 
 
     @Test
-    void onboardingCompanyV2() {
+    void onboardingCompanyV2Successfully() {
         // given
         OnboardingData onboardingData = mockInstance(new OnboardingData(), "setInstitutionType", "setUsers");
         onboardingData.setInstitutionType(InstitutionType.PG);
         onboardingData.setUsers(List.of(dummyManager, dummyDelegate));
+
+        InstitutionInfoIC institutionInfoIC = new InstitutionInfoIC();
+        institutionInfoIC.setLegalTaxId(dummyManager.getTaxCode());
+        BusinessInfoIC businessInfoIC = new BusinessInfoIC();
+        businessInfoIC.setBusinessName("businessName");
+        businessInfoIC.setBusinessTaxId(onboardingData.getTaxCode());
+        institutionInfoIC.setBusinesses(List.of(businessInfoIC));
+
+        when(partyRegistryProxyConnectorMock.getInstitutionsByUserFiscalCode(anyString()))
+                .thenReturn(institutionInfoIC);
         // when
-        institutionService.onboardingCompanyV2(onboardingData);
+        institutionService.onboardingCompanyV2(onboardingData, dummyManager.getTaxCode());
         // then
+        verify(partyRegistryProxyConnectorMock, times(1))
+                .getInstitutionsByUserFiscalCode(any());
         verify(onboardingMsConnector, times(1))
+                .onboardingCompany(any());
+    }
+
+    @Test
+    void onboardingCompanyV2NotAllowedWhenBusinessIsNotRetrievedFromPartyRegistry() {
+        // given
+        OnboardingData onboardingData = mockInstance(new OnboardingData(), "setInstitutionType", "setUsers");
+        onboardingData.setInstitutionType(InstitutionType.PG);
+        onboardingData.setUsers(List.of(dummyManager, dummyDelegate));
+
+        when(partyRegistryProxyConnectorMock.getInstitutionsByUserFiscalCode(anyString()))
+                .thenReturn(new InstitutionInfoIC());
+        // when
+        Assertions.assertThrows(OnboardingNotAllowedException.class, () -> institutionService.onboardingCompanyV2(onboardingData, dummyManager.getTaxCode()));
+        // then
+        verify(partyRegistryProxyConnectorMock, times(1))
+                .getInstitutionsByUserFiscalCode(any());
+        verify(onboardingMsConnector, times(0))
                 .onboardingCompany(any());
     }
 

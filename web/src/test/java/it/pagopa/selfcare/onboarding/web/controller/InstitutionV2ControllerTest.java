@@ -2,7 +2,9 @@ package it.pagopa.selfcare.onboarding.web.controller;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import it.pagopa.selfcare.commons.base.security.SelfCareUser;
 import it.pagopa.selfcare.commons.base.utils.ProductId;
+import it.pagopa.selfcare.commons.web.security.JwtAuthenticationToken;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
 import it.pagopa.selfcare.onboarding.core.InstitutionService;
@@ -12,6 +14,7 @@ import it.pagopa.selfcare.onboarding.web.model.mapper.OnboardingInstitutionInfoM
 import it.pagopa.selfcare.onboarding.web.model.mapper.OnboardingResourceMapperImpl;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
@@ -97,10 +100,16 @@ class InstitutionV2ControllerTest {
 
     @Test
     void onboardingCompany(@Value("classpath:stubs/onboardingCompanyDto.json") Resource onboardingDto) throws Exception {
-
+        //given
+        JwtAuthenticationToken mockPrincipal = Mockito.mock(JwtAuthenticationToken.class);
+        SelfCareUser selfCareUser = SelfCareUser.builder("example")
+                .fiscalCode("fiscalCode")
+                .build();
+        Mockito.when(mockPrincipal.getPrincipal()).thenReturn(selfCareUser);
         // when
         mvc.perform(MockMvcRequestBuilders
                         .post(BASE_URL + "/company/onboarding")
+                        .principal(mockPrincipal)
                         .content(onboardingDto.getInputStream().readAllBytes())
                         .contentType(APPLICATION_JSON_VALUE)
                         .accept(APPLICATION_JSON_VALUE))
@@ -109,7 +118,7 @@ class InstitutionV2ControllerTest {
         // then
 
         verify(institutionServiceMock, times(1))
-                .onboardingCompanyV2(any(OnboardingData.class));
+                .onboardingCompanyV2(any(OnboardingData.class), anyString());
         verifyNoMoreInteractions(institutionServiceMock);
     }
 

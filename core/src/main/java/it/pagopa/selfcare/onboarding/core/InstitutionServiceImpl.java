@@ -118,11 +118,23 @@ class InstitutionServiceImpl implements InstitutionService {
     }
 
     @Override
-    public void onboardingCompanyV2(OnboardingData onboardingData) {
+    public void onboardingCompanyV2(OnboardingData onboardingData, String userFiscalCode) {
         log.trace("onboardingProductAsync start");
         log.debug("onboardingProductAsync onboardingData = {}", onboardingData);
+        InstitutionInfoIC userBusinesses = partyRegistryProxyConnector.getInstitutionsByUserFiscalCode(userFiscalCode);
+        if(businessIsNotRelatedToUser(userBusinesses, onboardingData.getTaxCode())){
+            throw new OnboardingNotAllowedException("The selected business does not belong to the user");
+        }
         onboardingMsConnector.onboardingCompany(onboardingData);
         log.trace("onboarding end");
+    }
+
+    private boolean businessIsNotRelatedToUser(InstitutionInfoIC institutionInfoIC, String businessTaxCode) {
+        return institutionInfoIC == null
+                || CollectionUtils.isEmpty(institutionInfoIC.getBusinesses())
+                || institutionInfoIC.getBusinesses()
+                .stream()
+                .noneMatch(business -> business.getBusinessTaxId().equals(businessTaxCode));
     }
 
     @Override
