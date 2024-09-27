@@ -71,6 +71,7 @@ class InstitutionServiceImpl implements InstitutionService {
     private static final String REQUIRED_AGGREGATE_INSTITUTIONS = "Aggregate institutions are required if given institution is an Aggregator";
 
     private static final String ONBOARDING_COMPANY_NOT_ALLOWED = "The selected business does not belong to the user";
+    private final static String PROD_PNPG = "prod-pnpg";
     static final String DESCRIPTION_TO_REPLACE_REGEX = " - COMUNE";
     private final OnboardingMsConnector onboardingMsConnector;
     private final PartyConnector partyConnector;
@@ -80,8 +81,6 @@ class InstitutionServiceImpl implements InstitutionService {
     private final OnboardingValidationStrategy onboardingValidationStrategy;
     private final PartyRegistryProxyConnector partyRegistryProxyConnector;
     private final InstitutionInfoMapper institutionMapper;
-    private final static String PROD_PNPG = "prod-pnpg";
-
     @Autowired
     InstitutionServiceImpl(OnboardingMsConnector onboardingMsConnector, PartyConnector partyConnector,
                            ProductsConnector productsConnector,
