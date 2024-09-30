@@ -71,7 +71,7 @@ class InstitutionServiceImpl implements InstitutionService {
     private static final String REQUIRED_AGGREGATE_INSTITUTIONS = "Aggregate institutions are required if given institution is an Aggregator";
 
     private static final String ONBOARDING_COMPANY_NOT_ALLOWED = "The selected business does not belong to the user";
-    private final static String PROD_PNPG = "prod-pnpg";
+    private static final String PROD_PN_PG = "prod-pn-pg";
     static final String DESCRIPTION_TO_REPLACE_REGEX = " - COMUNE";
     private final OnboardingMsConnector onboardingMsConnector;
     private final PartyConnector partyConnector;
@@ -498,7 +498,7 @@ class InstitutionServiceImpl implements InstitutionService {
         log.debug(LogUtils.CONFIDENTIAL_MARKER, "Checking if business with tax code {} is onboarded by user with fiscal code {}",
                 businessInfoIC.getBusinessTaxId(), fiscalCode);
         try {
-            onboardingMsConnector.verifyOnboarding(PROD_PNPG, businessInfoIC.getBusinessTaxId(), null, null, null);
+            onboardingMsConnector.verifyOnboarding(PROD_PN_PG, businessInfoIC.getBusinessTaxId(), null, null, null);
             log.debug("Business with tax code {} is already onboarded, checking if user with fiscal code {} is manager",
                     businessInfoIC.getBusinessTaxId(), fiscalCode);
 
@@ -519,7 +519,7 @@ class InstitutionServiceImpl implements InstitutionService {
         user.setRole(PartyRole.MANAGER);
         onboardingData.setUsers(List.of(user));
         onboardingData.setTaxCode(businessInfoIC.getBusinessTaxId());
-        onboardingData.setProductId(PROD_PNPG);
+        onboardingData.setProductId(PROD_PN_PG);
         return onboardingData;
     }
 
