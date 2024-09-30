@@ -1276,7 +1276,7 @@ class InstitutionServiceImplTest {
     }
 
     @Test
-    void getInstitutionsByUser_default() {
+    void getInstitutionsByUser_default_notOnboarded() {
         //given
         String taxCode = "setTaxCode";
         SaveUserDto saveUserDto = mockInstance(new SaveUserDto(), "setFiscalCode");
@@ -1289,6 +1289,38 @@ class InstitutionServiceImplTest {
         institutionInfoICmock.setBusinesses(businessInfoICSmock);
         when(partyRegistryProxyConnectorMock.getInstitutionsByUserFiscalCode(anyString()))
                 .thenReturn(institutionInfoICmock);
+        doThrow(new ResourceNotFoundException()).when(onboardingMsConnector)
+                .verifyOnboarding(any(), any(), any(), any(), any());
+        //when
+        InstitutionInfoIC result = institutionService.getInstitutionsByUser(user.getTaxCode());
+        //then
+        assertNotNull(result);
+        assertEquals(institutionInfoICmock.getBusinesses().get(0).getBusinessName(), result.getBusinesses().get(0).getBusinessName());
+        assertEquals(institutionInfoICmock.getBusinesses().get(0).getBusinessTaxId(), result.getBusinesses().get(0).getBusinessTaxId());
+        assertEquals(institutionInfoICmock.getLegalTaxId(), result.getLegalTaxId());
+        assertEquals(institutionInfoICmock.getRequestDateTime(), result.getRequestDateTime());
+        verify(partyRegistryProxyConnectorMock, times(1))
+                .getInstitutionsByUserFiscalCode(taxCode);
+        verifyNoMoreInteractions(partyRegistryProxyConnectorMock);
+        verifyNoMoreInteractions(userConnectorMock);
+    }
+
+    @Test
+    void getInstitutionsByUser_default_onboarded() {
+        //given
+        String taxCode = "setTaxCode";
+        SaveUserDto saveUserDto = mockInstance(new SaveUserDto(), "setFiscalCode");
+        saveUserDto.setFiscalCode(taxCode);
+        UserId userId = mockInstance(new UserId());
+        User user = mockInstance(new User(), "setId");
+        user.setId(userId.toString());
+        List<BusinessInfoIC> businessInfoICSmock = List.of(mockInstance(new BusinessInfoIC()));
+        InstitutionInfoIC institutionInfoICmock = mockInstance(new InstitutionInfoIC(), "setBusinesses");
+        institutionInfoICmock.setBusinesses(businessInfoICSmock);
+        when(partyRegistryProxyConnectorMock.getInstitutionsByUserFiscalCode(anyString()))
+                .thenReturn(institutionInfoICmock);
+        doNothing().when(onboardingMsConnector).verifyOnboarding(any(), any(), any(), any(), any());
+        when(onboardingMsConnector.checkManager(any())).thenReturn(false);
         //when
         InstitutionInfoIC result = institutionService.getInstitutionsByUser(user.getTaxCode());
         //then

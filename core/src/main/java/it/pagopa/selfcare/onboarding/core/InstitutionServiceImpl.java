@@ -11,6 +11,7 @@ import it.pagopa.selfcare.onboarding.connector.model.InstitutionLegalAddressData
 import it.pagopa.selfcare.onboarding.connector.model.InstitutionOnboardingData;
 import it.pagopa.selfcare.onboarding.connector.model.RecipientCodeStatusResult;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.*;
+import it.pagopa.selfcare.onboarding.connector.model.institutions.infocamere.BusinessInfoIC;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.infocamere.InstitutionInfoIC;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.GeographicTaxonomy;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.InstitutionLocation;
@@ -70,6 +71,7 @@ class InstitutionServiceImpl implements InstitutionService {
     private static final String REQUIRED_AGGREGATE_INSTITUTIONS = "Aggregate institutions are required if given institution is an Aggregator";
 
     private static final String ONBOARDING_COMPANY_NOT_ALLOWED = "The selected business does not belong to the user";
+    private final static String PROD_PNPG = "prod-pnpg";
     static final String DESCRIPTION_TO_REPLACE_REGEX = " - COMUNE";
     private final OnboardingMsConnector onboardingMsConnector;
     private final PartyConnector partyConnector;
@@ -79,7 +81,6 @@ class InstitutionServiceImpl implements InstitutionService {
     private final OnboardingValidationStrategy onboardingValidationStrategy;
     private final PartyRegistryProxyConnector partyRegistryProxyConnector;
     private final InstitutionInfoMapper institutionMapper;
-
     @Autowired
     InstitutionServiceImpl(OnboardingMsConnector onboardingMsConnector, PartyConnector partyConnector,
                            ProductsConnector productsConnector,
@@ -479,10 +480,47 @@ class InstitutionServiceImpl implements InstitutionService {
     public InstitutionInfoIC getInstitutionsByUser(String fiscalCode) {
         log.trace("getInstitutionsByUserId start");
         log.debug(LogUtils.CONFIDENTIAL_MARKER, "getInstitutionsByUserId user = {}", fiscalCode);
+
         InstitutionInfoIC result = partyRegistryProxyConnector.getInstitutionsByUserFiscalCode(fiscalCode);
+        log.debug("found {} institutions for the user", result.getBusinesses().size());
+
+        List<BusinessInfoIC> institutionsNotOnboardedByUser = result.getBusinesses().stream()
+                .filter(businessInfoIC -> !isOnboardedByUser(businessInfoIC, fiscalCode))
+                .toList();
+
+        result.setBusinesses(institutionsNotOnboardedByUser);
         log.debug(LogUtils.CONFIDENTIAL_MARKER, "getInstitutionsByUserId result = {}", result);
         log.trace("getInstitutionsByUserId end");
         return result;
+    }
+
+    private boolean isOnboardedByUser(BusinessInfoIC businessInfoIC, String fiscalCode) {
+        log.debug(LogUtils.CONFIDENTIAL_MARKER, "Checking if business with tax code {} is onboarded by user with fiscal code {}",
+                businessInfoIC.getBusinessTaxId(), fiscalCode);
+        try {
+            onboardingMsConnector.verifyOnboarding(PROD_PNPG, businessInfoIC.getBusinessTaxId(), null, null, null);
+            log.debug("Business with tax code {} is already onboarded, checking if user with fiscal code {} is manager",
+                    businessInfoIC.getBusinessTaxId(), fiscalCode);
+
+            boolean isManager = onboardingMsConnector.checkManager(getOnboardingData(fiscalCode, businessInfoIC));
+            log.debug(LogUtils.CONFIDENTIAL_MARKER, "User with fiscal code {} is manager of business with tax code {}",
+                    fiscalCode, businessInfoIC.getBusinessTaxId());
+            return isManager;
+        } catch (ResourceNotFoundException e) {
+            log.debug("Business with tax code {} is not onboarded", businessInfoIC.getBusinessTaxId());
+            return false;
+        }
+    }
+
+    private OnboardingData getOnboardingData(String fiscalCode, BusinessInfoIC businessInfoIC) {
+        OnboardingData onboardingData = new OnboardingData();
+        User user = new User();
+        user.setTaxCode(fiscalCode);
+        user.setRole(PartyRole.MANAGER);
+        onboardingData.setUsers(List.of(user));
+        onboardingData.setTaxCode(businessInfoIC.getBusinessTaxId());
+        onboardingData.setProductId(PROD_PNPG);
+        return onboardingData;
     }
 
     @Override
