@@ -1191,6 +1191,15 @@
         "summary" : "onboarding",
         "description" : "The service allows the onboarding of Users to a subunit of an Institution",
         "operationId" : "onboardingUsingPOST_2",
+        "parameters" : [ {
+          "name" : "name",
+          "in" : "query",
+          "required" : false,
+          "style" : "form",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
         "requestBody" : {
           "content" : {
             "application/json" : {
@@ -3267,6 +3276,9 @@
             "items" : {
               "$ref" : "#/components/schemas/User"
             }
+          },
+          "vatNumber" : {
+            "type" : "string"
           },
           "zipCode" : {
             "type" : "string"

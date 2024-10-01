@@ -133,7 +133,9 @@ public interface OnboardingMapper {
     @Mapping(target = "institution", source = ".", qualifiedByName = "toInstitutionBase")
     OnboardingPaRequest toOnboardingPaAggregationRequest(OnboardingData onboardingData);
 
-    VerifyAggregateResult toVerifyAggregateResult(VerifyAggregateResponse body);
+    VerifyAggregateResult toVerifyAggregateAppIoResult(VerifyAggregateAppIoResponse body);
+
+    VerifyAggregateResult toVerifyAggregatePagoPaResult(VerifyAggregateResponse body);
 
     VerifyAggregateResult toVerifyAggregateSendResponse(VerifyAggregateSendResponse body);
 

@@ -57,11 +57,11 @@ public class OnboardingMsConnectorImpl implements OnboardingMsConnector {
     @Retry(name = "retryTimeout")
     public void onboarding(OnboardingData onboardingData) {
         if (onboardingData.getInstitutionType() == InstitutionType.PA) {
-            msOnboardingApiClient._v1OnboardingPaPost(onboardingMapper.toOnboardingPaRequest(onboardingData));
+            msOnboardingApiClient._onboardingPa(onboardingMapper.toOnboardingPaRequest(onboardingData));
         } else if (onboardingData.getInstitutionType() == InstitutionType.PSP) {
-            msOnboardingApiClient._v1OnboardingPspPost(onboardingMapper.toOnboardingPspRequest(onboardingData));
+            msOnboardingApiClient._onboardingPsp(onboardingMapper.toOnboardingPspRequest(onboardingData));
         } else {
-            msOnboardingApiClient._v1OnboardingPost(onboardingMapper.toOnboardingDefaultRequest(onboardingData));
+            msOnboardingApiClient._onboarding(onboardingMapper.toOnboardingDefaultRequest(onboardingData));
         }
     }
 
@@ -70,13 +70,13 @@ public class OnboardingMsConnectorImpl implements OnboardingMsConnector {
         log.info("validateAggregatesCsv for product: {}", productId);
         switch (productId) {
             case PROD_IO -> {
-                return onboardingMapper.toVerifyAggregateResult(msOnboardingAggregatesApiClient._v1AggregatesVerificationProdIoPost(file).getBody());
+                return onboardingMapper.toVerifyAggregateAppIoResult(msOnboardingAggregatesApiClient._verifyAppIoAggregatesCsv(file).getBody());
             }
             case PROD_PAGOPA -> {
-                return onboardingMapper.toVerifyAggregateResult(msOnboardingAggregatesApiClient._v1AggregatesVerificationProdPagopaPost(file).getBody());
+                return onboardingMapper.toVerifyAggregatePagoPaResult(msOnboardingAggregatesApiClient._verifyPagoPaAggregatesCsv(file).getBody());
             }
             case PROD_PN -> {
-                return onboardingMapper.toVerifyAggregateSendResponse(msOnboardingAggregatesApiClient._v1AggregatesVerificationProdPnPost(file).getBody());
+                return onboardingMapper.toVerifyAggregateSendResponse(msOnboardingAggregatesApiClient._verifySendAggregatesCsv(file).getBody());
             }
             default -> {
                 log.error("Unsupported productId: {}", productId);
@@ -88,14 +88,14 @@ public class OnboardingMsConnectorImpl implements OnboardingMsConnector {
     @Override
     @Retry(name = "retryTimeout")
     public void onboardingUsers(OnboardingData onboardingData) {
-        msOnboardingApiClient._v1OnboardingUsersPost(onboardingMapper.toOnboardingUsersRequest(onboardingData));
+        msOnboardingApiClient._onboardingUsers(onboardingMapper.toOnboardingUsersRequest(onboardingData));
     }
 
 
     @Override
     @Retry(name = "retryTimeout")
     public void onboardingCompany(OnboardingData onboardingData) {
-        msOnboardingApiClient._v1OnboardingPgCompletionPost(onboardingMapper.toOnboardingPgRequest(onboardingData));
+        msOnboardingApiClient._onboardingPgCompletion(onboardingMapper.toOnboardingPgRequest(onboardingData));
     }
 
     @Override
@@ -107,19 +107,19 @@ public class OnboardingMsConnectorImpl implements OnboardingMsConnector {
     @Override
     @Retry(name = "retryTimeout")
     public void onboardingUsersComplete(String onboardingId, MultipartFile contract) {
-        msOnboardingApiClient._v1OnboardingOnboardingIdCompleteOnboardingUsersPut(onboardingId, contract);
+        msOnboardingApiClient._completeOnboardingUser(onboardingId, contract);
     }
 
     @Override
     @Retry(name = "retryTimeout")
     public void onboardingPending(String onboardingId) {
-        msOnboardingApiClient._v1OnboardingOnboardingIdPendingGet(onboardingId);
+        msOnboardingApiClient._getOnboardingPending(onboardingId);
     }
 
     @Override
     @Retry(name = "retryTimeout")
     public void approveOnboarding(String onboardingId) {
-        msOnboardingApiClient._v1OnboardingOnboardingIdApprovePut(onboardingId);
+        msOnboardingApiClient._approve(onboardingId);
     }
 
     @Override
@@ -129,33 +129,33 @@ public class OnboardingMsConnectorImpl implements OnboardingMsConnector {
         if(StringUtils.hasText(reason)) {
             reasonForReject.setReasonForReject(reason);
         }
-        msOnboardingApiClient._v1OnboardingOnboardingIdRejectPut(onboardingId, reasonForReject);
+        msOnboardingApiClient._delete(onboardingId, reasonForReject);
     }
 
     @Override
     @Retry(name = "retryTimeout")
     public OnboardingData getOnboarding(String onboardingId) {
-        OnboardingGet onboardingGet = msOnboardingApiClient._v1OnboardingOnboardingIdGet(onboardingId).getBody();
+        OnboardingGet onboardingGet = msOnboardingApiClient._getById(onboardingId).getBody();
         return onboardingMapper.toOnboardingData(onboardingGet);
     }
 
     @Override
     @Retry(name = "retryTimeout")
     public OnboardingData getOnboardingWithUserInfo(String onboardingId) {
-        OnboardingGet onboardingGet = msOnboardingApiClient._v1OnboardingOnboardingIdWithUserInfoGet(onboardingId).getBody();
+        OnboardingGet onboardingGet = msOnboardingApiClient._getByIdWithUserInfo(onboardingId).getBody();
         return onboardingMapper.toOnboardingData(onboardingGet);
     }
 
     @Override
     @Retry(name = "retryTimeout")
     public Resource getContract(String onboardingId) {
-        return msOnboardingTokenApiClient._v1TokensOnboardingIdContractGet(onboardingId).getBody();
+        return msOnboardingTokenApiClient._getContract(onboardingId).getBody();
     }
 
     @Override
     @Retry(name = "retryTimeout")
     public void onboardingPaAggregation(OnboardingData onboardingData) {
-        msOnboardingApiClient._v1OnboardingPaAggregationPost(onboardingMapper.toOnboardingPaAggregationRequest(onboardingData));
+        msOnboardingApiClient._onboardingPaAggregation(onboardingMapper.toOnboardingPaAggregationRequest(onboardingData));
     }
 
     @Override
@@ -177,19 +177,19 @@ public class OnboardingMsConnectorImpl implements OnboardingMsConnector {
 
     @Override
     public boolean checkManager(OnboardingData onboardingData) {
-        return Boolean.TRUE.equals(Objects.requireNonNull(msOnboardingApiClient._v1OnboardingCheckManagerPost(onboardingMapper.toOnboardingUsersRequest(onboardingData)))
+        return Boolean.TRUE.equals(Objects.requireNonNull(msOnboardingApiClient._checkManager(onboardingMapper.toOnboardingUsersRequest(onboardingData)))
                 .getBody());
     }
 
     @Override
     public RecipientCodeStatusResult checkRecipientCode(String originId, String recipientCode) {
-        return onboardingMapper.toRecipientCodeStatusResult(msOnboardingApiClient._v1OnboardingCheckRecipientCodeGet(originId, recipientCode).getBody());
+        return onboardingMapper.toRecipientCodeStatusResult(msOnboardingApiClient._checkRecipientCode(originId, recipientCode).getBody());
     }
 
     public void verifyOnboarding(String productId, String taxCode, String origin, String originId, String subunitCode) {
         log.trace("verifyOnboarding start");
         Assert.hasText(productId, REQUIRED_PRODUCT_ID_MESSAGE);
-        msOnboardingApiClient._v1OnboardingVerifyHead(origin, originId, productId, subunitCode, taxCode);
+        msOnboardingApiClient._verifyOnboardingInfoByFilters(origin, originId, productId, subunitCode, taxCode);
         log.trace("verifyOnboarding end");
     }
 }
