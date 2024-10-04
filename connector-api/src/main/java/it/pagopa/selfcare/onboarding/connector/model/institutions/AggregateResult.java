@@ -9,7 +9,7 @@ public class AggregateResult {
     private String subunitCode;
     private String subunitType;
     private String description;
-    private String codeSDI;
+    private String recipientCode;
     private String digitalAddress;
     private String taxCode;
     private String vatNumber;

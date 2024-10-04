@@ -42,5 +42,5 @@ public class Institution {
     private String iban;
     private String service;
     private String syncAsyncMode;
-    private String codeSDI;
+    private String recipientCode;
 }
