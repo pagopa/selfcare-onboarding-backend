@@ -2761,9 +2761,6 @@
           "city" : {
             "type" : "string"
           },
-          "codeSDI" : {
-            "type" : "string"
-          },
           "county" : {
             "type" : "string"
           },
@@ -2787,6 +2784,9 @@
             "enum" : [ "ADE", "ANAC", "INFOCAMERE", "IPA", "IVASS", "MOCK", "PDND_INFOCAMERE", "SELC", "UNKNOWN" ]
           },
           "originId" : {
+            "type" : "string"
+          },
+          "recipientCode" : {
             "type" : "string"
           },
           "service" : {
@@ -2831,9 +2831,6 @@
           "city" : {
             "type" : "string"
           },
-          "codeSDI" : {
-            "type" : "string"
-          },
           "county" : {
             "type" : "string"
           },
@@ -2850,6 +2847,9 @@
             "type" : "string"
           },
           "originId" : {
+            "type" : "string"
+          },
+          "recipientCode" : {
             "type" : "string"
           },
           "service" : {
