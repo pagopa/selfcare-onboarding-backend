@@ -70,13 +70,13 @@ public class OnboardingMsConnectorImpl implements OnboardingMsConnector {
         log.info("validateAggregatesCsv for product: {}", productId);
         switch (productId) {
             case PROD_IO -> {
-                return onboardingMapper.toVerifyAggregateAppIoResult(msOnboardingAggregatesApiClient._verifyAppIoAggregatesCsv(file).getBody());
+                return onboardingMapper.toVerifyAggregateResult(msOnboardingAggregatesApiClient._verifyAppIoAggregatesCsv(file).getBody());
             }
             case PROD_PAGOPA -> {
-                return onboardingMapper.toVerifyAggregatePagoPaResult(msOnboardingAggregatesApiClient._verifyPagoPaAggregatesCsv(file).getBody());
+                return onboardingMapper.toVerifyAggregateResult(msOnboardingAggregatesApiClient._verifyPagoPaAggregatesCsv(file).getBody());
             }
             case PROD_PN -> {
-                return onboardingMapper.toVerifyAggregateSendResponse(msOnboardingAggregatesApiClient._verifySendAggregatesCsv(file).getBody());
+                return onboardingMapper.toVerifyAggregateResult(msOnboardingAggregatesApiClient._verifySendAggregatesCsv(file).getBody());
             }
             default -> {
                 log.error("Unsupported productId: {}", productId);

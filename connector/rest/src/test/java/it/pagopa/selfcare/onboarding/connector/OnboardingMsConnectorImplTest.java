@@ -136,11 +136,11 @@ class OnboardingMsConnectorImplTest {
     void aggregatesVerification_withProdIO_shouldReturnValidResult() {
         // given
         MockMultipartFile file = new MockMultipartFile("file", "content".getBytes());
-        VerifyAggregateAppIoResponse verifyAggregateAppIoResponse = new VerifyAggregateAppIoResponse();
+        VerifyAggregateResponse verifyAggregateAppIoResponse = new VerifyAggregateResponse();
         VerifyAggregateResult expectedResult = new VerifyAggregateResult();
         when(msOnboardingAggregatesApiClient._verifyAppIoAggregatesCsv(file))
                 .thenReturn(ResponseEntity.ok(verifyAggregateAppIoResponse));
-        when(onboardingMapper.toVerifyAggregateAppIoResult(eq(verifyAggregateAppIoResponse))).thenReturn(expectedResult);
+        when(onboardingMapper.toVerifyAggregateResult(eq(verifyAggregateAppIoResponse))).thenReturn(expectedResult);
 
         // when
         VerifyAggregateResult result = onboardingMsConnector.aggregatesVerification(file, "prod-io");
@@ -148,7 +148,7 @@ class OnboardingMsConnectorImplTest {
         // then
         assertEquals(expectedResult, result);
         verify(msOnboardingAggregatesApiClient, times(1))._verifyAppIoAggregatesCsv(file);
-        verify(onboardingMapper, times(1)).toVerifyAggregateAppIoResult(eq(verifyAggregateAppIoResponse));
+        verify(onboardingMapper, times(1)).toVerifyAggregateResult(eq(verifyAggregateAppIoResponse));
     }
 
     @Test
@@ -159,7 +159,7 @@ class OnboardingMsConnectorImplTest {
         VerifyAggregateResponse verifyAggregateResponse = new VerifyAggregateResponse();
         when(msOnboardingAggregatesApiClient._verifyPagoPaAggregatesCsv(file))
                 .thenReturn(ResponseEntity.ok(new VerifyAggregateResponse()));
-        when(onboardingMapper.toVerifyAggregatePagoPaResult(eq(verifyAggregateResponse))).thenReturn(expectedResult);
+        when(onboardingMapper.toVerifyAggregateResult(eq(verifyAggregateResponse))).thenReturn(expectedResult);
 
         // when
         VerifyAggregateResult result = onboardingMsConnector.aggregatesVerification(file, "prod-pagopa");
@@ -167,7 +167,7 @@ class OnboardingMsConnectorImplTest {
         // then
         assertEquals(expectedResult, result);
         verify(msOnboardingAggregatesApiClient, times(1))._verifyPagoPaAggregatesCsv(file);
-        verify(onboardingMapper, times(1)).toVerifyAggregatePagoPaResult(eq(verifyAggregateResponse));
+        verify(onboardingMapper, times(1)).toVerifyAggregateResult(eq(verifyAggregateResponse));
     }
 
     @Test
@@ -176,8 +176,8 @@ class OnboardingMsConnectorImplTest {
         MockMultipartFile file = new MockMultipartFile("file", "content".getBytes());
         VerifyAggregateResult expectedResult = new VerifyAggregateResult();
         when(msOnboardingAggregatesApiClient._verifySendAggregatesCsv(file))
-                .thenReturn(ResponseEntity.ok(new VerifyAggregateSendResponse()));
-        when(onboardingMapper.toVerifyAggregateSendResponse(any())).thenReturn(expectedResult);
+                .thenReturn(ResponseEntity.ok(new VerifyAggregateResponse()));
+        when(onboardingMapper.toVerifyAggregateResult(any())).thenReturn(expectedResult);
 
         // when
         VerifyAggregateResult result = onboardingMsConnector.aggregatesVerification(file, "prod-pn");
@@ -185,7 +185,7 @@ class OnboardingMsConnectorImplTest {
         // then
         assertEquals(expectedResult, result);
         verify(msOnboardingAggregatesApiClient, times(1))._verifySendAggregatesCsv(file);
-        verify(onboardingMapper, times(1)).toVerifyAggregateSendResponse(any());
+        verify(onboardingMapper, times(1)).toVerifyAggregateResult(any());
     }
 
     @Test

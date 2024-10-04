@@ -1803,7 +1803,7 @@ class InstitutionServiceImplTest {
     void validateAggregatesCsvReturnsValidResultWhenNoErrorsAndProductIdIsPROD_IO() {
         MultipartFile file = new MockMultipartFile("file", "hello.txt", MediaType.TEXT_PLAIN_VALUE, "Hello, World!".getBytes());
         VerifyAggregateResult expected = new VerifyAggregateResult();
-        expected.setAggregates(Arrays.asList(new Institution(), new Institution()));
+        expected.setAggregates(Arrays.asList(new AggregateResult(), new AggregateResult()));
         expected.setErrors(Collections.emptyList());
         when(onboardingMsConnector.aggregatesVerification(any(MultipartFile.class), eq("prod-io"))).thenReturn(expected);
 
@@ -1820,7 +1820,7 @@ class InstitutionServiceImplTest {
     void validateAggregatesCsvReturnsValidResultWhenNoErrorsAndProductIdIsPROD_PAGOPA() {
         MultipartFile file = new MockMultipartFile("file", "hello.txt", MediaType.TEXT_PLAIN_VALUE, "Hello, World!".getBytes());
         VerifyAggregateResult expected = new VerifyAggregateResult();
-        expected.setAggregates(Arrays.asList(new Institution(), new Institution()));
+        expected.setAggregates(Arrays.asList(new AggregateResult(), new AggregateResult()));
         expected.setErrors(Collections.emptyList());
         when(onboardingMsConnector.aggregatesVerification(any(MultipartFile.class), eq("prod-pagopa"))).thenReturn(expected);
 
@@ -1837,7 +1837,7 @@ class InstitutionServiceImplTest {
     void validateAggregatesCsvReturnsValidResultWhenNoErrorsAndProductIdIsPROD_PN() {
         MultipartFile file = new MockMultipartFile("file", "hello.txt", MediaType.TEXT_PLAIN_VALUE, "Hello, World!".getBytes());
         VerifyAggregateResult expected = new VerifyAggregateResult();
-        expected.setAggregates(Arrays.asList(new Institution(), new Institution()));
+        expected.setAggregates(Arrays.asList(new AggregateResult(), new AggregateResult()));
         expected.setErrors(Collections.emptyList());
         when(onboardingMsConnector.aggregatesVerification(any(MultipartFile.class), eq("prod-pn"))).thenReturn(expected);
 
@@ -1854,7 +1854,7 @@ class InstitutionServiceImplTest {
     void validateAggregatesCsvReturnsValidResultWhenNoErrorsAndProductIdIsDifferentCase() {
         MultipartFile file = new MockMultipartFile("file", "hello.txt", MediaType.TEXT_PLAIN_VALUE, "Hello, World!".getBytes());
         VerifyAggregateResult expected = new VerifyAggregateResult();
-        expected.setAggregates(Arrays.asList(new Institution(), new Institution()));
+        expected.setAggregates(Arrays.asList(new AggregateResult(), new AggregateResult()));
         expected.setErrors(Collections.emptyList());
         when(onboardingMsConnector.aggregatesVerification(any(MultipartFile.class), eq("prod-fd"))).thenReturn(expected);
 

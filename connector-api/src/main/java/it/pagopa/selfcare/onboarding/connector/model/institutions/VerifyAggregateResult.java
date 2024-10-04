@@ -6,6 +6,6 @@ import java.util.List;
 
 @Data
 public class VerifyAggregateResult {
-    private List<Institution> aggregates ;
+    private List<AggregateResult> aggregates ;
     private List<RowError> errors;
 }

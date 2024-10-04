@@ -24,4 +24,16 @@ public class AggregateInstitution {
     private Origin origin;
     private List<UserDto> users;
 
+    private String taxCodePT;
+    private String iban;
+    private String service;
+    private String syncAsyncMode;
+    private String codeSDI;
+    private String vatNumber;
+    private String digitalAddress;
+    private String city;
+    private String county;
+
+
+
 }
