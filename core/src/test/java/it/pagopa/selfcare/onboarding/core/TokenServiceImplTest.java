@@ -135,4 +135,17 @@ public class TokenServiceImplTest {
         Mockito.verify(onboardingMsConnector, Mockito.times(1))
                 .getContract(onboardingId);
     }
+
+
+    @Test
+    void getAggregatesCsv() {
+        //given
+        final String onboardingId = "onboardingId";
+        final String productId = "productId";
+        // when
+        tokenService.getAggregatesCsv(onboardingId, productId);
+        //then
+        Mockito.verify(onboardingMsConnector, Mockito.times(1))
+                .getAggregatesCsv(onboardingId, productId);
+    }
 }

@@ -91,4 +91,17 @@ public class TokenServiceImpl implements TokenService {
         log.trace("getContract end");
         return resource;
     }
+
+
+    @Override
+    public Resource getAggregatesCsv(String onboardingId, String productId) {
+        log.trace("getAggregatesCsv start");
+        log.debug("getAggregatesCsv id = {}, productId = {}", onboardingId, productId);
+        Assert.notNull(onboardingId, "OnboardingId is required");
+        Assert.notNull(productId, "ProductId is required");
+        Resource resource = onboardingMsConnector.getAggregatesCsv(onboardingId, productId);
+        log.debug("getAggregatesCsv result = success");
+        log.trace("getAggregatesCsv end");
+        return resource;
+    }
 }

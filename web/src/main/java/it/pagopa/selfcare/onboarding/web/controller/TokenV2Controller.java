@@ -218,4 +218,33 @@ public class TokenV2Controller {
             IOUtils.close(inputStream);
         }
     }
+
+    @GetMapping(value = "/aggregates-csv/{onboardingId}/products/{productId}", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "", notes = "${swagger.tokens.getContract}")
+    public ResponseEntity<byte[]> getAggregatesCsv(@ApiParam("${swagger.tokens.onboardingId}") @PathVariable("onboardingId")
+                                                       String onboardingId,
+                                                   @ApiParam("${swagger.tokens.productId}")
+                                                   @PathVariable("productId")
+                                                   String productId) throws IOException {
+        log.trace("getAggregatesCsv start");
+        log.debug("getAggregatesCsv onboardingId = {}, productId = {}", onboardingId, productId);
+        Resource contract = tokenService.getAggregatesCsv(onboardingId, productId);
+        InputStream inputStream = null;
+        try {
+            inputStream = contract.getInputStream();
+            byte[] byteArray = IOUtils.toByteArray(inputStream);
+            log.trace("getAggregatesCsv end");
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.add(HttpHeaders.CONTENT_TYPE, APPLICATION_OCTET_STREAM_VALUE);
+            headers.add(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, HttpHeaders.CONTENT_DISPOSITION);
+            headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + contract.getFilename());
+            return ResponseEntity.ok()
+                    .headers(headers)
+                    .body(byteArray);
+        } finally {
+            IOUtils.close(inputStream);
+        }
+    }
 }

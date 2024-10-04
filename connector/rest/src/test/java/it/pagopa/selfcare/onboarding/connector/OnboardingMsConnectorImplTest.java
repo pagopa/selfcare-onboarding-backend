@@ -5,8 +5,6 @@ import it.pagopa.selfcare.onboarding.connector.exceptions.InvalidRequestExceptio
 import it.pagopa.selfcare.onboarding.connector.model.RecipientCodeStatusResult;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.VerifyAggregateResult;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.DataProtectionOfficer;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.PaymentServiceProvider;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.*;
 import it.pagopa.selfcare.onboarding.connector.rest.client.MsOnboardingAggregatesApiClient;
 import it.pagopa.selfcare.onboarding.connector.rest.client.MsOnboardingApiClient;
@@ -200,7 +198,7 @@ class OnboardingMsConnectorImplTest {
         assertEquals("400 BAD_REQUEST Unsupported productId: prod-fd", exception.getMessage());
         verify(msOnboardingAggregatesApiClient, never())._verifyAppIoAggregatesCsv(any());
         verify(msOnboardingAggregatesApiClient, never())._verifyPagoPaAggregatesCsv(any());
-        verify(msOnboardingAggregatesApiClient, never())._verifySendAggregatesCsv(any());
+        verify(msOnboardingAggregatesApiClient, never())._verifyPagoPaAggregatesCsv(any());
     }
     @Test
     void onboardingCompany() {
@@ -344,6 +342,23 @@ class OnboardingMsConnectorImplTest {
         verify(msOnboardingTokenApiClient, times(1))
                 ._getContract(onboardingId);
         verifyNoMoreInteractions(msOnboardingTokenApiClient);
+    }
+
+    @Test
+    void getAggregatesCsv() {
+        // given
+        final String onboardingId = "onboardingId";
+        final String productId = "productId";
+        Resource resource = Mockito.mock(Resource.class);
+        when(msOnboardingAggregatesApiClient._getAggregatesCsv(onboardingId, productId))
+                .thenReturn(ResponseEntity.of(Optional.of(resource)));
+        // when
+        final Executable executable = () -> onboardingMsConnector.getAggregatesCsv(onboardingId, productId);
+        // then
+        assertDoesNotThrow(executable);
+        verify(msOnboardingAggregatesApiClient, times(1))
+                ._getAggregatesCsv(onboardingId, productId);
+        verifyNoMoreInteractions(msOnboardingAggregatesApiClient);
     }
 
     @Test

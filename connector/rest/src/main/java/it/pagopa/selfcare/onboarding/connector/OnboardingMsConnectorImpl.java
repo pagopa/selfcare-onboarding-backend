@@ -154,6 +154,12 @@ public class OnboardingMsConnectorImpl implements OnboardingMsConnector {
 
     @Override
     @Retry(name = "retryTimeout")
+    public Resource getAggregatesCsv(String onboardingId, String productId) {
+        return msOnboardingAggregatesApiClient._getAggregatesCsv(onboardingId, productId).getBody();
+    }
+
+    @Override
+    @Retry(name = "retryTimeout")
     public void onboardingPaAggregation(OnboardingData onboardingData) {
         msOnboardingApiClient._onboardingPaAggregation(onboardingMapper.toOnboardingPaAggregationRequest(onboardingData));
     }
