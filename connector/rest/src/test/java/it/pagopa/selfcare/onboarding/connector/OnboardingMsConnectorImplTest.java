@@ -198,7 +198,7 @@ class OnboardingMsConnectorImplTest {
         assertEquals("400 BAD_REQUEST Unsupported productId: prod-fd", exception.getMessage());
         verify(msOnboardingAggregatesApiClient, never())._verifyAppIoAggregatesCsv(any());
         verify(msOnboardingAggregatesApiClient, never())._verifyPagoPaAggregatesCsv(any());
-        verify(msOnboardingAggregatesApiClient, never())._verifyPagoPaAggregatesCsv(any());
+        verify(msOnboardingAggregatesApiClient, never())._verifySendAggregatesCsv(any());
     }
     @Test
     void onboardingCompany() {
