@@ -61,7 +61,7 @@ public class TokenServiceImplTest {
         Executable executable = () -> tokenService.completeOnboardingUsers(null, null);
         //then
         Exception e = Assertions.assertThrows(IllegalArgumentException.class, executable);
-        Assertions.assertEquals("onboardingId is required", e.getMessage());
+        Assertions.assertEquals("OnboardingId is required", e.getMessage());
         Mockito.verifyNoInteractions(partyConnector);
     }
 
