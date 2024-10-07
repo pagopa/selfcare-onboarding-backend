@@ -228,7 +228,7 @@ public class TokenV2ControllerTest {
 
         //when
         mvc.perform(MockMvcRequestBuilders
-                        .get("/v2/tokens/aggregates-csv/{onboardingId}/products/{productId}", onboardingId, productId)
+                        .get("/v2/tokens/{onboardingId}/products/{productId}/aggregates-csv", onboardingId, productId)
                         .accept(MediaType.APPLICATION_OCTET_STREAM_VALUE))
                 .andExpect(status().isOk())
                 .andReturn();

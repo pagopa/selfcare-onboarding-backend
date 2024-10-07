@@ -220,7 +220,7 @@ public class TokenV2Controller {
         }
     }
 
-    @GetMapping(value = "/aggregates-csv/{onboardingId}/products/{productId}", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    @GetMapping(value = "/{onboardingId}/products/{productId}/aggregates-csv", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "", notes = "${swagger.tokens.getAggregatesCsv}")
     public ResponseEntity<byte[]> getAggregatesCsv(@ApiParam("${swagger.tokens.onboardingId}") @PathVariable("onboardingId")
