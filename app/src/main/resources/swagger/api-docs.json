@@ -1774,7 +1774,7 @@
       "get" : {
         "tags" : [ "tokens" ],
         "summary" : "getAggregatesCsv",
-        "description" : "Service to download a specific onboarding contract",
+        "description" : "Service to download a specific onboarding aggregates csv",
         "operationId" : "getAggregatesCsvUsingGET",
         "parameters" : [ {
           "name" : "onboardingId",
