@@ -61,7 +61,7 @@ public class TokenServiceImplTest {
         Executable executable = () -> tokenService.completeOnboardingUsers(null, null);
         //then
         Exception e = Assertions.assertThrows(IllegalArgumentException.class, executable);
-        Assertions.assertEquals("onboardingId is required", e.getMessage());
+        Assertions.assertEquals("OnboardingId is required", e.getMessage());
         Mockito.verifyNoInteractions(partyConnector);
     }
 
@@ -134,5 +134,18 @@ public class TokenServiceImplTest {
         //then
         Mockito.verify(onboardingMsConnector, Mockito.times(1))
                 .getContract(onboardingId);
+    }
+
+
+    @Test
+    void getAggregatesCsv() {
+        //given
+        final String onboardingId = "onboardingId";
+        final String productId = "productId";
+        // when
+        tokenService.getAggregatesCsv(onboardingId, productId);
+        //then
+        Mockito.verify(onboardingMsConnector, Mockito.times(1))
+                .getAggregatesCsv(onboardingId, productId);
     }
 }

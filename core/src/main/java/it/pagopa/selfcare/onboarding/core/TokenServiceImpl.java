@@ -3,6 +3,7 @@ package it.pagopa.selfcare.onboarding.core;
 import it.pagopa.selfcare.onboarding.connector.api.OnboardingMsConnector;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
 import lombok.extern.slf4j.Slf4j;
+import org.owasp.encoder.Encode;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -75,7 +76,7 @@ public class TokenServiceImpl implements TokenService {
     public void completeOnboardingUsers(String onboardingId, MultipartFile contract) {
         log.trace("completeOnboardingUsersAsync start");
         log.debug("completeOnboardingUsersAsync id = {}", onboardingId);
-        Assert.notNull(onboardingId, "onboardingId is required");
+        Assert.notNull(onboardingId, ONBOARDING_ID_REQUIRED_MESSAGE);
         onboardingMsConnector.onboardingUsersComplete(onboardingId, contract);
         log.debug("completeOnboardingUsersAsync result = success");
         log.trace("completeOnboardingUsersAsync end");
@@ -89,6 +90,19 @@ public class TokenServiceImpl implements TokenService {
         Resource resource = onboardingMsConnector.getContract(onboardingId);
         log.debug("getContract result = success");
         log.trace("getContract end");
+        return resource;
+    }
+
+
+    @Override
+    public Resource getAggregatesCsv(String onboardingId, String productId) {
+        log.trace("getAggregatesCsv start");
+        log.debug("getAggregatesCsv id = {}, productId = {}", Encode.forJava(onboardingId), Encode.forJava(productId));
+        Assert.notNull(onboardingId, ONBOARDING_ID_REQUIRED_MESSAGE);
+        Assert.notNull(productId, "ProductId is required");
+        Resource resource = onboardingMsConnector.getAggregatesCsv(onboardingId, productId);
+        log.debug("getAggregatesCsv result = success");
+        log.trace("getAggregatesCsv end");
         return resource;
     }
 }
