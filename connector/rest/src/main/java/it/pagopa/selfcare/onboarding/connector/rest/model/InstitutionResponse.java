@@ -32,6 +32,7 @@ public class InstitutionResponse {
     private PaymentServiceProvider paymentServiceProvider;
     private DataProtectionOfficer dataProtectionOfficer;
     private List<GeographicTaxonomy> geographicTaxonomies;
+    private List<OnboardingResponse> onboarding;
     private String rea;
     private String shareCapital;
     private String businessRegisterPlace;
