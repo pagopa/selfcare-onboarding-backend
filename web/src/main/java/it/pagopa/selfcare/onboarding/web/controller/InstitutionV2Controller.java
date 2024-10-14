@@ -141,7 +141,7 @@ public class InstitutionV2Controller {
                                                                    @RequestParam(value = "subunitCode", required = false) String subunitCode
     ) {
         log.trace("getActiveOnboarding start");
-        log.debug("getActiveOnboarding taxCode = {}, productId = {}", taxCode, productId);
+        log.debug("getActiveOnboarding taxCode = {}, productId = {}", Encode.forJava(taxCode), Encode.forJava(productId));
         if ((StringUtils.isBlank(taxCode) || StringUtils.isBlank(productId)))
             throw new InvalidRequestException("taxCode and/or productId must not be blank! ");
         List<InstitutionOnboardingResource> response = institutionService.getActiveOnboarding(taxCode, productId,subunitCode)
