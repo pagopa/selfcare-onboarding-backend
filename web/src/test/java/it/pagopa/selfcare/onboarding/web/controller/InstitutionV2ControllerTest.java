@@ -6,9 +6,11 @@ import it.pagopa.selfcare.commons.base.security.SelfCareUser;
 import it.pagopa.selfcare.commons.base.utils.ProductId;
 import it.pagopa.selfcare.commons.web.security.JwtAuthenticationToken;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.InstitutionOnboarding;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
 import it.pagopa.selfcare.onboarding.core.InstitutionService;
 import it.pagopa.selfcare.onboarding.web.config.WebTestConfig;
+import it.pagopa.selfcare.onboarding.web.model.InstitutionOnboardingResource;
 import it.pagopa.selfcare.onboarding.web.model.mapper.GeographicTaxonomyMapperImpl;
 import it.pagopa.selfcare.onboarding.web.model.mapper.OnboardingInstitutionInfoMapperImpl;
 import it.pagopa.selfcare.onboarding.web.model.mapper.OnboardingResourceMapperImpl;
@@ -30,6 +32,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import it.pagopa.selfcare.commons.base.utils.InstitutionType;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -188,6 +191,105 @@ class InstitutionV2ControllerTest {
         // Then
         verify(institutionServiceMock, times(1)).validateAggregatesCsv(any(MultipartFile.class), anyString());
         verifyNoMoreInteractions(institutionServiceMock);
+    }
+
+    @Test
+    void getActiveOnboarding_success() throws Exception {
+        // given
+        String taxCode = "validTaxCode";
+        String productId = "validProductId";
+        InstitutionOnboarding onboarding = new InstitutionOnboarding();
+        onboarding.setProductId(productId);
+        onboarding.setStatus("ACTIVE");
+        onboarding.setCreatedAt(OffsetDateTime.parse("2021-01-01T00:00:00Z"));
+        Institution institution = new Institution();
+        institution.setOnboarding(List.of(onboarding));
+
+        when(institutionServiceMock.getActiveOnboarding(taxCode, productId, null))
+                .thenReturn(List.of(institution));
+        InstitutionOnboardingResource onboardingResource = new InstitutionOnboardingResource();
+        onboardingResource.setInstitutionId(institution.getId());
+
+        // when
+        MvcResult result = mvc.perform(MockMvcRequestBuilders
+                        .get(BASE_URL + "/onboarding/active")
+                        .param("taxCode", taxCode)
+                        .param("productId", productId)
+                        .contentType(APPLICATION_JSON_VALUE)
+                        .accept(APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        // then
+        List<InstitutionOnboardingResource> response = objectMapper.readValue(
+                result.getResponse().getContentAsString(),
+                new TypeReference<>() {
+                });
+        assertNotNull(response);
+        assertEquals(1, response.size());
+        assertEquals(response.get(0).getInstitutionId(), onboardingResource.getInstitutionId());
+    }
+
+    @Test
+    void getActiveOnboarding_blankTaxCode() throws Exception {
+        // given
+        String taxCode = "";
+
+        // when
+        mvc.perform(MockMvcRequestBuilders
+                        .get(BASE_URL + "/onboarding/active")
+                        .param("taxCode", taxCode)
+                        .contentType(APPLICATION_JSON_VALUE)
+                        .accept(APPLICATION_JSON_VALUE))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void getActiveOnboarding_blankProductId() throws Exception {
+        // given
+        String taxCode = "validTaxCode";
+        String productId = "";
+
+        // when
+        mvc.perform(MockMvcRequestBuilders
+                        .get(BASE_URL + "/onboarding/active")
+                        .param("taxCode", taxCode)
+                        .param("productId", productId)
+                        .contentType(APPLICATION_JSON_VALUE)
+                        .accept(APPLICATION_JSON_VALUE))
+                .andExpect(status().isInternalServerError());
+    }
+
+    @Test
+    void getActiveOnboarding_nullTaxCode() throws Exception {
+        // given
+        String taxCode = null;
+        String productId = "validProductId";
+
+        // when
+        mvc.perform(MockMvcRequestBuilders
+                        .get(BASE_URL + "/onboarding/active")
+                        .param("taxCode", taxCode)
+                        .param("productId", productId)
+                        .contentType(APPLICATION_JSON_VALUE)
+                        .accept(APPLICATION_JSON_VALUE))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void getActiveOnboarding_nullProductId() throws Exception {
+        // given
+        String taxCode = "validTaxCode";
+        String productId = null;
+
+        // when
+        mvc.perform(MockMvcRequestBuilders
+                        .get(BASE_URL + "/onboarding/active")
+                        .param("taxCode", taxCode)
+                        .param("productId", productId)
+                        .contentType(APPLICATION_JSON_VALUE)
+                        .accept(APPLICATION_JSON_VALUE))
+                .andExpect(status().isBadRequest());
     }
 
     @Test

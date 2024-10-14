@@ -28,6 +28,8 @@ public interface InstitutionService {
 
     Collection<InstitutionInfo> getInstitutions(String productId, String userId);
 
+    List<Institution> getActiveOnboarding(String taxCode,String productId,String subunitCode);
+
     InstitutionOnboardingData getInstitutionOnboardingDataById(String institutionId, String productId);
 
     InstitutionOnboardingData getInstitutionOnboardingData(String externalInstitutionId, String productId);

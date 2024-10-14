@@ -5,6 +5,7 @@ import it.pagopa.selfcare.onboarding.connector.model.InstitutionLegalAddressData
 import it.pagopa.selfcare.onboarding.connector.model.RecipientCodeStatusResult;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.VerifyAggregateResult;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.InstitutionOnboarding;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.User;
 import it.pagopa.selfcare.onboarding.web.model.*;
@@ -13,6 +14,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Mapper(componentModel = "spring")
@@ -94,4 +96,17 @@ public interface OnboardingResourceMapper {
     VerifyAggregatesResponse toVerifyAggregatesResponse(VerifyAggregateResult verifyAggregateResult);
 
     RecipientCodeStatus toRecipientCodeStatus (RecipientCodeStatusResult recipientCodeStatusResult);
+
+    @Mapping(source = "id", target = "institutionId")
+    @Mapping(source = "onboarding", target = "onboardings", qualifiedByName = "mapOnboardingList")
+    InstitutionOnboardingResource toOnboardingResource(Institution model);
+
+    @Named("mapOnboardingList")
+    default List<InstitutionOnboarding> mapOnboardingList(List<InstitutionOnboarding> onboardingList) {
+        return onboardingList.stream()
+                .map(this::mapOnboarding)
+                .collect(Collectors.toList());
+    }
+
+    InstitutionOnboarding mapOnboarding(InstitutionOnboarding model);
 }
