@@ -47,6 +47,7 @@
           "desc": "string"
         }
       ],
+      "onboarding": [],
       "rea": "string",
       "shareCapital": "10000",
       "businessRegisterPlace": "Rome",
