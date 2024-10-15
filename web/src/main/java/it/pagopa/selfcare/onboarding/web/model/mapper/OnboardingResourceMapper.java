@@ -13,8 +13,9 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Objects;
 
 
 @Mapper(componentModel = "spring")
@@ -103,9 +104,13 @@ public interface OnboardingResourceMapper {
 
     @Named("mapOnboardingList")
     default List<InstitutionOnboarding> mapOnboardingList(List<InstitutionOnboarding> onboardingList) {
+        if(Objects.isNull(onboardingList)) {
+            return new ArrayList<>();
+        }
+
         return onboardingList.stream()
                 .map(this::mapOnboarding)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     InstitutionOnboarding mapOnboarding(InstitutionOnboarding model);
