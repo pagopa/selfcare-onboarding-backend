@@ -10,6 +10,7 @@ import it.pagopa.selfcare.onboarding.connector.exceptions.ResourceNotFoundExcept
 import it.pagopa.selfcare.onboarding.connector.model.InstitutionLegalAddressData;
 import it.pagopa.selfcare.onboarding.connector.model.InstitutionOnboardingData;
 import it.pagopa.selfcare.onboarding.connector.model.RecipientCodeStatusResult;
+import it.pagopa.selfcare.onboarding.connector.model.RelationshipState;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.*;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.infocamere.BusinessInfoIC;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.infocamere.InstitutionInfoIC;
@@ -366,6 +367,35 @@ class InstitutionServiceImpl implements InstitutionService {
         log.debug("getInstitutions result = {}", result);
         log.trace("getInstitutions end");
         return result;
+    }
+
+    @Override
+    public List<Institution> getActiveOnboarding(String taxCode, String productId, String subUnitCode) {
+        log.trace("getActiveOnboarding start");
+        log.debug("getActiveOnboarding taxCode = {}, productId = {}", Encode.forJava(taxCode), Encode.forJava(productId));
+
+        List<Institution> institutions = partyConnector.getInstitutionsByTaxCodeAndSubunitCode(taxCode, subUnitCode);
+        if (institutions.isEmpty()) {
+            throw new ResourceNotFoundException("Institution not found");
+        }
+
+        List<Institution> activeOnboardingInstitutions = institutions.stream()
+                .filter(institution -> !CollectionUtils.isEmpty(institution.getOnboarding()))
+                .peek(institution -> institution.setOnboarding(
+                        institution.getOnboarding().stream()
+                                .filter(onboarding -> onboarding.getProductId().equals(productId)
+                                        && onboarding.getStatus().equals(String.valueOf(RelationshipState.ACTIVE)))
+                                .toList()
+                ))
+                .filter(institution -> !institution.getOnboarding().isEmpty())
+                .toList();
+
+        if (activeOnboardingInstitutions.isEmpty()) {
+            throw new ResourceNotFoundException("Institution doesn't have active onboarding for the given product");
+        }
+        log.debug("getActiveOnboarding result = {}", activeOnboardingInstitutions);
+        log.trace("getActiveOnboarding end");
+        return activeOnboardingInstitutions;
     }
 
 

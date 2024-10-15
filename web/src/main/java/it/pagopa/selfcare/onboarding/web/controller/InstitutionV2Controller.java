@@ -10,11 +10,13 @@ import it.pagopa.selfcare.commons.base.logging.LogUtils;
 import it.pagopa.selfcare.commons.base.security.SelfCareUser;
 import it.pagopa.selfcare.commons.web.model.Problem;
 import it.pagopa.selfcare.commons.web.security.JwtAuthenticationToken;
+import it.pagopa.selfcare.onboarding.connector.exceptions.InvalidRequestException;
 import it.pagopa.selfcare.onboarding.core.InstitutionService;
 import it.pagopa.selfcare.onboarding.web.model.*;
 import it.pagopa.selfcare.onboarding.web.model.mapper.InstitutionMapper;
 import it.pagopa.selfcare.onboarding.web.model.mapper.OnboardingResourceMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.owasp.encoder.Encode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -128,6 +130,26 @@ public class InstitutionV2Controller {
         log.debug("Verify Aggregates Csv start for productId {}", productId);
         VerifyAggregatesResponse response = onboardingResourceMapper.toVerifyAggregatesResponse(institutionService.validateAggregatesCsv(file, productId));
         log.trace("Verify Aggregates Csv end");
+        return response;
+    }
+
+    @GetMapping(value = "/onboarding/active")
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "", notes = "${swagger.onboarding.institutions.api.onboarding.getActiveOnboarding}")
+    public List<InstitutionOnboardingResource> getActiveOnboarding(@RequestParam("taxCode") String taxCode,
+                                                                   @RequestParam("productId") String productId,
+                                                                   @RequestParam(value = "subunitCode", required = false) String subunitCode
+    ) {
+        log.trace("getActiveOnboarding start");
+        log.debug("getActiveOnboarding taxCode = {}, productId = {}", Encode.forJava(taxCode), Encode.forJava(productId));
+        if ((StringUtils.isBlank(taxCode) || StringUtils.isBlank(productId)))
+            throw new InvalidRequestException("taxCode and/or productId must not be blank! ");
+        List<InstitutionOnboardingResource> response = institutionService.getActiveOnboarding(taxCode, productId,subunitCode)
+                .stream()
+                .map(onboardingResourceMapper::toOnboardingResource)
+                .toList();
+        log.debug("getActiveOnboarding result = {}", response);
+        log.trace("getActiveOnboarding end");
         return response;
     }
 
