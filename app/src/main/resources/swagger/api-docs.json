@@ -1568,7 +1568,7 @@
     },
     "/v2/institutions/onboarding/recipientCode/verification" : {
       "get" : {
-        "tags" : [ "institutions" ],
+        "tags" : [ "billing-portal", "institutions" ],
         "summary" : "checkRecipientCode",
         "description" : "The service allows to verify if recipientCode is valid or not",
         "operationId" : "checkRecipientCodeUsingGET",
