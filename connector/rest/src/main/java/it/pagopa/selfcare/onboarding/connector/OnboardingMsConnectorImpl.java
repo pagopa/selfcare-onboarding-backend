@@ -13,10 +13,7 @@ import it.pagopa.selfcare.onboarding.connector.rest.client.MsOnboardingApiClient
 import it.pagopa.selfcare.onboarding.connector.rest.client.MsOnboardingSupportApiClient;
 import it.pagopa.selfcare.onboarding.connector.rest.client.MsOnboardingTokenApiClient;
 import it.pagopa.selfcare.onboarding.connector.rest.mapper.OnboardingMapper;
-import it.pagopa.selfcare.onboarding.generated.openapi.v1.dto.OnboardingGet;
-import it.pagopa.selfcare.onboarding.generated.openapi.v1.dto.OnboardingResponse;
-import it.pagopa.selfcare.onboarding.generated.openapi.v1.dto.OnboardingStatus;
-import it.pagopa.selfcare.onboarding.generated.openapi.v1.dto.ReasonRequest;
+import it.pagopa.selfcare.onboarding.generated.openapi.v1.dto.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
@@ -197,5 +194,12 @@ public class OnboardingMsConnectorImpl implements OnboardingMsConnector {
         Assert.hasText(productId, REQUIRED_PRODUCT_ID_MESSAGE);
         msOnboardingApiClient._verifyOnboardingInfoByFilters(origin, originId, productId, subunitCode, taxCode);
         log.trace("verifyOnboarding end");
+    }
+
+    @Override
+    public void onboardingUsersPgFromIcAndAde(OnboardingData onboardingData) {
+        log.trace("onboardingUsersPgFromIcAndAde start");
+        msOnboardingApiClient._onboardingUsersPgFromIcAndAde(onboardingMapper.toOnboardingUserPgRequest(onboardingData));
+        log.trace("onboardingUsersPgFromIcAndAde end");
     }
 }

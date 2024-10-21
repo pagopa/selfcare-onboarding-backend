@@ -1900,6 +1900,22 @@ class InstitutionServiceImplTest {
     }
 
     @Test
+    void onboardingUsersPgFromIcAndAde_validData() {
+        OnboardingData onboardingData = new OnboardingData();
+        onboardingData.setProductId("productId");
+        onboardingData.setTaxCode("taxCode");
+        onboardingData.setInstitutionType(InstitutionType.PG);
+        onboardingData.setUsers(List.of(mockInstance(new User())));
+
+        doNothing().when(onboardingMsConnector).onboardingUsersPgFromIcAndAde(onboardingData);
+
+        institutionService.onboardingUsersPgFromIcAndAde(onboardingData);
+
+        verify(onboardingMsConnector, times(1)).onboardingUsersPgFromIcAndAde(onboardingData);
+        verifyNoMoreInteractions(onboardingMsConnector);
+    }
+
+    @Test
     void validateAggregatesCsvReturnsValidResultWhenNoErrorsAndProductIdIsPROD_PN() {
         MultipartFile file = new MockMultipartFile("file", "hello.txt", MediaType.TEXT_PLAIN_VALUE, "Hello, World!".getBytes());
         VerifyAggregateResult expected = new VerifyAggregateResult();

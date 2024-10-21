@@ -568,6 +568,7 @@ class InstitutionServiceImpl implements InstitutionService {
         return institutions;
     }
 
+
     @Override
     public MatchInfoResult matchInstitutionAndUser(String externalInstitutionId, User user) {
         log.trace("matchInstitutionAndUser start");
@@ -613,6 +614,14 @@ class InstitutionServiceImpl implements InstitutionService {
         log.debug("checkRecipientCode result = {}", result);
         log.trace("checkRecipientCode end");
         return result;
+    }
+
+    @Override
+    public void onboardingUsersPgFromIcAndAde(OnboardingData onboardingData) {
+        log.trace("onboardingUsersPgFromIcAndAde start");
+        log.debug("onboardingUsersPgFromIcAndAde onboardingData = {}", Encode.forJava(onboardingData.toString()));
+        onboardingMsConnector.onboardingUsersPgFromIcAndAde(onboardingData);
+        log.trace("onboardingUsersPgFromIcAndAde end");
     }
 
     @Override
