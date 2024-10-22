@@ -462,7 +462,7 @@ class OnboardingMsConnectorImplTest {
         onboardingMsConnector.onboardingUsersPgFromIcAndAde(onboardingData);
 
         // then
-        verify(msOnboardingApiClient, times(1))._onboardingUsersPgFromIcAndAde(request);
+        verify(msOnboardingApiClient, times(1))._onboardingUsersPg(request);
         verifyNoMoreInteractions(msOnboardingApiClient);
     }
 
@@ -483,7 +483,7 @@ class OnboardingMsConnectorImplTest {
         onboardingMsConnector.onboardingUsersPgFromIcAndAde(null);
 
         // then
-        verify(msOnboardingApiClient, times(1))._onboardingUsersPgFromIcAndAde(null);
+        verify(msOnboardingApiClient, times(1))._onboardingUsersPg(null);
         verifyNoMoreInteractions(msOnboardingApiClient);
     }
 

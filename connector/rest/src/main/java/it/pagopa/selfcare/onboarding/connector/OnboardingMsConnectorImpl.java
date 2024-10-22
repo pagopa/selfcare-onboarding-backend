@@ -199,7 +199,7 @@ public class OnboardingMsConnectorImpl implements OnboardingMsConnector {
     @Override
     public void onboardingUsersPgFromIcAndAde(OnboardingData onboardingData) {
         log.trace("onboardingUsersPgFromIcAndAde start");
-        msOnboardingApiClient._onboardingUsersPgFromIcAndAde(onboardingMapper.toOnboardingUserPgRequest(onboardingData));
+        msOnboardingApiClient._onboardingUsersPg(onboardingMapper.toOnboardingUserPgRequest(onboardingData));
         log.trace("onboardingUsersPgFromIcAndAde end");
     }
 }
