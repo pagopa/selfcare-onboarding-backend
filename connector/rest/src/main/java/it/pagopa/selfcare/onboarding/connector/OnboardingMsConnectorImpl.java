@@ -13,10 +13,7 @@ import it.pagopa.selfcare.onboarding.connector.rest.client.MsOnboardingApiClient
 import it.pagopa.selfcare.onboarding.connector.rest.client.MsOnboardingSupportApiClient;
 import it.pagopa.selfcare.onboarding.connector.rest.client.MsOnboardingTokenApiClient;
 import it.pagopa.selfcare.onboarding.connector.rest.mapper.OnboardingMapper;
-import it.pagopa.selfcare.onboarding.generated.openapi.v1.dto.OnboardingGet;
-import it.pagopa.selfcare.onboarding.generated.openapi.v1.dto.OnboardingResponse;
-import it.pagopa.selfcare.onboarding.generated.openapi.v1.dto.OnboardingStatus;
-import it.pagopa.selfcare.onboarding.generated.openapi.v1.dto.ReasonRequest;
+import it.pagopa.selfcare.onboarding.generated.openapi.v1.dto.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
@@ -183,8 +180,7 @@ public class OnboardingMsConnectorImpl implements OnboardingMsConnector {
 
     @Override
     public boolean checkManager(OnboardingData onboardingData) {
-        return Boolean.TRUE.equals(Objects.requireNonNull(msOnboardingApiClient._checkManager(onboardingMapper.toOnboardingUsersRequest(onboardingData)))
-                .getBody());
+        return Objects.requireNonNull(msOnboardingApiClient._checkManager(onboardingMapper.toOnboardingUsersRequest(onboardingData)).getBody()).getResponse();
     }
 
     @Override
