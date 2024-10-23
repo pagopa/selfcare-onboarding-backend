@@ -194,4 +194,11 @@ public class OnboardingMsConnectorImpl implements OnboardingMsConnector {
         msOnboardingApiClient._verifyOnboardingInfoByFilters(origin, originId, productId, subunitCode, taxCode);
         log.trace("verifyOnboarding end");
     }
+
+    @Override
+    public void onboardingUsersPgFromIcAndAde(OnboardingData onboardingData) {
+        log.trace("onboardingUsersPgFromIcAndAde start");
+        msOnboardingApiClient._onboardingUsersPg(onboardingMapper.toOnboardingUserPgRequest(onboardingData));
+        log.trace("onboardingUsersPgFromIcAndAde end");
+    }
 }

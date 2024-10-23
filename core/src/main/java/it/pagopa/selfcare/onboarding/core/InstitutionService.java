@@ -56,4 +56,6 @@ public interface InstitutionService {
     VerifyAggregateResult validateAggregatesCsv(MultipartFile file, String productId);
 
     RecipientCodeStatusResult checkRecipientCode(String originId, String recipientCode);
+
+    void onboardingUsersPgFromIcAndAde(OnboardingData onboardingUserPgRequest);
 }

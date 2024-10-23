@@ -441,6 +441,53 @@ class OnboardingMsConnectorImplTest {
     }
 
     @Test
+    void onboardingUsersPgFromIcAndAde() {
+        final String origin = "ADE";
+        // given
+        OnboardingData onboardingData = new OnboardingData();
+        onboardingData.setTaxCode("taxCode");
+        onboardingData.setOrigin(origin);
+        onboardingData.setInstitutionType(InstitutionType.PG);
+        onboardingData.setUsers(List.of(mockInstance(new User())));
+
+        OnboardingUserPgRequest request = new OnboardingUserPgRequest();
+        request.setOrigin(Origin.fromValue(origin));
+        request.setUsers(List.of(mockInstance(new UserRequest())));
+        request.setTaxCode("taxCode");
+        request.setInstitutionType(it.pagopa.selfcare.onboarding.generated.openapi.v1.dto.InstitutionType.PG);
+        request.setProductId("productId");
+
+        when(onboardingMapper.toOnboardingUserPgRequest(onboardingData)).thenReturn(request);
+        // when
+        onboardingMsConnector.onboardingUsersPgFromIcAndAde(onboardingData);
+
+        // then
+        verify(msOnboardingApiClient, times(1))._onboardingUsersPg(request);
+        verifyNoMoreInteractions(msOnboardingApiClient);
+    }
+
+    @Test
+    void onboardingUsersPgFromIcAndAde_shouldHandleNullResponse() {
+        // given
+        final String origin = "ADE";
+
+        OnboardingUserPgRequest request = new OnboardingUserPgRequest();
+        request.setOrigin(Origin.fromValue(origin));
+        request.setUsers(List.of(mockInstance(new UserRequest())));
+        request.setTaxCode("taxCode");
+        request.setInstitutionType(it.pagopa.selfcare.onboarding.generated.openapi.v1.dto.InstitutionType.PG);
+        request.setProductId("productId");
+
+
+        // when
+        onboardingMsConnector.onboardingUsersPgFromIcAndAde(null);
+
+        // then
+        verify(msOnboardingApiClient, times(1))._onboardingUsersPg(null);
+        verifyNoMoreInteractions(msOnboardingApiClient);
+    }
+
+    @Test
     void getOnboardingByFiltersWithUO() {
         // given
         final String origin = "origin";
