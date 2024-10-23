@@ -165,4 +165,14 @@ public class InstitutionV2Controller {
         return response;
     }
 
+    @PostMapping(value = "/onboarding/users/pg")
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "", notes = "${swagger.onboarding.institutions.api.onboardingUsersPg}")
+    public void onboardingUsers(@Valid @RequestBody(required = false) CompanyOnboardingUserDto companyOnboardingUserDto) {
+        log.trace("onboardingUsersPgFromIcAndAde start");
+        log.debug("onboardingUsersPgFromIcAndAde request = {}", Encode.forJava(companyOnboardingUserDto.toString()));
+        institutionService.onboardingUsersPgFromIcAndAde(onboardingResourceMapper.toEntity(companyOnboardingUserDto));
+        log.trace("onboardingUsersPgFromIcAndAde end");
+    }
+
 }

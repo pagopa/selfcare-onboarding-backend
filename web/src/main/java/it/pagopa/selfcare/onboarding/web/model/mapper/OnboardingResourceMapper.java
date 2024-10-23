@@ -46,6 +46,9 @@ public interface OnboardingResourceMapper {
     @Mapping(target = "origin", expression = "java(getOrigin(dto.getBillingData().isCertified()))")
     OnboardingData toEntity(CompanyOnboardingDto dto);
 
+    @Mapping(target = "origin", expression = "java(getOrigin(dto.isCertified()))")
+    OnboardingData toEntity(CompanyOnboardingUserDto dto);
+
     @Named("getOrigin")
     default String getOrigin(Boolean certified) {
         return Boolean.TRUE.equals(certified) ? "INFOCAMERE" : "ADE";
