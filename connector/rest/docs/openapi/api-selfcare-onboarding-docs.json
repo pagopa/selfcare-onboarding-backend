@@ -20,6 +20,8 @@
   }, {
     "name" : "Onboarding Controller"
   }, {
+    "name" : "billing-portal"
+  }, {
     "name" : "internal-v1"
   }, {
     "name" : "support"
@@ -470,7 +472,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "type" : "boolean"
+                  "$ref" : "#/components/schemas/CheckManagerResponse"
                 }
               }
             }
@@ -936,6 +938,44 @@
         } ]
       }
     },
+    "/v1/onboarding/users/pg-from-ic-and-ade" : {
+      "post" : {
+        "tags" : [ "Onboarding Controller" ],
+        "summary" : "Add Manager of PG institution",
+        "description" : "Create new onboarding request to add new Manager and replace the old inactive Managers of the institution.",
+        "operationId" : "onboardingUsersPgFromIcAndAde",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/OnboardingUserPgRequest"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/OnboardingResponse"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Not Authorized"
+          },
+          "403" : {
+            "description" : "Not Allowed"
+          }
+        },
+        "security" : [ {
+          "SecurityScheme" : [ ]
+        } ]
+      }
+    },
     "/v1/onboarding/verify" : {
       "head" : {
         "tags" : [ "Onboarding Controller" ],
@@ -1233,6 +1273,45 @@
                   "$ref" : "#/components/schemas/OnboardingGet"
                 }
               }
+            }
+          },
+          "401" : {
+            "description" : "Not Authorized"
+          },
+          "403" : {
+            "description" : "Not Allowed"
+          }
+        },
+        "security" : [ {
+          "SecurityScheme" : [ ]
+        } ]
+      }
+    },
+    "/v1/onboarding/{onboardingId}/recipient-code" : {
+      "put" : {
+        "tags" : [ "billing-portal", "Onboarding" ],
+        "summary" : "Update recipient code",
+        "description" : "Update recipient code receiving onboarding id.",
+        "operationId" : "updateOnboardingRecipientIdUsingPUT",
+        "parameters" : [ {
+          "name" : "onboardingId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "recipientCode",
+          "in" : "query",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : { }
             }
           },
           "401" : {
@@ -1683,6 +1762,14 @@
             "type" : "string"
           },
           "publicServices" : {
+            "type" : "boolean"
+          }
+        }
+      },
+      "CheckManagerResponse" : {
+        "type" : "object",
+        "properties" : {
+          "response" : {
             "type" : "boolean"
           }
         }
@@ -2373,6 +2460,32 @@
       "OnboardingStatus" : {
         "enum" : [ "REQUEST", "TOBEVALIDATED", "PENDING", "COMPLETED", "FAILED", "REJECTED", "DELETED" ],
         "type" : "string"
+      },
+      "OnboardingUserPgRequest" : {
+        "required" : [ "productId", "users", "taxCode", "origin" ],
+        "type" : "object",
+        "properties" : {
+          "productId" : {
+            "minLength" : 1,
+            "type" : "string"
+          },
+          "institutionType" : {
+            "$ref" : "#/components/schemas/InstitutionType"
+          },
+          "users" : {
+            "minItems" : 1,
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/UserRequest"
+            }
+          },
+          "taxCode" : {
+            "type" : "string"
+          },
+          "origin" : {
+            "$ref" : "#/components/schemas/Origin"
+          }
+        }
       },
       "OnboardingUserRequest" : {
         "required" : [ "productId", "users" ],
