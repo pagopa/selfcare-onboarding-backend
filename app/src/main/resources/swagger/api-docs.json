@@ -1649,6 +1649,81 @@
         } ]
       }
     },
+    "/v2/institutions/onboarding/users/pg" : {
+      "post" : {
+        "tags" : [ "institutions" ],
+        "summary" : "onboardingUsers",
+        "description" : "The service allows the onboarding of Users to a PG Institution",
+        "operationId" : "onboardingUsersUsingPOST",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/CompanyOnboardingUserDto"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK"
+          },
+          "400" : {
+            "description" : "Bad Request",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Unauthorized",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "Not Found",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "409" : {
+            "description" : "Conflict",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "Internal Server Error",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ "global" ]
+        } ]
+      }
+    },
     "/v1/product/{id}" : {
       "get" : {
         "tags" : [ "product" ],
@@ -3305,6 +3380,38 @@
           "billingData" : {
             "description" : "Institution's billing information",
             "$ref" : "#/components/schemas/CompanyBillingDataDto"
+          },
+          "institutionType" : {
+            "type" : "string",
+            "description" : "Institution's type",
+            "enum" : [ "AS", "CON", "GSP", "PA", "PG", "PRV", "PSP", "PT", "REC", "SA", "SCP" ]
+          },
+          "productId" : {
+            "type" : "string",
+            "description" : "Product's unique identifier"
+          },
+          "taxCode" : {
+            "type" : "string",
+            "description" : "Institution's taxCode"
+          },
+          "users" : {
+            "type" : "array",
+            "description" : "List of onboarding users",
+            "items" : {
+              "$ref" : "#/components/schemas/CompanyUserDto"
+            }
+          }
+        }
+      },
+      "CompanyOnboardingUserDto" : {
+        "title" : "CompanyOnboardingUserDto",
+        "required" : [ "certified", "institutionType", "productId", "taxCode", "users" ],
+        "type" : "object",
+        "properties" : {
+          "certified" : {
+            "type" : "boolean",
+            "description" : "Indicates whether the institution values come from INFOCAMERE (true) or MANUAL (false)",
+            "example" : false
           },
           "institutionType" : {
             "type" : "string",

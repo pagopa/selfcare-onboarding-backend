@@ -10,6 +10,8 @@ import it.pagopa.selfcare.onboarding.connector.model.onboarding.InstitutionOnboa
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
 import it.pagopa.selfcare.onboarding.core.InstitutionService;
 import it.pagopa.selfcare.onboarding.web.config.WebTestConfig;
+import it.pagopa.selfcare.onboarding.web.model.CompanyOnboardingUserDto;
+import it.pagopa.selfcare.onboarding.web.model.CompanyUserDto;
 import it.pagopa.selfcare.onboarding.web.model.InstitutionOnboardingResource;
 import it.pagopa.selfcare.onboarding.web.model.mapper.GeographicTaxonomyMapperImpl;
 import it.pagopa.selfcare.onboarding.web.model.mapper.OnboardingInstitutionInfoMapperImpl;
@@ -36,6 +38,7 @@ import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
 
+import static it.pagopa.selfcare.commons.utils.TestUtils.mockInstance;
 import static org.hamcrest.Matchers.emptyString;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -327,6 +330,29 @@ class InstitutionV2ControllerTest {
 
         // Then
         verify(institutionServiceMock, times(1)).checkRecipientCode(any(), any());
+        verifyNoMoreInteractions(institutionServiceMock);
+    }
+
+    @Test
+    void onboardingUsersPgFromIcAndAde_success() throws Exception {
+        // given
+        CompanyOnboardingUserDto onboardingData = new CompanyOnboardingUserDto();
+        onboardingData.setProductId("productId");
+        onboardingData.setTaxCode("taxCode");
+        onboardingData.setInstitutionType(it.pagopa.selfcare.onboarding.common.InstitutionType.PG);
+        onboardingData.setUsers(List.of(mockInstance(new CompanyUserDto())));
+
+
+        // when
+        mvc.perform(MockMvcRequestBuilders
+                        .post(BASE_URL + "/onboarding/users/pg")
+                        .content(objectMapper.writeValueAsString(onboardingData))
+                        .contentType(APPLICATION_JSON_VALUE)
+                        .accept(APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk());
+
+        // then
+        verify(institutionServiceMock, times(1)).onboardingUsersPgFromIcAndAde(any(OnboardingData.class));
         verifyNoMoreInteractions(institutionServiceMock);
     }
 }
