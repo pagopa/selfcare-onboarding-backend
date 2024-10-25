@@ -23,5 +23,6 @@ public class AggregateResult {
     private String iban;
     private String service;
     private String syncAsyncMode;
+    private String parentDescription;
     private List<AggregateUserResult> users = null;
 }

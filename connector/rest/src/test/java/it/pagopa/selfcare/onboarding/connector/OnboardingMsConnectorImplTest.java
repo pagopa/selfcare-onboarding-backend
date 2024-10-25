@@ -5,8 +5,6 @@ import it.pagopa.selfcare.onboarding.connector.exceptions.InvalidRequestExceptio
 import it.pagopa.selfcare.onboarding.connector.model.RecipientCodeStatusResult;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.VerifyAggregateResult;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.DataProtectionOfficer;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.PaymentServiceProvider;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.*;
 import it.pagopa.selfcare.onboarding.connector.rest.client.MsOnboardingAggregatesApiClient;
 import it.pagopa.selfcare.onboarding.connector.rest.client.MsOnboardingApiClient;
@@ -485,7 +483,7 @@ class OnboardingMsConnectorImplTest {
         request.setOrigin(origin);
         request.setOriginId(originId);
         when(msOnboardingApiClient._checkManager(request))
-                .thenReturn(ResponseEntity.of(Optional.of(Boolean.TRUE)));
+                .thenReturn(ResponseEntity.ok(new CheckManagerResponse()));
         // when
         final Executable executable = () -> onboardingMsConnector.checkManager(onboardingData);
         // then

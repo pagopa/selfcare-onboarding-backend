@@ -2852,6 +2852,9 @@
           "originId" : {
             "type" : "string"
           },
+          "parentDescription" : {
+            "type" : "string"
+          },
           "service" : {
             "type" : "string"
           },
