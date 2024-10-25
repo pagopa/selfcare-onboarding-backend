@@ -18,4 +18,6 @@ public interface TokenService {
     void completeOnboardingUsers(String onboardingId, MultipartFile contract);
 
     Resource getContract(String onboardingId);
+
+    Resource getAggregatesCsv(String onboardingId, String productId);
 }

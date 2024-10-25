@@ -203,7 +203,7 @@ class PartyConnectorImpl implements PartyConnector {
     @Override
     public List<Institution> getInstitutionsByTaxCodeAndSubunitCode(String taxCode, String subunitCode) {
         log.trace("getInstitution start");
-        log.debug("getInstitution taxCode = {}, subunitCode = {}", taxCode, subunitCode);
+        log.debug("getInstitution taxCode = {}, subunitCode = {}", Encode.forJava(taxCode), Encode.forJava(subunitCode));
         Assert.hasText(taxCode, REQUIRED_INSTITUTION_TAXCODE_MESSAGE);
         InstitutionsResponse partyInstitutionResponse = restClient.getInstitutions(taxCode, subunitCode);
         List<Institution> result = partyInstitutionResponse.getInstitutions().stream()

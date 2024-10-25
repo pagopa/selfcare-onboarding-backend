@@ -1,10 +1,7 @@
 package it.pagopa.selfcare.onboarding.connector.model.institutions;
 
 import it.pagopa.selfcare.commons.base.utils.InstitutionType;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.DataProtectionOfficer;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.GeographicTaxonomy;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.PaymentServiceProvider;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.User;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.*;
 import lombok.Data;
 
 import java.util.List;
@@ -29,6 +26,7 @@ public class Institution {
     private String subunitCode;
     private String subunitType;
     private String aooParentCode;
+    private List<InstitutionOnboarding> onboarding;
     private InstitutionType institutionType;
     private List<Attribute> attributes;
     private PaymentServiceProvider paymentServiceProvider;
@@ -42,5 +40,5 @@ public class Institution {
     private String iban;
     private String service;
     private String syncAsyncMode;
-    private String codeSDI;
+    private String recipientCode;
 }

@@ -10,6 +10,7 @@ import it.pagopa.selfcare.onboarding.connector.exceptions.ResourceNotFoundExcept
 import it.pagopa.selfcare.onboarding.connector.model.InstitutionLegalAddressData;
 import it.pagopa.selfcare.onboarding.connector.model.InstitutionOnboardingData;
 import it.pagopa.selfcare.onboarding.connector.model.RecipientCodeStatusResult;
+import it.pagopa.selfcare.onboarding.connector.model.RelationshipState;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.*;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.infocamere.BusinessInfoIC;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.infocamere.InstitutionInfoIC;
@@ -44,6 +45,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.ValidationException;
+import java.time.OffsetDateTime;
 import java.util.*;
 import java.util.stream.Stream;
 
@@ -1731,6 +1733,70 @@ class InstitutionServiceImplTest {
         assertNotNull(institutionOnboardingData.getInstitution().getInstitutionLocation().getCity());
 
     }
+    @Test
+    void getActiveOnboarding_shouldReturnActiveOnboardingInstitutions() {
+        // given
+        String taxCode = "taxCode";
+        String productId = "productId";
+        String subUnitCode = "subUnitCode";
+        InstitutionOnboarding onboarding = new InstitutionOnboarding();
+        onboarding.setProductId(productId);
+        onboarding.setStatus("ACTIVE");
+        onboarding.setCreatedAt(OffsetDateTime.parse("2021-01-01T00:00:00Z"));
+        Institution institution = new Institution();
+        institution.setOnboarding(List.of(onboarding));
+        when(partyConnectorMock.getInstitutionsByTaxCodeAndSubunitCode(taxCode, subUnitCode))
+                .thenReturn(List.of(institution));
+
+        // when
+        List<Institution> result = institutionService.getActiveOnboarding(taxCode, productId, subUnitCode);
+
+        // then
+        assertFalse(result.isEmpty());
+        assertEquals(1, result.size());
+        assertEquals(productId, result.get(0).getOnboarding().get(0).getProductId());
+        assertEquals(String.valueOf(RelationshipState.ACTIVE), result.get(0).getOnboarding().get(0).getStatus());
+    }
+
+    @Test
+    void getActiveOnboarding_shouldThrowResourceNotFoundExceptionWhenNoInstitutionsFound() {
+        // given
+        String taxCode = "taxCode";
+        String productId = "productId";
+        String subUnitCode = "subUnitCode";
+        when(partyConnectorMock.getInstitutionsByTaxCodeAndSubunitCode(taxCode, subUnitCode))
+                .thenReturn(Collections.emptyList());
+
+        // when
+        Executable executable = () -> institutionService.getActiveOnboarding(taxCode, productId, subUnitCode);
+
+        // then
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, executable);
+        assertEquals("Institution not found", exception.getMessage());
+    }
+
+    @Test
+    void getActiveOnboarding_shouldThrowResourceNotFoundExceptionWhenNoActiveOnboardingInstitutionsFound() {
+        // given
+        String taxCode = "taxCode";
+        String productId = "productId";
+        String subUnitCode = "subUnitCode";
+        Institution institution = new Institution();
+        InstitutionOnboarding onboarding = new InstitutionOnboarding();
+        onboarding.setProductId(productId);
+        onboarding.setStatus("PENDING");
+        onboarding.setCreatedAt(OffsetDateTime.parse("2021-01-01T00:00:00Z"));
+        institution.setOnboarding(List.of(onboarding));
+        when(partyConnectorMock.getInstitutionsByTaxCodeAndSubunitCode(taxCode, subUnitCode))
+                .thenReturn(List.of(institution));
+
+        // when
+        Executable executable = () -> institutionService.getActiveOnboarding(taxCode, productId, subUnitCode);
+
+        // then
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, executable);
+        assertEquals("Institution doesn't have active onboarding for the given product", exception.getMessage());
+    }
 
     @Test
     void getOnboardingData_locationNotFound(){
@@ -1830,6 +1896,22 @@ class InstitutionServiceImplTest {
         // Then
         assertEquals(0, result.getErrors().size());
         verify(onboardingMsConnector, times(1)).aggregatesVerification(any(MultipartFile.class), eq("prod-pagopa"));
+        verifyNoMoreInteractions(onboardingMsConnector);
+    }
+
+    @Test
+    void onboardingUsersPgFromIcAndAde_validData() {
+        OnboardingData onboardingData = new OnboardingData();
+        onboardingData.setProductId("productId");
+        onboardingData.setTaxCode("taxCode");
+        onboardingData.setInstitutionType(InstitutionType.PG);
+        onboardingData.setUsers(List.of(mockInstance(new User())));
+
+        doNothing().when(onboardingMsConnector).onboardingUsersPgFromIcAndAde(onboardingData);
+
+        institutionService.onboardingUsersPgFromIcAndAde(onboardingData);
+
+        verify(onboardingMsConnector, times(1)).onboardingUsersPgFromIcAndAde(onboardingData);
         verifyNoMoreInteractions(onboardingMsConnector);
     }
 

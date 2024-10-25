@@ -1364,6 +1364,100 @@
         } ]
       }
     },
+    "/v2/institutions/onboarding/active" : {
+      "get" : {
+        "tags" : [ "institutions" ],
+        "summary" : "getActiveOnboarding",
+        "description" : "The service retrieves the active onboarding information for a given tax code and product ID",
+        "operationId" : "getActiveOnboardingUsingGET",
+        "parameters" : [ {
+          "name" : "taxCode",
+          "in" : "query",
+          "description" : "taxCode",
+          "required" : true,
+          "style" : "form",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "productId",
+          "in" : "query",
+          "description" : "productId",
+          "required" : true,
+          "style" : "form",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "subunitCode",
+          "in" : "query",
+          "description" : "subunitCode",
+          "required" : false,
+          "style" : "form",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/InstitutionOnboardingResource"
+                  }
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad Request",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Unauthorized",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "Not Found",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "Internal Server Error",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ "global" ]
+        } ]
+      }
+    },
     "/v2/institutions/onboarding/aggregation/verification" : {
       "post" : {
         "tags" : [ "institutions" ],
@@ -1474,7 +1568,7 @@
     },
     "/v2/institutions/onboarding/recipientCode/verification" : {
       "get" : {
-        "tags" : [ "institutions" ],
+        "tags" : [ "billing-portal", "institutions" ],
         "summary" : "checkRecipientCode",
         "description" : "The service allows to verify if recipientCode is valid or not",
         "operationId" : "checkRecipientCodeUsingGET",
@@ -1531,6 +1625,81 @@
           },
           "404" : {
             "description" : "Not Found",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "Internal Server Error",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ "global" ]
+        } ]
+      }
+    },
+    "/v2/institutions/onboarding/users/pg" : {
+      "post" : {
+        "tags" : [ "institutions" ],
+        "summary" : "onboardingUsers",
+        "description" : "The service allows the onboarding of Users to a PG Institution",
+        "operationId" : "onboardingUsersUsingPOST",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/CompanyOnboardingUserDto"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK"
+          },
+          "400" : {
+            "description" : "Bad Request",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Unauthorized",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "Not Found",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "409" : {
+            "description" : "Conflict",
             "content" : {
               "application/problem+json" : {
                 "schema" : {
@@ -2233,6 +2402,89 @@
         } ]
       }
     },
+    "/v2/tokens/{onboardingId}/products/{productId}/aggregates-csv" : {
+      "get" : {
+        "tags" : [ "tokens" ],
+        "summary" : "getAggregatesCsv",
+        "description" : "Service to download a specific onboarding aggregates csv",
+        "operationId" : "getAggregatesCsvUsingGET",
+        "parameters" : [ {
+          "name" : "onboardingId",
+          "in" : "path",
+          "description" : "Onboarding's unique identifier",
+          "required" : true,
+          "style" : "simple",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "productId",
+          "in" : "path",
+          "description" : "Product's unique identifier",
+          "required" : true,
+          "style" : "simple",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/octet-stream" : {
+                "schema" : {
+                  "type" : "string",
+                  "format" : "byte"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad Request",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Unauthorized",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "Not Found",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "Internal Server Error",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ "global" ]
+        } ]
+      }
+    },
     "/v2/tokens/{onboardingId}/reject" : {
       "post" : {
         "tags" : [ "tokens" ],
@@ -2761,9 +3013,6 @@
           "city" : {
             "type" : "string"
           },
-          "codeSDI" : {
-            "type" : "string"
-          },
           "county" : {
             "type" : "string"
           },
@@ -2787,6 +3036,9 @@
             "enum" : [ "ADE", "ANAC", "INFOCAMERE", "IPA", "IVASS", "MOCK", "PDND_INFOCAMERE", "SELC", "UNKNOWN" ]
           },
           "originId" : {
+            "type" : "string"
+          },
+          "recipientCode" : {
             "type" : "string"
           },
           "service" : {
@@ -2831,9 +3083,6 @@
           "city" : {
             "type" : "string"
           },
-          "codeSDI" : {
-            "type" : "string"
-          },
           "county" : {
             "type" : "string"
           },
@@ -2853,6 +3102,9 @@
             "type" : "string"
           },
           "parentDescription" : {
+            "type" : "string"
+          },
+          "recipientCode" : {
             "type" : "string"
           },
           "service" : {
@@ -2935,6 +3187,24 @@
           "supportPhone" : {
             "type" : "string",
             "description" : "Institution's support phone contact"
+          }
+        }
+      },
+      "Billing" : {
+        "title" : "Billing",
+        "type" : "object",
+        "properties" : {
+          "publicServices" : {
+            "type" : "boolean"
+          },
+          "recipientCode" : {
+            "type" : "string"
+          },
+          "taxCodeInvoicing" : {
+            "type" : "string"
+          },
+          "vatNumber" : {
+            "type" : "string"
           }
         }
       },
@@ -3113,6 +3383,38 @@
           "billingData" : {
             "description" : "Institution's billing information",
             "$ref" : "#/components/schemas/CompanyBillingDataDto"
+          },
+          "institutionType" : {
+            "type" : "string",
+            "description" : "Institution's type",
+            "enum" : [ "AS", "CON", "GSP", "PA", "PG", "PRV", "PSP", "PT", "REC", "SA", "SCP" ]
+          },
+          "productId" : {
+            "type" : "string",
+            "description" : "Product's unique identifier"
+          },
+          "taxCode" : {
+            "type" : "string",
+            "description" : "Institution's taxCode"
+          },
+          "users" : {
+            "type" : "array",
+            "description" : "List of onboarding users",
+            "items" : {
+              "$ref" : "#/components/schemas/CompanyUserDto"
+            }
+          }
+        }
+      },
+      "CompanyOnboardingUserDto" : {
+        "title" : "CompanyOnboardingUserDto",
+        "required" : [ "certified", "institutionType", "productId", "taxCode", "users" ],
+        "type" : "object",
+        "properties" : {
+          "certified" : {
+            "type" : "boolean",
+            "description" : "Indicates whether the institution values come from INFOCAMERE (true) or MANUAL (false)",
+            "example" : false
           },
           "institutionType" : {
             "type" : "string",
@@ -3384,6 +3686,42 @@
           }
         }
       },
+      "InstitutionOnboarding" : {
+        "title" : "InstitutionOnboarding",
+        "type" : "object",
+        "properties" : {
+          "billing" : {
+            "$ref" : "#/components/schemas/Billing"
+          },
+          "closedAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "contract" : {
+            "type" : "string"
+          },
+          "createdAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "pricingPlan" : {
+            "type" : "string"
+          },
+          "productId" : {
+            "type" : "string"
+          },
+          "status" : {
+            "type" : "string"
+          },
+          "tokenId" : {
+            "type" : "string"
+          },
+          "updatedAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          }
+        }
+      },
       "InstitutionOnboardingInfoResource" : {
         "title" : "InstitutionOnboardingInfoResource",
         "type" : "object",
@@ -3398,6 +3736,21 @@
           "institution" : {
             "description" : "Institution's billing and type information",
             "$ref" : "#/components/schemas/InstitutionData"
+          }
+        }
+      },
+      "InstitutionOnboardingResource" : {
+        "title" : "InstitutionOnboardingResource",
+        "type" : "object",
+        "properties" : {
+          "institutionId" : {
+            "type" : "string"
+          },
+          "onboardings" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/InstitutionOnboarding"
+            }
           }
         }
       },

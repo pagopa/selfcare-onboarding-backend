@@ -13,10 +13,7 @@ import it.pagopa.selfcare.onboarding.connector.rest.client.MsOnboardingApiClient
 import it.pagopa.selfcare.onboarding.connector.rest.client.MsOnboardingSupportApiClient;
 import it.pagopa.selfcare.onboarding.connector.rest.client.MsOnboardingTokenApiClient;
 import it.pagopa.selfcare.onboarding.connector.rest.mapper.OnboardingMapper;
-import it.pagopa.selfcare.onboarding.generated.openapi.v1.dto.OnboardingGet;
-import it.pagopa.selfcare.onboarding.generated.openapi.v1.dto.OnboardingResponse;
-import it.pagopa.selfcare.onboarding.generated.openapi.v1.dto.OnboardingStatus;
-import it.pagopa.selfcare.onboarding.generated.openapi.v1.dto.ReasonRequest;
+import it.pagopa.selfcare.onboarding.generated.openapi.v1.dto.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
@@ -154,6 +151,12 @@ public class OnboardingMsConnectorImpl implements OnboardingMsConnector {
 
     @Override
     @Retry(name = "retryTimeout")
+    public Resource getAggregatesCsv(String onboardingId, String productId) {
+        return msOnboardingAggregatesApiClient._getAggregatesCsv(onboardingId, productId).getBody();
+    }
+
+    @Override
+    @Retry(name = "retryTimeout")
     public void onboardingPaAggregation(OnboardingData onboardingData) {
         msOnboardingApiClient._onboardingPaAggregation(onboardingMapper.toOnboardingPaAggregationRequest(onboardingData));
     }
@@ -177,8 +180,7 @@ public class OnboardingMsConnectorImpl implements OnboardingMsConnector {
 
     @Override
     public boolean checkManager(OnboardingData onboardingData) {
-        return Boolean.TRUE.equals(Objects.requireNonNull(msOnboardingApiClient._checkManager(onboardingMapper.toOnboardingUsersRequest(onboardingData)))
-                .getBody());
+        return Objects.requireNonNull(msOnboardingApiClient._checkManager(onboardingMapper.toOnboardingUsersRequest(onboardingData)).getBody()).getResponse();
     }
 
     @Override
@@ -191,5 +193,12 @@ public class OnboardingMsConnectorImpl implements OnboardingMsConnector {
         Assert.hasText(productId, REQUIRED_PRODUCT_ID_MESSAGE);
         msOnboardingApiClient._verifyOnboardingInfoByFilters(origin, originId, productId, subunitCode, taxCode);
         log.trace("verifyOnboarding end");
+    }
+
+    @Override
+    public void onboardingUsersPgFromIcAndAde(OnboardingData onboardingData) {
+        log.trace("onboardingUsersPgFromIcAndAde start");
+        msOnboardingApiClient._onboardingUsersPg(onboardingMapper.toOnboardingUserPgRequest(onboardingData));
+        log.trace("onboardingUsersPgFromIcAndAde end");
     }
 }

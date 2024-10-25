@@ -211,4 +211,30 @@ public class TokenV2ControllerTest {
         verify(tokenService, times(1))
                 .getContract(onboardingId);
     }
+
+    /**
+     * Method under test: {@link TokenV2Controller#getAggregatesCsv(String, String)}
+     */
+    @Test
+    void getAggregatesCsv() throws Exception {
+        String onboardingId = "onboardingId";
+        String productId = "productId";
+        String text = "String";
+        byte[] bytes= text.getBytes();
+        InputStream is = new ByteArrayInputStream(bytes);
+        Resource resource = Mockito.mock(Resource.class);
+        Mockito.when(tokenService.getAggregatesCsv(onboardingId, productId)).thenReturn(resource);
+        Mockito.when(resource.getInputStream()).thenReturn(is);
+
+        //when
+        mvc.perform(MockMvcRequestBuilders
+                        .get("/v2/tokens/{onboardingId}/products/{productId}/aggregates-csv", onboardingId, productId)
+                        .accept(MediaType.APPLICATION_OCTET_STREAM_VALUE))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        //then
+        verify(tokenService, times(1))
+                .getAggregatesCsv(onboardingId, productId);
+    }
 }

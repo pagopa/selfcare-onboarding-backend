@@ -13,6 +13,7 @@ import it.pagopa.selfcare.onboarding.web.model.ReasonForRejectDto;
 import it.pagopa.selfcare.onboarding.web.model.mapper.OnboardingResourceMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
+import org.owasp.encoder.Encode;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -211,6 +212,35 @@ public class TokenV2Controller {
             headers.add(HttpHeaders.CONTENT_TYPE, APPLICATION_OCTET_STREAM_VALUE);
             headers.add(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, HttpHeaders.CONTENT_DISPOSITION);
             headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + contract.getFilename());
+            return ResponseEntity.ok()
+                    .headers(headers)
+                    .body(byteArray);
+        } finally {
+            IOUtils.close(inputStream);
+        }
+    }
+
+    @GetMapping(value = "/{onboardingId}/products/{productId}/aggregates-csv", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "", notes = "${swagger.tokens.getAggregatesCsv}")
+    public ResponseEntity<byte[]> getAggregatesCsv(@ApiParam("${swagger.tokens.onboardingId}") @PathVariable("onboardingId")
+                                                       String onboardingId,
+                                                   @ApiParam("${swagger.tokens.productId}")
+                                                   @PathVariable("productId")
+                                                   String productId) throws IOException {
+        log.trace("getAggregatesCsv start");
+        log.debug("getAggregatesCsv onboardingId = {}, productId = {}", Encode.forJava(onboardingId), Encode.forJava(productId));
+        Resource csv = tokenService.getAggregatesCsv(onboardingId, productId);
+        InputStream inputStream = null;
+        try {
+            inputStream = csv.getInputStream();
+            byte[] byteArray = IOUtils.toByteArray(inputStream);
+            log.trace("getAggregatesCsv end");
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.add(HttpHeaders.CONTENT_TYPE, APPLICATION_OCTET_STREAM_VALUE);
+            headers.add(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, HttpHeaders.CONTENT_DISPOSITION);
+            headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + csv.getFilename());
             return ResponseEntity.ok()
                     .headers(headers)
                     .body(byteArray);

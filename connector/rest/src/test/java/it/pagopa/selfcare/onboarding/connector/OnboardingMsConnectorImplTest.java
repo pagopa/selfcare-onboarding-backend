@@ -345,6 +345,23 @@ class OnboardingMsConnectorImplTest {
     }
 
     @Test
+    void getAggregatesCsv() {
+        // given
+        final String onboardingId = "onboardingId";
+        final String productId = "productId";
+        Resource resource = Mockito.mock(Resource.class);
+        when(msOnboardingAggregatesApiClient._getAggregatesCsv(onboardingId, productId))
+                .thenReturn(ResponseEntity.of(Optional.of(resource)));
+        // when
+        final Executable executable = () -> onboardingMsConnector.getAggregatesCsv(onboardingId, productId);
+        // then
+        assertDoesNotThrow(executable);
+        verify(msOnboardingAggregatesApiClient, times(1))
+                ._getAggregatesCsv(onboardingId, productId);
+        verifyNoMoreInteractions(msOnboardingAggregatesApiClient);
+    }
+
+    @Test
     void onboardingUsers() {
         // given
         final String origin = "origin";
@@ -424,6 +441,53 @@ class OnboardingMsConnectorImplTest {
     }
 
     @Test
+    void onboardingUsersPgFromIcAndAde() {
+        final String origin = "ADE";
+        // given
+        OnboardingData onboardingData = new OnboardingData();
+        onboardingData.setTaxCode("taxCode");
+        onboardingData.setOrigin(origin);
+        onboardingData.setInstitutionType(InstitutionType.PG);
+        onboardingData.setUsers(List.of(mockInstance(new User())));
+
+        OnboardingUserPgRequest request = new OnboardingUserPgRequest();
+        request.setOrigin(Origin.fromValue(origin));
+        request.setUsers(List.of(mockInstance(new UserRequest())));
+        request.setTaxCode("taxCode");
+        request.setInstitutionType(it.pagopa.selfcare.onboarding.generated.openapi.v1.dto.InstitutionType.PG);
+        request.setProductId("productId");
+
+        when(onboardingMapper.toOnboardingUserPgRequest(onboardingData)).thenReturn(request);
+        // when
+        onboardingMsConnector.onboardingUsersPgFromIcAndAde(onboardingData);
+
+        // then
+        verify(msOnboardingApiClient, times(1))._onboardingUsersPg(request);
+        verifyNoMoreInteractions(msOnboardingApiClient);
+    }
+
+    @Test
+    void onboardingUsersPgFromIcAndAde_shouldHandleNullResponse() {
+        // given
+        final String origin = "ADE";
+
+        OnboardingUserPgRequest request = new OnboardingUserPgRequest();
+        request.setOrigin(Origin.fromValue(origin));
+        request.setUsers(List.of(mockInstance(new UserRequest())));
+        request.setTaxCode("taxCode");
+        request.setInstitutionType(it.pagopa.selfcare.onboarding.generated.openapi.v1.dto.InstitutionType.PG);
+        request.setProductId("productId");
+
+
+        // when
+        onboardingMsConnector.onboardingUsersPgFromIcAndAde(null);
+
+        // then
+        verify(msOnboardingApiClient, times(1))._onboardingUsersPg(null);
+        verifyNoMoreInteractions(msOnboardingApiClient);
+    }
+
+    @Test
     void getOnboardingByFiltersWithUO() {
         // given
         final String origin = "origin";
@@ -476,6 +540,8 @@ class OnboardingMsConnectorImplTest {
         // given
         final String origin = "origin";
         final String originId = "originId";
+        CheckManagerResponse response = new CheckManagerResponse();
+        response.setResponse(true);
         OnboardingData onboardingData = new OnboardingData();
         onboardingData.setOrigin(origin);
         onboardingData.setOriginId(originId);
@@ -483,7 +549,7 @@ class OnboardingMsConnectorImplTest {
         request.setOrigin(origin);
         request.setOriginId(originId);
         when(msOnboardingApiClient._checkManager(request))
-                .thenReturn(ResponseEntity.ok(new CheckManagerResponse()));
+                .thenReturn(ResponseEntity.ok(response));
         // when
         final Executable executable = () -> onboardingMsConnector.checkManager(onboardingData);
         // then

@@ -28,11 +28,12 @@ public class AggregateInstitution {
     private String iban;
     private String service;
     private String syncAsyncMode;
-    private String codeSDI;
+    private String recipientCode;
     private String vatNumber;
     private String digitalAddress;
     private String city;
     private String county;
+    private String parentDescription;
 
 
 

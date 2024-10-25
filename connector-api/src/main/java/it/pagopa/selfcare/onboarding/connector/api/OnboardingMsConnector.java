@@ -32,6 +32,8 @@ public interface OnboardingMsConnector {
 
     Resource getContract(String onboardingId);
 
+    Resource getAggregatesCsv(String onboardingId, String productId);
+
     void onboardingPaAggregation(OnboardingData onboardingData);
 
     List<OnboardingData> getByFilters(String productId, String taxCode, String origin, String originId, String subunitCode);
@@ -43,4 +45,7 @@ public interface OnboardingMsConnector {
     VerifyAggregateResult aggregatesVerification(MultipartFile file, String productId);
 
     void verifyOnboarding(String productId, String taxCode, String origin, String originId, String subunitCode);
+
+    void onboardingUsersPgFromIcAndAde(OnboardingData onboardingUserPgRequest);
+
 }

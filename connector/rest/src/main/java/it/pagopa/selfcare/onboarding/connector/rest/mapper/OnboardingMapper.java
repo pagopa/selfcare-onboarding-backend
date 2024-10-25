@@ -136,4 +136,6 @@ public interface OnboardingMapper {
     VerifyAggregateResult toVerifyAggregateResult(VerifyAggregateResponse body);
 
     RecipientCodeStatusResult toRecipientCodeStatusResult(RecipientCodeStatus recipientCodeStatus);
+
+    OnboardingUserPgRequest toOnboardingUserPgRequest(OnboardingData onboardingData);
 }
