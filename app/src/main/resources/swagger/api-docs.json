@@ -3101,6 +3101,9 @@
           "originId" : {
             "type" : "string"
           },
+          "parentDescription" : {
+            "type" : "string"
+          },
           "recipientCode" : {
             "type" : "string"
           },

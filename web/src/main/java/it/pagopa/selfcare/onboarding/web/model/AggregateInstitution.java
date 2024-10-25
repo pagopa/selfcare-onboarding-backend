@@ -33,6 +33,7 @@ public class AggregateInstitution {
     private String digitalAddress;
     private String city;
     private String county;
+    private String parentDescription;
 
 
 
