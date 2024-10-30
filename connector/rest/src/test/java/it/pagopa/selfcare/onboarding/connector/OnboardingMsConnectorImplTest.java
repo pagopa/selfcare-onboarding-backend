@@ -384,6 +384,30 @@ class OnboardingMsConnectorImplTest {
         verifyNoMoreInteractions(msOnboardingApiClient);
     }
 
+
+    @Test
+    void onboardingUsersAggregator() {
+        // given
+        final String origin = "origin";
+        final String originId = "originId";
+        OnboardingData onboardingData = new OnboardingData();
+        onboardingData.setOrigin(origin);
+        onboardingData.setOriginId(originId);
+        OnboardingUserRequest request = new OnboardingUserRequest();
+        request.setOrigin(origin);
+        request.setOriginId(originId);
+        OnboardingResponse resource = Mockito.mock(OnboardingResponse.class);
+        when(msOnboardingApiClient._onboardingUsersAggregator(request))
+                .thenReturn(ResponseEntity.of(Optional.of(resource)));
+        // when
+        final Executable executable = () -> onboardingMsConnector.onboardingUsersAggregator(onboardingData);
+        // then
+        assertDoesNotThrow(executable);
+        verify(msOnboardingApiClient, times(1))
+                ._onboardingUsersAggregator(request);
+        verifyNoMoreInteractions(msOnboardingApiClient);
+    }
+
     @Test
     void onboardingPaAggregation() {
         // given

@@ -155,6 +155,19 @@ class UserServiceImplTest {
     }
 
     @Test
+    void onboardingUsersAggregator() {
+        // given
+        OnboardingData onboardingData = new OnboardingData();
+        doNothing().when(onboardingMsConnector).onboardingUsersAggregator(any());
+        // when
+        userService.onboardingUsersAggregator(onboardingData);
+        // then
+        verify(onboardingMsConnector, times(1))
+                .onboardingUsersAggregator(onboardingData);
+        verifyNoMoreInteractions(onboardingMsConnector);
+    }
+
+    @Test
     void checkManager() {
         // given
         OnboardingData onboardingData = new OnboardingData();

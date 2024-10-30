@@ -13,7 +13,10 @@ import it.pagopa.selfcare.onboarding.connector.rest.client.MsOnboardingApiClient
 import it.pagopa.selfcare.onboarding.connector.rest.client.MsOnboardingSupportApiClient;
 import it.pagopa.selfcare.onboarding.connector.rest.client.MsOnboardingTokenApiClient;
 import it.pagopa.selfcare.onboarding.connector.rest.mapper.OnboardingMapper;
-import it.pagopa.selfcare.onboarding.generated.openapi.v1.dto.*;
+import it.pagopa.selfcare.onboarding.generated.openapi.v1.dto.OnboardingGet;
+import it.pagopa.selfcare.onboarding.generated.openapi.v1.dto.OnboardingResponse;
+import it.pagopa.selfcare.onboarding.generated.openapi.v1.dto.OnboardingStatus;
+import it.pagopa.selfcare.onboarding.generated.openapi.v1.dto.ReasonRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
@@ -86,6 +89,12 @@ public class OnboardingMsConnectorImpl implements OnboardingMsConnector {
     @Retry(name = "retryTimeout")
     public void onboardingUsers(OnboardingData onboardingData) {
         msOnboardingApiClient._onboardingUsers(onboardingMapper.toOnboardingUsersRequest(onboardingData));
+    }
+
+    @Override
+    @Retry(name = "retryTimeout")
+    public void onboardingUsersAggregator(OnboardingData onboardingData) {
+        msOnboardingApiClient._onboardingUsersAggregator(onboardingMapper.toOnboardingUsersRequest(onboardingData));
     }
 
 

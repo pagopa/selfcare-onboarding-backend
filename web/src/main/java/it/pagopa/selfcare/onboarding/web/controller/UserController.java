@@ -73,6 +73,23 @@ public class UserController {
         log.trace("onboarding end");
     }
 
+
+    @ApiResponse(responseCode = "403",
+            description = "Forbidden",
+            content = {
+                    @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE,
+                            schema = @Schema(implementation = Problem.class))
+            })
+    @PostMapping(value = "/onboarding/aggregator")
+    @ResponseStatus(HttpStatus.CREATED)
+    @ApiOperation(value = "", notes = "${swagger.onboarding.users.api.onboarding-aggregator}")
+    public void onboardingAggregator(@RequestBody @Valid OnboardingUserDto request) {
+        log.trace("onboardingAggregator start");
+        log.debug("onboardingAggregator request = {}", request);
+        userService.onboardingUsersAggregator(onboardingResourceMapper.toEntity(request));
+        log.trace("onboardingAggregator end");
+    }
+
     @ApiResponse(responseCode = "403",
             description = "Forbidden",
             content = {
