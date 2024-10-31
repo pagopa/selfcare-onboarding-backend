@@ -13,6 +13,7 @@ import it.pagopa.selfcare.onboarding.web.model.UserDataValidationDto;
 import it.pagopa.selfcare.onboarding.web.model.mapper.OnboardingResourceMapper;
 import it.pagopa.selfcare.onboarding.web.model.mapper.UserMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.owasp.encoder.Encode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -85,7 +86,7 @@ public class UserController {
     @ApiOperation(value = "", notes = "${swagger.onboarding.users.api.onboarding-aggregator}")
     public void onboardingAggregator(@RequestBody @Valid OnboardingUserDto request) {
         log.trace("onboardingAggregator start");
-        log.debug("onboardingAggregator request = {}", request);
+        log.debug("onboardingAggregator request = {}", Encode.forJava(request.toString()));
         userService.onboardingUsersAggregator(onboardingResourceMapper.toEntity(request));
         log.trace("onboardingAggregator end");
     }
