@@ -101,6 +101,23 @@ class UserControllerTest {
         verifyNoMoreInteractions(userServiceMock);
     }
 
+
+    @Test
+    void onboardingUsersAggregator(@Value("classpath:stubs/onboardingUsers.json") Resource onboardinUserDto) throws Exception {
+        // when
+        mvc.perform(MockMvcRequestBuilders
+                        .post(BASE_URL + "/onboarding/aggregator")
+                        .content(onboardinUserDto.getInputStream().readAllBytes())
+                        .contentType(APPLICATION_JSON_VALUE)
+                        .accept(APPLICATION_JSON_VALUE))
+                .andExpect(status().isCreated())
+                .andExpect(content().string(emptyString()));
+        // then
+        verify(userServiceMock, times(1))
+                .onboardingUsersAggregator(any(OnboardingData.class));
+        verifyNoMoreInteractions(userServiceMock);
+    }
+
     /**
      * Method under test: {@link UserController#checkManager(OnboardingUserDto)}
      */

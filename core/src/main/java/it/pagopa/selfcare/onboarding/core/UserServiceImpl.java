@@ -67,6 +67,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public void onboardingUsersAggregator(OnboardingData onboardingData) {
+        log.trace("onboardingUsersAggregator start");
+        log.debug("onboardingUsersAggregator onboardingData = {}", onboardingData);
+        onboardingMsConnector.onboardingUsersAggregator(onboardingData);
+        log.trace("onboardingUsersAggregator end");
+    }
+
+    @Override
     public boolean  checkManager(OnboardingData onboardingData) {
         log.trace("checkManager start");
         log.debug("checkManager onboardingData = {}", onboardingData);

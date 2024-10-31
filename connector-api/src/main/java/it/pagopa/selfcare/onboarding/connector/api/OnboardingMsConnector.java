@@ -14,6 +14,8 @@ public interface OnboardingMsConnector {
 
     void onboardingUsers(OnboardingData onboardingData);
 
+    void onboardingUsersAggregator(OnboardingData onboardingData);
+
     void onboardingCompany(OnboardingData onboardingData);
 
     void onboardingTokenComplete(String onboardingId, MultipartFile contract);
