@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import it.pagopa.selfcare.commons.base.logging.LogUtils;
 import it.pagopa.selfcare.commons.web.model.Problem;
 import it.pagopa.selfcare.onboarding.core.UserService;
+import it.pagopa.selfcare.onboarding.web.model.CheckManagerResponse;
 import it.pagopa.selfcare.onboarding.web.model.OnboardingUserDto;
 import it.pagopa.selfcare.onboarding.web.model.UserDataValidationDto;
 import it.pagopa.selfcare.onboarding.web.model.mapper.OnboardingResourceMapper;
@@ -20,8 +21,6 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.Collections;
-import java.util.Map;
 
 import static org.springframework.http.MediaType.APPLICATION_PROBLEM_JSON_VALUE;
 
@@ -100,11 +99,11 @@ public class UserController {
     @PostMapping(value = "/check-manager")
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "", notes = "${swagger.onboarding.users.api.check-manager}", nickname = "checkManager")
-    public Map<String, Boolean> checkManager(@RequestBody @Valid OnboardingUserDto request) {
+    public CheckManagerResponse checkManager(@RequestBody @Valid OnboardingUserDto request) {
         log.trace("onboarding start");
         boolean checkManager =  userService.checkManager(onboardingResourceMapper.toEntity(request));
         log.trace("onboarding end");
-        return Collections.singletonMap("result", checkManager);
+        return new CheckManagerResponse(checkManager);
     }
 
 }

@@ -2673,10 +2673,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "type" : "object",
-                  "additionalProperties" : {
-                    "type" : "boolean"
-                  }
+                  "$ref" : "#/components/schemas/CheckManagerResponse"
                 }
               }
             }
@@ -3400,6 +3397,18 @@
           "businessTaxId" : {
             "type" : "string",
             "description" : "Legal Representative's institutions tax ID"
+          }
+        }
+      },
+      "CheckManagerResponse" : {
+        "title" : "CheckManagerResponse",
+        "required" : [ "response" ],
+        "type" : "object",
+        "properties" : {
+          "response" : {
+            "type" : "boolean",
+            "description" : "Is the given user manager of the institution",
+            "example" : false
           }
         }
       },
