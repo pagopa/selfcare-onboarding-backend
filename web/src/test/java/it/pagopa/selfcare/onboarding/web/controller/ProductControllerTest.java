@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import it.pagopa.selfcare.onboarding.core.ProductService;
 import it.pagopa.selfcare.onboarding.web.config.WebTestConfig;
 import it.pagopa.selfcare.onboarding.web.model.ProductResource;
+import it.pagopa.selfcare.product.entity.ContractTemplate;
 import it.pagopa.selfcare.product.entity.Product;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -20,7 +21,9 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -101,7 +104,13 @@ class ProductControllerTest {
     void getProductsAdmin() throws Exception {
         //given
         Product product = new Product();
-        product.setUserContractTemplatePath("test");
+        Map<String, ContractTemplate> userContractMappings = new HashMap<>();
+        ContractTemplate userContract = new ContractTemplate();
+        userContract.setContractTemplatePath("test");
+        userContract.setContractTemplateVersion("version");
+        userContractMappings.put(Product.CONTRACT_TYPE_DEFAULT, userContract);
+        product.setUserContractMappings(userContractMappings);
+
         Mockito.when(productServiceMock.getProducts(true))
                 .thenReturn(List.of(product));
         //when
