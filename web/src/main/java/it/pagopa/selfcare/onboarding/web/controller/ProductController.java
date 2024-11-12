@@ -69,7 +69,7 @@ public class ProductController {
         log.trace("getProductsAdmin start");
         final List<Product> products = productService.getProducts(true);
         List<ProductResource> resources = products.stream()
-                .filter(product -> Objects.nonNull(product.getUserContractTemplatePath()))
+                .filter(product -> Objects.nonNull(product.getUserContractTemplate(Product.CONTRACT_TYPE_DEFAULT).getContractTemplatePath()))
                 .map(ProductMapper::toResource)
                 .toList();
         log.debug("getProductsAdmin result = {}", resources);

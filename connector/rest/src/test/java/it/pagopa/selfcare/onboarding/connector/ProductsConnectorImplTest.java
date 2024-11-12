@@ -1,7 +1,7 @@
 package it.pagopa.selfcare.onboarding.connector;
 
 import it.pagopa.selfcare.onboarding.common.InstitutionType;
-import it.pagopa.selfcare.product.entity.ContractStorage;
+import it.pagopa.selfcare.product.entity.ContractTemplate;
 import it.pagopa.selfcare.product.entity.Product;
 import it.pagopa.selfcare.product.entity.ProductStatus;
 import it.pagopa.selfcare.product.service.ProductService;
@@ -12,6 +12,7 @@ import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.Instant;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -31,11 +32,10 @@ class ProductsConnectorImplTest {
     @Test
     void getProductByInstitutionType() {
         final Product product = dummyProduct();
-        ContractStorage contractStorage = new ContractStorage();
-        contractStorage.setContractTemplateUpdatedAt(Instant.now());
-        contractStorage.setContractTemplatePath("contractTemplatePath");
-        contractStorage.setContractTemplateVersion("contractTemplateVersion");
-        final Map<String, ContractStorage> contractStorageMap = Map.of(InstitutionType.PA.name(),contractStorage);
+        ContractTemplate contractTemplate = new ContractTemplate();
+        contractTemplate.setContractTemplatePath("contractTemplatePath");
+        contractTemplate.setContractTemplateVersion("contractTemplateVersion");
+        final Map<String, ContractTemplate> contractStorageMap = Map.of(InstitutionType.PA.name(),contractTemplate);
         product.setInstitutionContractMappings(contractStorageMap);
         final String productId = "productId";
         when(productService.getProduct(anyString())).thenReturn(product);
@@ -51,11 +51,10 @@ class ProductsConnectorImplTest {
     @Test
     void getProduct_institutionTypeNotPresent(){
         final Product product = dummyProduct();
-        ContractStorage contractStorage = new ContractStorage();
-        contractStorage.setContractTemplateUpdatedAt(Instant.now());
-        contractStorage.setContractTemplatePath("contractTemplatePath");
-        contractStorage.setContractTemplateVersion("contractTemplateVersion");
-        final Map<String, ContractStorage> contractStorageMap = Map.of(InstitutionType.PA.name(),contractStorage);
+        ContractTemplate contractTemplate = new ContractTemplate();
+        contractTemplate.setContractTemplatePath("contractTemplatePath");
+        contractTemplate.setContractTemplateVersion("contractTemplateVersion");
+        final Map<String, ContractTemplate> contractStorageMap = Map.of(InstitutionType.PA.name(),contractTemplate);
         product.setInstitutionContractMappings(contractStorageMap);
         final String productId = "productId";
         when(productService.getProduct(anyString())).thenReturn(product);
@@ -87,8 +86,13 @@ class ProductsConnectorImplTest {
 
     private Product dummyProduct(){
         Product product = new Product();
-        product.setContractTemplatePath("Contract Template Path");
-        product.setContractTemplateVersion("1.0.2");
+        ContractTemplate contractTemplate = new ContractTemplate();
+        contractTemplate.setContractTemplatePath("Contract Template Path");
+        contractTemplate.setContractTemplateVersion("1.0.2");
+        Map<String, ContractTemplate> institutionContractMapping = new HashMap<>();
+        institutionContractMapping.put(Product.CONTRACT_TYPE_DEFAULT, contractTemplate);
+        product.setInstitutionContractMappings(institutionContractMapping);
+
         product.setId("42");
         product.setParentId("42");
         product.setRoleMappings(null);

@@ -28,11 +28,7 @@ public class ProductsConnectorImpl implements ProductsConnector {
         }
         Assert.hasText(id, "A productId is required");
         Product product = productService.getProduct(id);
-        if (Objects.nonNull(product.getInstitutionContractMappings()) && product.getInstitutionContractMappings().containsKey(institutionType)) {
-            product.setContractTemplatePath(product.getInstitutionContractMappings().get(institutionType).getContractTemplatePath());
-            product.setContractTemplateVersion(product.getInstitutionContractMappings().get(institutionType).getContractTemplateVersion());
-            product.setContractTemplateUpdatedAt(product.getInstitutionContractMappings().get(institutionType).getContractTemplateUpdatedAt());
-        }
+
         log.debug(LogUtils.CONFIDENTIAL_MARKER, "getProduct result = {}", product);
         return product;
     }
