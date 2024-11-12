@@ -198,8 +198,8 @@ class InstitutionServiceImpl implements InstitutionService {
                     product.getId()));
         }
 
-        onboardingData.setContractPath(product.getContractTemplatePath());
-        onboardingData.setContractVersion(product.getContractTemplateVersion());
+        onboardingData.setContractPath(product.getInstitutionContractTemplate(onboardingData.getInstitutionType().name()).getContractTemplatePath());
+        onboardingData.setContractVersion(product.getInstitutionContractTemplate(onboardingData.getInstitutionType().name()).getContractTemplateVersion());
 
         checkIfProductIsActiveAndSetUserProductRole(product, onboardingData);
         onboardingData.setProductName(product.getTitle());
@@ -286,10 +286,10 @@ class InstitutionServiceImpl implements InstitutionService {
                         product.getId(),
                         baseProduct.getId()));
             }
-            roleMappings = baseProduct.getRoleMappings();
+            roleMappings = baseProduct.getRoleMappings(onboardingData.getProductId());
         } else {
             validateOnboarding(onboardingData.getTaxCode(), product.getId());
-            roleMappings = product.getRoleMappings();
+            roleMappings = product.getRoleMappings(onboardingData.getProductId());
         }
 
         validateProductRole(onboardingData.getUsers(), roleMappings);
