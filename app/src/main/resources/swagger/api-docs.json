@@ -3402,10 +3402,10 @@
       },
       "CheckManagerResponse" : {
         "title" : "CheckManagerResponse",
-        "required" : [ "response" ],
+        "required" : [ "result" ],
         "type" : "object",
         "properties" : {
-          "response" : {
+          "result" : {
             "type" : "boolean",
             "description" : "Is the given user manager of the institution",
             "example" : false

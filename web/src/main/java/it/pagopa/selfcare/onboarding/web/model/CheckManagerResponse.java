@@ -6,11 +6,11 @@ import lombok.Data;
 
 @Data
 public class CheckManagerResponse {
-    @ApiModelProperty(value = "${swagger.user.check-manager.model.response}", required = true)
+    @ApiModelProperty(value = "${swagger.user.check-manager.model.result}", required = true)
     @JsonProperty(required = true)
-    private boolean response;
+    private boolean result;
 
-    public CheckManagerResponse(boolean response) {
-        this.response = response;
+    public CheckManagerResponse(boolean result) {
+        this.result = result;
     }
 }
