@@ -3,6 +3,7 @@ package it.pagopa.selfcare.onboarding.connector.rest.model;
 import it.pagopa.selfcare.commons.base.utils.InstitutionType;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Attribute;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.DataProtectionOfficer;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.GPUData;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.GeographicTaxonomy;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.PaymentServiceProvider;
 import lombok.Data;
@@ -31,6 +32,7 @@ public class InstitutionResponse {
     private List<Attribute> attributes;
     private PaymentServiceProvider paymentServiceProvider;
     private DataProtectionOfficer dataProtectionOfficer;
+    private GPUData gpuData;
     private List<GeographicTaxonomy> geographicTaxonomies;
     private List<OnboardingResponse> onboarding;
     private String rea;

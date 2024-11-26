@@ -31,6 +31,7 @@ public class Institution {
     private List<Attribute> attributes;
     private PaymentServiceProvider paymentServiceProvider;
     private DataProtectionOfficer dataProtectionOfficer;
+    private GPUData gpuData;
     private List<GeographicTaxonomy> geographicTaxonomies;
     private CompanyInformations companyInformations;
     private AssistanceContacts assistanceContacts;
