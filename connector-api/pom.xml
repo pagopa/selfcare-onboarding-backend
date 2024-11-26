@@ -7,16 +7,22 @@
         <groupId>it.pagopa.selfcare</groupId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
-    <modelVersion>4.0.0</modelVersion>
 
+    <modelVersion>4.0.0</modelVersion>
     <artifactId>selc-onboarding-connector-api</artifactId>
+
+    <properties>
+        <commons-sdk-version>0.5.0</commons-sdk-version>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>it.pagopa.selfcare</groupId>
             <artifactId>onboarding-sdk-product</artifactId>
-            <version>0.4.1</version>
+            <version>${commons-sdk-version}</version>
         </dependency>
     </dependencies>
+
     <repositories>
         <repository>
             <id>selfcare-onboarding</id>

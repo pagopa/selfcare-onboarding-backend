@@ -11,6 +11,10 @@
 
     <artifactId>selc-onboarding-web</artifactId>
 
+    <properties>
+        <commons-sdk-version>0.5.0</commons-sdk-version>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>it.pagopa.selfcare</groupId>
@@ -33,7 +37,7 @@
         <dependency>
             <groupId>it.pagopa.selfcare</groupId>
             <artifactId>onboarding-sdk-common</artifactId>
-            <version>0.2.2</version>
+            <version>${commons-sdk-version}</version>
         </dependency>
 
     </dependencies>
