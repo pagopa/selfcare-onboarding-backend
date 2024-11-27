@@ -2,6 +2,7 @@ package it.pagopa.selfcare.onboarding.web.model;
 
 import io.swagger.annotations.ApiModelProperty;
 import it.pagopa.selfcare.onboarding.common.InstitutionType;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.GPUData;
 import lombok.Data;
 
 import javax.validation.Valid;
@@ -74,4 +75,7 @@ public class OnboardingProductDto {
 
     @ApiModelProperty(value = "${swagger.onboarding.institutions.model.aggregates}")
     private List<AggregateInstitution> aggregates;
+
+    @ApiModelProperty(value = "${swagger.onboarding.institutions.model.gpuData}")
+    private GPUData gpuData;
 }
