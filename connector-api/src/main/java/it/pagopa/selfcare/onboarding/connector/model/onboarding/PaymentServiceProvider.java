@@ -1,14 +1,13 @@
 package it.pagopa.selfcare.onboarding.connector.model.onboarding;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Data
-public class PaymentServiceProvider {
+@EqualsAndHashCode(callSuper = true)
+public class PaymentServiceProvider extends BusinessData {
 
     private String abiCode;
-    private String businessRegisterNumber;
-    private String legalRegisterName;
-    private String legalRegisterNumber;
     private Boolean vatNumberGroup;
 
 }

@@ -21,6 +21,7 @@ public class InstitutionUpdate {
     private String originId;
     private PaymentServiceProvider paymentServiceProvider;
     private DataProtectionOfficer dataProtectionOfficer;
+    private GPUData gpuData;
     private List<GeographicTaxonomy> geographicTaxonomies;
     private String rea;
     private String shareCapital;

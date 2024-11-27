@@ -3609,6 +3609,36 @@
           }
         }
       },
+      "GPUData" : {
+        "title" : "GPUData",
+        "type" : "object",
+        "properties" : {
+          "businessRegisterNumber" : {
+            "type" : "string"
+          },
+          "institutionCourtMeasures" : {
+            "type" : "boolean"
+          },
+          "legalRegisterName" : {
+            "type" : "string"
+          },
+          "legalRegisterNumber" : {
+            "type" : "string"
+          },
+          "manager" : {
+            "type" : "boolean"
+          },
+          "managerAuthorized" : {
+            "type" : "boolean"
+          },
+          "managerEligible" : {
+            "type" : "boolean"
+          },
+          "managerProsecution" : {
+            "type" : "boolean"
+          }
+        }
+      },
       "GeographicTaxonomyDto" : {
         "title" : "GeographicTaxonomyDto",
         "required" : [ "code", "desc" ],
@@ -4000,6 +4030,10 @@
             "items" : {
               "$ref" : "#/components/schemas/GeographicTaxonomyDto"
             }
+          },
+          "gpuData" : {
+            "description" : "Institution's GPU data",
+            "$ref" : "#/components/schemas/GPUData"
           },
           "institutionLocationData" : {
             "description" : "Institution's location data, city, county, country information",

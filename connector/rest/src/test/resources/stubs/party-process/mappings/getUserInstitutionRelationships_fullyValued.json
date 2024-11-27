@@ -47,6 +47,16 @@
             "agentOfPublicServiceNote" : "string",
             "otherNote" : "string"
           },
+          "gpuData": {
+            "businessRegisterNumber": "string",
+            "legalRegisterName": "string",
+            "legalRegisterNumber": "string",
+            "manager": false,
+            "managerAuthorized": false,
+            "managerEligible": false,
+            "managerProsecution": false,
+            "institutionCourtMeasures": false
+          },
           "dataProtectionOfficer": {
             "address": "string",
             "email": "string",

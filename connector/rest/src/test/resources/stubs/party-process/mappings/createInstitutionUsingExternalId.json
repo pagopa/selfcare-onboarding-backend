@@ -41,6 +41,16 @@
         "email": "string",
         "pec": "string"
       },
+      "gpuData": {
+        "businessRegisterNumber": "string",
+        "legalRegisterName": "string",
+        "legalRegisterNumber": "string",
+        "manager": false,
+        "managerAuthorized": false,
+        "managerEligible": false,
+        "managerProsecution": false,
+        "institutionCourtMeasures": false
+      },
       "geographicTaxonomies": [
         {
           "code": "string",

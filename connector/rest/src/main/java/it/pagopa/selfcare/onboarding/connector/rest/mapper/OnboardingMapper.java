@@ -24,6 +24,7 @@ public interface OnboardingMapper {
     OnboardingPspRequest toOnboardingPspRequest(OnboardingData onboardingData);
     @Mapping(target = "institution", source = ".", qualifiedByName = "toInstitutionBase")
     @Mapping(target = "additionalInformations", source = "institutionUpdate.additionalInformations")
+    @Mapping(target = "gpuData", source = "institutionUpdate.gpuData")
     OnboardingDefaultRequest toOnboardingDefaultRequest(OnboardingData onboardingData);
 
     @Mapping(target = "businessName", source = "institutionUpdate.description")
