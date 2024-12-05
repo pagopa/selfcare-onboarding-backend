@@ -201,19 +201,7 @@ public class TokenV2Controller {
         log.trace("getContract start");
         log.debug("getContract onboardingId = {}", onboardingId);
         Resource contract = tokenService.getContract(onboardingId);
-        InputStream inputStream = null;
-        try {
-            inputStream = contract.getInputStream();
-            byte[] byteArray = IOUtils.toByteArray(inputStream);
-            log.trace("getContract end");
-
-            HttpHeaders headers = getHttpHeaders(contract);
-            return ResponseEntity.ok()
-                    .headers(headers)
-                    .body(byteArray);
-        } finally {
-            IOUtils.close(inputStream);
-        }
+        return getResponseEntity(contract);
     }
 
     @GetMapping(value = "/{onboardingId}/attachment", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
@@ -228,20 +216,9 @@ public class TokenV2Controller {
         String sanitizedFilename = filename.replaceAll("[^a-zA-Z0-9._-]", "_");
         log.debug("getAttachment onboardingId = {}, filename = {}", Encode.forJava(onboardingId), sanitizedFilename);
         Resource contract = tokenService.getAttachment(onboardingId, filename);
-        InputStream inputStream = null;
-        try {
-            inputStream = contract.getInputStream();
-            byte[] byteArray = IOUtils.toByteArray(inputStream);
-            log.trace("getContract end");
-
-            HttpHeaders headers = getHttpHeaders(contract);
-            return ResponseEntity.ok()
-                    .headers(headers)
-                    .body(byteArray);
-        } finally {
-            IOUtils.close(inputStream);
-        }
+        return getResponseEntity(contract);
     }
+
 
     @GetMapping(value = "/{onboardingId}/products/{productId}/aggregates-csv", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     @ResponseStatus(HttpStatus.OK)
@@ -254,26 +231,29 @@ public class TokenV2Controller {
         log.trace("getAggregatesCsv start");
         log.debug("getAggregatesCsv onboardingId = {}, productId = {}", Encode.forJava(onboardingId), Encode.forJava(productId));
         Resource csv = tokenService.getAggregatesCsv(onboardingId, productId);
+        return getResponseEntity(csv);
+    }
+
+    private HttpHeaders getHttpHeaders(Resource contract) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.CONTENT_TYPE, APPLICATION_OCTET_STREAM_VALUE);
+        headers.add(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, HttpHeaders.CONTENT_DISPOSITION);
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + contract.getFilename());
+        return headers;
+    }
+
+    private ResponseEntity<byte[]> getResponseEntity(Resource contract) throws IOException {
         InputStream inputStream = null;
         try {
-            inputStream = csv.getInputStream();
+            inputStream = contract.getInputStream();
             byte[] byteArray = IOUtils.toByteArray(inputStream);
-            log.trace("getAggregatesCsv end");
 
-            HttpHeaders headers = getHttpHeaders(csv);
+            HttpHeaders headers = getHttpHeaders(contract);
             return ResponseEntity.ok()
                     .headers(headers)
                     .body(byteArray);
         } finally {
             IOUtils.close(inputStream);
         }
-    }
-
-    private static HttpHeaders getHttpHeaders(Resource contract) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.CONTENT_TYPE, APPLICATION_OCTET_STREAM_VALUE);
-        headers.add(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, HttpHeaders.CONTENT_DISPOSITION);
-        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + contract.getFilename());
-        return headers;
     }
 }
