@@ -93,6 +93,17 @@ public class TokenServiceImpl implements TokenService {
         return resource;
     }
 
+    @Override
+    public Resource getAttachment(String onboardingId, String filename) {
+        log.trace("getAttachment start");
+        log.debug("getAttachment id = {}, filename = {}",  Encode.forJava(onboardingId),  Encode.forJava(filename));
+        Assert.notNull(onboardingId, "TokenId is required");
+        Assert.notNull(filename, "filename is required");
+        Resource resource = onboardingMsConnector.getAttachment(onboardingId, filename);
+        log.debug("getAttachment result = success");
+        log.trace("getAttachment end");
+        return resource;
+    }
 
     @Override
     public Resource getAggregatesCsv(String onboardingId, String productId) {

@@ -136,6 +136,18 @@ public class TokenServiceImplTest {
                 .getContract(onboardingId);
     }
 
+    @Test
+    void getAttachment() {
+        //given
+        final String onboardingId = "onboardingId";
+        final String filename = "filename";
+        // when
+        tokenService.getAttachment(onboardingId, filename);
+        //then
+        Mockito.verify(onboardingMsConnector, Mockito.times(1))
+                .getAttachment(onboardingId, filename);
+    }
+
 
     @Test
     void getAggregatesCsv() {

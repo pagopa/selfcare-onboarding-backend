@@ -160,6 +160,12 @@ public class OnboardingMsConnectorImpl implements OnboardingMsConnector {
 
     @Override
     @Retry(name = "retryTimeout")
+    public Resource getAttachment(String onboardingId, String filename) {
+        return msOnboardingTokenApiClient._getAttachment(onboardingId, filename).getBody();
+    }
+
+    @Override
+    @Retry(name = "retryTimeout")
     public Resource getAggregatesCsv(String onboardingId, String productId) {
         return msOnboardingAggregatesApiClient._getAggregatesCsv(onboardingId, productId).getBody();
     }
