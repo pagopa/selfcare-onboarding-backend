@@ -1,6 +1,8 @@
 package it.pagopa.selfcare.onboarding.web.controller;
 
 
+import static org.springframework.http.MediaType.APPLICATION_OCTET_STREAM_VALUE;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -11,6 +13,8 @@ import it.pagopa.selfcare.onboarding.web.model.OnboardingRequestResource;
 import it.pagopa.selfcare.onboarding.web.model.OnboardingVerify;
 import it.pagopa.selfcare.onboarding.web.model.ReasonForRejectDto;
 import it.pagopa.selfcare.onboarding.web.model.mapper.OnboardingResourceMapper;
+import java.io.IOException;
+import java.io.InputStream;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.owasp.encoder.Encode;
@@ -21,11 +25,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
-import java.io.InputStream;
-
-import static org.springframework.http.MediaType.APPLICATION_OCTET_STREAM_VALUE;
 
 @Slf4j
 @RestController
@@ -227,7 +226,7 @@ public class TokenV2Controller {
                                                 @RequestParam(name = "name") String filename) throws IOException {
         log.trace("getAttachment start");
         String sanitizedFilename = filename.replaceAll("[^a-zA-Z0-9._-]", "_");
-        log.debug("getAttachment onboardingId = {}, filename = {}", onboardingId, sanitizedFilename);
+        log.debug("getAttachment onboardingId = {}, filename = {}", Encode.forJava(onboardingId), sanitizedFilename);
         Resource contract = tokenService.getAttachment(onboardingId, filename);
         InputStream inputStream = null;
         try {

@@ -96,7 +96,7 @@ public class TokenServiceImpl implements TokenService {
     @Override
     public Resource getAttachment(String onboardingId, String filename) {
         log.trace("getAttachment start");
-        log.debug("getAttachment id = {}, filename = {}", onboardingId, filename);
+        log.debug("getAttachment id = {}, filename = {}",  Encode.forJava(onboardingId),  Encode.forJava(filename));
         Assert.notNull(onboardingId, "TokenId is required");
         Assert.notNull(filename, "filename is required");
         Resource resource = onboardingMsConnector.getAttachment(onboardingId, filename);
