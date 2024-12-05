@@ -345,6 +345,23 @@ class OnboardingMsConnectorImplTest {
     }
 
     @Test
+    void getAttachment() {
+        // given
+        final String onboardingId = "onboardingId";
+        final String filename = "filename";
+        Resource resource = Mockito.mock(Resource.class);
+        when(msOnboardingTokenApiClient._getAttachment(onboardingId, filename))
+                .thenReturn(ResponseEntity.of(Optional.of(resource)));
+        // when
+        final Executable executable = () -> onboardingMsConnector.getAttachment(onboardingId, filename);
+        // then
+        assertDoesNotThrow(executable);
+        verify(msOnboardingTokenApiClient, times(1))
+                ._getAttachment(onboardingId, filename);
+        verifyNoMoreInteractions(msOnboardingTokenApiClient);
+    }
+
+    @Test
     void getAggregatesCsv() {
         // given
         final String onboardingId = "onboardingId";

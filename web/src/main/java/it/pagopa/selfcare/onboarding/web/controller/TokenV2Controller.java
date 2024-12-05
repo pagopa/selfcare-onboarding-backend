@@ -220,6 +220,35 @@ public class TokenV2Controller {
         }
     }
 
+    @GetMapping(value = "/{onboardingId}/attachment", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "", notes = "${swagger.tokens.getAttachment}")
+    public ResponseEntity<byte[]> getAttachment(@ApiParam("${swagger.tokens.onboardingId}")
+                                                @PathVariable("onboardingId")
+                                                String onboardingId,
+                                                @ApiParam("${swagger.tokens.attachmentName}")
+                                                @RequestParam(name = "name") String filename) throws IOException {
+        log.trace("getAttachment start");
+        log.debug("getAttachment onboardingId = {}, filename = {}", onboardingId, filename);
+        Resource contract = tokenService.getAttachment(onboardingId, filename);
+        InputStream inputStream = null;
+        try {
+            inputStream = contract.getInputStream();
+            byte[] byteArray = IOUtils.toByteArray(inputStream);
+            log.trace("getContract end");
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.add(HttpHeaders.CONTENT_TYPE, APPLICATION_OCTET_STREAM_VALUE);
+            headers.add(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, HttpHeaders.CONTENT_DISPOSITION);
+            headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + contract.getFilename());
+            return ResponseEntity.ok()
+                    .headers(headers)
+                    .body(byteArray);
+        } finally {
+            IOUtils.close(inputStream);
+        }
+    }
+
     @GetMapping(value = "/{onboardingId}/products/{productId}/aggregates-csv", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "", notes = "${swagger.tokens.getAggregatesCsv}")
