@@ -208,10 +208,7 @@ public class TokenV2Controller {
             byte[] byteArray = IOUtils.toByteArray(inputStream);
             log.trace("getContract end");
 
-            HttpHeaders headers = new HttpHeaders();
-            headers.add(HttpHeaders.CONTENT_TYPE, APPLICATION_OCTET_STREAM_VALUE);
-            headers.add(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, HttpHeaders.CONTENT_DISPOSITION);
-            headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + contract.getFilename());
+            HttpHeaders headers = getHttpHeaders(contract);
             return ResponseEntity.ok()
                     .headers(headers)
                     .body(byteArray);
@@ -238,10 +235,7 @@ public class TokenV2Controller {
             byte[] byteArray = IOUtils.toByteArray(inputStream);
             log.trace("getContract end");
 
-            HttpHeaders headers = new HttpHeaders();
-            headers.add(HttpHeaders.CONTENT_TYPE, APPLICATION_OCTET_STREAM_VALUE);
-            headers.add(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, HttpHeaders.CONTENT_DISPOSITION);
-            headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + contract.getFilename());
+            HttpHeaders headers = getHttpHeaders(contract);
             return ResponseEntity.ok()
                     .headers(headers)
                     .body(byteArray);
@@ -267,15 +261,20 @@ public class TokenV2Controller {
             byte[] byteArray = IOUtils.toByteArray(inputStream);
             log.trace("getAggregatesCsv end");
 
-            HttpHeaders headers = new HttpHeaders();
-            headers.add(HttpHeaders.CONTENT_TYPE, APPLICATION_OCTET_STREAM_VALUE);
-            headers.add(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, HttpHeaders.CONTENT_DISPOSITION);
-            headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + csv.getFilename());
+            HttpHeaders headers = getHttpHeaders(csv);
             return ResponseEntity.ok()
                     .headers(headers)
                     .body(byteArray);
         } finally {
             IOUtils.close(inputStream);
         }
+    }
+
+    private static HttpHeaders getHttpHeaders(Resource contract) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.CONTENT_TYPE, APPLICATION_OCTET_STREAM_VALUE);
+        headers.add(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, HttpHeaders.CONTENT_DISPOSITION);
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + contract.getFilename());
+        return headers;
     }
 }
