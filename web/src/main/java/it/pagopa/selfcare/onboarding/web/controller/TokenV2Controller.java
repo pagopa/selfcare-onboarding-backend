@@ -229,7 +229,8 @@ public class TokenV2Controller {
                                                 @ApiParam("${swagger.tokens.attachmentName}")
                                                 @RequestParam(name = "name") String filename) throws IOException {
         log.trace("getAttachment start");
-        log.debug("getAttachment onboardingId = {}, filename = {}", onboardingId, filename);
+        String sanitizedFilename = filename.replaceAll("[^a-zA-Z0-9._-]", "_");
+        log.debug("getAttachment onboardingId = {}, filename = {}", onboardingId, sanitizedFilename);
         Resource contract = tokenService.getAttachment(onboardingId, filename);
         InputStream inputStream = null;
         try {
