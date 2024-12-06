@@ -1004,6 +1004,129 @@ class InstitutionServiceImplTest {
     }
 
     @Test
+    void verifyManager_userIsManagerOnInfocamere() {
+        // given
+        String taxCode = "validTaxCode";
+        String companyTaxCode = "validCompanyTaxCode";
+        InstitutionInfoIC institutionInfoIC = new InstitutionInfoIC();
+        BusinessInfoIC businessInfoIC = new BusinessInfoIC();
+        businessInfoIC.setBusinessTaxId("otherCompanyTaxCode");
+        businessInfoIC.setBusinessName("CompanyName 2");
+        BusinessInfoIC businessInfoIC2 = new BusinessInfoIC();
+        businessInfoIC2.setBusinessTaxId(companyTaxCode);
+        businessInfoIC2.setBusinessName("CompanyName 1");
+        institutionInfoIC.setBusinesses(List.of(businessInfoIC, businessInfoIC2));
+        when(partyRegistryProxyConnectorMock.getInstitutionsByUserFiscalCode(taxCode)).thenReturn(institutionInfoIC);
+
+        // when
+        ManagerVerification result = institutionService.verifyManager(taxCode, companyTaxCode);
+
+        // then
+        assertNotNull(result);
+        assertEquals(Origin.INFOCAMERE.getValue(), result.getOrigin());
+        assertEquals("CompanyName 1", result.getCompanyName());
+    }
+
+    @Test
+    void verifyManager_userIsManagerOnAde() {
+        // given
+        String taxCode = "validTaxCode";
+        String companyTaxCode = "validCompanyTaxCode";
+        InstitutionInfoIC institutionInfoIC = new InstitutionInfoIC();
+        institutionInfoIC.setBusinesses(Collections.emptyList());
+        when(partyRegistryProxyConnectorMock.getInstitutionsByUserFiscalCode(taxCode)).thenReturn(institutionInfoIC);
+        MatchInfoResult matchInfoResult = new MatchInfoResult();
+        matchInfoResult.setVerificationResult(true);
+        when(partyRegistryProxyConnectorMock.matchInstitutionAndUser(companyTaxCode, taxCode)).thenReturn(matchInfoResult);
+
+        // when
+        ManagerVerification result = institutionService.verifyManager(taxCode, companyTaxCode);
+
+        // then
+        assertNotNull(result);
+        assertEquals(Origin.ADE.getValue(), result.getOrigin());
+    }
+
+    @Test
+    void verifyManager_userAdeIsNull() {
+        // given
+        String taxCode = "validTaxCode";
+        String companyTaxCode = "validCompanyTaxCode";
+
+        //when
+        InstitutionInfoIC institutionInfoIC = new InstitutionInfoIC();
+        institutionInfoIC.setBusinesses(Collections.emptyList());
+        when(partyRegistryProxyConnectorMock.getInstitutionsByUserFiscalCode(taxCode)).thenReturn(institutionInfoIC);
+        when(partyRegistryProxyConnectorMock.matchInstitutionAndUser(companyTaxCode, taxCode)).thenReturn(null);
+
+        // then
+        assertThrows(ResourceNotFoundException.class, () -> institutionService.verifyManager(taxCode, companyTaxCode));
+    }
+
+    @Test
+    void verifyManager_userAdeIsFalse() {
+        // given
+        String taxCode = "validTaxCode";
+        String companyTaxCode = "validCompanyTaxCode";
+
+        //when
+        InstitutionInfoIC institutionInfoIC = new InstitutionInfoIC();
+        institutionInfoIC.setBusinesses(Collections.emptyList());
+        when(partyRegistryProxyConnectorMock.getInstitutionsByUserFiscalCode(taxCode)).thenReturn(institutionInfoIC);
+        MatchInfoResult matchInfoResult = new MatchInfoResult();
+        matchInfoResult.setVerificationResult(false);
+        when(partyRegistryProxyConnectorMock.matchInstitutionAndUser(companyTaxCode, taxCode)).thenReturn(matchInfoResult);
+
+        // then
+        assertThrows(ResourceNotFoundException.class, () -> institutionService.verifyManager(taxCode, companyTaxCode));
+    }
+
+    @Test
+    void verifyManager_businessNull() {
+        // given
+        String taxCode = "validTaxCode";
+        String companyTaxCode = "validCompanyTaxCode";
+        InstitutionInfoIC institutionInfoIC = new InstitutionInfoIC();
+        institutionInfoIC.setBusinesses(Collections.emptyList());
+
+        when(partyRegistryProxyConnectorMock.getInstitutionsByUserFiscalCode(anyString())).thenReturn(null);
+        when(partyRegistryProxyConnectorMock.matchInstitutionAndUser(anyString(), anyString())).thenReturn(null);
+
+        // when & then
+        assertThrows(ResourceNotFoundException.class, () -> institutionService.verifyManager(taxCode, companyTaxCode));
+    }
+
+    @Test
+    void verifyManager_noBusinessFound() {
+        // given
+        String taxCode = "validTaxCode";
+        String companyTaxCode = "validCompanyTaxCode";
+        InstitutionInfoIC institutionInfoIC = new InstitutionInfoIC();
+        institutionInfoIC.setBusinesses(Collections.emptyList());
+
+        when(partyRegistryProxyConnectorMock.getInstitutionsByUserFiscalCode(anyString())).thenReturn(institutionInfoIC);
+        when(partyRegistryProxyConnectorMock.matchInstitutionAndUser(anyString(), anyString())).thenReturn(null);
+
+        // when & then
+        assertThrows(ResourceNotFoundException.class, () -> institutionService.verifyManager(taxCode, companyTaxCode));
+    }
+
+    @Test
+    void verifyManager_invalidRequestException() {
+        // given
+        String taxCode = "validTaxCode";
+        String companyTaxCode = "validCompanyTaxCode";
+        InstitutionInfoIC institutionInfoIC = new InstitutionInfoIC();
+        institutionInfoIC.setBusinesses(Collections.emptyList());
+
+        when(partyRegistryProxyConnectorMock.getInstitutionsByUserFiscalCode(anyString())).thenReturn(institutionInfoIC);
+        when(partyRegistryProxyConnectorMock.matchInstitutionAndUser(anyString(), anyString())).thenThrow(new InvalidRequestException("Invalid request"));
+
+        // when & then
+        assertThrows(ResourceNotFoundException.class, () -> institutionService.verifyManager(taxCode, companyTaxCode));
+    }
+
+    @Test
     void getInstitutions() {
         //given
         InstitutionInfo expectedInstitutionInfo = new InstitutionInfo();

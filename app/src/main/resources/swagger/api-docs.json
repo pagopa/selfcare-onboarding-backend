@@ -1279,6 +1279,88 @@
         } ]
       }
     },
+    "/v2/institutions/company/verify-manager" : {
+      "post" : {
+        "tags" : [ "institutions" ],
+        "summary" : "verifyManager",
+        "description" : "The service allows to verify the legal representative on external registries and retrieve the company name",
+        "operationId" : "verifyManagerUsingPOST",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/VerifyManagerRequest"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/VerifyManagerResponse"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad Request",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Unauthorized",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "Not Found",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "409" : {
+            "description" : "Conflict",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "Internal Server Error",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ "global" ]
+        } ]
+      }
+    },
     "/v2/institutions/onboarding" : {
       "post" : {
         "tags" : [ "institutions" ],
@@ -4543,6 +4625,34 @@
             "items" : {
               "$ref" : "#/components/schemas/RowErrorResponse"
             }
+          }
+        }
+      },
+      "VerifyManagerRequest" : {
+        "title" : "VerifyManagerRequest",
+        "type" : "object",
+        "properties" : {
+          "companyTaxCode" : {
+            "type" : "string",
+            "description" : "Institution's taxCode"
+          },
+          "userTaxCode" : {
+            "type" : "string",
+            "description" : "User's fiscal code"
+          }
+        }
+      },
+      "VerifyManagerResponse" : {
+        "title" : "VerifyManagerResponse",
+        "type" : "object",
+        "properties" : {
+          "companyName" : {
+            "type" : "string",
+            "description" : "Institution's legal name"
+          },
+          "origin" : {
+            "type" : "string",
+            "description" : "Institution data origin"
           }
         }
       }

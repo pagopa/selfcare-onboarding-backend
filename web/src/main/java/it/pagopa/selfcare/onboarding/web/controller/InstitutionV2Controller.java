@@ -133,6 +133,16 @@ public class InstitutionV2Controller {
         return response;
     }
 
+    @PostMapping(value = "/company/verify-manager")
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "", notes = "${swagger.onboarding.institutions.api.onboarding.verifyManager}")
+    public VerifyManagerResponse verifyManager(@RequestBody @Valid VerifyManagerRequest request) {
+        log.trace("verifyManager start");
+        VerifyManagerResponse response = onboardingResourceMapper.toManagerVerification(institutionService.verifyManager(request.getUserTaxCode(), request.getCompanyTaxCode()));
+        log.trace("verifyManager end");
+        return response;
+    }
+
     @GetMapping(value = "/onboarding/active")
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "", notes = "${swagger.onboarding.institutions.api.onboarding.getActiveOnboarding}")

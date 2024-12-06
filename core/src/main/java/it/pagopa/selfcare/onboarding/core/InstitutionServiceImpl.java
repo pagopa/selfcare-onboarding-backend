@@ -625,6 +625,36 @@ class InstitutionServiceImpl implements InstitutionService {
     }
 
     @Override
+    public ManagerVerification verifyManager(String userTaxCode, String institutionTaxCode) {
+        log.trace("verifyManager start");
+        log.debug("verifyManager userTaxCode = {}, institutionTaxCode = {}", Encode.forJava(userTaxCode), Encode.forJava(institutionTaxCode));
+
+        log.debug(LogUtils.CONFIDENTIAL_MARKER, "Checking if user with taxCode {} is manager of institution with taxCode {} on INFOCAMERE", userTaxCode, institutionTaxCode);
+        InstitutionInfoIC institutionInfoIC = partyRegistryProxyConnector.getInstitutionsByUserFiscalCode(userTaxCode);
+        if (Objects.nonNull(institutionInfoIC) && !CollectionUtils.isEmpty(institutionInfoIC.getBusinesses())) {
+            for (BusinessInfoIC business : institutionInfoIC.getBusinesses()) {
+                if (institutionTaxCode.equals(business.getBusinessTaxId())) {
+                    log.debug("User found as manager in INFOCAMERE for business with name = {}", business.getBusinessName());
+                    return new ManagerVerification(Origin.INFOCAMERE.getValue(), business.getBusinessName());
+                }
+            }
+        }
+
+        try {
+            log.debug(LogUtils.CONFIDENTIAL_MARKER, "Checking if user with taxCode {} is manager of institution with taxCode {} on ADE", userTaxCode, institutionTaxCode);
+            MatchInfoResult matchInfoResult = partyRegistryProxyConnector.matchInstitutionAndUser(institutionTaxCode, userTaxCode);
+            if (Objects.nonNull(matchInfoResult) && matchInfoResult.isVerificationResult()) {
+                log.debug("User found as manager in ADE, response = {}", matchInfoResult);
+                return new ManagerVerification(Origin.ADE.getValue(), null);
+            }
+        } catch (InvalidRequestException e) {
+            throw new ResourceNotFoundException(String.format("User with taxCode %s is not the legal representative of the institution", userTaxCode));
+        }
+
+        throw new ResourceNotFoundException(String.format("User with userTaxCode %s is not the legal representative of the institution", userTaxCode));
+    }
+
+    @Override
     public InstitutionOnboardingData getInstitutionOnboardingData(String externalInstitutionId, String productId) {
         log.trace("getInstitutionOnboardingData start");
         log.debug("getInstitutionOnboardingData externalInstitutionId = {}, productId = {}", externalInstitutionId, productId);
