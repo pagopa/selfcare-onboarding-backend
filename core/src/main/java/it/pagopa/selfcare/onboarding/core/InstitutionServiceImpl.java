@@ -627,9 +627,8 @@ class InstitutionServiceImpl implements InstitutionService {
     @Override
     public ManagerVerification verifyManager(String userTaxCode, String institutionTaxCode) {
         log.trace("verifyManager start");
-        log.debug("verifyManager userTaxCode = {}, institutionTaxCode = {}", Encode.forJava(userTaxCode), Encode.forJava(institutionTaxCode));
 
-        log.debug(LogUtils.CONFIDENTIAL_MARKER, "Checking if user with taxCode {} is manager of institution with taxCode {} on INFOCAMERE", userTaxCode, institutionTaxCode);
+        log.debug(LogUtils.CONFIDENTIAL_MARKER, "Checking if user with taxCode {} is manager of institution with taxCode {} on INFOCAMERE", Encode.forJava(userTaxCode), Encode.forJava(institutionTaxCode));
         InstitutionInfoIC institutionInfoIC = partyRegistryProxyConnector.getInstitutionsByUserFiscalCode(userTaxCode);
         if (Objects.nonNull(institutionInfoIC) && !CollectionUtils.isEmpty(institutionInfoIC.getBusinesses())) {
             for (BusinessInfoIC business : institutionInfoIC.getBusinesses()) {
@@ -641,7 +640,7 @@ class InstitutionServiceImpl implements InstitutionService {
         }
 
         try {
-            log.debug(LogUtils.CONFIDENTIAL_MARKER, "Checking if user with taxCode {} is manager of institution with taxCode {} on ADE", userTaxCode, institutionTaxCode);
+            log.debug(LogUtils.CONFIDENTIAL_MARKER, "Checking if user with taxCode {} is manager of institution with taxCode {} on ADE", Encode.forJava(userTaxCode), Encode.forJava(institutionTaxCode));
             MatchInfoResult matchInfoResult = partyRegistryProxyConnector.matchInstitutionAndUser(institutionTaxCode, userTaxCode);
             if (Objects.nonNull(matchInfoResult) && matchInfoResult.isVerificationResult()) {
                 log.debug("User found as manager in ADE, response = {}", matchInfoResult);

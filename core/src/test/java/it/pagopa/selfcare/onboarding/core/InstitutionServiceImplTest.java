@@ -1332,7 +1332,7 @@ class InstitutionServiceImplTest {
         final Executable executable = () -> institutionService.verifyOnboarding(productId, taxCode, originId, origin, subunitCode);
 
         // then
-        final Exception e = assertThrows(InvalidRequestException.class, executable);
+        assertThrows(InvalidRequestException.class, executable);
         verifyNoInteractions(productsConnectorMock, userConnectorMock, onboardingMsConnector);
     }
 
@@ -2097,7 +2097,7 @@ class InstitutionServiceImplTest {
         RecipientCodeStatusResult result = institutionService.checkRecipientCode("recipientCode", "originId");
 
         // Then
-        assertEquals(result, RecipientCodeStatusResult.ACCEPTED);
+        assertEquals(RecipientCodeStatusResult.ACCEPTED, result);
         verify(onboardingMsConnector, times(1)).checkRecipientCode(any(), any());
         verifyNoMoreInteractions(onboardingMsConnector);
     }
