@@ -6,13 +6,12 @@ import it.pagopa.selfcare.commons.base.security.SelfCareUser;
 import it.pagopa.selfcare.commons.base.utils.ProductId;
 import it.pagopa.selfcare.commons.web.security.JwtAuthenticationToken;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
+import it.pagopa.selfcare.onboarding.connector.model.institutions.ManagerVerification;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.InstitutionOnboarding;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
 import it.pagopa.selfcare.onboarding.core.InstitutionService;
 import it.pagopa.selfcare.onboarding.web.config.WebTestConfig;
-import it.pagopa.selfcare.onboarding.web.model.CompanyOnboardingUserDto;
-import it.pagopa.selfcare.onboarding.web.model.CompanyUserDto;
-import it.pagopa.selfcare.onboarding.web.model.InstitutionOnboardingResource;
+import it.pagopa.selfcare.onboarding.web.model.*;
 import it.pagopa.selfcare.onboarding.web.model.mapper.GeographicTaxonomyMapperImpl;
 import it.pagopa.selfcare.onboarding.web.model.mapper.OnboardingInstitutionInfoMapperImpl;
 import it.pagopa.selfcare.onboarding.web.model.mapper.OnboardingResourceMapperImpl;
@@ -40,13 +39,13 @@ import java.util.UUID;
 
 import static it.pagopa.selfcare.commons.utils.TestUtils.mockInstance;
 import static org.hamcrest.Matchers.emptyString;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 @WebMvcTest(value = {InstitutionV2Controller.class}, excludeAutoConfiguration = SecurityAutoConfiguration.class)
 @ContextConfiguration(classes = {InstitutionV2Controller.class, WebTestConfig.class, OnboardingResourceMapperImpl.class, OnboardingInstitutionInfoMapperImpl.class, GeographicTaxonomyMapperImpl.class})
 class InstitutionV2ControllerTest {
@@ -197,6 +196,50 @@ class InstitutionV2ControllerTest {
     }
 
     @Test
+    void verifyManager_success() throws Exception {
+        // given
+        VerifyManagerRequest request = new VerifyManagerRequest();
+        request.setUserTaxCode("validUserTaxCode");
+        request.setCompanyTaxCode("validCompanyTaxCode");
+        ManagerVerification managerVerification = new ManagerVerification();
+        managerVerification.setOrigin("INFOCAMERE");
+        managerVerification.setCompanyName("CompanyName");
+        when(institutionServiceMock.verifyManager(anyString(), anyString())).thenReturn(managerVerification);
+
+        // when
+        MvcResult result = mvc.perform(MockMvcRequestBuilders
+                        .post(BASE_URL + "/company/verify-manager")
+                        .content(objectMapper.writeValueAsString(request))
+                        .contentType(APPLICATION_JSON_VALUE)
+                        .accept(APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        // then
+        VerifyManagerResponse response = objectMapper.readValue(result.getResponse().getContentAsString(), VerifyManagerResponse.class);
+        assertNotNull(response);
+        assertEquals("INFOCAMERE", response.getOrigin());
+        assertEquals("CompanyName", response.getCompanyName());
+        verify(institutionServiceMock, times(1)).verifyManager(anyString(), anyString());
+        verifyNoMoreInteractions(institutionServiceMock);
+    }
+
+    @Test
+    void verifyManager_invalidRequest() throws Exception {
+        // given
+        VerifyManagerRequest request = new VerifyManagerRequest();
+        request.setCompanyTaxCode("validCompanyTaxCode");
+
+        // when
+        mvc.perform(MockMvcRequestBuilders
+                        .post(BASE_URL + "/company/verify-manager")
+                        .content(objectMapper.writeValueAsString(request))
+                        .contentType(APPLICATION_JSON_VALUE)
+                        .accept(APPLICATION_JSON_VALUE))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
     void getActiveOnboarding_success() throws Exception {
         // given
         String taxCode = "validTaxCode";
@@ -300,7 +343,7 @@ class InstitutionV2ControllerTest {
         // Given
         MultipartFile file = new MockMultipartFile("file", "hello.txt", MediaType.TEXT_PLAIN_VALUE, "Hello, World!".getBytes());
 
-        doThrow(new RuntimeException()).when(institutionServiceMock).validateAggregatesCsv(any(MultipartFile.class),anyString());
+        doThrow(new RuntimeException()).when(institutionServiceMock).validateAggregatesCsv(any(MultipartFile.class), anyString());
 
         // When
         mvc.perform(MockMvcRequestBuilders.multipart(BASE_URL + "/onboarding/aggregation/verification")
@@ -323,8 +366,8 @@ class InstitutionV2ControllerTest {
         // When
         mvc.perform(MockMvcRequestBuilders
                         .get(BASE_URL + "/onboarding/recipientCode/verification")
-                        .queryParam( "recipientCode", recipientCode)
-                        .queryParam( "originId", originId)
+                        .queryParam("recipientCode", recipientCode)
+                        .queryParam("originId", originId)
                         .contentType(APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk());
 
