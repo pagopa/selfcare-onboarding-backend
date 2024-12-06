@@ -630,7 +630,7 @@ class InstitutionServiceImpl implements InstitutionService {
 
         log.debug(LogUtils.CONFIDENTIAL_MARKER, "Checking if user with taxCode {} is manager of institution with taxCode {} on INFOCAMERE", Encode.forJava(userTaxCode), Encode.forJava(institutionTaxCode));
         InstitutionInfoIC institutionInfoIC = partyRegistryProxyConnector.getInstitutionsByUserFiscalCode(userTaxCode);
-        if (Objects.nonNull(institutionInfoIC) && !CollectionUtils.isEmpty(institutionInfoIC.getBusinesses())) {
+        if (Objects.nonNull(institutionInfoIC) && Objects.nonNull(institutionInfoIC.getBusinesses())){
             for (BusinessInfoIC business : institutionInfoIC.getBusinesses()) {
                 if (institutionTaxCode.equals(business.getBusinessTaxId())) {
                     log.debug("User found as manager in INFOCAMERE for business with name = {}", business.getBusinessName());

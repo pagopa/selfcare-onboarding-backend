@@ -1086,8 +1086,6 @@ class InstitutionServiceImplTest {
         // given
         String taxCode = "validTaxCode";
         String companyTaxCode = "validCompanyTaxCode";
-        InstitutionInfoIC institutionInfoIC = new InstitutionInfoIC();
-        institutionInfoIC.setBusinesses(Collections.emptyList());
 
         when(partyRegistryProxyConnectorMock.getInstitutionsByUserFiscalCode(anyString())).thenReturn(null);
         when(partyRegistryProxyConnectorMock.matchInstitutionAndUser(anyString(), anyString())).thenReturn(null);
