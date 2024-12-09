@@ -38,7 +38,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(value = {TokenV2Controller.class}, excludeAutoConfiguration = SecurityAutoConfiguration.class)
 @ContextConfiguration(classes = {TokenV2Controller.class, WebTestConfig.class, OnboardingResourceMapperImpl.class})
-public class TokenV2ControllerTest {
+class TokenV2ControllerTest {
 
     @Autowired
     protected MockMvc mvc;
@@ -210,6 +210,32 @@ public class TokenV2ControllerTest {
         //then
         verify(tokenService, times(1))
                 .getContract(onboardingId);
+    }
+
+    /**
+     * Method under test: {@link TokenV2Controller#getAttachment(String, String)}
+     */
+    @Test
+    void getAttachment() throws Exception {
+        final String onboardingId = "onboardingId";
+        final String text = "String";
+        final String filename = "filename";
+        byte[] bytes= text.getBytes();
+        InputStream is = new ByteArrayInputStream(bytes);
+        Resource resource = Mockito.mock(Resource.class);
+        Mockito.when(tokenService.getAttachment(onboardingId, filename)).thenReturn(resource);
+        Mockito.when(resource.getInputStream()).thenReturn(is);
+
+        //when
+        mvc.perform(MockMvcRequestBuilders
+                        .get("/v2/tokens/{onboardingId}/attachment?name={name}", onboardingId, filename)
+                        .accept(MediaType.APPLICATION_OCTET_STREAM_VALUE))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        //then
+        verify(tokenService, times(1))
+                .getAttachment(onboardingId, filename);
     }
 
     /**

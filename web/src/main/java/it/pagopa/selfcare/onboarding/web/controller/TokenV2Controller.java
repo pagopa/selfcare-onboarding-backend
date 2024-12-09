@@ -1,6 +1,8 @@
 package it.pagopa.selfcare.onboarding.web.controller;
 
 
+import static org.springframework.http.MediaType.APPLICATION_OCTET_STREAM_VALUE;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -11,6 +13,8 @@ import it.pagopa.selfcare.onboarding.web.model.OnboardingRequestResource;
 import it.pagopa.selfcare.onboarding.web.model.OnboardingVerify;
 import it.pagopa.selfcare.onboarding.web.model.ReasonForRejectDto;
 import it.pagopa.selfcare.onboarding.web.model.mapper.OnboardingResourceMapper;
+import java.io.IOException;
+import java.io.InputStream;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.owasp.encoder.Encode;
@@ -21,11 +25,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
-import java.io.InputStream;
-
-import static org.springframework.http.MediaType.APPLICATION_OCTET_STREAM_VALUE;
 
 @Slf4j
 @RestController
@@ -202,23 +201,24 @@ public class TokenV2Controller {
         log.trace("getContract start");
         log.debug("getContract onboardingId = {}", onboardingId);
         Resource contract = tokenService.getContract(onboardingId);
-        InputStream inputStream = null;
-        try {
-            inputStream = contract.getInputStream();
-            byte[] byteArray = IOUtils.toByteArray(inputStream);
-            log.trace("getContract end");
-
-            HttpHeaders headers = new HttpHeaders();
-            headers.add(HttpHeaders.CONTENT_TYPE, APPLICATION_OCTET_STREAM_VALUE);
-            headers.add(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, HttpHeaders.CONTENT_DISPOSITION);
-            headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + contract.getFilename());
-            return ResponseEntity.ok()
-                    .headers(headers)
-                    .body(byteArray);
-        } finally {
-            IOUtils.close(inputStream);
-        }
+        return getResponseEntity(contract);
     }
+
+    @GetMapping(value = "/{onboardingId}/attachment", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "", notes = "${swagger.tokens.getAttachment}")
+    public ResponseEntity<byte[]> getAttachment(@ApiParam("${swagger.tokens.onboardingId}")
+                                                @PathVariable("onboardingId")
+                                                String onboardingId,
+                                                @ApiParam("${swagger.tokens.attachmentName}")
+                                                @RequestParam(name = "name") String filename) throws IOException {
+        log.trace("getAttachment start");
+        String sanitizedFilename = filename.replaceAll("[^a-zA-Z0-9._-]", "_");
+        log.debug("getAttachment onboardingId = {}, filename = {}", Encode.forJava(onboardingId), sanitizedFilename);
+        Resource contract = tokenService.getAttachment(onboardingId, filename);
+        return getResponseEntity(contract);
+    }
+
 
     @GetMapping(value = "/{onboardingId}/products/{productId}/aggregates-csv", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     @ResponseStatus(HttpStatus.OK)
@@ -231,16 +231,24 @@ public class TokenV2Controller {
         log.trace("getAggregatesCsv start");
         log.debug("getAggregatesCsv onboardingId = {}, productId = {}", Encode.forJava(onboardingId), Encode.forJava(productId));
         Resource csv = tokenService.getAggregatesCsv(onboardingId, productId);
+        return getResponseEntity(csv);
+    }
+
+    private HttpHeaders getHttpHeaders(Resource contract) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.CONTENT_TYPE, APPLICATION_OCTET_STREAM_VALUE);
+        headers.add(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, HttpHeaders.CONTENT_DISPOSITION);
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + contract.getFilename());
+        return headers;
+    }
+
+    private ResponseEntity<byte[]> getResponseEntity(Resource contract) throws IOException {
         InputStream inputStream = null;
         try {
-            inputStream = csv.getInputStream();
+            inputStream = contract.getInputStream();
             byte[] byteArray = IOUtils.toByteArray(inputStream);
-            log.trace("getAggregatesCsv end");
 
-            HttpHeaders headers = new HttpHeaders();
-            headers.add(HttpHeaders.CONTENT_TYPE, APPLICATION_OCTET_STREAM_VALUE);
-            headers.add(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, HttpHeaders.CONTENT_DISPOSITION);
-            headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + csv.getFilename());
+            HttpHeaders headers = getHttpHeaders(contract);
             return ResponseEntity.ok()
                     .headers(headers)
                     .body(byteArray);

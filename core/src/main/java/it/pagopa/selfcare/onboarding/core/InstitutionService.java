@@ -3,10 +3,7 @@ package it.pagopa.selfcare.onboarding.core;
 import it.pagopa.selfcare.onboarding.connector.model.InstitutionLegalAddressData;
 import it.pagopa.selfcare.onboarding.connector.model.InstitutionOnboardingData;
 import it.pagopa.selfcare.onboarding.connector.model.RecipientCodeStatusResult;
-import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
-import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionInfo;
-import it.pagopa.selfcare.onboarding.connector.model.institutions.MatchInfoResult;
-import it.pagopa.selfcare.onboarding.connector.model.institutions.VerifyAggregateResult;
+import it.pagopa.selfcare.onboarding.connector.model.institutions.*;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.infocamere.InstitutionInfoIC;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.GeographicTaxonomy;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
@@ -58,4 +55,6 @@ public interface InstitutionService {
     RecipientCodeStatusResult checkRecipientCode(String originId, String recipientCode);
 
     void onboardingUsersPgFromIcAndAde(OnboardingData onboardingUserPgRequest);
+
+    ManagerVerification verifyManager(String taxCode, String companyTaxCode);
 }

@@ -4,6 +4,7 @@ import it.pagopa.selfcare.commons.base.security.PartyRole;
 import it.pagopa.selfcare.onboarding.connector.model.InstitutionLegalAddressData;
 import it.pagopa.selfcare.onboarding.connector.model.RecipientCodeStatusResult;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
+import it.pagopa.selfcare.onboarding.connector.model.institutions.ManagerVerification;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.VerifyAggregateResult;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.InstitutionOnboarding;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
@@ -37,6 +38,8 @@ public interface OnboardingResourceMapper {
     @Mapping(source = "gpuData", target = "institutionUpdate.gpuData")
     @Mapping(source = "originId", target = "originId")
     OnboardingData toEntity(OnboardingProductDto dto);
+
+    VerifyManagerResponse toManagerVerification(ManagerVerification managerVerification);
 
     Institution toInstitution(AggregateInstitution aggregateInstitution);
 
