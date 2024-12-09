@@ -4102,6 +4102,13 @@
               "$ref" : "#/components/schemas/UserInfo"
             }
           },
+          "attachments" : {
+            "type" : "array",
+            "description" : "Onboarding's attachments",
+            "items" : {
+              "type" : "string"
+            }
+          },
           "expiringDate" : {
             "type" : "string",
             "description" : "Onboarding request expiring date",
