@@ -52,6 +52,7 @@ public class OnboardingData {
     private String reasonForReject;
     private Boolean isAggregator;
     private List<Institution> aggregates;
+    private List<String> attachments;
     public List<User> getUsers() {
         return Optional.ofNullable(users).orElse(Collections.emptyList());
     }

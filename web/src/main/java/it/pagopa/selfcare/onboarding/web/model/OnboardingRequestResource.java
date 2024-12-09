@@ -41,6 +41,9 @@ public class OnboardingRequestResource {
     @ApiModelProperty(value = "${swagger.onboarding.model.reason}")
     private String reasonForReject;
 
+    @ApiModelProperty(value = "${swagger.onboarding.model.attachments}")
+    private List<String> attachments;
+
     @Data
     @EqualsAndHashCode(of = "id")
     public static class InstitutionInfo {
