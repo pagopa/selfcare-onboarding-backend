@@ -3790,6 +3790,9 @@
           "legalRegisterNumber" : {
             "type" : "string"
           },
+          "longTermPayments" : {
+            "type" : "boolean"
+          },
           "manager" : {
             "type" : "boolean"
           },

@@ -3235,6 +3235,9 @@
           },
           "institutionCourtMeasures": {
             "type": "boolean"
+          },
+          "longTermPayments": {
+            "type": "boolean"
           }
         }
       }

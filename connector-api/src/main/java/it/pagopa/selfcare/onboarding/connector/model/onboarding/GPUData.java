@@ -13,4 +13,5 @@ public class GPUData extends BusinessData {
     private boolean managerProsecution;
     private boolean institutionCourtMeasures;
 
+
 }
