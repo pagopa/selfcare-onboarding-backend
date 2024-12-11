@@ -85,7 +85,7 @@ public interface OnboardingResourceMapper {
 
     @Named("toManager")
     default OnboardingRequestResource.UserInfo toManager(List<User> users) {
-        return users.stream().filter(user -> PartyRole.DELEGATE.equals(user.getRole()))
+        return users.stream().filter(user -> PartyRole.MANAGER.equals(user.getRole()))
                 .map(this::toUserInfo)
                 .findAny()
                 .orElse(null);
@@ -93,7 +93,7 @@ public interface OnboardingResourceMapper {
     @Named("toAdmin")
     default List<OnboardingRequestResource.UserInfo> toAdmin(List<User> users) {
         return users.stream()
-                .filter(user -> PartyRole.MANAGER.equals(user.getRole()))
+                .filter(user -> PartyRole.DELEGATE.equals(user.getRole()))
                 .map(this::toUserInfo)
                 .toList();
     }
