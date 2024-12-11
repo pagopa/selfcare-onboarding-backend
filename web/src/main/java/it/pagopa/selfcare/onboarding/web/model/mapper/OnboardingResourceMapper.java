@@ -1,6 +1,6 @@
 package it.pagopa.selfcare.onboarding.web.model.mapper;
 
-import it.pagopa.selfcare.commons.base.security.PartyRole;
+import it.pagopa.selfcare.onboarding.common.PartyRole;
 import it.pagopa.selfcare.onboarding.connector.model.InstitutionLegalAddressData;
 import it.pagopa.selfcare.onboarding.connector.model.RecipientCodeStatusResult;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
@@ -10,14 +10,12 @@ import it.pagopa.selfcare.onboarding.connector.model.onboarding.InstitutionOnboa
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.User;
 import it.pagopa.selfcare.onboarding.web.model.*;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.Named;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.Named;
 
 @Mapper(componentModel = "spring")
 public interface OnboardingResourceMapper {
@@ -87,8 +85,7 @@ public interface OnboardingResourceMapper {
 
     @Named("toManager")
     default OnboardingRequestResource.UserInfo toManager(List<User> users) {
-        return users.stream()
-                .filter(user -> PartyRole.MANAGER.equals(user.getRole()))
+        return users.stream().filter(user -> PartyRole.MANAGER.equals(user.getRole()))
                 .map(this::toUserInfo)
                 .findAny()
                 .orElse(null);
@@ -96,7 +93,7 @@ public interface OnboardingResourceMapper {
     @Named("toAdmin")
     default List<OnboardingRequestResource.UserInfo> toAdmin(List<User> users) {
         return users.stream()
-                .filter(user -> !PartyRole.MANAGER.equals(user.getRole()))
+                .filter(user -> PartyRole.DELEGATE.equals(user.getRole()))
                 .map(this::toUserInfo)
                 .toList();
     }
