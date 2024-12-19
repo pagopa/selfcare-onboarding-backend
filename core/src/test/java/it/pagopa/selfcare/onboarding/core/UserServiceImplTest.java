@@ -1,13 +1,18 @@
 package it.pagopa.selfcare.onboarding.core;
 
 import it.pagopa.selfcare.commons.utils.TestUtils;
+import it.pagopa.selfcare.onboarding.common.PartyRole;
 import it.pagopa.selfcare.onboarding.connector.api.OnboardingMsConnector;
 import it.pagopa.selfcare.onboarding.connector.api.UserRegistryConnector;
+import it.pagopa.selfcare.onboarding.connector.exceptions.ResourceNotFoundException;
+import it.pagopa.selfcare.onboarding.connector.model.institutions.ManagerVerification;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.User;
 import it.pagopa.selfcare.onboarding.connector.model.user.Certification;
 import it.pagopa.selfcare.onboarding.connector.model.user.CertifiedField;
 import it.pagopa.selfcare.onboarding.core.exception.InvalidUserFieldsException;
+import it.pagopa.selfcare.onboarding.core.exception.OnboardingNotAllowedException;
+import it.pagopa.selfcare.onboarding.core.utils.PgManagerVerifier;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
@@ -16,6 +21,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.EnumSet;
+import java.util.List;
 import java.util.Optional;
 
 import static it.pagopa.selfcare.onboarding.connector.model.user.User.Fields.familyName;
@@ -35,6 +41,9 @@ class UserServiceImplTest {
 
     @Mock
     private OnboardingMsConnector onboardingMsConnector;
+
+    @Mock
+    private PgManagerVerifier pgManagerVerifierMock;
 
 
     @Test
@@ -180,5 +189,128 @@ class UserServiceImplTest {
         verifyNoMoreInteractions(onboardingMsConnector);
     }
 
+    @Test
+    void getManagerInfo_shouldReturnManagerInfoWhenGivenUserIsManager() {
+        // given
+        String onboardingId = "onboardingId";
+        String userTaxCode = "userTaxCode";
+        OnboardingData onboardingData = TestUtils.mockInstance(new OnboardingData());
+        onboardingData.getInstitutionUpdate().setTaxCode("institutionTaxCode");
+        User manager = TestUtils.mockInstance(new User());
+        manager.setName("managerName");
+        manager.setSurname("managerSurname");
+        manager.setRole(PartyRole.MANAGER);
+        onboardingData.setUsers(List.of(manager));
+        when(onboardingMsConnector.getOnboardingWithUserInfo(onboardingId)).thenReturn(onboardingData);
 
+
+        ManagerVerification managerVerification = new ManagerVerification();
+        managerVerification.setVerified(true);
+        when(pgManagerVerifierMock.doVerify(userTaxCode, "institutionTaxCode")).thenReturn(managerVerification);
+
+        // when
+        User result = userService.getManagerInfo(onboardingId, userTaxCode);
+
+        // then
+        assertNotNull(result);
+        assertEquals("managerName", result.getName());
+        assertEquals("managerSurname", result.getSurname());
+        assertEquals(PartyRole.MANAGER, result.getRole());
+        verify(onboardingMsConnector, times(1)).getOnboardingWithUserInfo(onboardingId);
+        verify(pgManagerVerifierMock, times(1)).doVerify(userTaxCode, "institutionTaxCode");
+    }
+
+    @Test
+    void getManagerInfo_shouldReturnManagerInfoWhenGivenUserIsAlreadyAdmin() {
+        // given
+        String onboardingId = "onboardingId";
+        String userTaxCode = "userTaxCode";
+        OnboardingData onboardingData = TestUtils.mockInstance(new OnboardingData());
+        onboardingData.getInstitutionUpdate().setTaxCode("institutionTaxCode");
+        User manager = TestUtils.mockInstance(new User());
+        manager.setTaxCode(userTaxCode);
+        manager.setName("managerName");
+        manager.setSurname("managerSurname");
+        manager.setRole(PartyRole.MANAGER);
+        onboardingData.setUsers(List.of(manager));
+        when(onboardingMsConnector.getOnboardingWithUserInfo(onboardingId)).thenReturn(onboardingData);
+
+        // when
+        User result = userService.getManagerInfo(onboardingId, userTaxCode);
+
+        // then
+        assertNotNull(result);
+        assertEquals("managerName", result.getName());
+        assertEquals("managerSurname", result.getSurname());
+        assertEquals(PartyRole.MANAGER, result.getRole());
+        verify(onboardingMsConnector, times(1)).getOnboardingWithUserInfo(onboardingId);
+        verify(pgManagerVerifierMock, times(0)).doVerify(userTaxCode, "institutionTaxCode");
+    }
+
+    @Test
+    void getManagerInfo_shouldThrowResourceNotFoundExceptionWhenOnboardingNotFound() {
+        // given
+        String onboardingId = "onboardingId";
+        String userTaxCode = "userTaxCode";
+        when(onboardingMsConnector.getOnboardingWithUserInfo(onboardingId)).thenThrow(new ResourceNotFoundException("Onboarding not found"));
+
+        // when
+        Executable executable = () -> userService.getManagerInfo(onboardingId, userTaxCode);
+
+        // then
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, executable);
+        assertEquals("Onboarding not found", exception.getMessage());
+        verify(onboardingMsConnector, times(1)).getOnboardingWithUserInfo(onboardingId);
+        verifyNoInteractions(pgManagerVerifierMock);
+    }
+
+    @Test
+    void getManagerInfo_shouldThrowOnboardingNotAllowedExceptionWhenUserIsNotManager() {
+        // given
+        String onboardingId = "onboardingId";
+        String userTaxCode = "userTaxCode";
+        OnboardingData onboardingData = TestUtils.mockInstance(new OnboardingData());
+        onboardingData.getInstitutionUpdate().setTaxCode("institutionTaxCode");
+
+        User user = TestUtils.mockInstance(new User());
+        user.setRole(PartyRole.MANAGER);
+        onboardingData.setUsers(List.of(user));
+
+        when(onboardingMsConnector.getOnboardingWithUserInfo(onboardingId)).thenReturn(onboardingData);
+
+        ManagerVerification managerVerification = new ManagerVerification();
+        managerVerification.setVerified(false);
+        when(pgManagerVerifierMock.doVerify(userTaxCode, "institutionTaxCode")).thenReturn(managerVerification);
+
+        // when
+        Executable executable = () -> userService.getManagerInfo(onboardingId, userTaxCode);
+
+        // then
+        OnboardingNotAllowedException exception = assertThrows(OnboardingNotAllowedException.class, executable);
+        assertEquals("User is not an admin of the institution", exception.getMessage());
+        verify(onboardingMsConnector, times(1)).getOnboardingWithUserInfo(onboardingId);
+        verify(pgManagerVerifierMock, times(1)).doVerify(userTaxCode, "institutionTaxCode");
+    }
+
+    @Test
+    void getManagerInfo_shouldThrowResourceNotFoundExceptionWhenManagerNotFound() {
+        // given
+        String onboardingId = "onboardingId";
+        String userTaxCode = "userTaxCode";
+        OnboardingData onboardingData = TestUtils.mockInstance(new OnboardingData());
+        onboardingData.getInstitutionUpdate().setTaxCode("institutionTaxCode");
+        User user = TestUtils.mockInstance(new User());
+        user.setRole(PartyRole.OPERATOR);
+        onboardingData.setUsers(List.of(user));
+
+        when(onboardingMsConnector.getOnboardingWithUserInfo(onboardingId)).thenReturn(onboardingData);
+
+        // when
+        Executable executable = () -> userService.getManagerInfo(onboardingId, userTaxCode);
+
+        // then
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, executable);
+        assertEquals("Manager not found", exception.getMessage());
+        verify(onboardingMsConnector, times(1)).getOnboardingWithUserInfo(onboardingId);
+    }
 }

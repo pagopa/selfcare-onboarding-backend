@@ -3,12 +3,17 @@ package it.pagopa.selfcare.onboarding.core;
 import it.pagopa.selfcare.commons.base.logging.LogUtils;
 import it.pagopa.selfcare.onboarding.connector.api.OnboardingMsConnector;
 import it.pagopa.selfcare.onboarding.connector.api.UserRegistryConnector;
+import it.pagopa.selfcare.onboarding.connector.exceptions.ResourceNotFoundException;
+import it.pagopa.selfcare.onboarding.connector.model.institutions.ManagerVerification;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.User;
 import it.pagopa.selfcare.onboarding.connector.model.user.Certification;
 import it.pagopa.selfcare.onboarding.connector.model.user.CertifiedField;
 import it.pagopa.selfcare.onboarding.core.exception.InvalidUserFieldsException;
+import it.pagopa.selfcare.onboarding.core.exception.OnboardingNotAllowedException;
+import it.pagopa.selfcare.onboarding.core.utils.PgManagerVerifier;
 import lombok.extern.slf4j.Slf4j;
+import org.owasp.encoder.Encode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -19,6 +24,8 @@ import java.util.Optional;
 
 import static it.pagopa.selfcare.onboarding.connector.model.user.User.Fields.familyName;
 import static it.pagopa.selfcare.onboarding.connector.model.user.User.Fields.name;
+import static it.pagopa.selfcare.onboarding.core.utils.Utils.getManager;
+import static it.pagopa.selfcare.onboarding.core.utils.Utils.isUserAdmin;
 
 @Slf4j
 @Service
@@ -28,12 +35,15 @@ public class UserServiceImpl implements UserService {
     private static final String INVALID_FIELD_REASON = "the value does not match with the certified data";
     private final UserRegistryConnector userRegistryConnector;
     private final OnboardingMsConnector onboardingMsConnector;
+    private final PgManagerVerifier pgManagerVerifier;
 
     @Autowired
     public UserServiceImpl(UserRegistryConnector userRegistryConnector,
-                           OnboardingMsConnector onboardingMsConnector) {
+                           OnboardingMsConnector onboardingMsConnector,
+                           PgManagerVerifier pgManagerVerifier) {
         this.userRegistryConnector = userRegistryConnector;
         this.onboardingMsConnector = onboardingMsConnector;
+        this.pgManagerVerifier = pgManagerVerifier;
     }
 
     @Override
@@ -89,6 +99,40 @@ public class UserServiceImpl implements UserService {
                 || (String.class.isAssignableFrom(certifiedField.getValue().getClass())
                 ? ((String) certifiedField.getValue()).equalsIgnoreCase((String) field)
                 : certifiedField.getValue().equals(field));
+    }
+
+    @Override
+    public User getManagerInfo(String onboardingId, String userTaxCode) {
+        log.trace("getManagerInfo start");
+        log.debug("getManagerInfo onboardingId = {}", Encode.forJava(onboardingId));
+
+        OnboardingData onboardingData;
+        try {
+            onboardingData = onboardingMsConnector.getOnboardingWithUserInfo(onboardingId);
+        } catch (ResourceNotFoundException e) {
+            log.error("Onboarding not found", e);
+            throw new ResourceNotFoundException("Onboarding not found");
+        }
+
+        String institutionTaxCode = onboardingData.getInstitutionUpdate().getTaxCode();
+        log.debug("getManagerInfo institutionTaxCode = {}", institutionTaxCode);
+
+        User managerInfo = getManager(onboardingData.getUsers())
+                .orElseThrow(() -> new ResourceNotFoundException("Manager not found"));
+
+        boolean isAlreadyAdmin = isUserAdmin(userTaxCode, onboardingData.getUsers());
+        if (isAlreadyAdmin) {
+            return managerInfo;
+        }
+
+        ManagerVerification managerVerification = pgManagerVerifier.doVerify(userTaxCode, institutionTaxCode);
+        if (!managerVerification.isVerified()) {
+            log.error("User is not an admin of the institution");
+            throw new OnboardingNotAllowedException("User is not an admin of the institution");
+        }
+
+        log.trace("getManagerInfo end");
+        return managerInfo;
     }
 
 }
