@@ -10,4 +10,9 @@ import lombok.NoArgsConstructor;
 public class ManagerVerification {
     private String origin;
     private String companyName;
+    private boolean verified;
+
+    public ManagerVerification(boolean verified) {
+        this.verified = verified;
+    }
 }

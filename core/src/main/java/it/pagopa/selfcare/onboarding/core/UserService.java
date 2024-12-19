@@ -8,4 +8,5 @@ public interface UserService {
     void onboardingUsers(OnboardingData onboardingData);
     void onboardingUsersAggregator(OnboardingData onboardingData);
     boolean checkManager(OnboardingData onboardingData);
+    User getManagerInfo(String onboardingId, String userTaxCode);
 }
