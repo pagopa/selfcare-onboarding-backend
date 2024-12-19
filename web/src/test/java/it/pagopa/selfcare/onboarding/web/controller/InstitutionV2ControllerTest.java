@@ -204,6 +204,9 @@ class InstitutionV2ControllerTest {
                 .build();
         Mockito.when(mockPrincipal.getPrincipal()).thenReturn(selfCareUser);
 
+        VerifyManagerRequest verifyManagerRequest = new VerifyManagerRequest();
+        verifyManagerRequest.setCompanyTaxCode("taxCode");
+
         ManagerVerification managerVerification = new ManagerVerification();
         managerVerification.setOrigin("INFOCAMERE");
         managerVerification.setCompanyName("CompanyName");
@@ -211,7 +214,8 @@ class InstitutionV2ControllerTest {
 
         // when
         MvcResult result = mvc.perform(MockMvcRequestBuilders
-                        .get(BASE_URL + "/company/validCompanyTaxCode/verify-manager")
+                        .post(BASE_URL + "/company/verify-manager")
+                        .content(objectMapper.writeValueAsString(verifyManagerRequest))
                         .principal(mockPrincipal)
                         .contentType(APPLICATION_JSON_VALUE)
                         .accept(APPLICATION_JSON_VALUE))
@@ -225,6 +229,27 @@ class InstitutionV2ControllerTest {
         assertEquals("CompanyName", response.getCompanyName());
         verify(institutionServiceMock, times(1)).verifyManager(anyString(), anyString());
         verifyNoMoreInteractions(institutionServiceMock);
+    }
+
+    @Test
+    void verifyManager_invalidRequest() throws Exception {
+        // given
+        JwtAuthenticationToken mockPrincipal = Mockito.mock(JwtAuthenticationToken.class);
+        SelfCareUser selfCareUser = SelfCareUser.builder("example")
+                .fiscalCode("fiscalCode")
+                .build();
+        Mockito.when(mockPrincipal.getPrincipal()).thenReturn(selfCareUser);
+
+        VerifyManagerRequest request = new VerifyManagerRequest();
+
+        // when
+        mvc.perform(MockMvcRequestBuilders
+                        .post(BASE_URL + "/company/verify-manager")
+                        .principal(mockPrincipal)
+                        .content(objectMapper.writeValueAsString(request))
+                        .contentType(APPLICATION_JSON_VALUE)
+                        .accept(APPLICATION_JSON_VALUE))
+                .andExpect(status().isBadRequest());
     }
 
     @Test

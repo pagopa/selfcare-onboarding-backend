@@ -1279,22 +1279,13 @@
         } ]
       }
     },
-    "/v2/institutions/company/{companyTaxCode}/verify-manager" : {
-      "get" : {
+    "/v2/institutions/company/verify-manager" : {
+      "post" : {
         "tags" : [ "institutions" ],
         "summary" : "verifyManager",
         "description" : "The service allows to verify the legal representative on external registries and retrieve the company name",
-        "operationId" : "verifyManagerUsingGET",
+        "operationId" : "verifyManagerUsingPOST",
         "parameters" : [ {
-          "name" : "companyTaxCode",
-          "in" : "path",
-          "description" : "Institution's taxCode",
-          "required" : true,
-          "style" : "simple",
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
           "name" : "name",
           "in" : "query",
           "required" : false,
@@ -1303,6 +1294,15 @@
             "type" : "string"
           }
         } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/VerifyManagerRequest"
+              }
+            }
+          }
+        },
         "responses" : {
           "200" : {
             "description" : "OK",
@@ -1336,6 +1336,16 @@
           },
           "404" : {
             "description" : "Not Found",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "409" : {
+            "description" : "Conflict",
             "content" : {
               "application/problem+json" : {
                 "schema" : {
@@ -4740,6 +4750,16 @@
             "items" : {
               "$ref" : "#/components/schemas/RowErrorResponse"
             }
+          }
+        }
+      },
+      "VerifyManagerRequest" : {
+        "title" : "VerifyManagerRequest",
+        "type" : "object",
+        "properties" : {
+          "companyTaxCode" : {
+            "type" : "string",
+            "description" : "Institution's taxCode"
           }
         }
       },
