@@ -6,13 +6,17 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import it.pagopa.selfcare.commons.base.logging.LogUtils;
+import it.pagopa.selfcare.commons.base.security.SelfCareUser;
 import it.pagopa.selfcare.commons.web.model.Problem;
+import it.pagopa.selfcare.commons.web.security.JwtAuthenticationToken;
 import it.pagopa.selfcare.onboarding.core.UserService;
 import it.pagopa.selfcare.onboarding.web.model.CheckManagerResponse;
+import it.pagopa.selfcare.onboarding.web.model.ManagerInfoResponse;
 import it.pagopa.selfcare.onboarding.web.model.OnboardingUserDto;
 import it.pagopa.selfcare.onboarding.web.model.UserDataValidationDto;
 import it.pagopa.selfcare.onboarding.web.model.mapper.OnboardingResourceMapper;
 import it.pagopa.selfcare.onboarding.web.model.mapper.UserMapper;
+import it.pagopa.selfcare.onboarding.web.model.mapper.UserResourceMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.owasp.encoder.Encode;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +25,8 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+
+import java.security.Principal;
 
 import static org.springframework.http.MediaType.APPLICATION_PROBLEM_JSON_VALUE;
 
@@ -33,12 +39,15 @@ public class UserController {
 
     private final UserService userService;
     private final OnboardingResourceMapper onboardingResourceMapper;
+    private final UserResourceMapper userResourceMapper;
 
     @Autowired
     public UserController(UserService userService,
-                          OnboardingResourceMapper onboardingResourceMapper) {
+                          OnboardingResourceMapper onboardingResourceMapper,
+                          UserResourceMapper userResourceMapper) {
         this.userService = userService;
         this.onboardingResourceMapper = onboardingResourceMapper;
+        this.userResourceMapper = userResourceMapper;
     }
 
     @PostMapping("/validate")
@@ -104,6 +113,25 @@ public class UserController {
         boolean checkManager =  userService.checkManager(onboardingResourceMapper.toEntity(request));
         log.trace("onboarding end");
         return new CheckManagerResponse(checkManager);
+    }
+
+    @ApiResponse(responseCode = "403",
+            description = "Forbidden",
+            content = {
+                    @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE,
+                            schema = @Schema(implementation = Problem.class))
+            })
+    @GetMapping(value = "/onboarding/{onboardingId}/manager")
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "", notes = "${swagger.onboarding.users.api.check-manager}", nickname = "checkManager")
+    public ManagerInfoResponse getManagerInfo(@PathVariable("onboardingId") String onboardingId, Principal principal) {
+        log.trace("getManagerInfo start");
+        JwtAuthenticationToken jwtAuthenticationToken = (JwtAuthenticationToken) principal;
+        SelfCareUser selfCareUser = (SelfCareUser) jwtAuthenticationToken.getPrincipal();
+
+        ManagerInfoResponse managerInfoResponse = userResourceMapper.toManagerInfoResponse(userService.getManagerInfo(onboardingId, selfCareUser.getFiscalCode()));
+        log.trace("getManagerInfo end");
+        return managerInfoResponse;
     }
 
 }
