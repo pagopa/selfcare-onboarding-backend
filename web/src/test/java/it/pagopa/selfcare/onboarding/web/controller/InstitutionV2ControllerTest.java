@@ -198,9 +198,12 @@ class InstitutionV2ControllerTest {
     @Test
     void verifyManager_success() throws Exception {
         // given
-        VerifyManagerRequest request = new VerifyManagerRequest();
-        request.setUserTaxCode("validUserTaxCode");
-        request.setCompanyTaxCode("validCompanyTaxCode");
+        JwtAuthenticationToken mockPrincipal = Mockito.mock(JwtAuthenticationToken.class);
+        SelfCareUser selfCareUser = SelfCareUser.builder("example")
+                .fiscalCode("fiscalCode")
+                .build();
+        Mockito.when(mockPrincipal.getPrincipal()).thenReturn(selfCareUser);
+
         ManagerVerification managerVerification = new ManagerVerification();
         managerVerification.setOrigin("INFOCAMERE");
         managerVerification.setCompanyName("CompanyName");
@@ -208,8 +211,8 @@ class InstitutionV2ControllerTest {
 
         // when
         MvcResult result = mvc.perform(MockMvcRequestBuilders
-                        .post(BASE_URL + "/company/verify-manager")
-                        .content(objectMapper.writeValueAsString(request))
+                        .get(BASE_URL + "/company/validCompanyTaxCode/verify-manager")
+                        .principal(mockPrincipal)
                         .contentType(APPLICATION_JSON_VALUE)
                         .accept(APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk())
@@ -222,21 +225,6 @@ class InstitutionV2ControllerTest {
         assertEquals("CompanyName", response.getCompanyName());
         verify(institutionServiceMock, times(1)).verifyManager(anyString(), anyString());
         verifyNoMoreInteractions(institutionServiceMock);
-    }
-
-    @Test
-    void verifyManager_invalidRequest() throws Exception {
-        // given
-        VerifyManagerRequest request = new VerifyManagerRequest();
-        request.setCompanyTaxCode("validCompanyTaxCode");
-
-        // when
-        mvc.perform(MockMvcRequestBuilders
-                        .post(BASE_URL + "/company/verify-manager")
-                        .content(objectMapper.writeValueAsString(request))
-                        .contentType(APPLICATION_JSON_VALUE)
-                        .accept(APPLICATION_JSON_VALUE))
-                .andExpect(status().isBadRequest());
     }
 
     @Test

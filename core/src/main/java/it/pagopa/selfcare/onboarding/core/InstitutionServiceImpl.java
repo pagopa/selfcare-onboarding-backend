@@ -32,6 +32,7 @@ import it.pagopa.selfcare.onboarding.core.exception.OnboardingNotAllowedExceptio
 import it.pagopa.selfcare.onboarding.core.exception.UpdateNotAllowedException;
 import it.pagopa.selfcare.onboarding.core.mapper.InstitutionInfoMapper;
 import it.pagopa.selfcare.onboarding.core.strategy.OnboardingValidationStrategy;
+import it.pagopa.selfcare.onboarding.core.utils.PgManagerVerifier;
 import it.pagopa.selfcare.product.entity.Product;
 import it.pagopa.selfcare.product.entity.ProductRoleInfo;
 import it.pagopa.selfcare.product.entity.ProductStatus;
@@ -82,6 +83,7 @@ class InstitutionServiceImpl implements InstitutionService {
     private final OnboardingValidationStrategy onboardingValidationStrategy;
     private final PartyRegistryProxyConnector partyRegistryProxyConnector;
     private final InstitutionInfoMapper institutionMapper;
+    private final PgManagerVerifier pgManagerVerifier;
     @Autowired
     InstitutionServiceImpl(OnboardingMsConnector onboardingMsConnector, PartyConnector partyConnector,
                            ProductsConnector productsConnector,
@@ -89,7 +91,8 @@ class InstitutionServiceImpl implements InstitutionService {
                            OnboardingFunctionsConnector onboardingFunctionsConnector,
                            PartyRegistryProxyConnector partyRegistryProxyConnector,
                            OnboardingValidationStrategy onboardingValidationStrategy,
-                           InstitutionInfoMapper institutionMapper
+                           InstitutionInfoMapper institutionMapper,
+                           PgManagerVerifier pgManagerVerifier
     ) {
         this.onboardingMsConnector = onboardingMsConnector;
         this.partyConnector = partyConnector;
@@ -99,6 +102,7 @@ class InstitutionServiceImpl implements InstitutionService {
         this.userConnector = userConnector;
         this.onboardingValidationStrategy = onboardingValidationStrategy;
         this.institutionMapper = institutionMapper;
+        this.pgManagerVerifier = pgManagerVerifier;
     }
 
 
@@ -628,29 +632,12 @@ class InstitutionServiceImpl implements InstitutionService {
     public ManagerVerification verifyManager(String userTaxCode, String institutionTaxCode) {
         log.trace("verifyManager start");
 
-        log.debug(LogUtils.CONFIDENTIAL_MARKER, "Checking if user with taxCode {} is manager of institution with taxCode {} on INFOCAMERE", Encode.forJava(userTaxCode), Encode.forJava(institutionTaxCode));
-        InstitutionInfoIC institutionInfoIC = partyRegistryProxyConnector.getInstitutionsByUserFiscalCode(userTaxCode);
-        if (Objects.nonNull(institutionInfoIC) && Objects.nonNull(institutionInfoIC.getBusinesses())){
-            for (BusinessInfoIC business : institutionInfoIC.getBusinesses()) {
-                if (institutionTaxCode.equals(business.getBusinessTaxId())) {
-                    log.debug("User found as manager in INFOCAMERE for business with name = {}", business.getBusinessName());
-                    return new ManagerVerification(Origin.INFOCAMERE.getValue(), business.getBusinessName());
-                }
-            }
+        ManagerVerification result = pgManagerVerifier.doVerify(userTaxCode, institutionTaxCode);
+        if(!result.isVerified()) {
+            throw new ResourceNotFoundException(String.format("User with userTaxCode %s is not the legal representative of the institution", userTaxCode));
         }
 
-        try {
-            log.debug(LogUtils.CONFIDENTIAL_MARKER, "Checking if user with taxCode {} is manager of institution with taxCode {} on ADE", Encode.forJava(userTaxCode), Encode.forJava(institutionTaxCode));
-            MatchInfoResult matchInfoResult = partyRegistryProxyConnector.matchInstitutionAndUser(institutionTaxCode, userTaxCode);
-            if (Objects.nonNull(matchInfoResult) && matchInfoResult.isVerificationResult()) {
-                log.debug("User found as manager in ADE, response = {}", matchInfoResult);
-                return new ManagerVerification(Origin.ADE.getValue(), null);
-            }
-        } catch (InvalidRequestException e) {
-            throw new ResourceNotFoundException(String.format("User with taxCode %s is not the legal representative of the institution", userTaxCode));
-        }
-
-        throw new ResourceNotFoundException(String.format("User with userTaxCode %s is not the legal representative of the institution", userTaxCode));
+        return result;
     }
 
     @Override
