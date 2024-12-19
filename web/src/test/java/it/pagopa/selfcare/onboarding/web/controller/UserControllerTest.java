@@ -1,5 +1,7 @@
 package it.pagopa.selfcare.onboarding.web.controller;
 
+import it.pagopa.selfcare.commons.base.security.SelfCareUser;
+import it.pagopa.selfcare.commons.web.security.JwtAuthenticationToken;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
 import it.pagopa.selfcare.onboarding.core.UserService;
 import it.pagopa.selfcare.onboarding.core.exception.InvalidUserFieldsException;
@@ -7,6 +9,7 @@ import it.pagopa.selfcare.onboarding.web.config.WebTestConfig;
 import it.pagopa.selfcare.onboarding.web.handler.OnboardingExceptionHandler;
 import it.pagopa.selfcare.onboarding.web.model.OnboardingUserDto;
 import it.pagopa.selfcare.onboarding.web.model.mapper.OnboardingResourceMapperImpl;
+import it.pagopa.selfcare.onboarding.web.model.mapper.UserResourceMapperImpl;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +22,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+
+import java.security.Principal;
 
 import static org.hamcrest.Matchers.emptyString;
 import static org.hamcrest.Matchers.not;
@@ -33,7 +38,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         UserController.class,
         OnboardingResourceMapperImpl.class,
         WebTestConfig.class,
-        OnboardingExceptionHandler.class
+        OnboardingExceptionHandler.class,
+        UserResourceMapperImpl.class
 })
 class UserControllerTest {
 
@@ -136,4 +142,28 @@ class UserControllerTest {
         verifyNoMoreInteractions(userServiceMock);
     }
 
+    /**
+     * Method under test: {@link UserController#getManagerInfo(String, Principal)}
+     */
+    @Test
+    void getManagerInfo() throws Exception {
+        //given
+        JwtAuthenticationToken mockPrincipal = Mockito.mock(JwtAuthenticationToken.class);
+        SelfCareUser selfCareUser = SelfCareUser.builder("example")
+                .fiscalCode("fiscalCode")
+                .build();
+        Mockito.when(mockPrincipal.getPrincipal()).thenReturn(selfCareUser);
+
+        // when
+        mvc.perform(MockMvcRequestBuilders
+                        .get(BASE_URL + "/onboarding/onboarding-test-id/manager")
+                        .principal(mockPrincipal)
+                        .contentType(APPLICATION_JSON_VALUE)
+                        .accept(APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk());
+        // then
+        verify(userServiceMock, times(1))
+                .getManagerInfo(any(), any());
+        verifyNoMoreInteractions(userServiceMock);
+    }
 }
