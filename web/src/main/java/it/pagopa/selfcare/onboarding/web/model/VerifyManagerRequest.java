@@ -8,11 +8,6 @@ import javax.validation.constraints.NotBlank;
 
 @Data
 public class VerifyManagerRequest {
-    @ApiModelProperty(value = "${swagger.onboarding.user.model.fiscalCode}")
-    @JsonProperty(required = true)
-    @NotBlank
-    private String userTaxCode;
-
     @ApiModelProperty(value = "${swagger.onboarding.institutions.model.taxCode}")
     @JsonProperty(required = true)
     @NotBlank
