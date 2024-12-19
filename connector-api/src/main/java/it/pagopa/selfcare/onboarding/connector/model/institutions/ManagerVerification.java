@@ -12,6 +12,11 @@ public class ManagerVerification {
     private String companyName;
     private boolean verified;
 
+    public ManagerVerification(String origin, String companyName) {
+        this.origin = origin;
+        this.companyName = companyName;
+    }
+
     public ManagerVerification(boolean verified) {
         this.verified = verified;
     }
