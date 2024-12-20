@@ -1285,6 +1285,15 @@
         "summary" : "verifyManager",
         "description" : "The service allows to verify the legal representative on external registries and retrieve the company name",
         "operationId" : "verifyManagerUsingPOST",
+        "parameters" : [ {
+          "name" : "name",
+          "in" : "query",
+          "required" : false,
+          "style" : "form",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
         "requestBody" : {
           "content" : {
             "application/json" : {
@@ -4751,10 +4760,6 @@
           "companyTaxCode" : {
             "type" : "string",
             "description" : "Institution's taxCode"
-          },
-          "userTaxCode" : {
-            "type" : "string",
-            "description" : "User's fiscal code"
           }
         }
       },

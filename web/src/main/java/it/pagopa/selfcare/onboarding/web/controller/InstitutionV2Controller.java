@@ -136,9 +136,15 @@ public class InstitutionV2Controller {
     @PostMapping(value = "/company/verify-manager")
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "", notes = "${swagger.onboarding.institutions.api.onboarding.verifyManager}")
-    public VerifyManagerResponse verifyManager(@RequestBody @Valid VerifyManagerRequest request) {
+    public VerifyManagerResponse verifyManager(
+            @RequestBody @Valid VerifyManagerRequest request,
+            Principal principal
+    ) {
         log.trace("verifyManager start");
-        VerifyManagerResponse response = onboardingResourceMapper.toManagerVerification(institutionService.verifyManager(request.getUserTaxCode(), request.getCompanyTaxCode()));
+        JwtAuthenticationToken jwtAuthenticationToken = (JwtAuthenticationToken) principal;
+        SelfCareUser selfCareUser = (SelfCareUser) jwtAuthenticationToken.getPrincipal();
+
+        VerifyManagerResponse response = onboardingResourceMapper.toManagerVerification(institutionService.verifyManager(selfCareUser.getFiscalCode(), request.getCompanyTaxCode()));
         log.trace("verifyManager end");
         return response;
     }

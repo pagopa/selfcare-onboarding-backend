@@ -198,9 +198,15 @@ class InstitutionV2ControllerTest {
     @Test
     void verifyManager_success() throws Exception {
         // given
-        VerifyManagerRequest request = new VerifyManagerRequest();
-        request.setUserTaxCode("validUserTaxCode");
-        request.setCompanyTaxCode("validCompanyTaxCode");
+        JwtAuthenticationToken mockPrincipal = Mockito.mock(JwtAuthenticationToken.class);
+        SelfCareUser selfCareUser = SelfCareUser.builder("example")
+                .fiscalCode("fiscalCode")
+                .build();
+        Mockito.when(mockPrincipal.getPrincipal()).thenReturn(selfCareUser);
+
+        VerifyManagerRequest verifyManagerRequest = new VerifyManagerRequest();
+        verifyManagerRequest.setCompanyTaxCode("taxCode");
+
         ManagerVerification managerVerification = new ManagerVerification();
         managerVerification.setOrigin("INFOCAMERE");
         managerVerification.setCompanyName("CompanyName");
@@ -209,7 +215,8 @@ class InstitutionV2ControllerTest {
         // when
         MvcResult result = mvc.perform(MockMvcRequestBuilders
                         .post(BASE_URL + "/company/verify-manager")
-                        .content(objectMapper.writeValueAsString(request))
+                        .content(objectMapper.writeValueAsString(verifyManagerRequest))
+                        .principal(mockPrincipal)
                         .contentType(APPLICATION_JSON_VALUE)
                         .accept(APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk())
@@ -227,12 +234,18 @@ class InstitutionV2ControllerTest {
     @Test
     void verifyManager_invalidRequest() throws Exception {
         // given
+        JwtAuthenticationToken mockPrincipal = Mockito.mock(JwtAuthenticationToken.class);
+        SelfCareUser selfCareUser = SelfCareUser.builder("example")
+                .fiscalCode("fiscalCode")
+                .build();
+        Mockito.when(mockPrincipal.getPrincipal()).thenReturn(selfCareUser);
+
         VerifyManagerRequest request = new VerifyManagerRequest();
-        request.setCompanyTaxCode("validCompanyTaxCode");
 
         // when
         mvc.perform(MockMvcRequestBuilders
                         .post(BASE_URL + "/company/verify-manager")
+                        .principal(mockPrincipal)
                         .content(objectMapper.writeValueAsString(request))
                         .contentType(APPLICATION_JSON_VALUE)
                         .accept(APPLICATION_JSON_VALUE))
