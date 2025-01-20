@@ -44,7 +44,7 @@ import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.validation.ValidationException;
+import jakarta.validation.ValidationException;
 import java.util.*;
 
 import static io.netty.util.internal.StringUtil.isNullOrEmpty;

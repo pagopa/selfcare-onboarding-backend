@@ -4,6 +4,9 @@ import com.fasterxml.classmate.TypeResolver;
 import it.pagopa.selfcare.commons.web.model.Problem;
 import it.pagopa.selfcare.commons.web.swagger.EmailAnnotationSwaggerPluginConfig;
 import it.pagopa.selfcare.commons.web.swagger.ServerSwaggerConfig;
+import java.time.LocalTime;
+import java.util.Collections;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.*;
 import org.springframework.core.env.Environment;
@@ -18,10 +21,6 @@ import springfox.documentation.service.*;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spi.service.contexts.SecurityContext;
 import springfox.documentation.spring.web.plugins.Docket;
-
-import java.time.LocalTime;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * The Class SwaggerConfig.
@@ -102,6 +101,10 @@ class SwaggerConfig {
 
     private final Environment environment;
 
+    @Bean
+    public TypeResolver typeResolver() {
+        return new TypeResolver();
+    }
 
     @Autowired
     SwaggerConfig(Environment environment) {
@@ -110,7 +113,7 @@ class SwaggerConfig {
 
 
     @Bean
-    public Docket swaggerSpringPlugin(@Autowired TypeResolver typeResolver) {
+    public Docket swaggerSpringPlugin(TypeResolver typeResolver) {
         return (new Docket(DocumentationType.OAS_30))
                 .apiInfo(new ApiInfoBuilder()
                         .title(environment.getProperty("swagger.title", environment.getProperty("spring.application.name")))

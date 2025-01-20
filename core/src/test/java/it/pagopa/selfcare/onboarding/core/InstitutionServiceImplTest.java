@@ -45,7 +45,7 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.validation.ValidationException;
+import jakarta.validation.ValidationException;
 import java.time.OffsetDateTime;
 import java.util.*;
 import java.util.stream.Stream;
