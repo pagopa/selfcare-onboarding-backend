@@ -152,14 +152,14 @@ class SwaggerConfig {
     }
 
 
-    @Bean
+    /**@Bean
     public EmailAnnotationSwaggerPluginConfig emailAnnotationPlugin() {
         return new EmailAnnotationSwaggerPluginConfig();
-    }
+    }*/
 
-    @Bean
+    /**@Bean
     public ServerSwaggerConfig serverSwaggerConfiguration() {
         return new ServerSwaggerConfig();
-    }
+    }*/
 
 }
