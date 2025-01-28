@@ -1,9 +1,15 @@
 package it.pagopa.selfcare.onboarding.core;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import it.pagopa.selfcare.onboarding.common.InstitutionType;
 import it.pagopa.selfcare.onboarding.connector.api.ProductsConnector;
+import it.pagopa.selfcare.onboarding.connector.exceptions.ResourceNotFoundException;
 import it.pagopa.selfcare.product.entity.Product;
 import it.pagopa.selfcare.product.entity.ProductStatus;
+import it.pagopa.selfcare.product.exception.ProductNotFoundException;
+import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -12,8 +18,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
 class ProductServiceImplTest {
@@ -62,6 +66,23 @@ class ProductServiceImplTest {
         Product product = productService.getProduct(productId, institutionType);
         //then
         Assertions.assertSame(productMock, product);
+        Mockito.verify(productsConnectorMock, Mockito.times(1))
+                .getProduct(productId, institutionType);
+        Mockito.verifyNoMoreInteractions(productsConnectorMock);
+    }
+
+    @Test
+    void getProduct_NotFound() {
+        //given
+        final String productId = "productId";
+        InstitutionType institutionType = InstitutionType.PA;
+        Mockito.when(productsConnectorMock.getProduct(productId, institutionType))
+                .thenThrow(ProductNotFoundException.class);
+        //when
+        Executable executable = () -> productService.getProduct(productId, institutionType);
+        //then
+        ResourceNotFoundException e = assertThrows(ResourceNotFoundException.class, executable);
+        assertEquals("No product found with id " + productId, e.getMessage());
         Mockito.verify(productsConnectorMock, Mockito.times(1))
                 .getProduct(productId, institutionType);
         Mockito.verifyNoMoreInteractions(productsConnectorMock);
