@@ -1,5 +1,8 @@
 package it.pagopa.selfcare.onboarding.core;
 
+import static io.netty.util.internal.StringUtil.isNullOrEmpty;
+import static it.pagopa.selfcare.onboarding.connector.model.user.User.Fields.*;
+
 import it.pagopa.selfcare.commons.base.logging.LogUtils;
 import it.pagopa.selfcare.commons.base.utils.Origin;
 import it.pagopa.selfcare.onboarding.common.InstitutionType;
@@ -36,6 +39,9 @@ import it.pagopa.selfcare.onboarding.core.utils.PgManagerVerifier;
 import it.pagopa.selfcare.product.entity.Product;
 import it.pagopa.selfcare.product.entity.ProductRoleInfo;
 import it.pagopa.selfcare.product.entity.ProductStatus;
+import it.pagopa.selfcare.product.service.ProductService;
+import java.util.*;
+import javax.validation.ValidationException;
 import lombok.extern.slf4j.Slf4j;
 import org.owasp.encoder.Encode;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,12 +49,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
-
-import javax.validation.ValidationException;
-import java.util.*;
-
-import static io.netty.util.internal.StringUtil.isNullOrEmpty;
-import static it.pagopa.selfcare.onboarding.connector.model.user.User.Fields.*;
 
 @Slf4j
 @Service
@@ -84,8 +84,12 @@ class InstitutionServiceImpl implements InstitutionService {
     private final PartyRegistryProxyConnector partyRegistryProxyConnector;
     private final InstitutionInfoMapper institutionMapper;
     private final PgManagerVerifier pgManagerVerifier;
+    private final ProductService productService;
+
     @Autowired
-    InstitutionServiceImpl(OnboardingMsConnector onboardingMsConnector, PartyConnector partyConnector,
+    InstitutionServiceImpl(OnboardingMsConnector onboardingMsConnector,
+                           PartyConnector partyConnector,
+                           ProductService productService,
                            ProductsConnector productsConnector,
                            UserRegistryConnector userConnector,
                            OnboardingFunctionsConnector onboardingFunctionsConnector,
@@ -96,6 +100,7 @@ class InstitutionServiceImpl implements InstitutionService {
     ) {
         this.onboardingMsConnector = onboardingMsConnector;
         this.partyConnector = partyConnector;
+        this.productService = productService;
         this.onboardingFunctionsConnector = onboardingFunctionsConnector;
         this.partyRegistryProxyConnector = partyRegistryProxyConnector;
         this.productsConnector = productsConnector;
@@ -136,15 +141,12 @@ class InstitutionServiceImpl implements InstitutionService {
 
     private void verifyIfUserIsManagerOfBusiness(String businessTaxCode, String userFiscalCode, String origin) {
         switch (Origin.fromValue(origin)) {
-            case INFOCAMERE:
-                verifyIfUserIsManagerOfBusinessOnInfocamere(businessTaxCode, userFiscalCode);
-                break;
-            case ADE:
-                verifyIfUserIsManagerOfBusinessOnAde(businessTaxCode, userFiscalCode);
-                break;
-            default:
+            case INFOCAMERE -> verifyIfUserIsManagerOfBusinessOnInfocamere(businessTaxCode, userFiscalCode);
+            case ADE -> verifyIfUserIsManagerOfBusinessOnAde(businessTaxCode, userFiscalCode);
+            default -> {
                 log.error("Origin {} is not supported", origin);
                 throw new InvalidRequestException("Origin not supported");
+            }
         }
     }
 
@@ -367,6 +369,13 @@ class InstitutionServiceImpl implements InstitutionService {
     @Override
     public Collection<InstitutionInfo> getInstitutions(String productId, String userId) {
         log.trace("getInstitutions start");
+        //In case product is a child, the api will retrieve the users for parent
+        if (Objects.nonNull(productId)) {
+            Product product = productService.getProduct(productId);
+            if (Objects.nonNull(product) && Objects.nonNull(product.getParentId())) {
+                productId = product.getParentId();
+            }
+        }
         Collection<InstitutionInfo> result = partyConnector.getInstitutionsByUser(productId, userId);
         log.debug("getInstitutions result = {}", result);
         log.trace("getInstitutions end");

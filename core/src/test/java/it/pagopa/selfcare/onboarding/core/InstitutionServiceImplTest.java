@@ -30,6 +30,7 @@ import it.pagopa.selfcare.product.entity.Product;
 import it.pagopa.selfcare.product.entity.ProductRole;
 import it.pagopa.selfcare.product.entity.ProductRoleInfo;
 import it.pagopa.selfcare.product.entity.ProductStatus;
+import it.pagopa.selfcare.product.service.ProductService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -66,6 +67,9 @@ class InstitutionServiceImplTest {
 
     @Mock
     private PartyConnector partyConnectorMock;
+
+    @Mock
+    private ProductService productService;
 
     @Mock
     private OnboardingMsConnector onboardingMsConnector;
@@ -1041,6 +1045,30 @@ class InstitutionServiceImplTest {
         ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, executable);
         assertEquals("User with userTaxCode userTaxCode is not the legal representative of the institution", exception.getMessage());
         verify(pgManagerVerifierMock, times(1)).doVerify(userTaxCode, institutionTaxCode);
+    }
+
+    @Test
+    void getInstitutions_WithChildProduct() {
+        //given
+        InstitutionInfo expectedInstitutionInfo = new InstitutionInfo();
+        final String userId = "userId";
+        final String productId = "productId";
+        final String parentId = "parentId";
+        when(partyConnectorMock.getInstitutionsByUser(parentId, userId))
+                .thenReturn(List.of(expectedInstitutionInfo));
+        Product product = new Product();
+        product.setParentId("parentId");
+        when(productService.getProduct(productId)).thenReturn(product);
+        // when
+        Collection<InstitutionInfo> institutions = institutionService.getInstitutions(productId, userId);
+        // then
+        assertNotNull(institutions);
+        assertEquals(1, institutions.size());
+        assertSame(expectedInstitutionInfo, institutions.iterator().next());
+        verify(partyConnectorMock, times(1))
+                .getInstitutionsByUser("parentId", userId);
+        verifyNoMoreInteractions(partyConnectorMock);
+        verifyNoInteractions(productsConnectorMock, userConnectorMock);
     }
 
     @Test
