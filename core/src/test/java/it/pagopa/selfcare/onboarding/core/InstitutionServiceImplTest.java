@@ -1072,6 +1072,29 @@ class InstitutionServiceImplTest {
     }
 
     @Test
+    void getInstitutions_WithNullProduct() {
+        //given
+        InstitutionInfo expectedInstitutionInfo = new InstitutionInfo();
+        final String userId = "userId";
+        final String productId = "productId";
+        when(partyConnectorMock.getInstitutionsByUser(productId, userId))
+                .thenReturn(List.of(expectedInstitutionInfo));
+        Product product = new Product();
+        product.setParentId("parentId");
+        when(productService.getProduct(productId)).thenReturn(null);
+        // when
+        Collection<InstitutionInfo> institutions = institutionService.getInstitutions(productId, userId);
+        // then
+        assertNotNull(institutions);
+        assertEquals(1, institutions.size());
+        assertSame(expectedInstitutionInfo, institutions.iterator().next());
+        verify(partyConnectorMock, times(1))
+                .getInstitutionsByUser(productId, userId);
+        verifyNoMoreInteractions(partyConnectorMock);
+        verifyNoInteractions(productsConnectorMock, userConnectorMock);
+    }
+
+    @Test
     void getInstitutions() {
         //given
         InstitutionInfo expectedInstitutionInfo = new InstitutionInfo();
