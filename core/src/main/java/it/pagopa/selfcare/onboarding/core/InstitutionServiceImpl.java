@@ -39,6 +39,7 @@ import it.pagopa.selfcare.onboarding.core.utils.PgManagerVerifier;
 import it.pagopa.selfcare.product.entity.Product;
 import it.pagopa.selfcare.product.entity.ProductRoleInfo;
 import it.pagopa.selfcare.product.entity.ProductStatus;
+import it.pagopa.selfcare.product.exception.ProductNotFoundException;
 import it.pagopa.selfcare.product.service.ProductService;
 import java.util.*;
 import javax.validation.ValidationException;
@@ -365,18 +366,16 @@ class InstitutionServiceImpl implements InstitutionService {
         return isToUpdate;
     }
 
-
     @Override
-    public Collection<InstitutionInfo> getInstitutions(String productId, String userId) {
+    public List<InstitutionInfo> getInstitutions(String productId, String userId) {
         log.trace("getInstitutions start");
-        //In case product is a child, the api will retrieve the users for parent
-        if (Objects.nonNull(productId)) {
-            Product product = productService.getProduct(productId);
-            if (Objects.nonNull(product) && Objects.nonNull(product.getParentId())) {
-                productId = product.getParentId();
-            }
+        Product product;
+        try {
+            product = productService.getProduct(productId);
+        } catch (ProductNotFoundException e) {
+            throw new ResourceNotFoundException("No product found with id " + productId);
         }
-        Collection<InstitutionInfo> result = partyConnector.getInstitutionsByUser(productId, userId);
+        List<InstitutionInfo> result = partyConnector.getInstitutionsByUser(product, userId);
         log.debug("getInstitutions result = {}", result);
         log.trace("getInstitutions end");
         return result;

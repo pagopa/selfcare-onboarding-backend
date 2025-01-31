@@ -12,7 +12,7 @@
     <artifactId>selc-onboarding-connector-api</artifactId>
 
     <properties>
-        <commons-sdk-version>0.6.2</commons-sdk-version>
+        <commons-sdk-version>0.6.5</commons-sdk-version>
     </properties>
 
     <dependencies>

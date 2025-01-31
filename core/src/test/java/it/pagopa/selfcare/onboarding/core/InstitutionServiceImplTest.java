@@ -1,5 +1,13 @@
 package it.pagopa.selfcare.onboarding.core;
 
+import static it.pagopa.selfcare.commons.utils.TestUtils.mockInstance;
+import static it.pagopa.selfcare.onboarding.connector.model.user.User.Fields.*;
+import static it.pagopa.selfcare.onboarding.core.InstitutionServiceImpl.*;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.*;
+
 import it.pagopa.selfcare.commons.base.utils.Origin;
 import it.pagopa.selfcare.commons.base.utils.ProductId;
 import it.pagopa.selfcare.onboarding.common.InstitutionType;
@@ -31,6 +39,10 @@ import it.pagopa.selfcare.product.entity.ProductRole;
 import it.pagopa.selfcare.product.entity.ProductRoleInfo;
 import it.pagopa.selfcare.product.entity.ProductStatus;
 import it.pagopa.selfcare.product.service.ProductService;
+import java.time.OffsetDateTime;
+import java.util.*;
+import java.util.stream.Stream;
+import javax.validation.ValidationException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -45,19 +57,6 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.multipart.MultipartFile;
-
-import javax.validation.ValidationException;
-import java.time.OffsetDateTime;
-import java.util.*;
-import java.util.stream.Stream;
-
-import static it.pagopa.selfcare.commons.utils.TestUtils.mockInstance;
-import static it.pagopa.selfcare.onboarding.connector.model.user.User.Fields.*;
-import static it.pagopa.selfcare.onboarding.core.InstitutionServiceImpl.*;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class InstitutionServiceImplTest {
@@ -1045,53 +1044,6 @@ class InstitutionServiceImplTest {
         ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, executable);
         assertEquals("User with userTaxCode userTaxCode is not the legal representative of the institution", exception.getMessage());
         verify(pgManagerVerifierMock, times(1)).doVerify(userTaxCode, institutionTaxCode);
-    }
-
-    @Test
-    void getInstitutions_WithChildProduct() {
-        //given
-        InstitutionInfo expectedInstitutionInfo = new InstitutionInfo();
-        final String userId = "userId";
-        final String productId = "productId";
-        final String parentId = "parentId";
-        when(partyConnectorMock.getInstitutionsByUser(parentId, userId))
-                .thenReturn(List.of(expectedInstitutionInfo));
-        Product product = new Product();
-        product.setParentId("parentId");
-        when(productService.getProduct(productId)).thenReturn(product);
-        // when
-        Collection<InstitutionInfo> institutions = institutionService.getInstitutions(productId, userId);
-        // then
-        assertNotNull(institutions);
-        assertEquals(1, institutions.size());
-        assertSame(expectedInstitutionInfo, institutions.iterator().next());
-        verify(partyConnectorMock, times(1))
-                .getInstitutionsByUser("parentId", userId);
-        verifyNoMoreInteractions(partyConnectorMock);
-        verifyNoInteractions(productsConnectorMock, userConnectorMock);
-    }
-
-    @Test
-    void getInstitutions_WithNullProduct() {
-        //given
-        InstitutionInfo expectedInstitutionInfo = new InstitutionInfo();
-        final String userId = "userId";
-        final String productId = "productId";
-        when(partyConnectorMock.getInstitutionsByUser(productId, userId))
-                .thenReturn(List.of(expectedInstitutionInfo));
-        Product product = new Product();
-        product.setParentId("parentId");
-        when(productService.getProduct(productId)).thenReturn(null);
-        // when
-        Collection<InstitutionInfo> institutions = institutionService.getInstitutions(productId, userId);
-        // then
-        assertNotNull(institutions);
-        assertEquals(1, institutions.size());
-        assertSame(expectedInstitutionInfo, institutions.iterator().next());
-        verify(partyConnectorMock, times(1))
-                .getInstitutionsByUser(productId, userId);
-        verifyNoMoreInteractions(partyConnectorMock);
-        verifyNoInteractions(productsConnectorMock, userConnectorMock);
     }
 
     @Test

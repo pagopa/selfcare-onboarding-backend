@@ -1,5 +1,12 @@
 package it.pagopa.selfcare.onboarding.connector;
 
+import static it.pagopa.selfcare.commons.utils.TestUtils.*;
+import static it.pagopa.selfcare.onboarding.connector.PartyConnectorImpl.*;
+import static it.pagopa.selfcare.onboarding.connector.model.RelationshipState.ACTIVE;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
+
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
@@ -15,8 +22,8 @@ import it.pagopa.selfcare.onboarding.connector.model.RelationshipsResponse;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionInfo;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.OnboardingResource;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.InstitutionUpdate;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.*;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.InstitutionUpdate;
 import it.pagopa.selfcare.onboarding.connector.rest.client.MsCoreOnboardingApiClient;
 import it.pagopa.selfcare.onboarding.connector.rest.client.MsCoreTokenApiClient;
 import it.pagopa.selfcare.onboarding.connector.rest.client.MsUserApiClient;
@@ -24,9 +31,14 @@ import it.pagopa.selfcare.onboarding.connector.rest.client.PartyProcessRestClien
 import it.pagopa.selfcare.onboarding.connector.rest.mapper.InstitutionMapper;
 import it.pagopa.selfcare.onboarding.connector.rest.mapper.InstitutionMapperImpl;
 import it.pagopa.selfcare.onboarding.connector.rest.model.*;
+import it.pagopa.selfcare.product.entity.Product;
 import it.pagopa.selfcare.user.generated.openapi.v1.dto.OnboardedProductResponse;
 import it.pagopa.selfcare.user.generated.openapi.v1.dto.OnboardedProductState;
 import it.pagopa.selfcare.user.generated.openapi.v1.dto.UserInstitutionResponse;
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
+import java.util.stream.Collectors;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -35,18 +47,6 @@ import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.ResourceUtils;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.*;
-import java.util.stream.Collectors;
-
-import static it.pagopa.selfcare.commons.utils.TestUtils.*;
-import static it.pagopa.selfcare.onboarding.connector.PartyConnectorImpl.*;
-import static it.pagopa.selfcare.onboarding.connector.model.RelationshipState.ACTIVE;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class PartyConnectorImplTest {
@@ -195,129 +195,79 @@ class PartyConnectorImplTest {
     }
 
     @Test
-    void getOnboardedInstitutions() {
+    void getOnboardedInstitutions_WithChildProduct() {
         // given
         final String userId = "userId";
+        final String productFilter = "prod-io";
+        final String childProductId = "prod-io-premium";
+
+        Product product = new Product();
+        product.setId(childProductId);
+        product.setParentId(productFilter);
 
         UserInstitutionResponse onboardingData1 = mockInstance(new UserInstitutionResponse(), 1, "setProducts");
         OnboardedProductResponse onboardedProduct1 = new OnboardedProductResponse();
         onboardedProduct1.setStatus(OnboardedProductState.ACTIVE);
         onboardedProduct1.setRole(it.pagopa.selfcare.user.generated.openapi.v1.dto.PartyRole.OPERATOR);
+        onboardedProduct1.setProductId("prod-io");
         onboardingData1.setProducts(List.of(onboardedProduct1));
 
+        UserInstitutionResponse onboardingData2 = mockInstance(new UserInstitutionResponse(), 2, "setProducts", "setInstitutionId");
+        onboardingData2.setInstitutionId(onboardingData1.getInstitutionId());
         OnboardedProductResponse onboardedProduct2 = new OnboardedProductResponse();
         onboardedProduct2.setStatus(OnboardedProductState.ACTIVE);
         onboardedProduct2.setRole(it.pagopa.selfcare.user.generated.openapi.v1.dto.PartyRole.MANAGER);
+        onboardedProduct2.setProductId("prod-io");
+        onboardingData2.setProducts(List.of(onboardedProduct2));
 
-        onboardingData1.setProducts(List.of(onboardedProduct1, onboardedProduct2));
+        UserInstitutionResponse onboardingData4 = mockInstance(new UserInstitutionResponse(), 4, "setProducts", "setInstitutionId");
+        onboardingData4.setInstitutionId(onboardingData1.getInstitutionId());
+        OnboardedProductResponse onboardedProduct4 = new OnboardedProductResponse();
+        onboardedProduct4.setStatus(OnboardedProductState.ACTIVE);
+        onboardedProduct4.setRole(it.pagopa.selfcare.user.generated.openapi.v1.dto.PartyRole.SUB_DELEGATE);
+        onboardedProduct4.setProductId("prod-io");
+        onboardingData4.setProducts(List.of(onboardedProduct4));
 
-        UserInstitutionResponse onboardingData3 = mockInstance(new UserInstitutionResponse(), 3, "setProducts");
-        OnboardedProductResponse onboardedProduct3 = new OnboardedProductResponse();
-        onboardedProduct3.setStatus(OnboardedProductState.ACTIVE);
-        onboardedProduct3.setRole(it.pagopa.selfcare.user.generated.openapi.v1.dto.PartyRole.OPERATOR);
-        onboardingData3.setProducts(List.of(onboardedProduct3));
+        UserInstitutionResponse onboardingDataPremium = mockInstance(new UserInstitutionResponse(), 4, "setProducts", "setInstitutionId");
+        onboardingDataPremium.setInstitutionId("premium");
+        OnboardedProductResponse onboardedProductPremium = new OnboardedProductResponse();
+        onboardedProductPremium.setStatus(OnboardedProductState.ACTIVE);
+        onboardedProductPremium.setRole(it.pagopa.selfcare.user.generated.openapi.v1.dto.PartyRole.SUB_DELEGATE);
+        onboardedProductPremium.setProductId("prod-io-premium");
+        onboardingDataPremium.setProducts(List.of(onboardedProductPremium));
 
-        List<UserInstitutionResponse> onBoardingInfo = List.of(onboardingData1, onboardingData3);
+        List<UserInstitutionResponse> onBoardingInfo = List.of(onboardingData1, onboardingData2, onboardingData4);
         ResponseEntity<List<UserInstitutionResponse>> responseEntity = mock(ResponseEntity.class);
         when(responseEntity.getBody()).thenReturn(onBoardingInfo);
-        when(msUserApiClient._usersGet(null, null, null, null, null, null, List.of(ACTIVE.name()), userId))
+        when(msUserApiClient._usersGet(null, null, null, List.of(productFilter), null, null, List.of(ACTIVE.name()), userId))
                 .thenReturn(responseEntity);
+
+        List<UserInstitutionResponse> onBoardingInfoPremium = List.of(onboardingDataPremium);
+        ResponseEntity<List<UserInstitutionResponse>> responseEntityPremium = mock(ResponseEntity.class);
+        when(responseEntityPremium.getBody()).thenReturn(onBoardingInfoPremium);
+        when(msUserApiClient._usersGet(null, null, null, List.of(childProductId), null, null, List.of(ACTIVE.name()), null))
+                .thenReturn(responseEntityPremium);
+
         // when
-        Collection<InstitutionInfo> institutions = partyConnector.getInstitutionsByUser(null, userId);
+        Collection<InstitutionInfo> institutions = partyConnector.getInstitutionsByUser(product, userId);
         // then
         assertNotNull(institutions);
-        assertEquals(2, institutions.size());
-        Map<PartyRole, List<InstitutionInfo>> map = institutions.stream()
-                .collect(Collectors.groupingBy(InstitutionInfo::getUserRole));
-        List<InstitutionInfo> institutionInfos = map.get(PartyRole.MANAGER);
-        assertNotNull(institutionInfos);
-        assertEquals(1, institutionInfos.size());
-        assertEquals(onboardingData1.getInstitutionId(), institutionInfos.get(0).getId());
-        assertEquals(onboardingData1.getInstitutionDescription(), institutionInfos.get(0).getDescription());
-        assertEquals(onboardedProduct2.getStatus().toString(), institutionInfos.get(0).getStatus());
-        assertEquals(onboardedProduct2.getRole().name(), institutionInfos.get(0).getUserRole().name());
-        institutionInfos = map.get(PartyRole.OPERATOR);
-        assertNotNull(institutionInfos);
-        assertEquals(1, institutionInfos.size());
-        assertEquals(onboardingData3.getInstitutionId(), institutionInfos.get(0).getId());
-        assertEquals(onboardingData3.getInstitutionDescription(), institutionInfos.get(0).getDescription());
-        assertEquals(onboardedProduct3.getStatus().toString(), institutionInfos.get(0).getStatus());
-        assertEquals(onboardedProduct3.getRole().name(), institutionInfos.get(0).getUserRole().name());
+        assertEquals(3, institutions.size());
         verify(msUserApiClient, times(1))
-                ._usersGet(null, null, null, null, null, null, List.of(ACTIVE.name()), userId);
+                ._usersGet(null, null, null, List.of(productFilter), null, null, List.of(ACTIVE.name()), userId);
+        verify(msUserApiClient, times(1))
+                ._usersGet(null, null, null, List.of(childProductId), null, null, List.of(ACTIVE.name()), null);
         verifyNoMoreInteractions(msUserApiClient);
     }
 
     @Test
-    void getOnboardedInstitutions_productFilterFound() {
+    void getOnboardedInstitutions_OnlyParent() {
         // given
         final String userId = "userId";
         final String productFilter = "prod-io";
 
-        UserInstitutionResponse onboardingData1 = mockInstance(new UserInstitutionResponse(), 1, "setProducts");
-        OnboardedProductResponse onboardedProduct1 = new OnboardedProductResponse();
-        onboardedProduct1.setStatus(OnboardedProductState.ACTIVE);
-        onboardedProduct1.setRole(it.pagopa.selfcare.user.generated.openapi.v1.dto.PartyRole.OPERATOR);
-        onboardedProduct1.setProductId("prod-io");
-        onboardingData1.setProducts(List.of(onboardedProduct1));
-
-        UserInstitutionResponse onboardingData2 = mockInstance(new UserInstitutionResponse(), 2, "setProducts", "setInstitutionId");
-        onboardingData2.setInstitutionId(onboardingData1.getInstitutionId());
-        OnboardedProductResponse onboardedProduct2 = new OnboardedProductResponse();
-        onboardedProduct2.setStatus(OnboardedProductState.ACTIVE);
-        onboardedProduct2.setRole(it.pagopa.selfcare.user.generated.openapi.v1.dto.PartyRole.MANAGER);
-        onboardedProduct2.setProductId("prod-ciban");
-        onboardingData2.setProducts(List.of(onboardedProduct2));
-
-        UserInstitutionResponse onboardingData4 = mockInstance(new UserInstitutionResponse(), 4, "setProducts", "setInstitutionId");
-        onboardingData4.setInstitutionId(onboardingData1.getInstitutionId());
-        OnboardedProductResponse onboardedProduct4 = new OnboardedProductResponse();
-        onboardedProduct4.setStatus(OnboardedProductState.ACTIVE);
-        onboardedProduct4.setRole(it.pagopa.selfcare.user.generated.openapi.v1.dto.PartyRole.SUB_DELEGATE);
-        onboardedProduct4.setProductId("prod-pn");
-        onboardingData4.setProducts(List.of(onboardedProduct4));
-
-        UserInstitutionResponse onboardingData3 = mockInstance(new UserInstitutionResponse(), 3, "setProducts");
-        OnboardedProductResponse onboardedProduct3 = new OnboardedProductResponse();
-        onboardedProduct3.setStatus(OnboardedProductState.ACTIVE);
-        onboardedProduct3.setRole(it.pagopa.selfcare.user.generated.openapi.v1.dto.PartyRole.OPERATOR);
-        onboardedProduct3.setProductId("prod-pagopa");
-        onboardingData3.setProducts(List.of(onboardedProduct3));
-
-        List<UserInstitutionResponse> onBoardingInfo = List.of(onboardingData1, onboardingData2, onboardingData3, onboardingData3, onboardingData4);
-        ResponseEntity<List<UserInstitutionResponse>> responseEntity = mock(ResponseEntity.class);
-        when(responseEntity.getBody()).thenReturn(onBoardingInfo);
-        when(msUserApiClient._usersGet(null, null, null, List.of(productFilter), null, null, List.of(ACTIVE.name()), userId))
-                .thenReturn(responseEntity);
-        // when
-        Collection<InstitutionInfo> institutions = partyConnector.getInstitutionsByUser(productFilter, userId);
-        // then
-        assertNotNull(institutions);
-        assertEquals(1, institutions.size());
-        Map<PartyRole, List<InstitutionInfo>> map = institutions.stream()
-                .collect(Collectors.groupingBy(InstitutionInfo::getUserRole));
-        List<InstitutionInfo> institutionInfos = map.get(PartyRole.OPERATOR);
-        assertNotNull(institutionInfos);
-        assertEquals(1, institutionInfos.size());
-        assertEquals(onboardingData1.getInstitutionId(), institutionInfos.get(0).getId());
-        assertEquals(onboardingData1.getInstitutionDescription(), institutionInfos.get(0).getDescription());
-        assertEquals(onboardedProduct1.getStatus().toString(), institutionInfos.get(0).getStatus());
-        assertEquals(onboardedProduct1.getRole().name(), institutionInfos.get(0).getUserRole().name());
-        institutionInfos = map.get(PartyRole.SUB_DELEGATE);
-        assertNull(institutionInfos);
-        institutionInfos = map.get(PartyRole.MANAGER);
-        assertNull(institutionInfos);
-        verify(msUserApiClient, times(1))
-                ._usersGet(null, null, null, List.of(productFilter), null, null, List.of(ACTIVE.name()), userId);
-        verifyNoMoreInteractions(msUserApiClient);
-    }
-
-    @Test
-    void getOnboardedInstitutions_productFilterNotFound() {
-        // given
-
-        final String userId = "userId";
-        final String productFilter = "produdct-to-find";
+        Product product = new Product();
+        product.setId(productFilter);
 
         UserInstitutionResponse onboardingData1 = mockInstance(new UserInstitutionResponse(), 1, "setProducts");
         OnboardedProductResponse onboardedProduct1 = new OnboardedProductResponse();
@@ -326,119 +276,20 @@ class PartyConnectorImplTest {
         onboardedProduct1.setProductId("prod-io");
         onboardingData1.setProducts(List.of(onboardedProduct1));
 
-        UserInstitutionResponse onboardingData2 = mockInstance(new UserInstitutionResponse(), 2, "setProducts", "setInstitutionId");
-        onboardingData2.setInstitutionId(onboardingData1.getInstitutionId());
-        OnboardedProductResponse onboardedProduct2 = new OnboardedProductResponse();
-        onboardedProduct2.setStatus(OnboardedProductState.ACTIVE);
-        onboardedProduct2.setRole(it.pagopa.selfcare.user.generated.openapi.v1.dto.PartyRole.MANAGER);
-        onboardedProduct2.setProductId("prod-ciban");
-        onboardingData2.setProducts(List.of(onboardedProduct2));
-
-        UserInstitutionResponse onboardingData4 = mockInstance(new UserInstitutionResponse(), 4, "setProducts", "setInstitutionId");
-        onboardingData4.setInstitutionId(onboardingData1.getInstitutionId());
-        OnboardedProductResponse onboardedProduct4 = new OnboardedProductResponse();
-        onboardedProduct4.setStatus(OnboardedProductState.ACTIVE);
-        onboardedProduct4.setRole(it.pagopa.selfcare.user.generated.openapi.v1.dto.PartyRole.SUB_DELEGATE);
-        onboardedProduct4.setProductId("prod-pn");
-        onboardingData4.setProducts(List.of(onboardedProduct4));
-
-        UserInstitutionResponse onboardingData3 = mockInstance(new UserInstitutionResponse(), 3, "setProducts");
-        OnboardedProductResponse onboardedProduct3 = new OnboardedProductResponse();
-        onboardedProduct3.setStatus(OnboardedProductState.ACTIVE);
-        onboardedProduct3.setRole(it.pagopa.selfcare.user.generated.openapi.v1.dto.PartyRole.OPERATOR);
-        onboardedProduct3.setProductId("prod-pagopa");
-        onboardingData3.setProducts(List.of(onboardedProduct3));
-
-        List<UserInstitutionResponse> onBoardingInfo = List.of(onboardingData1, onboardingData2, onboardingData3, onboardingData3, onboardingData4);
+        List<UserInstitutionResponse> onBoardingInfo = List.of(onboardingData1);
         ResponseEntity<List<UserInstitutionResponse>> responseEntity = mock(ResponseEntity.class);
         when(responseEntity.getBody()).thenReturn(onBoardingInfo);
         when(msUserApiClient._usersGet(null, null, null, List.of(productFilter), null, null, List.of(ACTIVE.name()), userId))
                 .thenReturn(responseEntity);
 
         // when
-        Collection<InstitutionInfo> institutions = partyConnector.getInstitutionsByUser(productFilter, userId);
+        Collection<InstitutionInfo> institutions = partyConnector.getInstitutionsByUser(product, userId);
         // then
-        assertTrue(institutions.isEmpty());
+        assertNotNull(institutions);
+        assertEquals(1, institutions.size());
         verify(msUserApiClient, times(1))
                 ._usersGet(null, null, null, List.of(productFilter), null, null, List.of(ACTIVE.name()), userId);
         verifyNoMoreInteractions(msUserApiClient);
-    }
-
-    @Test
-    void getOnboardedInstitutions_productFilterPremium() {
-        // Given
-        final String userId = "userId";
-        String productFilter = "prod-io-premium";
-
-        UserInstitutionResponse onboardingData1 = mockInstance(new UserInstitutionResponse(), 1, "setProducts");
-        OnboardedProductResponse onboardedProduct1 = new OnboardedProductResponse();
-        onboardedProduct1.setStatus(OnboardedProductState.ACTIVE);
-        onboardedProduct1.setRole(it.pagopa.selfcare.user.generated.openapi.v1.dto.PartyRole.OPERATOR);
-        onboardedProduct1.setProductId("prod-io");
-        onboardingData1.setProducts(List.of(onboardedProduct1));
-
-        UserInstitutionResponse onboardingData2 = mockInstance(new UserInstitutionResponse(), 2, "setProducts", "setInstitutionId");
-        onboardingData2.setInstitutionId(onboardingData1.getInstitutionId());
-        OnboardedProductResponse onboardedProduct2 = new OnboardedProductResponse();
-        onboardedProduct2.setStatus(OnboardedProductState.ACTIVE);
-        onboardedProduct2.setRole(it.pagopa.selfcare.user.generated.openapi.v1.dto.PartyRole.MANAGER);
-        onboardedProduct2.setProductId("prod-ciban");
-        onboardingData2.setProducts(List.of(onboardedProduct2));
-
-        UserInstitutionResponse onboardingData4 = mockInstance(new UserInstitutionResponse(), 4, "setProducts", "setInstitutionId");
-        onboardingData4.setInstitutionId(onboardingData1.getInstitutionId());
-        OnboardedProductResponse onboardedProduct4 = new OnboardedProductResponse();
-        onboardedProduct4.setStatus(OnboardedProductState.ACTIVE);
-        onboardedProduct4.setRole(it.pagopa.selfcare.user.generated.openapi.v1.dto.PartyRole.SUB_DELEGATE);
-        onboardedProduct4.setProductId("prod-pn");
-        onboardingData4.setProducts(List.of(onboardedProduct4));
-
-        UserInstitutionResponse onboardingData3 = mockInstance(new UserInstitutionResponse(), 3, "setProducts");
-        OnboardedProductResponse onboardedProduct3 = new OnboardedProductResponse();
-        onboardedProduct3.setStatus(OnboardedProductState.ACTIVE);
-        onboardedProduct3.setRole(it.pagopa.selfcare.user.generated.openapi.v1.dto.PartyRole.OPERATOR);
-        onboardedProduct3.setProductId("prod-io");
-        onboardingData3.setProducts(List.of(onboardedProduct3));
-
-        List<UserInstitutionResponse> onBoardingInfo = List.of(onboardingData1, onboardingData2, onboardingData3, onboardingData3, onboardingData4);
-        ResponseEntity<List<UserInstitutionResponse>> responseEntity = mock(ResponseEntity.class);
-        when(responseEntity.getBody()).thenReturn(onBoardingInfo);
-        when(msUserApiClient._usersGet(null, null, null, List.of(productFilter), null, null, List.of(ACTIVE.name()), userId))
-                .thenReturn(responseEntity);
-
-        OnboardingsResponse onboardingsResponse = new OnboardingsResponse();
-        OnboardingResponse onboardingResponse = new OnboardingResponse();
-        onboardingResponse.setProductId(productFilter);
-        onboardingResponse.setStatus(ACTIVE.name());
-        onboardingsResponse.setOnboardings(List.of(onboardingResponse));
-        when(restClientMock.getOnboardings(onboardingData1.getInstitutionId(), productFilter))
-                .thenReturn(onboardingsResponse);
-        when(restClientMock.getOnboardings(onboardingData3.getInstitutionId(), productFilter))
-                .thenReturn(new OnboardingsResponse());
-        // When
-        Collection<InstitutionInfo> institutions = partyConnector.getInstitutionsByUser(productFilter, userId);
-        // Then
-        assertNotNull(institutions);
-        assertEquals(1, institutions.size());
-        Map<PartyRole, List<InstitutionInfo>> map = institutions.stream()
-                .collect(Collectors.groupingBy(InstitutionInfo::getUserRole));
-        List<InstitutionInfo> institutionInfos = map.get(PartyRole.OPERATOR);
-        assertNotNull(institutionInfos);
-        assertEquals(onboardingData1.getInstitutionId(), institutionInfos.get(0).getId());
-        assertEquals(onboardingData1.getInstitutionDescription(), institutionInfos.get(0).getDescription());
-        assertEquals(onboardedProduct1.getStatus().toString(), institutionInfos.get(0).getStatus());
-        assertEquals(onboardedProduct1.getRole().name(), institutionInfos.get(0).getUserRole().name());
-        institutionInfos = map.get(PartyRole.MANAGER);
-        assertNull(institutionInfos);
-        institutionInfos = map.get(PartyRole.SUB_DELEGATE);
-        assertNull(institutionInfos);
-        verify(msUserApiClient, times(1))
-                ._usersGet(null, null, null, List.of(productFilter), null, null, List.of(ACTIVE.name()), userId);
-        verify(restClientMock, times(1))
-                .getOnboardings(onboardingData1.getInstitutionId(), productFilter);
-        verify(restClientMock, times(2))
-                .getOnboardings(onboardingData3.getInstitutionId(), productFilter);
-        verifyNoMoreInteractions(restClientMock);
     }
 
     @Test
@@ -448,8 +299,9 @@ class PartyConnectorImplTest {
         when(responseEntity.getBody()).thenReturn(List.of());
         when(msUserApiClient._usersGet(null, null, null, null, null, null, List.of(ACTIVE.name()), null))
                 .thenReturn(responseEntity);
-        //when
-        Collection<InstitutionInfo> institutionInfos = partyConnector.getInstitutionsByUser(null, null);
+    // when
+    Collection<InstitutionInfo> institutionInfos =
+        partyConnector.getInstitutionsByUser(new Product(), null);
         //then
         assertNotNull(institutionInfos);
         assertTrue(institutionInfos.isEmpty());
