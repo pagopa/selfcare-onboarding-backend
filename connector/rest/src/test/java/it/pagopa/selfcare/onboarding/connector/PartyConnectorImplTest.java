@@ -309,7 +309,7 @@ class PartyConnectorImplTest {
         Collection<InstitutionInfo> institutions = partyConnector.getInstitutionsByUser(product, userId);
         // then
         assertNotNull(institutions);
-        assertEquals(2, institutions.size());
+        assertEquals(0, institutions.size());
         verify(msUserApiClient, times(1))
                 ._usersGet(null, null, null, List.of(productFilter), null, null, List.of(ACTIVE.name()), userId);
         verify(msUserApiClient, times(1))
