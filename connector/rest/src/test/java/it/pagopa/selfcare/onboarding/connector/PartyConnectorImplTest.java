@@ -286,7 +286,7 @@ class PartyConnectorImplTest {
         onboardingData2.setProducts(List.of(onboardedProduct2));
 
         UserInstitutionResponse onboardingDataPremium = mockInstance(new UserInstitutionResponse(), 4, "setProducts", "setInstitutionId");
-        onboardingDataPremium.setInstitutionId("premium");
+        onboardingDataPremium.setInstitutionId(onboardingData1.getInstitutionId());
         OnboardedProductResponse onboardedProductPremium = new OnboardedProductResponse();
         onboardedProductPremium.setStatus(OnboardedProductState.ACTIVE);
         onboardedProductPremium.setRole(it.pagopa.selfcare.user.generated.openapi.v1.dto.PartyRole.SUB_DELEGATE);

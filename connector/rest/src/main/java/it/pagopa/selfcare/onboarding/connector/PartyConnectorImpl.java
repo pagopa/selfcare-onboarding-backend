@@ -81,7 +81,7 @@ class PartyConnectorImpl implements PartyConnector {
         }
         if (Objects.nonNull(onboardingData.getInstitutionUpdate()) && Objects.nonNull(onboardingData.getInstitutionUpdate().getGeographicTaxonomies())) {
             institutionUpdate.setGeographicTaxonomyCodes(onboardingData.getInstitutionUpdate().getGeographicTaxonomies().stream()
-                    .map(GeographicTaxonomy::getCode).collect(Collectors.toList()));
+                    .map(GeographicTaxonomy::getCode).toList());
         }
         institutionUpdate.setRea(onboardingData.getInstitutionUpdate().getRea());
         institutionUpdate.setShareCapital(onboardingData.getInstitutionUpdate().getShareCapital());
@@ -103,7 +103,7 @@ class PartyConnectorImpl implements PartyConnector {
                     user.setRole(userInfo.getRole());
                     user.setProductRole(userInfo.getProductRole());
                     return user;
-                }).collect(Collectors.toList()));
+                }).toList());
         OnboardingContract onboardingContract = new OnboardingContract();
         onboardingContract.setPath(onboardingData.getContractPath());
         onboardingContract.setVersion(onboardingData.getContractVersion());
