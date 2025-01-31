@@ -8,10 +8,8 @@ import it.pagopa.selfcare.onboarding.connector.model.institutions.infocamere.Ins
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.GeographicTaxonomy;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.User;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.util.Collection;
 import java.util.List;
+import org.springframework.web.multipart.MultipartFile;
 
 public interface InstitutionService {
 
@@ -23,7 +21,7 @@ public interface InstitutionService {
 
     void onboardingPaAggregator(OnboardingData entity);
 
-    Collection<InstitutionInfo> getInstitutions(String productId, String userId);
+    List<InstitutionInfo> getInstitutions(String productId, String userId);
 
     List<Institution> getActiveOnboarding(String taxCode,String productId,String subunitCode);
 

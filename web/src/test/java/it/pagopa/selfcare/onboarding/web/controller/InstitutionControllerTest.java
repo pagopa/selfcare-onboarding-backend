@@ -251,7 +251,7 @@ class InstitutionControllerTest {
         //when
         MvcResult result = mvc.perform(MockMvcRequestBuilders
                         .get(BASE_URL)
-                        .queryParam("productFilter", productFilter)
+                        .queryParam("productId", productFilter)
                         .principal(mockPrincipal)
                         .contentType(APPLICATION_JSON_VALUE)
                         .accept(APPLICATION_JSON_VALUE))
