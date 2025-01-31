@@ -38,7 +38,6 @@ import it.pagopa.selfcare.user.generated.openapi.v1.dto.UserInstitutionResponse;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

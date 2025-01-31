@@ -203,7 +203,7 @@ class PartyConnectorImpl implements PartyConnector {
         InstitutionsResponse partyInstitutionResponse = restClient.getInstitutions(taxCode, subunitCode);
         List<Institution> result = partyInstitutionResponse.getInstitutions().stream()
                 .map(institutionMapper::toEntity)
-                .collect(Collectors.toList());
+                .toList();
         log.debug("getInstitution result = {}", result);
         log.trace("getInstitution end");
         return result;
@@ -241,7 +241,7 @@ class PartyConnectorImpl implements PartyConnector {
         OnboardingsResponse onboardings = restClient.getOnboardings(institutionId, productId);
         List<OnboardingResource> onboardingResources = onboardings.getOnboardings().stream()
                 .map(institutionMapper::toResource)
-                .collect(Collectors.toList());
+                .toList();
         log.debug("getOnboardings result = {}", onboardingResources);
         log.trace("getOnboardings end");
         return onboardingResources;

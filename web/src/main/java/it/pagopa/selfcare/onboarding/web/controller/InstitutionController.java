@@ -27,7 +27,6 @@ import java.security.Principal;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import javax.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -120,7 +119,7 @@ public class InstitutionController {
         List<GeographicTaxonomyResource> geographicTaxonomies = institutionService.getGeographicTaxonomyList(externalInstitutionId)
                 .stream()
                 .map(geographicTaxonomyMapper::toResource)
-                .collect(Collectors.toList());
+                .toList();
         log.debug("getInstitutionGeographicTaxonomy result = {}", geographicTaxonomies);
         log.trace("getInstitutionGeographicTaxonomy end");
         return geographicTaxonomies;
@@ -143,7 +142,7 @@ public class InstitutionController {
         List<GeographicTaxonomyResource> geographicTaxonomies = institutionService.getGeographicTaxonomyList(taxCode, subunitCode)
                 .stream()
                 .map(geographicTaxonomyMapper::toResource)
-                .collect(Collectors.toList());
+                .toList();
         log.debug("getGeographicTaxonomiesByTaxCodeAndSubunitCode result = {}", geographicTaxonomies);
         log.trace("getGeographicTaxonomiesByTaxCodeAndSubunitCode end");
         return geographicTaxonomies;
@@ -164,7 +163,7 @@ public class InstitutionController {
         List<InstitutionResource> institutionResources = institutionService.getInstitutions(childProductId, selfCareUser.getId())
                 .stream()
                 .map(InstitutionMapper::toResource)
-                .collect(Collectors.toList());
+                .toList();
         log.debug("getInstitutions result = {}", institutionResources);
         log.trace("getInstitutions end");
         return institutionResources;
