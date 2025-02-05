@@ -59,7 +59,7 @@ public interface InstitutionMapper {
         try {
             return model.getProducts().stream()
                     .filter(product -> Objects.nonNull(product.getRole()))
-                    .map(product -> PartyRole.valueOf(product.getRole().name()))
+                    .map(product -> PartyRole.valueOf(product.getRole()))
                     .reduce((role1,role2) -> Collections.min(List.of(role1, role2)))
                     .orElse(null);
         } catch (IllegalArgumentException e) {

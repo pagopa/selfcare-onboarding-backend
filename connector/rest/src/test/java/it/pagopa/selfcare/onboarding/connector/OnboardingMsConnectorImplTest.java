@@ -470,14 +470,14 @@ class OnboardingMsConnectorImplTest {
         OnboardingResponse resource = new OnboardingResponse();
         resource.setInstitution(new InstitutionResponse());
         resource.setProductId("productId");
-        when(msOnboardingSupportApiClient._onboardingInstitutionUsingGET(origin, originId, OnboardingStatus.COMPLETED, null, null))
+        when(msOnboardingSupportApiClient._onboardingInstitutionUsingGETV2(origin, originId, OnboardingStatus.COMPLETED, null, null))
                 .thenReturn(ResponseEntity.ok(List.of(resource)));
         // when
         final Executable executable = () -> onboardingMsConnector.getByFilters(productId, null, origin, originId, null);
         // then
         assertDoesNotThrow(executable);
         verify(msOnboardingSupportApiClient, times(1))
-                ._onboardingInstitutionUsingGET(origin, originId, OnboardingStatus.COMPLETED, null, null);
+                ._onboardingInstitutionUsingGETV2(origin, originId, OnboardingStatus.COMPLETED, null, null);
         verifyNoMoreInteractions(msOnboardingSupportApiClient);
     }
 
@@ -540,7 +540,7 @@ class OnboardingMsConnectorImplTest {
         resource.setInstitution(institution);
 
         resource.setProductId("productId");
-        when(msOnboardingSupportApiClient._onboardingInstitutionUsingGET(origin, originId, OnboardingStatus.COMPLETED, null, null))
+        when(msOnboardingSupportApiClient._onboardingInstitutionUsingGETV2(origin, originId, OnboardingStatus.COMPLETED, null, null))
                 .thenReturn(ResponseEntity.ok(List.of(resource)));
         // when
         List<OnboardingData> result = onboardingMsConnector.getByFilters(productId, null, origin, originId, null);
@@ -548,7 +548,7 @@ class OnboardingMsConnectorImplTest {
         assertNotNull(result);
         assertTrue(result.isEmpty());
         verify(msOnboardingSupportApiClient, times(1))
-                ._onboardingInstitutionUsingGET(origin, originId, OnboardingStatus.COMPLETED, null, null);
+                ._onboardingInstitutionUsingGETV2(origin, originId, OnboardingStatus.COMPLETED, null, null);
         verifyNoMoreInteractions(msOnboardingSupportApiClient);
     }
 
@@ -564,7 +564,7 @@ class OnboardingMsConnectorImplTest {
         resource.setInstitution(institution);
 
         resource.setProductId("productId");
-        when(msOnboardingSupportApiClient._onboardingInstitutionUsingGET(origin, originId, OnboardingStatus.COMPLETED, null, null))
+        when(msOnboardingSupportApiClient._onboardingInstitutionUsingGETV2(origin, originId, OnboardingStatus.COMPLETED, null, null))
                 .thenReturn(ResponseEntity.ok(List.of(resource)));
         // when
         List<OnboardingData> result = onboardingMsConnector.getByFilters(productId, null, origin, originId, null);
@@ -572,7 +572,7 @@ class OnboardingMsConnectorImplTest {
         assertNotNull(result);
         assertTrue(result.isEmpty());
         verify(msOnboardingSupportApiClient, times(1))
-                ._onboardingInstitutionUsingGET(origin, originId, OnboardingStatus.COMPLETED, null, null);
+                ._onboardingInstitutionUsingGETV2(origin, originId, OnboardingStatus.COMPLETED, null, null);
         verifyNoMoreInteractions(msOnboardingSupportApiClient);
     }
 

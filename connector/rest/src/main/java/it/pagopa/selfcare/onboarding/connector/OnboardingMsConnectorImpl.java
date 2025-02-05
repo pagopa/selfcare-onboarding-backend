@@ -178,7 +178,7 @@ public class OnboardingMsConnectorImpl implements OnboardingMsConnector {
 
     @Override
     public List<OnboardingData> getByFilters(String productId, String taxCode, String origin, String originId, String subunitCode) {
-        List<OnboardingResponse> result = msOnboardingSupportApiClient._onboardingInstitutionUsingGET(origin, originId, OnboardingStatus.COMPLETED, subunitCode, taxCode).getBody();
+        List<OnboardingResponse> result = msOnboardingSupportApiClient._onboardingInstitutionUsingGETV2(origin, originId, OnboardingStatus.COMPLETED, subunitCode, taxCode).getBody();
         return Objects.nonNull(result) ? result.stream()
                 // TODO this filter should be into query
                 .filter(onboardingResponse -> {

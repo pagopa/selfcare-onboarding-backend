@@ -3816,7 +3816,7 @@
           "role" : {
             "type" : "string",
             "description" : "User's role",
-            "enum" : [ "ADMIN_EA", "DELEGATE", "MANAGER", "OPERATOR", "SUB_DELEGATE" ]
+            "enum" : [ "ADMIN_EA", "ADMIN_EA_IO", "DELEGATE", "MANAGER", "OPERATOR", "SUB_DELEGATE" ]
           },
           "surname" : {
             "type" : "string",
@@ -4672,7 +4672,7 @@
           "role" : {
             "type" : "string",
             "description" : "User's role",
-            "enum" : [ "ADMIN_EA", "DELEGATE", "MANAGER", "OPERATOR", "SUB_DELEGATE" ]
+            "enum" : [ "ADMIN_EA", "ADMIN_EA_IO", "DELEGATE", "MANAGER", "OPERATOR", "SUB_DELEGATE" ]
           },
           "surname" : {
             "type" : "string",

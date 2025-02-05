@@ -116,7 +116,7 @@ class PartyConnectorImpl implements PartyConnector {
     @Override
     public Collection<InstitutionInfo> getInstitutionsByUser(String productId, String userId) {
         log.trace("getInstitutionsByUser start");
-        List<UserInstitutionResponse> userInstitutionResponses = userApiClient._usersGet(null, null, null, Optional.ofNullable(productId).map(List::of).orElse(null), null, null, List.of(ACTIVE.name()), userId).getBody();
+        List<UserInstitutionResponse> userInstitutionResponses = userApiClient._retrievePaginatedAndFilteredUser(null, null, null, Optional.ofNullable(productId).map(List::of).orElse(null), null, null, List.of(ACTIVE.name()), userId).getBody();
         Collection<InstitutionInfo> result = Optional.ofNullable(userInstitutionResponses)
                 .map(userInstitutions -> userInstitutions.stream()
                     .filter(userInstitutionResponse -> Objects.isNull(productId) || userInstitutionResponse.getProducts().stream()
