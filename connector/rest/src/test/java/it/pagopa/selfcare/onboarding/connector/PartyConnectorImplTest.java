@@ -174,7 +174,7 @@ class PartyConnectorImplTest {
     }
 
     @Test
-    void onboardOrganization_nullLocation(){
+    void onboardOrganization_nullLocation() {
         // given
         OnboardingData onboardingData = mockInstance(new OnboardingData(), "setLocation");
         Billing billing = mockInstance(new Billing());
@@ -772,7 +772,6 @@ class PartyConnectorImplTest {
     }
 
 
-
     @Test
     void getInstitution_nullInstitutionId() {
         //given
@@ -910,7 +909,7 @@ class PartyConnectorImplTest {
         assertEquals(institutionResponse.getSupportPhone(), result.getAssistanceContacts().getSupportPhone());
         final ArgumentCaptor<InstitutionSeed> argumentCaptor = ArgumentCaptor.forClass(InstitutionSeed.class);
         verify(restClientMock, times(1))
-                .createInstitution( argumentCaptor.capture());
+                .createInstitution(argumentCaptor.capture());
         final InstitutionSeed institutionSeed = argumentCaptor.getValue();
         assertEquals(onboardingData.getInstitutionUpdate().getDescription(), institutionSeed.getDescription());
         assertEquals(onboardingData.getInstitutionUpdate().getDigitalAddress(), institutionSeed.getDigitalAddress());
@@ -931,7 +930,7 @@ class PartyConnectorImplTest {
     }
 
     @Test
-    void createInstitution_nullLocation(){
+    void createInstitution_nullLocation() {
         //given
         final OnboardingData onboardingData = mockInstance(new OnboardingData());
         onboardingData.setLocation(null);
@@ -954,7 +953,7 @@ class PartyConnectorImplTest {
         assertEquals(institutionResponse.getSupportPhone(), result.getAssistanceContacts().getSupportPhone());
         final ArgumentCaptor<InstitutionSeed> argumentCaptor = ArgumentCaptor.forClass(InstitutionSeed.class);
         verify(restClientMock, times(1))
-                .createInstitution( argumentCaptor.capture());
+                .createInstitution(argumentCaptor.capture());
         final InstitutionSeed institutionSeed = argumentCaptor.getValue();
         assertEquals(onboardingData.getInstitutionUpdate().getDescription(), institutionSeed.getDescription());
         assertEquals(onboardingData.getInstitutionUpdate().getDigitalAddress(), institutionSeed.getDigitalAddress());
@@ -1058,7 +1057,7 @@ class PartyConnectorImplTest {
         InstitutionInfo institutionInfo = partyConnector.getInstitutionBillingData(externalId, productId);
         //then
         assertNotNull(institutionInfo);
-        checkNotNullFields(institutionInfo, "status", "category", "userRole", "institutionLocation");
+        checkNotNullFields(institutionInfo, "status", "category", "userRole", "institutionLocation", "paymentServiceProvider", "gpuData", "dataProtectionOfficer");
         reflectionEqualsByName(billingDataResponseMock, institutionInfo);
         verify(restClientMock, times(1))
                 .getInstitutionBillingData(externalId, productId);
@@ -1107,6 +1106,7 @@ class PartyConnectorImplTest {
                 .verifyOnboarding(externalInstitutionId, productId);
         verifyNoMoreInteractions(restClientMock);
     }
+
     @Test
     void verifyOnboardingSubunitCode() {
         // given
@@ -1121,9 +1121,10 @@ class PartyConnectorImplTest {
         // then
         assertDoesNotThrow(executable);
         verify(restClientMock, times(1))
-        ._verifyOnboardingInfoByFiltersUsingHEAD(productId, externalId, taxCode, origin, originId, subunitCode);
+                ._verifyOnboardingInfoByFiltersUsingHEAD(productId, externalId, taxCode, origin, originId, subunitCode);
         verifyNoMoreInteractions(restClientMock);
     }
+
     @Test
     void getInstitutionsByTaxCodeAndSubunitCode_nullTaxCode() {
         // given
@@ -1135,6 +1136,7 @@ class PartyConnectorImplTest {
         assertEquals(REQUIRED_INSTITUTION_TAXCODE_MESSAGE, e.getMessage());
         verifyNoInteractions(restClientMock);
     }
+
     @Test
     void getInstitutionsByTaxCodeAndSubunitCode() {
         // given
@@ -1151,6 +1153,7 @@ class PartyConnectorImplTest {
                 .getInstitutions(taxCode, subunitCode);
         verifyNoMoreInteractions(restClientMock);
     }
+
     @Test
     void createInstitutionFromIpa_nullTaxCode() {
         // given
