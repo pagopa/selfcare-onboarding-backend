@@ -48,10 +48,10 @@
             "type" : "string"
           }
         }, {
-          "name" : "productFilter",
+          "name" : "productId",
           "in" : "query",
           "description" : "A product to filter the institutions based on whether the institution has an ACTIVE onboarding on the specified product.",
-          "required" : false,
+          "required" : true,
           "style" : "form",
           "schema" : {
             "type" : "string"

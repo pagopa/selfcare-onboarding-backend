@@ -1,5 +1,7 @@
 package it.pagopa.selfcare.onboarding.connector;
 
+import static it.pagopa.selfcare.onboarding.connector.model.RelationshipState.ACTIVE;
+
 import it.pagopa.selfcare.commons.base.logging.LogUtils;
 import it.pagopa.selfcare.onboarding.connector.api.PartyConnector;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipInfo;
@@ -15,18 +17,16 @@ import it.pagopa.selfcare.onboarding.connector.rest.client.MsUserApiClient;
 import it.pagopa.selfcare.onboarding.connector.rest.client.PartyProcessRestClient;
 import it.pagopa.selfcare.onboarding.connector.rest.mapper.InstitutionMapper;
 import it.pagopa.selfcare.onboarding.connector.rest.model.*;
+import it.pagopa.selfcare.product.entity.Product;
 import it.pagopa.selfcare.user.generated.openapi.v1.dto.UserInstitutionResponse;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.owasp.encoder.Encode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
-
-import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
-import static it.pagopa.selfcare.onboarding.connector.model.RelationshipState.ACTIVE;
 
 @Service
 @Slf4j
@@ -38,7 +38,6 @@ class PartyConnectorImpl implements PartyConnector {
     protected static final String REQUIRED_INSTITUTION_TAXCODE_MESSAGE = "An Institution tax code is required";
     private final PartyProcessRestClient restClient;
     private final InstitutionMapper institutionMapper;
-
     private final MsUserApiClient userApiClient;
 
     static final Function<RelationshipInfo, UserInfo> RELATIONSHIP_INFO_TO_USER_INFO_FUNCTION = relationshipInfo -> {
@@ -82,7 +81,7 @@ class PartyConnectorImpl implements PartyConnector {
         }
         if (Objects.nonNull(onboardingData.getInstitutionUpdate()) && Objects.nonNull(onboardingData.getInstitutionUpdate().getGeographicTaxonomies())) {
             institutionUpdate.setGeographicTaxonomyCodes(onboardingData.getInstitutionUpdate().getGeographicTaxonomies().stream()
-                    .map(GeographicTaxonomy::getCode).collect(Collectors.toList()));
+                    .map(GeographicTaxonomy::getCode).toList());
         }
         institutionUpdate.setRea(onboardingData.getInstitutionUpdate().getRea());
         institutionUpdate.setShareCapital(onboardingData.getInstitutionUpdate().getShareCapital());
@@ -104,7 +103,7 @@ class PartyConnectorImpl implements PartyConnector {
                     user.setRole(userInfo.getRole());
                     user.setProductRole(userInfo.getProductRole());
                     return user;
-                }).collect(Collectors.toList()));
+                }).toList());
         OnboardingContract onboardingContract = new OnboardingContract();
         onboardingContract.setPath(onboardingData.getContractPath());
         onboardingContract.setVersion(onboardingData.getContractVersion());
@@ -114,36 +113,32 @@ class PartyConnectorImpl implements PartyConnector {
     }
 
     @Override
-    public Collection<InstitutionInfo> getInstitutionsByUser(String productId, String userId) {
+    public List<InstitutionInfo> getInstitutionsByUser(Product product, String userId) {
         log.trace("getInstitutionsByUser start");
-        List<UserInstitutionResponse> userInstitutionResponses = userApiClient._usersGet(null, null, null, Optional.ofNullable(productId).map(List::of).orElse(null), null, null, List.of(ACTIVE.name()), userId).getBody();
-        Collection<InstitutionInfo> result = Optional.ofNullable(userInstitutionResponses)
-                .map(userInstitutions -> userInstitutions.stream()
-                    .filter(userInstitutionResponse -> Objects.isNull(productId) || userInstitutionResponse.getProducts().stream()
-                            .anyMatch(product -> verifyFilter(product.getProductId(),userInstitutionResponse.getInstitutionId(), productId)))
+        final String parentProductId = product.getParentId();
+        List<InstitutionInfo> result;
+
+        if (Objects.nonNull(parentProductId)) {
+            List<UserInstitutionResponse> userInstitutions = userApiClient._usersGet(null, null, null, Optional.of(parentProductId).map(List::of).orElse(null), null, null, List.of(ACTIVE.name()), userId).getBody();
+            List<UserInstitutionResponse> userInstitutionForChildProduct = userApiClient._usersGet(null, null, null, Optional.ofNullable(product.getId()).map(List::of).orElse(null), null, null, List.of(ACTIVE.name()), null).getBody();
+
+            Set<String> institutionIdsForChildProduct = Objects.requireNonNull(userInstitutionForChildProduct).stream()
+                    .map(UserInstitutionResponse::getInstitutionId)
+                    .collect(Collectors.toSet());
+            result = Objects.requireNonNull(userInstitutions).stream()
+                    .filter(u -> !institutionIdsForChildProduct.contains(u.getInstitutionId()))
                     .map(institutionMapper::toInstitutionInfo)
-                    .toList())
-                .orElse(List.of());
+                    .toList();
+        } else {
+            List<UserInstitutionResponse> userInstitutions = userApiClient._usersGet(null, null, null, Optional.ofNullable(product.getId()).map(List::of).orElse(null), null, null, List.of(ACTIVE.name()), userId).getBody();
+            result = Objects.requireNonNull(userInstitutions).stream()
+                    .map(institutionMapper::toInstitutionInfo)
+                    .toList();
+        }
 
         log.debug("getInstitutionsByUser result = {}", result);
         log.trace("getInstitutionsByUser end");
         return result;
-    }
-
-    private Boolean verifyFilter(String userInstitutionProduct, String institutionId, String productFilter) {
-
-        if (productFilter.contains("premium")) {
-            if (userInstitutionProduct.equals(productFilter.split("-premium")[0])) {
-                OnboardingsResponse onboardings = restClient.getOnboardings(institutionId, productFilter);
-                return Optional.ofNullable(onboardings.getOnboardings())
-                        .map(items -> items.stream()
-                        .anyMatch(onboarding -> onboarding.getProductId().equals(productFilter)
-                                && ACTIVE.name().equals(onboarding.getStatus())))
-                        .orElse(false);
-            }
-        }
-
-        return userInstitutionProduct.equals(productFilter);
     }
 
     @Override
@@ -208,7 +203,7 @@ class PartyConnectorImpl implements PartyConnector {
         InstitutionsResponse partyInstitutionResponse = restClient.getInstitutions(taxCode, subunitCode);
         List<Institution> result = partyInstitutionResponse.getInstitutions().stream()
                 .map(institutionMapper::toEntity)
-                .collect(Collectors.toList());
+                .toList();
         log.debug("getInstitution result = {}", result);
         log.trace("getInstitution end");
         return result;
@@ -246,7 +241,7 @@ class PartyConnectorImpl implements PartyConnector {
         OnboardingsResponse onboardings = restClient.getOnboardings(institutionId, productId);
         List<OnboardingResource> onboardingResources = onboardings.getOnboardings().stream()
                 .map(institutionMapper::toResource)
-                .collect(Collectors.toList());
+                .toList();
         log.debug("getOnboardings result = {}", onboardingResources);
         log.trace("getOnboardings end");
         return onboardingResources;
