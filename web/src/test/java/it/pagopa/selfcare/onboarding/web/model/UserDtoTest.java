@@ -1,9 +1,8 @@
 package it.pagopa.selfcare.onboarding.web.model;
 
-import it.pagopa.selfcare.commons.utils.TestUtils;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import it.pagopa.selfcare.commons.utils.TestUtils;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
@@ -16,8 +15,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 class UserDtoTest {
 
@@ -29,7 +28,6 @@ class UserDtoTest {
         ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
         validator = validatorFactory.getValidator();
     }
-
 
     @Test
     void validateNullFields() {
@@ -50,7 +48,7 @@ class UserDtoTest {
                     Class<? extends Annotation> annotationToCheck = toCheckMap.get(violation.getPropertyPath().toString());
                     return !violation.getConstraintDescriptor().getAnnotation().annotationType().equals(annotationToCheck);
                 })
-                .collect(Collectors.toList());
+                .toList();
         assertTrue(filteredViolations.isEmpty());
     }
 

@@ -57,7 +57,7 @@ class SwaggerConfigTest {
     void swaggerSpringPlugin() throws Exception {
         MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
         mockMvc.perform(MockMvcRequestBuilders.get("/v3/api-docs").accept(MediaType.APPLICATION_JSON))
-                .andDo((result) -> {
+                .andDo(result -> {
                     assertNotNull(result);
                     assertNotNull(result.getResponse());
                     final String content = result.getResponse().getContentAsString();

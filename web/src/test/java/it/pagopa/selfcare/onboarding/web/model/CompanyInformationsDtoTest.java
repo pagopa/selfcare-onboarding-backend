@@ -16,7 +16,6 @@ class CompanyInformationsDtoTest {
 
     private Validator validator;
 
-
     @BeforeEach
     void setUp() {
         ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
