@@ -40,10 +40,10 @@ import it.pagopa.selfcare.product.entity.ProductRoleInfo;
 import it.pagopa.selfcare.product.entity.ProductStatus;
 import it.pagopa.selfcare.product.exception.ProductNotFoundException;
 import it.pagopa.selfcare.product.service.ProductService;
+import jakarta.validation.ValidationException;
 import java.time.OffsetDateTime;
 import java.util.*;
 import java.util.stream.Stream;
-import javax.validation.ValidationException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -58,19 +58,6 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.multipart.MultipartFile;
-
-import jakarta.validation.ValidationException;
-import java.time.OffsetDateTime;
-import java.util.*;
-import java.util.stream.Stream;
-
-import static it.pagopa.selfcare.commons.utils.TestUtils.mockInstance;
-import static it.pagopa.selfcare.onboarding.connector.model.user.User.Fields.*;
-import static it.pagopa.selfcare.onboarding.core.InstitutionServiceImpl.*;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class InstitutionServiceImplTest {

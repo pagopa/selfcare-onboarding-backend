@@ -42,7 +42,7 @@ import it.pagopa.selfcare.product.entity.ProductStatus;
 import it.pagopa.selfcare.product.exception.ProductNotFoundException;
 import it.pagopa.selfcare.product.service.ProductService;
 import java.util.*;
-import javax.validation.ValidationException;
+import jakarta.validation.ValidationException;
 import lombok.extern.slf4j.Slf4j;
 import org.owasp.encoder.Encode;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,12 +50,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
-
-import jakarta.validation.ValidationException;
-import java.util.*;
-
-import static io.netty.util.internal.StringUtil.isNullOrEmpty;
-import static it.pagopa.selfcare.onboarding.connector.model.user.User.Fields.*;
 
 @Slf4j
 @Service
