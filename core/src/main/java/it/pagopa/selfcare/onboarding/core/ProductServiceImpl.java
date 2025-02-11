@@ -2,14 +2,15 @@ package it.pagopa.selfcare.onboarding.core;
 
 import it.pagopa.selfcare.onboarding.common.InstitutionType;
 import it.pagopa.selfcare.onboarding.connector.api.ProductsConnector;
+import it.pagopa.selfcare.onboarding.connector.exceptions.ResourceNotFoundException;
 import it.pagopa.selfcare.product.entity.Product;
 import it.pagopa.selfcare.product.entity.ProductStatus;
+import it.pagopa.selfcare.product.exception.ProductNotFoundException;
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
-
-import java.util.List;
 
 @Slf4j
 @Service
@@ -27,10 +28,14 @@ public class ProductServiceImpl implements ProductService {
         log.trace("getProduct start");
         log.debug("getProduct id = {}, institutionType = {}", id, institutionType);
         Assert.notNull(id, "ProductId is required");
-        Product product = productsConnector.getProduct(id, institutionType);
-        log.debug("getProduct result = {}", product);
-        log.trace("getProduct end");
-        return product;
+        try {
+            Product product = productsConnector.getProduct(id, institutionType);
+            log.debug("getProduct result = {}", product);
+            log.trace("getProduct end");
+            return product;
+        } catch (ProductNotFoundException e) {
+            throw new ResourceNotFoundException("No product found with id " + id);
+        }
     }
 
     @Override

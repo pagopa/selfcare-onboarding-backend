@@ -1,5 +1,13 @@
 package it.pagopa.selfcare.onboarding.core;
 
+import static it.pagopa.selfcare.commons.utils.TestUtils.mockInstance;
+import static it.pagopa.selfcare.onboarding.connector.model.user.User.Fields.*;
+import static it.pagopa.selfcare.onboarding.core.InstitutionServiceImpl.*;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.*;
+
 import it.pagopa.selfcare.commons.base.utils.Origin;
 import it.pagopa.selfcare.commons.base.utils.ProductId;
 import it.pagopa.selfcare.onboarding.common.InstitutionType;
@@ -30,6 +38,12 @@ import it.pagopa.selfcare.product.entity.Product;
 import it.pagopa.selfcare.product.entity.ProductRole;
 import it.pagopa.selfcare.product.entity.ProductRoleInfo;
 import it.pagopa.selfcare.product.entity.ProductStatus;
+import it.pagopa.selfcare.product.exception.ProductNotFoundException;
+import it.pagopa.selfcare.product.service.ProductService;
+import java.time.OffsetDateTime;
+import java.util.*;
+import java.util.stream.Stream;
+import javax.validation.ValidationException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -66,6 +80,9 @@ class InstitutionServiceImplTest {
 
     @Mock
     private PartyConnector partyConnectorMock;
+
+    @Mock
+    private ProductService productService;
 
     @Mock
     private OnboardingMsConnector onboardingMsConnector;
@@ -1060,6 +1077,19 @@ class InstitutionServiceImplTest {
                 .getInstitutionsByUser(null, userId);
         verifyNoMoreInteractions(partyConnectorMock);
         verifyNoInteractions(productsConnectorMock, userConnectorMock);
+    }
+
+    @Test
+    void getInstitutions_ProductNotFound() {
+        //given
+        final String userId = "userId";
+        //when
+        when(productService.getProduct("prod-io")).thenThrow(ProductNotFoundException.class);
+        // then
+        Executable executable = () -> institutionService.getInstitutions("prod-io", userId);
+        //then
+        ResourceNotFoundException e = Assertions.assertThrows(ResourceNotFoundException.class, executable);
+        Assertions.assertEquals("No product found with id prod-io", e.getMessage());
     }
 
     @Test

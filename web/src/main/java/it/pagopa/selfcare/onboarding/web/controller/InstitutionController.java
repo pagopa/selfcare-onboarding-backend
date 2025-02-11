@@ -1,5 +1,10 @@
 package it.pagopa.selfcare.onboarding.web.controller;
 
+import static it.pagopa.selfcare.commons.base.utils.ProductId.PROD_FD;
+import static it.pagopa.selfcare.commons.base.utils.ProductId.PROD_FD_GARANTITO;
+import static org.springframework.http.MediaType.APPLICATION_PROBLEM_JSON_VALUE;
+import static org.springframework.web.bind.annotation.RequestMethod.HEAD;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -18,6 +23,11 @@ import it.pagopa.selfcare.onboarding.connector.model.institutions.infocamere.Ins
 import it.pagopa.selfcare.onboarding.core.InstitutionService;
 import it.pagopa.selfcare.onboarding.web.model.*;
 import it.pagopa.selfcare.onboarding.web.model.mapper.*;
+import java.security.Principal;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import javax.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.owasp.encoder.Encode;
@@ -121,7 +131,7 @@ public class InstitutionController {
         List<GeographicTaxonomyResource> geographicTaxonomies = institutionService.getGeographicTaxonomyList(externalInstitutionId)
                 .stream()
                 .map(geographicTaxonomyMapper::toResource)
-                .collect(Collectors.toList());
+                .toList();
         log.debug("getInstitutionGeographicTaxonomy result = {}", geographicTaxonomies);
         log.trace("getInstitutionGeographicTaxonomy end");
         return geographicTaxonomies;
@@ -144,7 +154,7 @@ public class InstitutionController {
         List<GeographicTaxonomyResource> geographicTaxonomies = institutionService.getGeographicTaxonomyList(taxCode, subunitCode)
                 .stream()
                 .map(geographicTaxonomyMapper::toResource)
-                .collect(Collectors.toList());
+                .toList();
         log.debug("getGeographicTaxonomiesByTaxCodeAndSubunitCode result = {}", geographicTaxonomies);
         log.trace("getGeographicTaxonomiesByTaxCodeAndSubunitCode end");
         return geographicTaxonomies;
@@ -161,10 +171,10 @@ public class InstitutionController {
         JwtAuthenticationToken jwtAuthenticationToken = (JwtAuthenticationToken) principal;
         SelfCareUser selfCareUser = (SelfCareUser) jwtAuthenticationToken.getPrincipal();
 
-        List<InstitutionResource> institutionResources = institutionService.getInstitutions(productFilter, selfCareUser.getId())
+        List<InstitutionResource> institutionResources = institutionService.getInstitutions(childProductId, selfCareUser.getId())
                 .stream()
                 .map(InstitutionMapper::toResource)
-                .collect(Collectors.toList());
+                .toList();
         log.debug("getInstitutions result = {}", institutionResources);
         log.trace("getInstitutions end");
         return institutionResources;
@@ -276,7 +286,6 @@ public class InstitutionController {
 
     /**
      * @param externalInstitutionId
-     * @return
      * @deprecated [reference SELC-2815]
      */
     @Deprecated(forRemoval = true)
