@@ -81,7 +81,7 @@ public class TokenV2Controller {
      */
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @ApiOperation(value = "${swagger.tokens.completeOnboardingUsers}", notes = "${swagger.tokens.completeOnboardingUsers}")
-    @PostMapping(value = "/{onboardingId}/completeOnboardingUsers")
+    @PostMapping(value = "/{onboardingId}/complete-onboarding-users")
     public ResponseEntity<Void> completeOnboardingUsers(@ApiParam("${swagger.tokens.onboardingId}")
                                          @PathVariable(value = "onboardingId") String onboardingId,
                                          @RequestPart MultipartFile contract) {
