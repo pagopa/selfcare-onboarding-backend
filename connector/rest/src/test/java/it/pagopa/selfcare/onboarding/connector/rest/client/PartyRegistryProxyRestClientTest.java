@@ -1,5 +1,9 @@
 package it.pagopa.selfcare.onboarding.connector.rest.client;
 
+import static it.pagopa.selfcare.commons.utils.TestUtils.mockInstance;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import it.pagopa.selfcare.commons.connector.rest.BaseFeignRestClientTest;
 import it.pagopa.selfcare.commons.connector.rest.RestTestUtils;
@@ -13,16 +17,11 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.commons.httpclient.HttpClientConfiguration;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.support.TestPropertySourceUtils;
-
-import static it.pagopa.selfcare.commons.utils.TestUtils.mockInstance;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @TestPropertySource(
         locations = "classpath:config/party-registry-proxy-rest-client.properties",
@@ -33,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         })
 @ContextConfiguration(
         initializers = PartyRegistryProxyRestClientTest.RandomPortInitializer.class,
-        classes = {PartyRegistryProxyRestClientTestConfig.class, HttpClientConfiguration.class})
+        classes = {PartyRegistryProxyRestClientTestConfig.class})
 class PartyRegistryProxyRestClientTest extends BaseFeignRestClientTest {
 
     @Order(1)

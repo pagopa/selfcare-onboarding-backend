@@ -1,4 +1,4 @@
-FROM maven@sha256:dcfe7934d3780beda6e1f0f641bc7db3fa9b8818899981f6eddae052c78394c7
+FROM maven@sha256:f9bde890aa2cea7e6c1d6480bead88ed07f5bf29ab0a76289553e5c9895d682b
 ADD https://github.com/microsoft/ApplicationInsights-Java/releases/download/3.2.11/applicationinsights-agent-3.2.11.jar /applicationinsights-agent.jar
 VOLUME /tmp
 COPY target/*.jar app.jar

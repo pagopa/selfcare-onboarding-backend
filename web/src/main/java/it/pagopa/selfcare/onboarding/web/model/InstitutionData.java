@@ -4,7 +4,7 @@ import io.swagger.annotations.ApiModelProperty;
 import it.pagopa.selfcare.commons.base.utils.InstitutionType;
 import lombok.Data;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 @Data
 public class InstitutionData {

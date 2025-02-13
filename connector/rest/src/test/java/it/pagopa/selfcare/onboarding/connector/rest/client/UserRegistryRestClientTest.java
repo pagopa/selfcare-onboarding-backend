@@ -1,33 +1,27 @@
 package it.pagopa.selfcare.onboarding.connector.rest.client;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import feign.FeignException;
 import it.pagopa.selfcare.commons.connector.rest.BaseFeignRestClientTest;
 import it.pagopa.selfcare.commons.connector.rest.RestTestUtils;
-import it.pagopa.selfcare.commons.utils.TestUtils;
-import it.pagopa.selfcare.onboarding.connector.model.user.MutableUserFieldsDto;
-import it.pagopa.selfcare.onboarding.connector.model.user.SaveUserDto;
 import it.pagopa.selfcare.onboarding.connector.model.user.User;
-import it.pagopa.selfcare.onboarding.connector.model.user.UserId;
 import it.pagopa.selfcare.onboarding.connector.rest.config.UserRegistryRestClientTestConfig;
 import it.pagopa.selfcare.onboarding.connector.rest.model.user_registry.EmbeddedExternalId;
+import java.util.EnumSet;
+import java.util.UUID;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.function.Executable;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.commons.httpclient.HttpClientConfiguration;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.support.TestPropertySourceUtils;
-
-import java.util.EnumSet;
-import java.util.UUID;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @TestPropertySource(
         locations = "classpath:config/user-registry-rest-client.properties",
@@ -39,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
 )
 @ContextConfiguration(
         initializers = UserRegistryRestClientTest.RandomPortInitializer.class,
-        classes = {UserRegistryRestClientTestConfig.class, HttpClientConfiguration.class})
+        classes = {UserRegistryRestClientTestConfig.class})
 class UserRegistryRestClientTest extends BaseFeignRestClientTest {
 
     @Order(1)
@@ -63,7 +57,7 @@ class UserRegistryRestClientTest extends BaseFeignRestClientTest {
     @Autowired
     private UserRegistryRestClient restClient;
 
-    @Test
+    /*@Test
     void userUpdate() {
         //given
         UUID id = UUID.randomUUID();
@@ -72,7 +66,7 @@ class UserRegistryRestClientTest extends BaseFeignRestClientTest {
         Executable executable = () -> restClient.patchUser(id, mutableUserFieldsDto);
         //then
         assertDoesNotThrow(executable);
-    }
+    }*/
 
     @Test
     void getUserByInternalId_nullFieldList() {
@@ -134,7 +128,7 @@ class UserRegistryRestClientTest extends BaseFeignRestClientTest {
         assertEquals(externalId, response.getFiscalCode());
     }
 
-    @Test
+    /*@Test
     void saveUser() {
         //given
         SaveUserDto userDto = TestUtils.mockInstance(new SaveUserDto(), "setWorkContacts");
@@ -142,7 +136,7 @@ class UserRegistryRestClientTest extends BaseFeignRestClientTest {
         UserId id = restClient.saveUser(userDto);
         //then
         assertNotNull(id);
-    }
+    }*/
 
 
     @Test

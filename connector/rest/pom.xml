@@ -5,7 +5,7 @@
     <parent>
         <artifactId>selc-onboarding-connector</artifactId>
         <groupId>it.pagopa.selfcare</groupId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>0.1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -28,10 +28,6 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>io.github.openfeign</groupId>
-            <artifactId>feign-okhttp</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.openapitools</groupId>
             <artifactId>jackson-databind-nullable</artifactId>
             <version>0.2.4</version>
@@ -39,6 +35,11 @@
         <dependency>
             <groupId>io.github.resilience4j</groupId>
             <artifactId>resilience4j-spring-boot2</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.github.openfeign</groupId>
+            <artifactId>feign-httpclient</artifactId>
+            <version>12.3</version>
         </dependency>
     </dependencies>
 
@@ -63,6 +64,7 @@
                             <generateApiTests>false</generateApiTests>
                             <generateModelTests>false</generateModelTests>
                             <configOptions>
+                                <useSpringBoot3>true</useSpringBoot3>
                                 <generateForOpenFeign>true</generateForOpenFeign>
                                 <basePackage>${project.groupId}.core.generated.openapi.v1</basePackage>
                                 <modelPackage>${project.groupId}.core.generated.openapi.v1.dto</modelPackage>
@@ -94,6 +96,7 @@
                             <generateApiTests>false</generateApiTests>
                             <generateModelTests>false</generateModelTests>
                             <configOptions>
+                                <useSpringBoot3>true</useSpringBoot3>
                                 <generateForOpenFeign>true</generateForOpenFeign>
                                 <basePackage>${project.groupId}.onboarding.generated.openapi.v1</basePackage>
                                 <modelPackage>${project.groupId}.onboarding.generated.openapi.v1.dto</modelPackage>
@@ -125,6 +128,7 @@
                             <generateApiTests>false</generateApiTests>
                             <generateModelTests>false</generateModelTests>
                             <configOptions>
+                                <useSpringBoot3>true</useSpringBoot3>
                                 <generateForOpenFeign>true</generateForOpenFeign>
                                 <basePackage>${project.groupId}.user.generated.openapi.v1</basePackage>
                                 <modelPackage>${project.groupId}.user.generated.openapi.v1.dto</modelPackage>
@@ -156,6 +160,7 @@
                             <generateApiTests>false</generateApiTests>
                             <generateModelTests>false</generateModelTests>
                             <configOptions>
+                                <useSpringBoot3>true</useSpringBoot3>
                                 <generateForOpenFeign>true</generateForOpenFeign>
                                 <basePackage>${project.groupId}.onboarding_functions.generated.openapi.v1</basePackage>
                                 <modelPackage>${project.groupId}.onboarding_functions.generated.openapi.v1.dto</modelPackage>
