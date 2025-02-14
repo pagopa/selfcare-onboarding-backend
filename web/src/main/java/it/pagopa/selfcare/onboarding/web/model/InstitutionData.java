@@ -2,6 +2,9 @@ package it.pagopa.selfcare.onboarding.web.model;
 
 import io.swagger.annotations.ApiModelProperty;
 import it.pagopa.selfcare.commons.base.utils.InstitutionType;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.DataProtectionOfficer;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.GPUData;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.PaymentServiceProvider;
 import lombok.Data;
 
 import jakarta.validation.Valid;
@@ -24,6 +27,12 @@ public class InstitutionData {
     private String country;
     @ApiModelProperty
     private String origin;
+    @ApiModelProperty(value = "${swagger.onboarding.institutions.model.paymentServiceProvider}")
+    private PaymentServiceProvider paymentServiceProvider;
+    @ApiModelProperty(value = "${swagger.onboarding.institutions.model.dataProtectionOfficer}")
+    private DataProtectionOfficer dataProtectionOfficer;
+    @ApiModelProperty(value = "${swagger.onboarding.institutions.model.gpuData}")
+    private GPUData gpuData;
     @ApiModelProperty(value = "${swagger.onboarding.institutions.model.companyInformations}")
     @Valid
     private CompanyInformationsResource companyInformations;
