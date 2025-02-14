@@ -3828,6 +3828,21 @@
           }
         }
       },
+      "DataProtectionOfficer" : {
+        "title" : "DataProtectionOfficer",
+        "type" : "object",
+        "properties" : {
+          "address" : {
+            "type" : "string"
+          },
+          "email" : {
+            "type" : "string"
+          },
+          "pec" : {
+            "type" : "string"
+          }
+        }
+      },
       "DpoData" : {
         "title" : "DpoData",
         "required" : [ "address", "email", "pec" ],
@@ -3964,6 +3979,14 @@
             "type" : "string",
             "description" : "Institution's county"
           },
+          "dataProtectionOfficer" : {
+            "description" : "Data protection officer",
+            "$ref" : "#/components/schemas/DataProtectionOfficer"
+          },
+          "gpuData" : {
+            "description" : "Institution's GPU data",
+            "$ref" : "#/components/schemas/GPUData"
+          },
           "id" : {
             "type" : "string",
             "description" : "Institution's unique internal Id"
@@ -3975,6 +3998,10 @@
           },
           "origin" : {
             "type" : "string"
+          },
+          "paymentServiceProvider" : {
+            "description" : "Payment service provider",
+            "$ref" : "#/components/schemas/PaymentServiceProvider"
           }
         }
       },
@@ -4480,6 +4507,30 @@
           "status" : {
             "type" : "string",
             "description" : "Onboarding request's status"
+          }
+        }
+      },
+      "PaymentServiceProvider" : {
+        "title" : "PaymentServiceProvider",
+        "type" : "object",
+        "properties" : {
+          "abiCode" : {
+            "type" : "string"
+          },
+          "businessRegisterNumber" : {
+            "type" : "string"
+          },
+          "legalRegisterName" : {
+            "type" : "string"
+          },
+          "legalRegisterNumber" : {
+            "type" : "string"
+          },
+          "longTermPayments" : {
+            "type" : "boolean"
+          },
+          "vatNumberGroup" : {
+            "type" : "boolean"
           }
         }
       },
