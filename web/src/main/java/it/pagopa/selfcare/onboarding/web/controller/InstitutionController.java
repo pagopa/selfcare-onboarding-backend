@@ -23,11 +23,11 @@ import it.pagopa.selfcare.onboarding.connector.model.institutions.infocamere.Ins
 import it.pagopa.selfcare.onboarding.core.InstitutionService;
 import it.pagopa.selfcare.onboarding.web.model.*;
 import it.pagopa.selfcare.onboarding.web.model.mapper.*;
+import jakarta.validation.Valid;
 import java.security.Principal;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import javax.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.owasp.encoder.Encode;
@@ -148,12 +148,11 @@ public class InstitutionController {
         return geographicTaxonomies;
     }
 
-
     @GetMapping("")
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "", notes = "${swagger.onboarding.institutions.api.getInstitutions}")
     public List<InstitutionResource> getInstitutions(@ApiParam("${swagger.onboarding.institutions.model.productFilter}")
-                                                     @RequestParam(value = "productId")
+                                                     @RequestParam(value = "productId", required = false)
                                                      String childProductId,
                                                      Principal principal) {
         log.trace("getInstitutions start");

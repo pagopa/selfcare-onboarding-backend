@@ -9,10 +9,14 @@ spring:
   profiles:
     include:
       - swaggerEN
+
+management:
+  tracing:
+      sampling:
+        probability: 1.0
   zipkin:
     enabled: false
-  sleuth:
-    baggage:
+  baggage:
       remote-fields: X-Client-Ip
       correlation-fields: X-Client-Ip
 

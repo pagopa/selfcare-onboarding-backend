@@ -7,7 +7,7 @@ import it.pagopa.selfcare.onboarding.connector.model.onboarding.GPUData;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.PaymentServiceProvider;
 import lombok.Data;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 @Data
 public class InstitutionData {

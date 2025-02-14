@@ -1,10 +1,15 @@
 package it.pagopa.selfcare.onboarding.web.config;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.pagopa.selfcare.onboarding.core.InstitutionService;
 import it.pagopa.selfcare.onboarding.core.ProductService;
 import it.pagopa.selfcare.onboarding.core.TokenService;
 import it.pagopa.selfcare.onboarding.core.UserService;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -17,21 +22,16 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-import springfox.documentation.oas.annotations.EnableOpenApi;
-
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(classes = {
         SwaggerConfig.class,
-        WebConfig.class
+        WebConfig.class,
 })
-@EnableOpenApi
 @EnableWebMvc
-@ComponentScan(basePackages = {"it.pagopa.selfcare.onboarding.web.controller", "it.pagopa.selfcare.onboarding.web.model.mapper"})
+@ComponentScan(basePackages = {
+        "it.pagopa.selfcare.onboarding.web.controller",
+        "it.pagopa.selfcare.onboarding.web.model.mapper"
+})
 @TestPropertySource(locations = "classpath:config/application.yml")
 class SwaggerConfigTest {
 
@@ -57,17 +57,17 @@ class SwaggerConfigTest {
     void swaggerSpringPlugin() throws Exception {
         MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
         mockMvc.perform(MockMvcRequestBuilders.get("/v3/api-docs").accept(MediaType.APPLICATION_JSON))
-                .andDo((result) -> {
+                .andDo(result -> {
                     assertNotNull(result);
                     assertNotNull(result.getResponse());
                     final String content = result.getResponse().getContentAsString();
                     assertFalse(content.isBlank());
+                    assertFalse(content.contains("${"), "Generated swagger contains placeholders");
                     Object swagger = objectMapper.readValue(content, Object.class);
                     String formatted = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(swagger);
                     Path basePath = Paths.get("src/main/resources/swagger/");
                     Files.createDirectories(basePath);
                     Files.write(basePath.resolve("api-docs.json"), formatted.getBytes());
-                    assertFalse(content.contains("${"), "Generated swagger contains placeholders");
                 });
     }
 }
