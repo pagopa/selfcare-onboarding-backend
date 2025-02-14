@@ -37,7 +37,7 @@
       "get" : {
         "tags" : [ "institutions" ],
         "summary" : "getInstitutions",
-        "description" : "The service retrieves all the onboarded institutions related to the logged user",
+        "description" : "The service retrieves all the onboarded institutions related to the logged user and product's identifier.  ",
         "operationId" : "getInstitutionsUsingGET",
         "parameters" : [ {
           "name" : "name",
@@ -2409,7 +2409,7 @@
         } ]
       }
     },
-    "/v2/tokens/{onboardingId}/completeOnboardingUsers" : {
+    "/v2/tokens/{onboardingId}/complete-onboarding-users" : {
       "post" : {
         "tags" : [ "tokens" ],
         "summary" : "Complete an onboarding users request",
