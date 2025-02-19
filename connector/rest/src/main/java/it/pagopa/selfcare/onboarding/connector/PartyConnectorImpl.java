@@ -135,7 +135,7 @@ class PartyConnectorImpl implements PartyConnector {
                     .entrySet().stream().filter(obj -> obj.getValue().size() == 1)
                     .flatMap(entry -> entry.getValue().stream())
                     .map(element -> getInstitutionInfo(userId, element))
-                    .collect(Collectors.toList());
+                    .toList();
 
         } else {
             OnboardingGetResponse response = onboardingApiClient._getOnboardingWithFilter(
@@ -145,7 +145,7 @@ class PartyConnectorImpl implements PartyConnector {
 
             result = Objects.requireNonNull(response.getItems()).stream()
                     .map(onboarding -> getInstitutionInfo(userId, onboarding))
-                    .collect(Collectors.toList());
+                    .toList();
         }
 
         // Filtering result for allowed institution types on product
