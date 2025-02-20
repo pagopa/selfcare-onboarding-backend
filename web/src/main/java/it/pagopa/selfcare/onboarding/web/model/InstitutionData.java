@@ -27,6 +27,8 @@ public class InstitutionData {
     private String country;
     @ApiModelProperty
     private String origin;
+    @ApiModelProperty
+    private String originId;
     @ApiModelProperty(value = "${swagger.onboarding.institutions.model.paymentServiceProvider}")
     private PaymentServiceProvider paymentServiceProvider;
     @ApiModelProperty(value = "${swagger.onboarding.institutions.model.dataProtectionOfficer}")
