@@ -342,6 +342,46 @@ class PartyConnectorImplTest {
     }
 
     @Test
+    void getOnboardedInstitutions_AllowedInstitutionTypes() {
+        // given
+        final String userId = "userId";
+        final String productFilter = "prod-io";
+
+        Product product = new Product();
+        product.setId(productFilter);
+        product.setInstitutionTypesAllowed(List.of(InstitutionType.PSP.name()));
+
+        OnboardingGet onboardingData = new OnboardingGet();
+        it.pagopa.selfcare.onboarding.generated.openapi.v1.dto.InstitutionResponse institutionResponse = new it.pagopa.selfcare.onboarding.generated.openapi.v1.dto.InstitutionResponse();
+        institutionResponse.setId("id");
+        institutionResponse.setDescription("description");
+        institutionResponse.setInstitutionType(InstitutionType.PA.name());
+        onboardingData.setInstitution(institutionResponse);
+        onboardingData.setProductId("prod-io");
+
+        OnboardingGetResponse onboardingGetResponse = new OnboardingGetResponse();
+        onboardingGetResponse.setItems(List.of(onboardingData));
+        ResponseEntity<OnboardingGetResponse> responseEntity = mock(ResponseEntity.class);
+        when(responseEntity.getBody()).thenReturn(onboardingGetResponse);
+
+        when(onboardingApiClient._getOnboardingWithFilter(any(), any(), any(), any(), any(),
+                any(), any(), any(), any(), any(),
+                any(), any(), any()))
+                .thenReturn(responseEntity);
+
+        // when
+        Collection<InstitutionInfo> institutions = partyConnector.getInstitutionsByUser(product, userId);
+        // then
+        assertNotNull(institutions);
+        assertEquals(0, institutions.size());
+        verify(onboardingApiClient, times(1))
+                ._getOnboardingWithFilter(any(), any(), any(), any(), any(),
+                        any(), any(), any(), any(), any(),
+                        any(), any(), any());
+        verifyNoMoreInteractions(onboardingApiClient);
+    }
+
+    @Test
     void getOnboardedInstitutions_nullInstitutions() {
         //given
         Product product = new Product();

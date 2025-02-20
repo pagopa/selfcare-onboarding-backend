@@ -159,7 +159,7 @@ class PartyConnectorImpl implements PartyConnector {
 
         log.debug("getInstitutionsByUser result = {}", allowedInstitutions);
         log.trace("getInstitutionsByUser end");
-        return result;
+        return allowedInstitutions;
     }
 
     private InstitutionInfo getInstitutionInfo(String userId, OnboardingGet onboarding) {
