@@ -169,7 +169,7 @@ public class InstitutionV2Controller {
         return response;
     }
 
-    @GetMapping(value = "/onboarding/recipientCode/verification")
+    @GetMapping(value = "/onboarding/recipient-code/verification")
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(tags = "billing-portal", value = "", notes = "${swagger.onboarding.institutions.api.onboarding.checkRecipientCode}")
     public RecipientCodeStatus checkRecipientCode(@RequestParam(value = "originId") String originId,
