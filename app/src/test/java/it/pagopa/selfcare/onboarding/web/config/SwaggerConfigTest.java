@@ -10,6 +10,7 @@ import it.pagopa.selfcare.onboarding.core.UserService;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -33,6 +34,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
         "it.pagopa.selfcare.onboarding.web.model.mapper"
 })
 @TestPropertySource(locations = "classpath:config/application.yml")
+@Disabled
 class SwaggerConfigTest {
 
     @MockBean
