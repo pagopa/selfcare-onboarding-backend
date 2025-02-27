@@ -6,6 +6,7 @@ import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionInf
 import it.pagopa.selfcare.onboarding.connector.model.institutions.OnboardingResource;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.UserInfo;
+import it.pagopa.selfcare.product.entity.Product;
 
 import java.util.Collection;
 import java.util.List;
@@ -14,7 +15,7 @@ public interface PartyConnector {
 
     void onboardingOrganization(OnboardingData onboardingData);
 
-    Collection<InstitutionInfo> getInstitutionsByUser(String productId, String userId);
+    List<InstitutionInfo> getInstitutionsByUser(Product product, String userId);
 
     RelationshipsResponse getUserInstitutionRelationships(String externalInstitutionId, UserInfo.UserInfoFilter userInfoFilter);
 

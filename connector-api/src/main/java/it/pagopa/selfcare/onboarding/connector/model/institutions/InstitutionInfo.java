@@ -2,8 +2,7 @@ package it.pagopa.selfcare.onboarding.connector.model.institutions;
 
 import it.pagopa.selfcare.commons.base.security.PartyRole;
 import it.pagopa.selfcare.commons.base.utils.InstitutionType;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.Billing;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.InstitutionLocation;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.*;
 import lombok.Data;
 
 import java.util.Objects;
@@ -26,10 +25,14 @@ public class InstitutionInfo {
     private String origin;
     private String originId;
     private InstitutionType institutionType;
+    private PaymentServiceProvider paymentServiceProvider;
+    private DataProtectionOfficer dataProtectionOfficer;
+    private GPUData gpuData;
     private PartyRole userRole;
     private String subunitCode;
     private String subunitType;
     private String aooParentCode;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

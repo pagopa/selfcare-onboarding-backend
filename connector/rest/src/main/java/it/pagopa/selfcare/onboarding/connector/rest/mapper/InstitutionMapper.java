@@ -9,13 +9,12 @@ import it.pagopa.selfcare.onboarding.connector.rest.model.OnboardingResponse;
 import it.pagopa.selfcare.user.generated.openapi.v1.dto.OnboardedProductResponse;
 import it.pagopa.selfcare.user.generated.openapi.v1.dto.OnboardedProductState;
 import it.pagopa.selfcare.user.generated.openapi.v1.dto.UserInstitutionResponse;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.Named;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.Named;
 
 @Mapper(componentModel = "spring")
 public interface InstitutionMapper {
@@ -53,6 +52,7 @@ public interface InstitutionMapper {
     @Mapping(target = "userRole", source = ".", qualifiedByName = "toPartyRole")
     @Mapping(target = "status", source = ".", qualifiedByName = "toStatus")
     InstitutionInfo toInstitutionInfo(UserInstitutionResponse model);
+
 
     @Named("toPartyRole")
     static PartyRole toPartyRole(UserInstitutionResponse model) {

@@ -13,16 +13,16 @@
     <parent>
         <groupId>it.pagopa.selfcare</groupId>
         <artifactId>selc-starter-parent</artifactId>
-        <version>0.0.3-SNAPSHOT</version>
+        <version>0.3.0-SNAPSHOT</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <artifactId>selc-onboarding</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.1.0-SNAPSHOT</version>
     <name>selc-onboarding</name>
     <description>Self Care OnBoarding Backend</description>
 
     <properties>
-        <selc-commons.version>2.5.5</selc-commons.version>
+        <selc-commons.version>2.8.2</selc-commons.version>
         <sonar.host.url>https://sonarcloud.io/</sonar.host.url>
         <parent-commons-sdk-version>0.6.9</parent-commons-sdk-version>
     </properties>
@@ -32,22 +32,22 @@
             <dependency>
                 <groupId>it.pagopa.selfcare</groupId>
                 <artifactId>selc-onboarding-connector-rest</artifactId>
-                <version>0.0.1-SNAPSHOT</version>
+                <version>0.1.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>it.pagopa.selfcare</groupId>
                 <artifactId>selc-onboarding-connector-api</artifactId>
-                <version>0.0.1-SNAPSHOT</version>
+                <version>0.1.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>it.pagopa.selfcare</groupId>
                 <artifactId>selc-onboarding-core</artifactId>
-                <version>0.0.1-SNAPSHOT</version>
+                <version>0.1.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>it.pagopa.selfcare</groupId>
                 <artifactId>selc-onboarding-web</artifactId>
-                <version>0.0.1-SNAPSHOT</version>
+                <version>0.1.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>it.pagopa.selfcare</groupId>
@@ -82,6 +82,16 @@
                 <artifactId>selc-commons-web</artifactId>
                 <version>${selc-commons.version}</version>
                 <type>test-jar</type>
+            </dependency>
+            <dependency>
+                <groupId>jakarta.xml.bind</groupId>
+                <artifactId>jakarta.xml.bind-api</artifactId>
+                <version>4.0.0</version>
+            </dependency>
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt</artifactId>
+                <version>0.11.5</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
