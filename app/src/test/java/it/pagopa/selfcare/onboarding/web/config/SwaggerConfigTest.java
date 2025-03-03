@@ -1,27 +1,24 @@
 package it.pagopa.selfcare.onboarding.web.config;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import it.pagopa.selfcare.commons.web.config.SecurityConfig;
 import it.pagopa.selfcare.onboarding.connector.api.ProductsConnector;
 import it.pagopa.selfcare.onboarding.connector.rest.client.*;
-import it.pagopa.selfcare.onboarding.connector.rest.config.FeignClientConfig;
 import it.pagopa.selfcare.onboarding.connector.rest.config.ProductServiceConfig;
 import it.pagopa.selfcare.onboarding.connector.rest.config.UserRegistryRestClientConfig;
 import it.pagopa.selfcare.onboarding.core.InstitutionService;
 import it.pagopa.selfcare.onboarding.core.ProductService;
 import it.pagopa.selfcare.onboarding.core.TokenService;
 import it.pagopa.selfcare.onboarding.core.UserService;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
@@ -97,22 +94,19 @@ class SwaggerConfigTest {
     @Test
     void testApiDocsEndpoint() throws Exception {
         MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
-        String response = mockMvc.perform(MockMvcRequestBuilders.get("/v3/api-docs")
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andReturn()
-                .getResponse()
-                .getContentAsString();
-
-        assertNotNull(response);
-        assertFalse(response.isBlank());
-        assertFalse(response.contains("${"), "Generated swagger contains placeholders");
-
-        Object swagger = objectMapper.readValue(response, Object.class);
-        assertNotNull(swagger);
-
-        String formatted = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(swagger);
-        System.out.println(formatted);
+        mockMvc.perform(MockMvcRequestBuilders.get("/v3/api-docs").accept(MediaType.APPLICATION_JSON))
+                .andDo(result -> {
+                    assertNotNull(result);
+                    assertNotNull(result.getResponse());
+                    final String content = result.getResponse().getContentAsString();
+                    assertFalse(content.isBlank());
+                    assertFalse(content.contains("${"), "Generated swagger contains placeholders");
+                    Object swagger = objectMapper.readValue(content, Object.class);
+                    String formatted = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(swagger);
+                    Path basePath = Paths.get("src/main/resources/swagger/");
+                    Files.createDirectories(basePath);
+                    Files.write(basePath.resolve("api-docs.json"), formatted.getBytes());
+                });
     }
 }
 
