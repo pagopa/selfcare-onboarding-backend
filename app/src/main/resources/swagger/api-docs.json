@@ -4076,6 +4076,9 @@
           "institutionId" : {
             "type" : "string"
           },
+          "businessName" : {
+            "type" : "string"
+          },
           "onboardings" : {
             "type" : "array",
             "items" : {
