@@ -10,9 +10,11 @@ import it.pagopa.selfcare.onboarding.connector.model.onboarding.InstitutionOnboa
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.User;
 import it.pagopa.selfcare.onboarding.web.model.*;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
@@ -74,6 +76,7 @@ public interface OnboardingResourceMapper {
     @Mapping(source = "users", target = "admins", qualifiedByName = "toAdmin")
     @Mapping(source = "institutionUpdate.additionalInformations", target = "institutionInfo.additionalInformations")
     OnboardingRequestResource toOnboardingRequestResource(OnboardingData onboardingData);
+
     OnboardingVerify toOnboardingVerify(OnboardingData onboardingData);
 
     @Mapping(source = "taxCode", target = "fiscalCode")
@@ -90,6 +93,7 @@ public interface OnboardingResourceMapper {
                 .findAny()
                 .orElse(null);
     }
+
     @Named("toAdmin")
     default List<OnboardingRequestResource.UserInfo> toAdmin(List<User> users) {
         return users.stream()
@@ -100,15 +104,16 @@ public interface OnboardingResourceMapper {
 
     VerifyAggregatesResponse toVerifyAggregatesResponse(VerifyAggregateResult verifyAggregateResult);
 
-    RecipientCodeStatus toRecipientCodeStatus (RecipientCodeStatusResult recipientCodeStatusResult);
+    RecipientCodeStatus toRecipientCodeStatus(RecipientCodeStatusResult recipientCodeStatusResult);
 
     @Mapping(source = "id", target = "institutionId")
+    @Mapping(source = "description", target = "businessName")
     @Mapping(source = "onboarding", target = "onboardings", qualifiedByName = "mapOnboardingList")
     InstitutionOnboardingResource toOnboardingResource(Institution model);
 
     @Named("mapOnboardingList")
     default List<InstitutionOnboarding> mapOnboardingList(List<InstitutionOnboarding> onboardingList) {
-        if(Objects.isNull(onboardingList)) {
+        if (Objects.isNull(onboardingList)) {
             return new ArrayList<>();
         }
 
