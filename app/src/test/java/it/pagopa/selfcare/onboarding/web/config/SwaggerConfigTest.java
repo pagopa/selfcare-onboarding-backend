@@ -92,7 +92,7 @@ class SwaggerConfigTest {
     WebApplicationContext context;
 
     @Test
-    void testApiDocsEndpoint() throws Exception {
+    void swaggerSpringPlugin() throws Exception {
         MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
         mockMvc.perform(MockMvcRequestBuilders.get("/v3/api-docs").accept(MediaType.APPLICATION_JSON))
                 .andDo(result -> {
