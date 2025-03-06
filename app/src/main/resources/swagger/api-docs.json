@@ -11,7 +11,7 @@
   },
   "servers": [
     {
-      "url": "http://localhost:8080",
+      "url": "http://localhost",
       "description": "Generated server url"
     }
   ],
@@ -4502,6 +4502,9 @@
         "type": "object",
         "properties": {
           "institutionId": {
+            "type": "string"
+          },
+          "businessName": {
             "type": "string"
           },
           "onboardings": {

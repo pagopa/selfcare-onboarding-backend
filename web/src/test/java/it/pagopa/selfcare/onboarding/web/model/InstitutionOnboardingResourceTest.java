@@ -186,6 +186,7 @@ class InstitutionOnboardingResourceTest {
         // Arrange and Act
         InstitutionOnboardingResource actualInstitutionOnboardingResource = new InstitutionOnboardingResource();
         actualInstitutionOnboardingResource.setInstitutionId("42");
+        actualInstitutionOnboardingResource.setBusinessName("description");
         ArrayList<InstitutionOnboarding> onboardings = new ArrayList<>();
         actualInstitutionOnboardingResource.setOnboardings(onboardings);
         String actualToStringResult = actualInstitutionOnboardingResource.toString();
@@ -194,7 +195,7 @@ class InstitutionOnboardingResourceTest {
 
         // Assert that nothing has changed
         assertEquals("42", actualInstitutionId);
-        assertEquals("InstitutionOnboardingResource(institutionId=42, onboardings=[])", actualToStringResult);
+        assertEquals("InstitutionOnboardingResource(institutionId=42, businessName=description, onboardings=[])", actualToStringResult);
         assertTrue(actualOnboardings.isEmpty());
         assertSame(onboardings, actualOnboardings);
     }
