@@ -153,13 +153,13 @@ public class InstitutionController {
     @ApiOperation(value = "", notes = "${swagger.onboarding.institutions.api.getInstitutions}")
     public List<InstitutionResource> getInstitutions(@ApiParam("${swagger.onboarding.institutions.model.productFilter}")
                                                      @RequestParam(value = "productId", required = false)
-                                                     String childProductId,
+                                                     String productId,
                                                      Principal principal) {
         log.trace("getInstitutions start");
         JwtAuthenticationToken jwtAuthenticationToken = (JwtAuthenticationToken) principal;
         SelfCareUser selfCareUser = (SelfCareUser) jwtAuthenticationToken.getPrincipal();
 
-        List<InstitutionResource> institutionResources = institutionService.getInstitutions(childProductId, selfCareUser.getId())
+        List<InstitutionResource> institutionResources = institutionService.getInstitutions(productId, selfCareUser.getId())
                 .stream()
                 .map(InstitutionMapper::toResource)
                 .toList();
