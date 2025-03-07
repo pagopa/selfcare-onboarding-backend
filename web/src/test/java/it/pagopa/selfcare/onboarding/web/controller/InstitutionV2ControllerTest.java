@@ -370,24 +370,24 @@ class InstitutionV2ControllerTest {
         verifyNoMoreInteractions(institutionServiceMock);
     }
 
-    @Test
-    void verifyRecipientCode() throws Exception {
-        // Given
-        String recipientCode = "recipientCode";
-        String originId = "originId";
+  @Test
+  void verifyRecipientCode() throws Exception {
+    // Given
+    String recipientCode = "recipientCode";
+    String originId = "originId";
 
-        // When
-        mvc.perform(MockMvcRequestBuilders
-                        .get(BASE_URL + "/onboarding/recipientCode/verification")
-                        .queryParam("recipientCode", recipientCode)
-                        .queryParam("originId", originId)
-                        .contentType(APPLICATION_JSON_VALUE))
-                .andExpect(status().isOk());
+    // When
+    mvc.perform(
+            MockMvcRequestBuilders.get(BASE_URL + "/onboarding/recipient-code/verification")
+                .queryParam("recipientCode", recipientCode)
+                .queryParam("originId", originId)
+                .contentType(APPLICATION_JSON_VALUE))
+        .andExpect(status().isOk());
 
-        // Then
-        verify(institutionServiceMock, times(1)).checkRecipientCode(any(), any());
-        verifyNoMoreInteractions(institutionServiceMock);
-    }
+    // Then
+    verify(institutionServiceMock, times(1)).checkRecipientCode(any(), any());
+    verifyNoMoreInteractions(institutionServiceMock);
+  }
 
     @Test
     void onboardingUsersPgFromIcAndAde_success() throws Exception {
