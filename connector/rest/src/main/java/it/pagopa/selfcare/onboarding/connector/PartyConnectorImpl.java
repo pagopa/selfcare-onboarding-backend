@@ -13,16 +13,18 @@ import it.pagopa.selfcare.onboarding.connector.model.onboarding.GeographicTaxono
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.User;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.UserInfo;
-import it.pagopa.selfcare.onboarding.connector.rest.client.MsOnboardingApiClient;
+import it.pagopa.selfcare.onboarding.connector.rest.client.MsOnboardingInstitutionApiClient;
 import it.pagopa.selfcare.onboarding.connector.rest.client.MsUserApiClient;
 import it.pagopa.selfcare.onboarding.connector.rest.client.PartyProcessRestClient;
 import it.pagopa.selfcare.onboarding.connector.rest.mapper.InstitutionMapper;
 import it.pagopa.selfcare.onboarding.connector.rest.model.*;
+import it.pagopa.selfcare.onboarding.generated.openapi.v1.dto.GetInstitutionRequest;
 import it.pagopa.selfcare.product.entity.Product;
-import it.pagopa.selfcare.user.generated.openapi.v1.dto.UserInstitutionResponse;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import it.pagopa.selfcare.user.generated.openapi.v1.dto.UserInstitutionResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.owasp.encoder.Encode;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +42,7 @@ class PartyConnectorImpl implements PartyConnector {
     private final PartyProcessRestClient restClient;
     private final InstitutionMapper institutionMapper;
     private final MsUserApiClient userApiClient;
+    private final MsOnboardingInstitutionApiClient institutionApiClient;
 
     static final Function<RelationshipInfo, UserInfo> RELATIONSHIP_INFO_TO_USER_INFO_FUNCTION = relationshipInfo -> {
         UserInfo userInfo = new UserInfo();
@@ -50,13 +53,22 @@ class PartyConnectorImpl implements PartyConnector {
         return userInfo;
     };
 
+    private Map<String, it.pagopa.selfcare.onboarding.generated.openapi.v1.dto.InstitutionResponse> buildInstitutionMap(List<InstitutionInfo> result) {
+        GetInstitutionRequest request = new GetInstitutionRequest();
+        request.setInstitutionIds(result.stream().map(InstitutionInfo::getId).toList());
+        List<it.pagopa.selfcare.onboarding.generated.openapi.v1.dto.InstitutionResponse> response = institutionApiClient._getInstitutions(request).getBody();
+        return response.stream().collect(Collectors.toMap(it.pagopa.selfcare.onboarding.generated.openapi.v1.dto.InstitutionResponse::getId, Function.identity()));
+    }
+
     @Autowired
     public PartyConnectorImpl(PartyProcessRestClient restClient,
                               InstitutionMapper institutionMapper,
-                              MsUserApiClient userApiClient) {
+                              MsUserApiClient userApiClient,
+                              MsOnboardingInstitutionApiClient institutionApiClient) {
         this.restClient = restClient;
         this.institutionMapper = institutionMapper;
         this.userApiClient = userApiClient;
+        this.institutionApiClient = institutionApiClient;
     }
 
     @Override
@@ -138,19 +150,20 @@ class PartyConnectorImpl implements PartyConnector {
                     .toList();
 
         } else {
-
             result = Objects.requireNonNull(userInstitutions).stream()
                     .map(institutionMapper::toInstitutionInfo)
                     .toList();
         }
+
+        Map<String, it.pagopa.selfcare.onboarding.generated.openapi.v1.dto.InstitutionResponse> map = buildInstitutionMap(result);
 
         // Filtering result for allowed institution types on product
         List<InstitutionInfo> allowedInstitutions = Objects.isNull(product.getInstitutionTypesAllowed())
                 || product.getInstitutionTypesAllowed().isEmpty()
                 ? result
                 : result.stream()
-                .filter(institutionInfo -> product.getInstitutionTypesAllowed()
-                        .contains(institutionInfo.getInstitutionType().name()))
+                .filter(institutionInfo -> map.containsKey(institutionInfo.getId()) &&
+                        product.getInstitutionTypesAllowed().contains(map.get(institutionInfo.getId()).getInstitutionType()))
                 .toList();
 
         log.debug("getInstitutionsByUser result = {}", allowedInstitutions);
