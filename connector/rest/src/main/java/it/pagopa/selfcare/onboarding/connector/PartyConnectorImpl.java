@@ -57,7 +57,7 @@ class PartyConnectorImpl implements PartyConnector {
         GetInstitutionRequest request = new GetInstitutionRequest();
         request.setInstitutionIds(result.stream().map(InstitutionInfo::getId).toList());
         List<it.pagopa.selfcare.onboarding.generated.openapi.v1.dto.InstitutionResponse> response = institutionApiClient._getInstitutions(request).getBody();
-        return response.stream().collect(Collectors.toMap(it.pagopa.selfcare.onboarding.generated.openapi.v1.dto.InstitutionResponse::getId, Function.identity()));
+        return Objects.isNull(response) ? Map.of() : response.stream().collect(Collectors.toMap(it.pagopa.selfcare.onboarding.generated.openapi.v1.dto.InstitutionResponse::getId, Function.identity()));
     }
 
     @Autowired
