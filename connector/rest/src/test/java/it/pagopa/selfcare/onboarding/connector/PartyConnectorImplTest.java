@@ -29,17 +29,13 @@ import it.pagopa.selfcare.onboarding.connector.rest.mapper.InstitutionMapper;
 import it.pagopa.selfcare.onboarding.connector.rest.mapper.InstitutionMapperImpl;
 import it.pagopa.selfcare.onboarding.connector.rest.model.*;
 import it.pagopa.selfcare.onboarding.generated.openapi.v1.dto.InstitutionType;
-import it.pagopa.selfcare.onboarding.generated.openapi.v1.dto.OnboardingGet;
-import it.pagopa.selfcare.onboarding.generated.openapi.v1.dto.OnboardingGetResponse;
-import it.pagopa.selfcare.onboarding.generated.openapi.v1.dto.UserResponse;
 import it.pagopa.selfcare.product.entity.Product;
-import java.io.File;
-import java.io.IOException;
-import java.util.*;
-
 import it.pagopa.selfcare.user.generated.openapi.v1.dto.OnboardedProductResponse;
 import it.pagopa.selfcare.user.generated.openapi.v1.dto.OnboardedProductState;
 import it.pagopa.selfcare.user.generated.openapi.v1.dto.UserInstitutionResponse;
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -339,7 +335,7 @@ class PartyConnectorImplTest {
     }
 
     @Test
-    void getOnboardedInstitutions_nullInstitutions() {
+    void getOnboardedInstitutions_emptyInstitutions() {
         //given
         ResponseEntity<List<UserInstitutionResponse>> responseEntity = mock(ResponseEntity.class);
         when(responseEntity.getBody()).thenReturn(List.of());
@@ -354,6 +350,60 @@ class PartyConnectorImplTest {
         verify(userApiClient, times(1))
                 ._usersGet(isNull(), isNull(), isNull(), isNull(), isNull(), isNull(), Mockito.isNotNull(), isNull());
         verifyNoMoreInteractions(restClientMock);
+    }
+
+    @Test
+    void getOnboardedInstitutions_nullInstitutions() {
+        //given
+        ResponseEntity<List<UserInstitutionResponse>> responseEntity = mock(ResponseEntity.class);
+        when(responseEntity.getBody()).thenReturn(List.of());
+        when(userApiClient._usersGet(null, null, null, null, null, null, List.of(ACTIVE.name()), null))
+                .thenReturn(responseEntity);
+        when(institutionApiClient._getInstitutions(any())).thenReturn(ResponseEntity.ok(null));
+        // when
+        Collection<InstitutionInfo> institutionInfos = partyConnector.getInstitutionsByUser(new Product(), null);
+        //then
+        assertNotNull(institutionInfos);
+        assertTrue(institutionInfos.isEmpty());
+        verify(userApiClient, times(1))
+                ._usersGet(isNull(), isNull(), isNull(), isNull(), isNull(), isNull(), Mockito.isNotNull(), isNull());
+        verifyNoMoreInteractions(restClientMock);
+    }
+
+    @Test
+    void getOnboardedInstitutions_withEmptyAllowedInstitutionType() {
+        final String userId = "userId";
+        final String productFilter = "prod-io";
+
+        Product product = new Product();
+        product.setId(productFilter);
+        product.setInstitutionTypesAllowed(List.of());
+
+        UserInstitutionResponse onboardingData = mockInstance(new UserInstitutionResponse(), 1, "setProducts");
+        OnboardedProductResponse onboardedProduct1 = new OnboardedProductResponse();
+        onboardedProduct1.setStatus(OnboardedProductState.ACTIVE);
+        onboardedProduct1.setRole(it.pagopa.selfcare.user.generated.openapi.v1.dto.PartyRole.OPERATOR);
+        onboardedProduct1.setProductId("prod-io");
+        onboardingData.setProducts(List.of(onboardedProduct1));
+
+        List<UserInstitutionResponse> onBoardingInfo = List.of(onboardingData);
+        ResponseEntity<List<UserInstitutionResponse>> responseEntity = mock(ResponseEntity.class);
+        it.pagopa.selfcare.onboarding.generated.openapi.v1.dto.InstitutionResponse institutionResponse = new it.pagopa.selfcare.onboarding.generated.openapi.v1.dto.InstitutionResponse();
+        institutionResponse.setId(onboardingData.getId());
+        institutionResponse.setInstitutionType(InstitutionType.PA.name());
+        when(responseEntity.getBody()).thenReturn(onBoardingInfo);
+        when(userApiClient._usersGet(null, null, null, List.of(productFilter), null, null, List.of(ACTIVE.name()), userId))
+                .thenReturn(responseEntity);
+        when(institutionApiClient._getInstitutions(any())).thenReturn(ResponseEntity.ok(List.of(institutionResponse)));
+
+        // when
+        Collection<InstitutionInfo> institutions = partyConnector.getInstitutionsByUser(product, userId);
+        // then
+        assertNotNull(institutions);
+        assertEquals(1, institutions.size());
+        verify(userApiClient, times(1))
+                ._usersGet(null, null, null, List.of(productFilter), null, null, List.of(ACTIVE.name()), userId);
+        verifyNoMoreInteractions(userApiClient);
     }
 
     @Test
