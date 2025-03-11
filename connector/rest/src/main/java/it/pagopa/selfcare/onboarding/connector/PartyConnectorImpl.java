@@ -131,19 +131,19 @@ class PartyConnectorImpl implements PartyConnector {
     public List<InstitutionInfo> getInstitutionsByUser(Product product, String userId) {
         log.trace("getInstitutionsByUser start");
         final String parentProductId = product.getParentId();
-        List<UserInstitutionResponse> userInstitutions = userApiClient._usersGet(null, null, null, Optional.ofNullable(product.getId()).map(List::of).orElse(null), null, null, List.of(ACTIVE.name()), userId).getBody();
+        List<UserInstitutionResponse> userInstitutions = userApiClient._usersGet(null, null, null, Optional.ofNullable(product.getId()).map(List::of).orElse(null), null, 500, List.of(ACTIVE.name()), userId).getBody();
         List<InstitutionInfo> result;
 
         if (Objects.nonNull(parentProductId)) {
 
-            List<UserInstitutionResponse> parentUserInstitutions = userApiClient._usersGet(null, null, null, Optional.ofNullable(parentProductId).map(List::of).orElse(null), null, null, List.of(ACTIVE.name()), userId).getBody();
+            List<UserInstitutionResponse> parentUserInstitutions = userApiClient._usersGet(null, null, null, Optional.ofNullable(parentProductId).map(List::of).orElse(null), null, 500, List.of(ACTIVE.name()), userId).getBody();
 
-            // Ottieni gli institutionId dalla seconda lista
+            // Get institution identifiers from list linked to the product
             List<String> childInstitutionIds = userInstitutions.stream()
                     .map(UserInstitutionResponse::getInstitutionId)
                     .toList();
 
-            // Filtra gli oggetti della prima lista il cui institutionId non è nella seconda lista
+            // Filtering objects from the first list not included into second one (linked to parent product)
             result  = parentUserInstitutions.stream()
                     .filter(parentInstitution -> !childInstitutionIds.contains(parentInstitution.getInstitutionId()))
                     .map(institutionMapper::toInstitutionInfo)

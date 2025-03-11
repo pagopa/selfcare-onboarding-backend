@@ -241,9 +241,9 @@ class PartyConnectorImplTest {
         ResponseEntity<List<UserInstitutionResponse>> responseEntity = mock(ResponseEntity.class);
         when(responseEntity.getBody()).thenReturn(onBoardingInfo);
 
-        when(userApiClient._usersGet(null, null, null, Optional.ofNullable(product.getParentId()).map(List::of).orElse(null), null, null, List.of(ACTIVE.name()), userId))
+        when(userApiClient._usersGet(null, null, null, Optional.ofNullable(product.getParentId()).map(List::of).orElse(null), null, 500, List.of(ACTIVE.name()), userId))
                 .thenReturn(responseEntity);
-        when(userApiClient._usersGet(null, null, null, Optional.ofNullable(product.getId()).map(List::of).orElse(null), null, null, List.of(ACTIVE.name()), userId))
+        when(userApiClient._usersGet(null, null, null, Optional.ofNullable(product.getId()).map(List::of).orElse(null), null, 500, List.of(ACTIVE.name()), userId))
                 .thenReturn(ResponseEntity.ok(List.of()));
         when(institutionApiClient._getInstitutions(any())).thenReturn(ResponseEntity.ok(List.of(institutionResponse, institutionResponse2, institutionResponse3)));
 
@@ -279,7 +279,7 @@ class PartyConnectorImplTest {
         institutionResponse.setId(onboardingData.getId());
         institutionResponse.setInstitutionType(InstitutionType.PA.name());
         when(responseEntity.getBody()).thenReturn(onBoardingInfo);
-        when(userApiClient._usersGet(null, null, null, List.of(productFilter), null, null, List.of(ACTIVE.name()), userId))
+        when(userApiClient._usersGet(null, null, null, List.of(productFilter), null, 500, List.of(ACTIVE.name()), userId))
                 .thenReturn(responseEntity);
         when(institutionApiClient._getInstitutions(any())).thenReturn(ResponseEntity.ok(List.of(institutionResponse)));
 
@@ -289,7 +289,7 @@ class PartyConnectorImplTest {
         assertNotNull(institutions);
         assertEquals(1, institutions.size());
         verify(userApiClient, times(1))
-                ._usersGet(null, null, null, List.of(productFilter), null, null, List.of(ACTIVE.name()), userId);
+                ._usersGet(null, null, null, List.of(productFilter), null, 500, List.of(ACTIVE.name()), userId);
         verifyNoMoreInteractions(userApiClient);
     }
 
@@ -339,7 +339,7 @@ class PartyConnectorImplTest {
         //given
         ResponseEntity<List<UserInstitutionResponse>> responseEntity = mock(ResponseEntity.class);
         when(responseEntity.getBody()).thenReturn(List.of());
-        when(userApiClient._usersGet(null, null, null, null, null, null, List.of(ACTIVE.name()), null))
+        when(userApiClient._usersGet(null, null, null, null, null, 500, List.of(ACTIVE.name()), null))
                 .thenReturn(responseEntity);
         when(institutionApiClient._getInstitutions(any())).thenReturn(ResponseEntity.ok(List.of()));
         // when
@@ -348,7 +348,7 @@ class PartyConnectorImplTest {
         assertNotNull(institutionInfos);
         assertTrue(institutionInfos.isEmpty());
         verify(userApiClient, times(1))
-                ._usersGet(isNull(), isNull(), isNull(), isNull(), isNull(), isNull(), Mockito.isNotNull(), isNull());
+                ._usersGet(isNull(), isNull(), isNull(), isNull(), isNull(), Mockito.isNotNull(), Mockito.isNotNull(), isNull());
         verifyNoMoreInteractions(restClientMock);
     }
 
@@ -357,7 +357,7 @@ class PartyConnectorImplTest {
         //given
         ResponseEntity<List<UserInstitutionResponse>> responseEntity = mock(ResponseEntity.class);
         when(responseEntity.getBody()).thenReturn(List.of());
-        when(userApiClient._usersGet(null, null, null, null, null, null, List.of(ACTIVE.name()), null))
+        when(userApiClient._usersGet(null, null, null, null, null, 500, List.of(ACTIVE.name()), null))
                 .thenReturn(responseEntity);
         when(institutionApiClient._getInstitutions(any())).thenReturn(ResponseEntity.ok(null));
         // when
@@ -366,7 +366,7 @@ class PartyConnectorImplTest {
         assertNotNull(institutionInfos);
         assertTrue(institutionInfos.isEmpty());
         verify(userApiClient, times(1))
-                ._usersGet(isNull(), isNull(), isNull(), isNull(), isNull(), isNull(), Mockito.isNotNull(), isNull());
+                ._usersGet(isNull(), isNull(), isNull(), isNull(), isNull(), Mockito.isNotNull(), Mockito.isNotNull(), isNull());
         verifyNoMoreInteractions(restClientMock);
     }
 
@@ -392,7 +392,7 @@ class PartyConnectorImplTest {
         institutionResponse.setId(onboardingData.getId());
         institutionResponse.setInstitutionType(InstitutionType.PA.name());
         when(responseEntity.getBody()).thenReturn(onBoardingInfo);
-        when(userApiClient._usersGet(null, null, null, List.of(productFilter), null, null, List.of(ACTIVE.name()), userId))
+        when(userApiClient._usersGet(null, null, null, List.of(productFilter), null, 500, List.of(ACTIVE.name()), userId))
                 .thenReturn(responseEntity);
         when(institutionApiClient._getInstitutions(any())).thenReturn(ResponseEntity.ok(List.of(institutionResponse)));
 
@@ -402,7 +402,7 @@ class PartyConnectorImplTest {
         assertNotNull(institutions);
         assertEquals(1, institutions.size());
         verify(userApiClient, times(1))
-                ._usersGet(null, null, null, List.of(productFilter), null, null, List.of(ACTIVE.name()), userId);
+                ._usersGet(null, null, null, List.of(productFilter), null, 500, List.of(ACTIVE.name()), userId);
         verifyNoMoreInteractions(userApiClient);
     }
 
