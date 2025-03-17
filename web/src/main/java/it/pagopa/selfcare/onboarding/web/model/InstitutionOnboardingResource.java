@@ -8,5 +8,6 @@ import java.util.List;
 @Data
 public class InstitutionOnboardingResource {
     private String institutionId;
+    private String businessName;
     private List<InstitutionOnboarding> onboardings;
 }

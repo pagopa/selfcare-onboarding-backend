@@ -14,7 +14,7 @@ import org.springframework.context.annotation.PropertySource;
 @Import({RestClientBaseConfig.class})
 @EnableFeignClients(clients = UserRegistryRestClient.class)
 @PropertySource("classpath:config/user-registry-rest-client.properties")
-class UserRegistryRestClientConfig {
+public class UserRegistryRestClientConfig {
 
     @Value("${USERVICE_USER_REGISTRY_API_KEY}")
     private String apiKey;
