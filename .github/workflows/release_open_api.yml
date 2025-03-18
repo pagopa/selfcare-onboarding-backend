@@ -13,7 +13,8 @@ jobs:
     name: Swagger Detect Rules and Conflict
     steps:
       - id: swagger-detect
-        uses: pagopa/selfcare-commons/github-actions-template/swagger-detect-conflict-spring@main
+        uses: pagopa/selfcare-commons/github-actions-template/swagger-detect-conflict-spring@fix/gha-swagger-dif
         with:
           path_openapi_docs: app/src/main/resources/swagger/api-docs.json
+          module: "selc-onboarding-app"
           github_token: ${{ secrets.GITHUB_TOKEN }}
