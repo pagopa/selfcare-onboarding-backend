@@ -33,7 +33,6 @@ import org.springframework.web.context.WebApplicationContext;
 })
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestPropertySource(locations = "classpath:config/application.yml")
-@Disabled
 class SwaggerConfigTest {
 
     @MockBean
