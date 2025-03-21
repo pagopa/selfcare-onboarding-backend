@@ -12,7 +12,7 @@
     <artifactId>selc-onboarding-web</artifactId>
 
     <properties>
-        <commons-sdk-version>0.6.9</commons-sdk-version>
+        <commons-sdk-version>${parent-commons-sdk-version}</commons-sdk-version>
     </properties>
 
     <dependencies>
