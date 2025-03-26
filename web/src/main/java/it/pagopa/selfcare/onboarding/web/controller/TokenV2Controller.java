@@ -6,6 +6,7 @@ import static org.springframework.http.MediaType.APPLICATION_OCTET_STREAM_VALUE;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.Operation;
 import it.pagopa.selfcare.commons.base.logging.LogUtils;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
 import it.pagopa.selfcare.onboarding.core.TokenService;
@@ -162,6 +163,7 @@ public class TokenV2Controller {
      */
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "${swagger.tokens.rejectOnboardingRequest}")
+    @Operation(summary = "Service to reject a specific onboarding request", description = "Service to reject a specific onboarding request")
     @PostMapping("/{onboardingId}/reject")
     public void rejectOnboarding(@ApiParam("${swagger.tokens.onboardingId}")
                                      @PathVariable("onboardingId") String onboardingId,
