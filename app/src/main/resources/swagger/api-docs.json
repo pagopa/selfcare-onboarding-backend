@@ -125,6 +125,8 @@
         "tags": [
           "token-v-2-controller"
         ],
+        "summary": "Service to reject a specific onboarding request",
+        "description": "Service to reject a specific onboarding request",
         "operationId": "rejectOnboarding",
         "parameters": [
           {
