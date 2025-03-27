@@ -4,7 +4,6 @@ package it.pagopa.selfcare.onboarding.web.controller;
 import static org.springframework.http.MediaType.APPLICATION_OCTET_STREAM_VALUE;
 
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.v3.oas.annotations.Operation;
 import it.pagopa.selfcare.commons.base.logging.LogUtils;
@@ -56,7 +55,7 @@ public class TokenV2Controller {
      * * Code: 404, Message: Not found, DataType: Problem
      */
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @ApiOperation(value = "${swagger.tokens.complete}", notes = "${swagger.tokens.complete}")
+    @Operation(description = "${swagger.tokens.complete}", summary = "${swagger.tokens.complete}", operationId = "completeUsingPOST")
     @PostMapping(value = "/{onboardingId}/complete")
     public ResponseEntity<Void> complete(@ApiParam("${swagger.tokens.onboardingId}")
                                          @PathVariable(value = "onboardingId") String onboardingId,
@@ -81,7 +80,8 @@ public class TokenV2Controller {
      * * Code: 404, Message: Not found, DataType: Problem
      */
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @ApiOperation(value = "${swagger.tokens.completeOnboardingUsers}", notes = "${swagger.tokens.completeOnboardingUsers}")
+    @Operation(description = "${swagger.tokens.completeOnboardingUsers}", summary = "${swagger.tokens.completeOnboardingUsers}",
+            operationId = "completeOnboardingUsersUsingPOST")
     @PostMapping(value = "/{onboardingId}/complete-onboarding-users")
     public ResponseEntity<Void> completeOnboardingUsers(@ApiParam("${swagger.tokens.onboardingId}")
                                          @PathVariable(value = "onboardingId") String onboardingId,
@@ -104,7 +104,7 @@ public class TokenV2Controller {
      * * Code: 409, Message: Token already consumed, DataType: Problem
      */
     @ResponseStatus(HttpStatus.OK)
-    @ApiOperation(value = "${swagger.tokens.verify}", notes = "${swagger.tokens.verify}")
+    @Operation(description = "${swagger.tokens.verify}", summary = "${swagger.tokens.verify}", operationId = "verifyOnboardingUsingPOST")
     @PostMapping("/{onboardingId}/verify")
     public OnboardingVerify verifyOnboarding(@ApiParam("${swagger.tokens.onboardingId}")
                                                                 @PathVariable("onboardingId") String onboardingId) {
@@ -116,10 +116,9 @@ public class TokenV2Controller {
         return result;
     }
 
-
     @GetMapping(value = "/{onboardingId}")
     @ResponseStatus(HttpStatus.OK)
-    @ApiOperation(value = "", notes = "${swagger.tokens.retrieveOnboardingRequest}")
+    @Operation(summary = "${swagger.tokens.retrieveOnboardingRequest}", operationId = "retrieveOnboardingRequestUsingGET")
     public OnboardingRequestResource retrieveOnboardingRequest(@ApiParam("${swagger.tokens.onboardingId}")
                                                                @PathVariable("onboardingId")
                                                                String onboardingId) {
@@ -143,7 +142,8 @@ public class TokenV2Controller {
      * * Code: 409, Message: Token already consumed, DataType: Problem
      */
     @ResponseStatus(HttpStatus.OK)
-    @ApiOperation(value = "${swagger.tokens.approveOnboardingRequest}", notes = "${swagger.tokens.approveOnboardingRequest}")
+    @Operation(description = "${swagger.tokens.approveOnboardingRequest}", summary = "${swagger.tokens.approveOnboardingRequest}",
+            operationId = "approveOnboardingUsingPOST")
     @PostMapping("/{onboardingId}/approve")
     public void approveOnboarding(@ApiParam("${swagger.tokens.onboardingId}")
                                   @PathVariable("onboardingId") String onboardingId) {
@@ -162,8 +162,7 @@ public class TokenV2Controller {
      * * Code: 409, Message: Token already consumed, DataType: Problem
      */
     @ResponseStatus(HttpStatus.OK)
-    @ApiOperation(value = "${swagger.tokens.rejectOnboardingRequest}")
-    @Operation(summary = "Service to reject a specific onboarding request", description = "Service to reject a specific onboarding request")
+    @Operation(summary = "Service to reject a specific onboarding request", operationId = "rejectOnboardingUsingPOST")
     @PostMapping("/{onboardingId}/reject")
     public void rejectOnboarding(@ApiParam("${swagger.tokens.onboardingId}")
                                      @PathVariable("onboardingId") String onboardingId,
@@ -183,7 +182,7 @@ public class TokenV2Controller {
      * * Code: 404, Message: Not found, DataType: Problem
      */
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @ApiOperation(value = "${swagger.tokens.complete}", notes = "${swagger.tokens.complete}")
+    @Operation(summary = "${swagger.tokens.complete}", description = "${swagger.tokens.complete}", operationId = "deleteUsingDELETE")
     @DeleteMapping(value = "/{onboardingId}/complete")
     public ResponseEntity<Void> delete(@ApiParam("${swagger.tokens.tokenId}")
                                        @PathVariable(value = "onboardingId") String onboardingId) {
@@ -196,7 +195,7 @@ public class TokenV2Controller {
 
     @GetMapping(value = "/{onboardingId}/contract", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    @ApiOperation(value = "", notes = "${swagger.tokens.getContract}")
+    @Operation(summary = "${swagger.tokens.getContract}", operationId = "getContractUsingGET")
     public ResponseEntity<byte[]> getContract(@ApiParam("${swagger.tokens.onboardingId}")
                                               @PathVariable("onboardingId")
                                               String onboardingId) throws IOException {
@@ -208,7 +207,7 @@ public class TokenV2Controller {
 
     @GetMapping(value = "/{onboardingId}/attachment", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    @ApiOperation(value = "", notes = "${swagger.tokens.getAttachment}")
+    @Operation(summary = "${swagger.tokens.getAttachment}", operationId = "getAttachmentUsingGET")
     public ResponseEntity<byte[]> getAttachment(@ApiParam("${swagger.tokens.onboardingId}")
                                                 @PathVariable("onboardingId")
                                                 String onboardingId,
@@ -224,7 +223,7 @@ public class TokenV2Controller {
 
     @GetMapping(value = "/{onboardingId}/products/{productId}/aggregates-csv", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    @ApiOperation(value = "", notes = "${swagger.tokens.getAggregatesCsv}")
+    @Operation(summary = "${swagger.tokens.getAggregatesCsv}", operationId = "getAggregatesCsvUsingGET")
     public ResponseEntity<byte[]> getAggregatesCsv(@ApiParam("${swagger.tokens.onboardingId}") @PathVariable("onboardingId")
                                                        String onboardingId,
                                                    @ApiParam("${swagger.tokens.productId}")
