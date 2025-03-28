@@ -13,6 +13,7 @@ import it.pagopa.selfcare.onboarding.connector.rest.client.MsOnboardingApiClient
 import it.pagopa.selfcare.onboarding.connector.rest.client.MsOnboardingSupportApiClient;
 import it.pagopa.selfcare.onboarding.connector.rest.client.MsOnboardingTokenApiClient;
 import it.pagopa.selfcare.onboarding.connector.rest.mapper.OnboardingMapper;
+import it.pagopa.selfcare.onboarding.generated.openapi.v1.api.InternalV1Api;
 import it.pagopa.selfcare.onboarding.generated.openapi.v1.dto.OnboardingGet;
 import it.pagopa.selfcare.onboarding.generated.openapi.v1.dto.OnboardingResponse;
 import it.pagopa.selfcare.onboarding.generated.openapi.v1.dto.OnboardingStatus;
@@ -40,17 +41,20 @@ public class OnboardingMsConnectorImpl implements OnboardingMsConnector {
     private final MsOnboardingTokenApiClient msOnboardingTokenApiClient;
     private final MsOnboardingAggregatesApiClient msOnboardingAggregatesApiClient;
     private final OnboardingMapper onboardingMapper;
+    private final InternalV1Api internalV1Api;
     protected static final String REQUIRED_PRODUCT_ID_MESSAGE = "A product Id is required";
 
     public OnboardingMsConnectorImpl(MsOnboardingApiClient msOnboardingApiClient,
                                      MsOnboardingTokenApiClient msOnboardingTokenApiClient,
                                      MsOnboardingSupportApiClient msOnboardingSupportApiClient,
-                                     MsOnboardingAggregatesApiClient msOnboardingAggregatesApiClient, OnboardingMapper onboardingMapper) {
+                                     MsOnboardingAggregatesApiClient msOnboardingAggregatesApiClient, OnboardingMapper onboardingMapper,
+                                     InternalV1Api internalV1Api1) {
         this.msOnboardingApiClient = msOnboardingApiClient;
         this.msOnboardingTokenApiClient = msOnboardingTokenApiClient;
         this.msOnboardingSupportApiClient = msOnboardingSupportApiClient;
         this.msOnboardingAggregatesApiClient = msOnboardingAggregatesApiClient;
         this.onboardingMapper = onboardingMapper;
+        this.internalV1Api = internalV1Api1;
     }
 
     @Override
@@ -107,7 +111,7 @@ public class OnboardingMsConnectorImpl implements OnboardingMsConnector {
     @Override
     @Retry(name = "retryTimeout")
     public void onboardingTokenComplete(String onboardingId, MultipartFile contract) {
-        msOnboardingSupportApiClient._completeOnboardingTokenConsume(onboardingId, contract);
+        internalV1Api._completeOnboardingUsingPUT(onboardingId, contract);
     }
 
     @Override
@@ -132,7 +136,7 @@ public class OnboardingMsConnectorImpl implements OnboardingMsConnector {
     @Retry(name = "retryTimeout")
     public void rejectOnboarding(String onboardingId, String reason) {
         ReasonRequest reasonForReject = new ReasonRequest();
-        if(StringUtils.hasText(reason)) {
+        if (StringUtils.hasText(reason)) {
             reasonForReject.setReasonForReject(reason);
         }
         msOnboardingApiClient._delete(onboardingId, reasonForReject);
@@ -182,7 +186,7 @@ public class OnboardingMsConnectorImpl implements OnboardingMsConnector {
         return Objects.nonNull(result) ? result.stream()
                 // TODO this filter should be into query
                 .filter(onboardingResponse -> {
-                    if(Objects.isNull(subunitCode) && Objects.nonNull(onboardingResponse.getInstitution().getSubunitType())) {
+                    if (Objects.isNull(subunitCode) && Objects.nonNull(onboardingResponse.getInstitution().getSubunitType())) {
                         return !onboardingResponse.getInstitution().getSubunitType().name().equals(InstitutionPaSubunitType.UO.name())
                                 && !onboardingResponse.getInstitution().getSubunitType().name().equals(InstitutionPaSubunitType.AOO.name());
                     }
