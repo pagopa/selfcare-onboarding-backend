@@ -1,15 +1,22 @@
 package it.pagopa.selfcare.onboarding.core;
 
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.when;
 
+import it.pagopa.selfcare.onboarding.common.PartyRole;
 import it.pagopa.selfcare.onboarding.connector.api.OnboardingMsConnector;
 import it.pagopa.selfcare.onboarding.connector.api.PartyConnector;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.User;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -158,5 +165,45 @@ public class TokenServiceImplTest {
         //then
         Mockito.verify(onboardingMsConnector, Mockito.times(1))
                 .getAggregatesCsv(onboardingId, productId);
+    }
+
+    @Test
+    void verifyAllowedUserByRoleTest() {
+        //given
+        final String onboardingId = "onboardingId";
+        OnboardingData onboardingData = new OnboardingData();
+
+        User user = new User();
+        user.setRole(PartyRole.MANAGER);
+
+        onboardingData.setUsers(List.of(user));
+
+        when(onboardingMsConnector.getOnboardingWithUserInfo(anyString())).thenReturn(onboardingData);
+
+        // when
+        boolean result = tokenService.verifyAllowedUserByRole(onboardingId);
+
+        //then
+        assertTrue(result);
+        Mockito.verify(onboardingMsConnector, Mockito.times(1))
+            .getOnboardingWithUserInfo(anyString());
+    }
+
+    @Test
+    void verifyAllowedUserByRoleTest_CaseKO() {
+        //given
+        final String onboardingId = "onboardingId";
+        OnboardingData onboardingData = new OnboardingData();
+        onboardingData.setUsers(List.of());
+
+        when(onboardingMsConnector.getOnboardingWithUserInfo(anyString())).thenReturn(onboardingData);
+
+        // when
+        boolean result = tokenService.verifyAllowedUserByRole(onboardingId);
+
+        //then
+        assertFalse(result);
+        Mockito.verify(onboardingMsConnector, Mockito.times(1))
+            .getOnboardingWithUserInfo(anyString());
     }
 }

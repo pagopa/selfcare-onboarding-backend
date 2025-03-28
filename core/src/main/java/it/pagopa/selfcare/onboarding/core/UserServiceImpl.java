@@ -1,5 +1,10 @@
 package it.pagopa.selfcare.onboarding.core;
 
+import static it.pagopa.selfcare.onboarding.connector.model.user.User.Fields.familyName;
+import static it.pagopa.selfcare.onboarding.connector.model.user.User.Fields.name;
+import static it.pagopa.selfcare.onboarding.core.utils.Utils.getManager;
+import static it.pagopa.selfcare.onboarding.core.utils.Utils.isUserAdmin;
+
 import it.pagopa.selfcare.commons.base.logging.LogUtils;
 import it.pagopa.selfcare.onboarding.connector.api.OnboardingMsConnector;
 import it.pagopa.selfcare.onboarding.connector.api.UserRegistryConnector;
@@ -11,21 +16,16 @@ import it.pagopa.selfcare.onboarding.connector.model.user.Certification;
 import it.pagopa.selfcare.onboarding.connector.model.user.CertifiedField;
 import it.pagopa.selfcare.onboarding.core.exception.InvalidUserFieldsException;
 import it.pagopa.selfcare.onboarding.core.exception.OnboardingNotAllowedException;
+import it.pagopa.selfcare.onboarding.core.strategy.UserAllowedValidationStrategy;
 import it.pagopa.selfcare.onboarding.core.utils.PgManagerVerifier;
+import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.owasp.encoder.Encode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
-
-import java.util.ArrayList;
-import java.util.EnumSet;
-import java.util.Optional;
-
-import static it.pagopa.selfcare.onboarding.connector.model.user.User.Fields.familyName;
-import static it.pagopa.selfcare.onboarding.connector.model.user.User.Fields.name;
-import static it.pagopa.selfcare.onboarding.core.utils.Utils.getManager;
-import static it.pagopa.selfcare.onboarding.core.utils.Utils.isUserAdmin;
 
 @Slf4j
 @Service
@@ -36,14 +36,16 @@ public class UserServiceImpl implements UserService {
     private final UserRegistryConnector userRegistryConnector;
     private final OnboardingMsConnector onboardingMsConnector;
     private final PgManagerVerifier pgManagerVerifier;
+    private final UserAllowedValidationStrategy userAllowedValidationStrategy;
 
     @Autowired
     public UserServiceImpl(UserRegistryConnector userRegistryConnector,
                            OnboardingMsConnector onboardingMsConnector,
-                           PgManagerVerifier pgManagerVerifier) {
+                           PgManagerVerifier pgManagerVerifier, UserAllowedValidationStrategy userAllowedValidationStrategy) {
         this.userRegistryConnector = userRegistryConnector;
         this.onboardingMsConnector = onboardingMsConnector;
         this.pgManagerVerifier = pgManagerVerifier;
+        this.userAllowedValidationStrategy = userAllowedValidationStrategy;
     }
 
     @Override
@@ -135,4 +137,9 @@ public class UserServiceImpl implements UserService {
         return managerInfo;
     }
 
+  @Override
+  public boolean isAllowedUserByUid(String uid) {
+      log.trace("isAllowedUser for {}", uid);
+      return userAllowedValidationStrategy.isAuthorizedUser(uid);
+  }
 }

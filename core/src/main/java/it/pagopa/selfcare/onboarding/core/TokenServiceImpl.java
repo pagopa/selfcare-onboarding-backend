@@ -1,7 +1,10 @@
 package it.pagopa.selfcare.onboarding.core;
 
+import it.pagopa.selfcare.onboarding.common.PartyRole;
 import it.pagopa.selfcare.onboarding.connector.api.OnboardingMsConnector;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.User;
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.owasp.encoder.Encode;
 import org.springframework.core.io.Resource;
@@ -116,4 +119,23 @@ public class TokenServiceImpl implements TokenService {
         log.trace("getAggregatesCsv end");
         return resource;
     }
+
+  @Override
+  public boolean verifyAllowedUserByRole(String onboardingId) {
+    log.trace("verifyAllowedUserRole for {}", onboardingId);
+    boolean result = false;
+    OnboardingData onboardingData = getOnboardingWithUserInfo(onboardingId);
+
+    List<User> list =
+        onboardingData.getUsers().stream()
+            .filter(
+                user ->
+                    user.getRole().equals(PartyRole.MANAGER)
+                        || user.getRole().equals(PartyRole.DELEGATE))
+            .toList();
+    if (!list.isEmpty()) {
+      result = true;
+    }
+    return result;
+  }
 }

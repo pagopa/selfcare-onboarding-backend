@@ -8,9 +8,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import it.pagopa.selfcare.commons.base.security.SelfCareUser;
+import it.pagopa.selfcare.commons.web.security.JwtAuthenticationToken;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.InstitutionUpdate;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
 import it.pagopa.selfcare.onboarding.core.TokenService;
+import it.pagopa.selfcare.onboarding.core.UserService;
 import it.pagopa.selfcare.onboarding.web.config.WebTestConfig;
 import it.pagopa.selfcare.onboarding.web.model.OnboardingRequestResource;
 import it.pagopa.selfcare.onboarding.web.model.ReasonForRejectDto;
@@ -44,6 +47,9 @@ class TokenV2ControllerTest {
 
     @MockBean
     private TokenService tokenService;
+
+    @MockBean
+    private UserService userService;
 
     @Autowired
     protected ObjectMapper objectMapper;
@@ -238,28 +244,132 @@ class TokenV2ControllerTest {
     }
 
     /**
-     * Method under test: {@link TokenV2Controller#getAggregatesCsv(String, String)}
+     * Method under test: {@link TokenV2Controller#getAggregatesCsv(String, String, java.security.Principal)}
      */
     @Test
-    void getAggregatesCsv() throws Exception {
+    void getAggregatesCsv_Case1() throws Exception {
+        //given
         String onboardingId = "onboardingId";
         String productId = "productId";
         String text = "String";
+
+        JwtAuthenticationToken mockPrincipal = Mockito.mock(JwtAuthenticationToken.class);
+        SelfCareUser selfCareUser = SelfCareUser.builder("example")
+            .fiscalCode("fiscalCode")
+            .build();
+        Mockito.when(mockPrincipal.getPrincipal()).thenReturn(selfCareUser);
+
+        Mockito.when(tokenService.verifyAllowedUserByRole(onboardingId)).thenReturn(true);
+
         byte[] bytes= text.getBytes();
         InputStream is = new ByteArrayInputStream(bytes);
         Resource resource = Mockito.mock(Resource.class);
         Mockito.when(tokenService.getAggregatesCsv(onboardingId, productId)).thenReturn(resource);
         Mockito.when(resource.getInputStream()).thenReturn(is);
 
-        //when
-        mvc.perform(MockMvcRequestBuilders
-                        .get("/v2/tokens/{onboardingId}/products/{productId}/aggregates-csv", onboardingId, productId)
-                        .accept(MediaType.APPLICATION_OCTET_STREAM_VALUE))
-                .andExpect(status().isOk())
-                .andReturn();
+    // when
+    mvc.perform(
+            MockMvcRequestBuilders.get(
+                    "/v2/tokens/{onboardingId}/products/{productId}/aggregates-csv",
+                    onboardingId,
+                    productId)
+                .principal(mockPrincipal)
+                .accept(MediaType.APPLICATION_OCTET_STREAM_VALUE))
+        .andExpect(status().isOk())
+        .andReturn();
 
         //then
         verify(tokenService, times(1))
                 .getAggregatesCsv(onboardingId, productId);
+        verify(tokenService, times(1))
+            .verifyAllowedUserByRole(onboardingId);
+        verifyNoMoreInteractions(tokenService);
+    }
+
+    /**
+     * Method under test: {@link TokenV2Controller#getAggregatesCsv(String, String, java.security.Principal)}
+     */
+    @Test
+    void getAggregatesCsv_Case2() throws Exception {
+        //given
+        String onboardingId = "onboardingId";
+        String productId = "productId";
+        String text = "String";
+
+        JwtAuthenticationToken mockPrincipal = Mockito.mock(JwtAuthenticationToken.class);
+        SelfCareUser selfCareUser = SelfCareUser.builder("example")
+            .fiscalCode("fiscalCode")
+            .build();
+        Mockito.when(mockPrincipal.getPrincipal()).thenReturn(selfCareUser);
+
+        Mockito.when(userService.isAllowedUserByUid(selfCareUser.getId())).thenReturn(true);
+
+        byte[] bytes= text.getBytes();
+        InputStream is = new ByteArrayInputStream(bytes);
+        Resource resource = Mockito.mock(Resource.class);
+        Mockito.when(tokenService.getAggregatesCsv(onboardingId, productId)).thenReturn(resource);
+        Mockito.when(resource.getInputStream()).thenReturn(is);
+
+        // when
+        mvc.perform(
+                MockMvcRequestBuilders.get(
+                        "/v2/tokens/{onboardingId}/products/{productId}/aggregates-csv",
+                        onboardingId,
+                        productId)
+                    .principal(mockPrincipal)
+                    .accept(MediaType.APPLICATION_OCTET_STREAM_VALUE))
+            .andExpect(status().isOk())
+            .andReturn();
+
+        //then
+        verify(userService, times(1))
+            .isAllowedUserByUid(selfCareUser.getId());
+        verify(tokenService, times(1))
+            .verifyAllowedUserByRole(onboardingId);
+        verify(tokenService, times(1))
+            .getAggregatesCsv(onboardingId, productId);
+        verifyNoMoreInteractions(userService);
+        verifyNoMoreInteractions(tokenService);
+    }
+
+    /**
+     * Method under test: {@link TokenV2Controller#getAggregatesCsv(String, String, java.security.Principal)}
+     */
+    @Test
+    void getAggregatesCsv_CaseKO() throws Exception {
+        //given
+        String onboardingId = "onboardingId";
+        String productId = "productId";
+        String text = "String";
+
+        JwtAuthenticationToken mockPrincipal = Mockito.mock(JwtAuthenticationToken.class);
+        SelfCareUser selfCareUser = SelfCareUser.builder("example")
+            .fiscalCode("fiscalCode")
+            .build();
+        Mockito.when(mockPrincipal.getPrincipal()).thenReturn(selfCareUser);
+
+        Mockito.when(tokenService.verifyAllowedUserByRole(onboardingId)).thenReturn(false);
+
+        byte[] bytes= text.getBytes();
+        InputStream is = new ByteArrayInputStream(bytes);
+        Resource resource = Mockito.mock(Resource.class);
+        Mockito.when(tokenService.getAggregatesCsv(onboardingId, productId)).thenReturn(resource);
+        Mockito.when(resource.getInputStream()).thenReturn(is);
+
+        // when
+        mvc.perform(
+                MockMvcRequestBuilders.get(
+                        "/v2/tokens/{onboardingId}/products/{productId}/aggregates-csv",
+                        onboardingId,
+                        productId)
+                    .principal(mockPrincipal)
+                    .accept(MediaType.APPLICATION_OCTET_STREAM_VALUE))
+            .andExpect(status().isForbidden())
+            .andReturn();
+
+        //then
+        verify(tokenService, times(1))
+            .verifyAllowedUserByRole(onboardingId);
+        verifyNoMoreInteractions(tokenService);
     }
 }
