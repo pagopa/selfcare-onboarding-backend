@@ -232,15 +232,17 @@ public class TokenV2Controller {
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "", notes = "${swagger.tokens.getAggregatesCsv}")
     public ResponseEntity<byte[]> getAggregatesCsv(@ApiParam("${swagger.tokens.onboardingId}") @PathVariable("onboardingId")
-                                                       String onboardingId,
+                                                       String onboardingIdInput,
                                                    @ApiParam("${swagger.tokens.productId}")
                                                    @PathVariable("productId")
-                                                   String productId, Principal principal) throws IOException {
+                                                   String productIdInput, Principal principal) throws IOException {
 
         JwtAuthenticationToken jwtAuthenticationToken = (JwtAuthenticationToken) principal;
         SelfCareUser selfCareUser = (SelfCareUser) jwtAuthenticationToken.getPrincipal();
         log.trace("getAggregatesCsv start");
-        log.debug("getAggregatesCsv onboardingId = {}, productId = {}", Encode.forJava(onboardingId), Encode.forJava(productId));
+        String onboardingId = Encode.forJava(onboardingIdInput);
+        String productId = Encode.forJava(productIdInput);
+        log.debug("getAggregatesCsv onboardingId = {}, productId = {}", onboardingId, productId);
 
         if (tokenService.verifyAllowedUserByRole(onboardingId) || userService.isAllowedUserByUid(selfCareUser.getId())) {
             Resource csv = tokenService.getAggregatesCsv(onboardingId, productId);
