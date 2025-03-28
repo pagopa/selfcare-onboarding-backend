@@ -6,13 +6,9 @@ import it.pagopa.selfcare.onboarding.connector.model.RecipientCodeStatusResult;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.VerifyAggregateResult;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.*;
-import it.pagopa.selfcare.onboarding.connector.rest.client.MsOnboardingAggregatesApiClient;
-import it.pagopa.selfcare.onboarding.connector.rest.client.MsOnboardingApiClient;
-import it.pagopa.selfcare.onboarding.connector.rest.client.MsOnboardingSupportApiClient;
-import it.pagopa.selfcare.onboarding.connector.rest.client.MsOnboardingTokenApiClient;
+import it.pagopa.selfcare.onboarding.connector.rest.client.*;
 import it.pagopa.selfcare.onboarding.connector.rest.mapper.OnboardingMapper;
 import it.pagopa.selfcare.onboarding.connector.rest.mapper.OnboardingMapperImpl;
-import it.pagopa.selfcare.onboarding.generated.openapi.v1.api.InternalV1Api;
 import it.pagopa.selfcare.onboarding.generated.openapi.v1.dto.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -53,7 +49,7 @@ class OnboardingMsConnectorImplTest {
     private MsOnboardingSupportApiClient msOnboardingSupportApiClient;
 
     @Mock
-    private InternalV1Api internalV1Api;
+    private MsOnboardingInternalApiClient msOnboardingInternalApiClient;
 
     @Spy
     private OnboardingMapper onboardingMapper = new OnboardingMapperImpl();
@@ -241,12 +237,12 @@ class OnboardingMsConnectorImplTest {
         final MockMultipartFile mockMultipartFile =
                 new MockMultipartFile("example", new ByteArrayInputStream("example".getBytes(StandardCharsets.UTF_8)));
         // when
-        final Executable executable = () -> internalV1Api._completeOnboardingUsingPUT(tokenId, mockMultipartFile);
+        final Executable executable = () -> msOnboardingInternalApiClient._completeOnboardingUsingPUT(tokenId, mockMultipartFile);
         // then
         assertDoesNotThrow(executable);
-        verify(internalV1Api, times(1))
+        verify(msOnboardingInternalApiClient, times(1))
                 ._completeOnboardingUsingPUT(tokenId, mockMultipartFile);
-        verifyNoMoreInteractions(internalV1Api);
+        verifyNoMoreInteractions(msOnboardingInternalApiClient);
     }
 
     @Test

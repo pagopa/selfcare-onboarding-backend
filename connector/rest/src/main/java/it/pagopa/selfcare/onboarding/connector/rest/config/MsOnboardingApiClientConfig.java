@@ -9,7 +9,7 @@ import org.springframework.context.annotation.PropertySource;
 
 @Configuration
 @Import(RestClientBaseConfig.class)
-@EnableFeignClients(clients = {MsOnboardingApiClient.class, MsOnboardingTokenApiClient.class, MsOnboardingSupportApiClient.class, MsOnboardingAggregatesApiClient.class, MsOnboardingInstitutionApiClient.class})
+@EnableFeignClients(clients = {MsOnboardingApiClient.class, MsOnboardingTokenApiClient.class, MsOnboardingSupportApiClient.class, MsOnboardingAggregatesApiClient.class, MsOnboardingInstitutionApiClient.class, MsOnboardingInternalApiClient.class})
 @PropertySource("classpath:config/ms-onboarding-rest-client.properties")
 public class MsOnboardingApiClientConfig {
 }
