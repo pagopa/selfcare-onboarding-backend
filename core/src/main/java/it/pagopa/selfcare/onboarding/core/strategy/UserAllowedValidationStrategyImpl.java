@@ -1,9 +1,9 @@
 package it.pagopa.selfcare.onboarding.core.strategy;
 
-import io.micrometer.common.util.StringUtils;
 import java.util.List;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -18,8 +18,16 @@ public class UserAllowedValidationStrategyImpl implements UserAllowedValidationS
   @Autowired
   public UserAllowedValidationStrategyImpl(
       @Value("${user-allowed-list}") String userAllowedListKV) {
+
+    if (userAllowedListKV == null || userAllowedListKV.trim().isEmpty()) {
+      log.trace("Malformed string for user-allowed-list: {}", userAllowedListKV);
+      userAllowedListKV = StringUtils.EMPTY;
+    }
+
     log.trace("Initializing {}", UserAllowedValidationStrategyImpl.class.getSimpleName());
-    log.debug("UserAllowedValidationStrategyImpl = {}", userAllowedListKV.isEmpty() ? "Empty String for User Allowed" : userAllowedListKV);
+    log.debug(
+        "UserAllowedValidationStrategyImpl = {}",
+        userAllowedListKV.isEmpty() ? "Empty String for User Allowed" : userAllowedListKV);
     setUserAllowedList(validateUserString(userAllowedListKV));
   }
 
