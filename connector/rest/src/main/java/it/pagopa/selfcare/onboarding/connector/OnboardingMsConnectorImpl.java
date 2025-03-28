@@ -8,10 +8,7 @@ import it.pagopa.selfcare.onboarding.connector.exceptions.InvalidRequestExceptio
 import it.pagopa.selfcare.onboarding.connector.model.RecipientCodeStatusResult;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.VerifyAggregateResult;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
-import it.pagopa.selfcare.onboarding.connector.rest.client.MsOnboardingAggregatesApiClient;
-import it.pagopa.selfcare.onboarding.connector.rest.client.MsOnboardingApiClient;
-import it.pagopa.selfcare.onboarding.connector.rest.client.MsOnboardingSupportApiClient;
-import it.pagopa.selfcare.onboarding.connector.rest.client.MsOnboardingTokenApiClient;
+import it.pagopa.selfcare.onboarding.connector.rest.client.*;
 import it.pagopa.selfcare.onboarding.connector.rest.mapper.OnboardingMapper;
 import it.pagopa.selfcare.onboarding.generated.openapi.v1.api.InternalV1Api;
 import it.pagopa.selfcare.onboarding.generated.openapi.v1.dto.OnboardingGet;
@@ -41,20 +38,20 @@ public class OnboardingMsConnectorImpl implements OnboardingMsConnector {
     private final MsOnboardingTokenApiClient msOnboardingTokenApiClient;
     private final MsOnboardingAggregatesApiClient msOnboardingAggregatesApiClient;
     private final OnboardingMapper onboardingMapper;
-    private final InternalV1Api internalV1Api;
+    private final MsOnboardingInternalApiClient msOnboardingInternalApiClient;
     protected static final String REQUIRED_PRODUCT_ID_MESSAGE = "A product Id is required";
 
     public OnboardingMsConnectorImpl(MsOnboardingApiClient msOnboardingApiClient,
                                      MsOnboardingTokenApiClient msOnboardingTokenApiClient,
                                      MsOnboardingSupportApiClient msOnboardingSupportApiClient,
                                      MsOnboardingAggregatesApiClient msOnboardingAggregatesApiClient, OnboardingMapper onboardingMapper,
-                                     InternalV1Api internalV1Api1) {
+                                     MsOnboardingInternalApiClient msOnboardingInternalApiClient) {
         this.msOnboardingApiClient = msOnboardingApiClient;
         this.msOnboardingTokenApiClient = msOnboardingTokenApiClient;
         this.msOnboardingSupportApiClient = msOnboardingSupportApiClient;
         this.msOnboardingAggregatesApiClient = msOnboardingAggregatesApiClient;
         this.onboardingMapper = onboardingMapper;
-        this.internalV1Api = internalV1Api1;
+        this.msOnboardingInternalApiClient = msOnboardingInternalApiClient;
     }
 
     @Override
@@ -111,7 +108,7 @@ public class OnboardingMsConnectorImpl implements OnboardingMsConnector {
     @Override
     @Retry(name = "retryTimeout")
     public void onboardingTokenComplete(String onboardingId, MultipartFile contract) {
-        internalV1Api._completeOnboardingUsingPUT(onboardingId, contract);
+        msOnboardingInternalApiClient._completeOnboardingUsingPUT(onboardingId, contract);
     }
 
     @Override
