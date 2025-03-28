@@ -9,6 +9,7 @@ import it.pagopa.selfcare.onboarding.connector.model.onboarding.*;
 import it.pagopa.selfcare.onboarding.connector.rest.client.*;
 import it.pagopa.selfcare.onboarding.connector.rest.mapper.OnboardingMapper;
 import it.pagopa.selfcare.onboarding.connector.rest.mapper.OnboardingMapperImpl;
+import it.pagopa.selfcare.onboarding.generated.openapi.v1.api.InternalV1Api;
 import it.pagopa.selfcare.onboarding.generated.openapi.v1.dto.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -50,6 +51,7 @@ class OnboardingMsConnectorImplTest {
 
     @Mock
     private MsOnboardingInternalApiClient msOnboardingInternalApiClient;
+
 
     @Spy
     private OnboardingMapper onboardingMapper = new OnboardingMapperImpl();

@@ -10,6 +10,7 @@ import it.pagopa.selfcare.onboarding.connector.model.institutions.VerifyAggregat
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
 import it.pagopa.selfcare.onboarding.connector.rest.client.*;
 import it.pagopa.selfcare.onboarding.connector.rest.mapper.OnboardingMapper;
+import it.pagopa.selfcare.onboarding.generated.openapi.v1.api.InternalV1Api;
 import it.pagopa.selfcare.onboarding.generated.openapi.v1.dto.OnboardingGet;
 import it.pagopa.selfcare.onboarding.generated.openapi.v1.dto.OnboardingResponse;
 import it.pagopa.selfcare.onboarding.generated.openapi.v1.dto.OnboardingStatus;
