@@ -121,21 +121,10 @@ public class TokenServiceImpl implements TokenService {
     }
 
   @Override
-  public boolean verifyAllowedUserByRole(String onboardingId) {
-    log.trace("verifyAllowedUserRole for {}", onboardingId);
-    boolean result = false;
+  public boolean verifyAllowedUserByRole(String onboardingId, String uid) {
+    log.trace("verifyAllowedUserRole for {} - {}", onboardingId, uid);
     OnboardingData onboardingData = getOnboardingWithUserInfo(onboardingId);
 
-    List<User> list =
-        onboardingData.getUsers().stream()
-            .filter(
-                user ->
-                    user.getRole().equals(PartyRole.MANAGER)
-                        || user.getRole().equals(PartyRole.DELEGATE))
-            .toList();
-    if (!list.isEmpty()) {
-      result = true;
-    }
-    return result;
+    return onboardingData.getUsers().stream().anyMatch(user -> uid.equalsIgnoreCase(user.getId()));
   }
 }

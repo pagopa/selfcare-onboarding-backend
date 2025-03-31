@@ -171,17 +171,23 @@ public class TokenServiceImplTest {
     void verifyAllowedUserByRoleTest() {
         //given
         final String onboardingId = "onboardingId";
+        final String uid = "uid1";
         OnboardingData onboardingData = new OnboardingData();
 
-        User user = new User();
-        user.setRole(PartyRole.MANAGER);
+        User userManager = new User();
+        userManager.setRole(PartyRole.MANAGER);
+        userManager.setId(uid);
 
-        onboardingData.setUsers(List.of(user));
+        User userDelegate = new User();
+        userDelegate.setRole(PartyRole.DELEGATE);
+        userDelegate.setId("uid2");
+
+        onboardingData.setUsers(List.of(userManager, userDelegate));
 
         when(onboardingMsConnector.getOnboardingWithUserInfo(anyString())).thenReturn(onboardingData);
 
         // when
-        boolean result = tokenService.verifyAllowedUserByRole(onboardingId);
+        boolean result = tokenService.verifyAllowedUserByRole(onboardingId, uid);
 
         //then
         assertTrue(result);
@@ -193,13 +199,20 @@ public class TokenServiceImplTest {
     void verifyAllowedUserByRoleTest_CaseKO() {
         //given
         final String onboardingId = "onboardingId";
+        final String uid = "uid1";
+
         OnboardingData onboardingData = new OnboardingData();
-        onboardingData.setUsers(List.of());
+
+        User user = new User();
+        user.setRole(PartyRole.DELEGATE);
+        user.setId("uid2");
+
+        onboardingData.setUsers(List.of(user));
 
         when(onboardingMsConnector.getOnboardingWithUserInfo(anyString())).thenReturn(onboardingData);
 
         // when
-        boolean result = tokenService.verifyAllowedUserByRole(onboardingId);
+        boolean result = tokenService.verifyAllowedUserByRole(onboardingId, uid);
 
         //then
         assertFalse(result);

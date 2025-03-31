@@ -23,5 +23,5 @@ public interface TokenService {
 
   Resource getAggregatesCsv(String onboardingId, String productId);
 
-  boolean verifyAllowedUserByRole(String onboardingId);
+  boolean verifyAllowedUserByRole(String onboardingId, String uid);
 }
