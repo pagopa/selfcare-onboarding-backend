@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
@@ -69,6 +70,21 @@ class UserAllowedValidationStrategyTest {
 
     // then
     assertTrue(result);
+  }
+
+  @Test
+  void isAuthorizedTest_CaseEmpty() {
+    // given
+    System.setProperty("user-allowed-list", "uid1");
+    String userString = System.getProperty("user-allowed-list");
+
+    userAllowedValidationStrategyImpl = new UserAllowedValidationStrategyImpl(userString);
+
+    // when
+    boolean result = userAllowedValidationStrategyImpl.isAuthorizedUser(StringUtils.EMPTY);
+
+    // then
+    assertFalse(result);
   }
 
   @AfterEach
