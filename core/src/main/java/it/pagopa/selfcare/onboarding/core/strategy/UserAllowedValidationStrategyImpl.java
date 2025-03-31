@@ -1,7 +1,6 @@
 package it.pagopa.selfcare.onboarding.core.strategy;
 
 import java.util.List;
-import java.util.Objects;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -20,7 +19,7 @@ public class UserAllowedValidationStrategyImpl implements UserAllowedValidationS
   public UserAllowedValidationStrategyImpl(
       @Value("${user-allowed-list}") String userAllowedListKV) {
 
-    if (!Objects.nonNull(userAllowedListKV) || userAllowedListKV.trim().isEmpty()) {
+    if (userAllowedListKV.equalsIgnoreCase("null") || userAllowedListKV.trim().isEmpty()) {
       log.trace("Malformed string for user-allowed-list: {}", userAllowedListKV);
       userAllowedListKV = StringUtils.EMPTY;
     }
