@@ -1,10 +1,7 @@
 package it.pagopa.selfcare.onboarding.core;
 
-import it.pagopa.selfcare.onboarding.common.PartyRole;
 import it.pagopa.selfcare.onboarding.connector.api.OnboardingMsConnector;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.User;
-import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.owasp.encoder.Encode;
 import org.springframework.core.io.Resource;
@@ -17,7 +14,9 @@ import org.springframework.web.multipart.MultipartFile;
 public class TokenServiceImpl implements TokenService {
 
     private final OnboardingMsConnector onboardingMsConnector;
+
     private static final String ONBOARDING_ID_REQUIRED_MESSAGE = "OnboardingId is required";
+    private static final String TOKEN_ID_IS_REQUIRED = "TokenId is required";
 
     public TokenServiceImpl(OnboardingMsConnector onboardingMsConnector) {
         this.onboardingMsConnector = onboardingMsConnector;
@@ -69,7 +68,7 @@ public class TokenServiceImpl implements TokenService {
     public void completeTokenV2(String onboardingId, MultipartFile contract) {
         log.trace("completeTokenAsync start");
         log.debug("completeTokenAsync id = {}", onboardingId);
-        Assert.notNull(onboardingId, "TokenId is required");
+        Assert.notNull(onboardingId, TOKEN_ID_IS_REQUIRED);
         onboardingMsConnector.onboardingTokenComplete(onboardingId, contract);
         log.debug("completeTokenAsync result = success");
         log.trace("completeTokenAsync end");
@@ -89,7 +88,7 @@ public class TokenServiceImpl implements TokenService {
     public Resource getContract(String onboardingId) {
         log.trace("getContract start");
         log.debug("getContract id = {}", onboardingId);
-        Assert.notNull(onboardingId, "TokenId is required");
+        Assert.notNull(onboardingId, TOKEN_ID_IS_REQUIRED);
         Resource resource = onboardingMsConnector.getContract(onboardingId);
         log.debug("getContract result = success");
         log.trace("getContract end");
@@ -100,7 +99,7 @@ public class TokenServiceImpl implements TokenService {
     public Resource getAttachment(String onboardingId, String filename) {
         log.trace("getAttachment start");
         log.debug("getAttachment id = {}, filename = {}",  Encode.forJava(onboardingId),  Encode.forJava(filename));
-        Assert.notNull(onboardingId, "TokenId is required");
+        Assert.notNull(onboardingId, TOKEN_ID_IS_REQUIRED);
         Assert.notNull(filename, "filename is required");
         Resource resource = onboardingMsConnector.getAttachment(onboardingId, filename);
         log.debug("getAttachment result = success");
