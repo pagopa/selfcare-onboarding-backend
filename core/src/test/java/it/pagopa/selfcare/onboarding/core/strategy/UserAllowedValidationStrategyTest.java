@@ -73,7 +73,22 @@ class UserAllowedValidationStrategyTest {
   }
 
   @Test
-  void isAuthorizedTest_CaseEmpty() {
+  void isAuthorizedTest_CaseNullString() {
+    // given
+    System.setProperty("user-allowed-list", "null");
+    String userString = System.getProperty("user-allowed-list");
+
+    userAllowedValidationStrategyImpl = new UserAllowedValidationStrategyImpl(userString);
+
+    // when
+    boolean result = userAllowedValidationStrategyImpl.isAuthorizedUser(StringUtils.EMPTY);
+
+    // then
+    assertFalse(result);
+  }
+
+  @Test
+  void isAuthorizedTest_CaseEmptyInput() {
     // given
     System.setProperty("user-allowed-list", "uid1");
     String userString = System.getProperty("user-allowed-list");
