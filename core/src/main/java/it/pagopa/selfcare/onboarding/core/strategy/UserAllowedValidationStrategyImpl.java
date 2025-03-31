@@ -20,7 +20,7 @@ public class UserAllowedValidationStrategyImpl implements UserAllowedValidationS
   public UserAllowedValidationStrategyImpl(
       @Value("${user-allowed-list}") String userAllowedListKV) {
 
-    if (Objects.nonNull(userAllowedListKV) || userAllowedListKV.trim().isEmpty()) {
+    if (!Objects.nonNull(userAllowedListKV) || userAllowedListKV.trim().isEmpty()) {
       log.trace("Malformed string for user-allowed-list: {}", userAllowedListKV);
       userAllowedListKV = StringUtils.EMPTY;
     }

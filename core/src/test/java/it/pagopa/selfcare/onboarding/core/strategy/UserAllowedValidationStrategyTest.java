@@ -61,6 +61,7 @@ class UserAllowedValidationStrategyTest {
     // given
     System.setProperty("user-allowed-list", "uid1");
     String userString = System.getProperty("user-allowed-list");
+
     userAllowedValidationStrategyImpl = new UserAllowedValidationStrategyImpl(userString);
 
     // when

@@ -2,6 +2,7 @@ package it.pagopa.selfcare.onboarding.web.controller;
 
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -10,11 +11,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import it.pagopa.selfcare.commons.base.security.SelfCareUser;
 import it.pagopa.selfcare.commons.web.security.JwtAuthenticationToken;
+import it.pagopa.selfcare.onboarding.connector.exceptions.UnauthorizedUserException;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.InstitutionUpdate;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
 import it.pagopa.selfcare.onboarding.core.TokenService;
 import it.pagopa.selfcare.onboarding.core.UserService;
 import it.pagopa.selfcare.onboarding.web.config.WebTestConfig;
+import it.pagopa.selfcare.onboarding.web.handler.TokenExceptionHandler;
 import it.pagopa.selfcare.onboarding.web.model.OnboardingRequestResource;
 import it.pagopa.selfcare.onboarding.web.model.ReasonForRejectDto;
 import it.pagopa.selfcare.onboarding.web.model.mapper.OnboardingResourceMapperImpl;
@@ -39,7 +42,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.web.multipart.MultipartFile;
 
 @WebMvcTest(value = {TokenV2Controller.class}, excludeAutoConfiguration = SecurityAutoConfiguration.class)
-@ContextConfiguration(classes = {TokenV2Controller.class, WebTestConfig.class, OnboardingResourceMapperImpl.class})
+@ContextConfiguration(classes = {TokenV2Controller.class, WebTestConfig.class, OnboardingResourceMapperImpl.class, TokenExceptionHandler.class})
 class TokenV2ControllerTest {
 
     @Autowired
@@ -259,7 +262,10 @@ class TokenV2ControllerTest {
             .build();
         Mockito.when(mockPrincipal.getPrincipal()).thenReturn(selfCareUser);
 
-        Mockito.when(tokenService.verifyAllowedUserByRole(onboardingId)).thenReturn(true);
+        String uid = selfCareUser.getId();
+
+        Mockito.when(tokenService.verifyAllowedUserByRole(onboardingId, uid))
+        .thenReturn(true);
 
         byte[] bytes= text.getBytes();
         InputStream is = new ByteArrayInputStream(bytes);
@@ -282,7 +288,7 @@ class TokenV2ControllerTest {
         verify(tokenService, times(1))
                 .getAggregatesCsv(onboardingId, productId);
         verify(tokenService, times(1))
-            .verifyAllowedUserByRole(onboardingId);
+            .verifyAllowedUserByRole(onboardingId, uid);
         verifyNoMoreInteractions(tokenService);
     }
 
@@ -302,7 +308,8 @@ class TokenV2ControllerTest {
             .build();
         Mockito.when(mockPrincipal.getPrincipal()).thenReturn(selfCareUser);
 
-        Mockito.when(userService.isAllowedUserByUid(selfCareUser.getId())).thenReturn(true);
+        String uid = selfCareUser.getId();
+        Mockito.when(userService.isAllowedUserByUid(uid)).thenReturn(true);
 
         byte[] bytes= text.getBytes();
         InputStream is = new ByteArrayInputStream(bytes);
@@ -323,9 +330,9 @@ class TokenV2ControllerTest {
 
         //then
         verify(userService, times(1))
-            .isAllowedUserByUid(selfCareUser.getId());
+            .isAllowedUserByUid(uid);
         verify(tokenService, times(1))
-            .verifyAllowedUserByRole(onboardingId);
+            .verifyAllowedUserByRole(onboardingId, uid);
         verify(tokenService, times(1))
             .getAggregatesCsv(onboardingId, productId);
         verifyNoMoreInteractions(userService);
@@ -348,7 +355,10 @@ class TokenV2ControllerTest {
             .build();
         Mockito.when(mockPrincipal.getPrincipal()).thenReturn(selfCareUser);
 
-        Mockito.when(tokenService.verifyAllowedUserByRole(onboardingId)).thenReturn(false);
+        String uid = selfCareUser.getId();
+
+        Mockito.when(tokenService.verifyAllowedUserByRole(onboardingId, uid))
+        .thenReturn(false);
 
         byte[] bytes= text.getBytes();
         InputStream is = new ByteArrayInputStream(bytes);
@@ -364,12 +374,14 @@ class TokenV2ControllerTest {
                         productId)
                     .principal(mockPrincipal)
                     .accept(MediaType.APPLICATION_OCTET_STREAM_VALUE))
+            .andExpect(result -> assertTrue(result.getResolvedException() instanceof UnauthorizedUserException))
             .andExpect(status().isForbidden())
             .andReturn();
 
         //then
         verify(tokenService, times(1))
-            .verifyAllowedUserByRole(onboardingId);
+            .verifyAllowedUserByRole(onboardingId, uid);
         verifyNoMoreInteractions(tokenService);
     }
+
 }

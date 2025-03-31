@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import it.pagopa.selfcare.commons.base.logging.LogUtils;
 import it.pagopa.selfcare.commons.base.security.SelfCareUser;
 import it.pagopa.selfcare.commons.web.security.JwtAuthenticationToken;
+import it.pagopa.selfcare.onboarding.connector.exceptions.UnauthorizedUserException;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
 import it.pagopa.selfcare.onboarding.core.TokenService;
 import it.pagopa.selfcare.onboarding.core.UserService;
@@ -235,7 +236,7 @@ public class TokenV2Controller {
                                                        String onboardingIdInput,
                                                    @ApiParam("${swagger.tokens.productId}")
                                                    @PathVariable("productId")
-                                                   String productIdInput, Principal principal) throws IOException {
+                                                   String productIdInput, Principal principal) throws Exception {
 
         JwtAuthenticationToken jwtAuthenticationToken = (JwtAuthenticationToken) principal;
         SelfCareUser selfCareUser = (SelfCareUser) jwtAuthenticationToken.getPrincipal();
@@ -244,12 +245,16 @@ public class TokenV2Controller {
         String productId = Encode.forJava(productIdInput);
         log.debug("getAggregatesCsv onboardingId = {}, productId = {}", onboardingId, productId);
 
-        if (tokenService.verifyAllowedUserByRole(onboardingId) || userService.isAllowedUserByUid(selfCareUser.getId())) {
+        String userUid = selfCareUser.getId();
+        
+        if (tokenService.verifyAllowedUserByRole(onboardingId, userUid)
+        || userService.isAllowedUserByUid(userUid)) {
             Resource csv = tokenService.getAggregatesCsv(onboardingId, productId);
             return getResponseEntity(csv);
+        } else {
+            throw new UnauthorizedUserException("Normal-User not allowed to use this endpoint.");
         }
 
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new byte[0]);
     }
 
 
