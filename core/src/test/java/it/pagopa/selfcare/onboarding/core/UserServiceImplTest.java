@@ -1,5 +1,10 @@
 package it.pagopa.selfcare.onboarding.core;
 
+import static it.pagopa.selfcare.onboarding.connector.model.user.User.Fields.familyName;
+import static it.pagopa.selfcare.onboarding.connector.model.user.User.Fields.name;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
 import it.pagopa.selfcare.commons.utils.TestUtils;
 import it.pagopa.selfcare.onboarding.common.PartyRole;
 import it.pagopa.selfcare.onboarding.connector.api.OnboardingMsConnector;
@@ -12,22 +17,17 @@ import it.pagopa.selfcare.onboarding.connector.model.user.Certification;
 import it.pagopa.selfcare.onboarding.connector.model.user.CertifiedField;
 import it.pagopa.selfcare.onboarding.core.exception.InvalidUserFieldsException;
 import it.pagopa.selfcare.onboarding.core.exception.OnboardingNotAllowedException;
+import it.pagopa.selfcare.onboarding.core.strategy.UserAllowedValidationStrategy;
 import it.pagopa.selfcare.onboarding.core.utils.PgManagerVerifier;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Optional;
-
-import static it.pagopa.selfcare.onboarding.connector.model.user.User.Fields.familyName;
-import static it.pagopa.selfcare.onboarding.connector.model.user.User.Fields.name;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceImplTest {
@@ -44,6 +44,9 @@ class UserServiceImplTest {
 
     @Mock
     private PgManagerVerifier pgManagerVerifierMock;
+
+    @Mock
+    private UserAllowedValidationStrategy userAllowedValidationStrategy;
 
 
     @Test
@@ -313,4 +316,16 @@ class UserServiceImplTest {
         assertEquals("Manager not found", exception.getMessage());
         verify(onboardingMsConnector, times(1)).getOnboardingWithUserInfo(onboardingId);
     }
+
+  @Test
+  void isAllowedUserByUidTest() {
+    // given
+    when(userAllowedValidationStrategy.isAuthorizedUser(anyString())).thenReturn(true);
+
+    // when
+    boolean result = userService.isAllowedUserByUid(anyString());
+
+    // then
+    assertTrue(result);
+  }
 }

@@ -8,14 +8,19 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.v3.oas.annotations.Operation;
 import it.pagopa.selfcare.commons.base.logging.LogUtils;
+import it.pagopa.selfcare.commons.base.security.SelfCareUser;
+import it.pagopa.selfcare.commons.web.security.JwtAuthenticationToken;
+import it.pagopa.selfcare.onboarding.connector.exceptions.UnauthorizedUserException;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
 import it.pagopa.selfcare.onboarding.core.TokenService;
+import it.pagopa.selfcare.onboarding.core.UserService;
 import it.pagopa.selfcare.onboarding.web.model.OnboardingRequestResource;
 import it.pagopa.selfcare.onboarding.web.model.OnboardingVerify;
 import it.pagopa.selfcare.onboarding.web.model.ReasonForRejectDto;
 import it.pagopa.selfcare.onboarding.web.model.mapper.OnboardingResourceMapper;
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.Principal;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.owasp.encoder.Encode;
@@ -34,11 +39,13 @@ import org.springframework.web.multipart.MultipartFile;
 public class TokenV2Controller {
 
     private final TokenService tokenService;
+    private final UserService userService;
 
     private final OnboardingResourceMapper onboardingResourceMapper;
-
-    public TokenV2Controller(TokenService tokenService, OnboardingResourceMapper onboardingResourceMapper) {
+    
+    public TokenV2Controller(TokenService tokenService, UserService userService, OnboardingResourceMapper onboardingResourceMapper) {
         this.tokenService = tokenService;
+        this.userService = userService;
         this.onboardingResourceMapper = onboardingResourceMapper;
     }
 
@@ -226,15 +233,30 @@ public class TokenV2Controller {
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "", notes = "${swagger.tokens.getAggregatesCsv}")
     public ResponseEntity<byte[]> getAggregatesCsv(@ApiParam("${swagger.tokens.onboardingId}") @PathVariable("onboardingId")
-                                                       String onboardingId,
+                                                       String onboardingIdInput,
                                                    @ApiParam("${swagger.tokens.productId}")
                                                    @PathVariable("productId")
-                                                   String productId) throws IOException {
+                                                   String productIdInput, Principal principal) throws Exception {
+
+        JwtAuthenticationToken jwtAuthenticationToken = (JwtAuthenticationToken) principal;
+        SelfCareUser selfCareUser = (SelfCareUser) jwtAuthenticationToken.getPrincipal();
         log.trace("getAggregatesCsv start");
-        log.debug("getAggregatesCsv onboardingId = {}, productId = {}", Encode.forJava(onboardingId), Encode.forJava(productId));
-        Resource csv = tokenService.getAggregatesCsv(onboardingId, productId);
-        return getResponseEntity(csv);
+        String onboardingId = Encode.forJava(onboardingIdInput);
+        String productId = Encode.forJava(productIdInput);
+        log.debug("getAggregatesCsv onboardingId = {}, productId = {}", onboardingId, productId);
+
+        String userUid = selfCareUser.getId();
+        
+        if (tokenService.verifyAllowedUserByRole(onboardingId, userUid)
+        || userService.isAllowedUserByUid(userUid)) {
+            Resource csv = tokenService.getAggregatesCsv(onboardingId, productId);
+            return getResponseEntity(csv);
+        } else {
+            throw new UnauthorizedUserException("Normal-User not allowed to use this endpoint.");
+        }
+
     }
+
 
     private HttpHeaders getHttpHeaders(Resource contract) {
         HttpHeaders headers = new HttpHeaders();

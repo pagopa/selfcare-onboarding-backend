@@ -5,21 +5,23 @@ import org.springframework.core.io.Resource;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface TokenService {
-    OnboardingData verifyOnboarding(String onboardingId);
+  OnboardingData verifyOnboarding(String onboardingId);
 
-    void approveOnboarding(String onboardingId);
+  void approveOnboarding(String onboardingId);
 
-    void rejectOnboarding(String onboardingId, String reason);
+  void rejectOnboarding(String onboardingId, String reason);
 
-    OnboardingData getOnboardingWithUserInfo(String onboardingId);
+  OnboardingData getOnboardingWithUserInfo(String onboardingId);
 
-    void completeTokenV2(String onboardingId, MultipartFile contract);
+  void completeTokenV2(String onboardingId, MultipartFile contract);
 
-    void completeOnboardingUsers(String onboardingId, MultipartFile contract);
+  void completeOnboardingUsers(String onboardingId, MultipartFile contract);
 
-    Resource getContract(String onboardingId);
+  Resource getContract(String onboardingId);
 
-    Resource getAttachment(String onboardingId, String filename);
+  Resource getAttachment(String onboardingId, String filename);
 
-    Resource getAggregatesCsv(String onboardingId, String productId);
+  Resource getAggregatesCsv(String onboardingId, String productId);
+
+  boolean verifyAllowedUserByRole(String onboardingId, String uid);
 }
