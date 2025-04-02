@@ -6,12 +6,10 @@ import it.pagopa.selfcare.onboarding.connector.model.RecipientCodeStatusResult;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.VerifyAggregateResult;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.*;
-import it.pagopa.selfcare.onboarding.connector.rest.client.MsOnboardingAggregatesApiClient;
-import it.pagopa.selfcare.onboarding.connector.rest.client.MsOnboardingApiClient;
-import it.pagopa.selfcare.onboarding.connector.rest.client.MsOnboardingSupportApiClient;
-import it.pagopa.selfcare.onboarding.connector.rest.client.MsOnboardingTokenApiClient;
+import it.pagopa.selfcare.onboarding.connector.rest.client.*;
 import it.pagopa.selfcare.onboarding.connector.rest.mapper.OnboardingMapper;
 import it.pagopa.selfcare.onboarding.connector.rest.mapper.OnboardingMapperImpl;
+import it.pagopa.selfcare.onboarding.generated.openapi.v1.api.InternalV1Api;
 import it.pagopa.selfcare.onboarding.generated.openapi.v1.dto.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -50,6 +48,10 @@ class OnboardingMsConnectorImplTest {
 
     @Mock
     private MsOnboardingSupportApiClient msOnboardingSupportApiClient;
+
+    @Mock
+    private MsOnboardingInternalApiClient msOnboardingInternalApiClient;
+
 
     @Spy
     private OnboardingMapper onboardingMapper = new OnboardingMapperImpl();
@@ -104,6 +106,7 @@ class OnboardingMsConnectorImplTest {
         assertEquals(actual.getInstitution().getTaxCode(), institutionUpdate.getTaxCode());
         verifyNoMoreInteractions(msOnboardingApiClient);
     }
+
     @Test
     void onboarding_institutionPsp() {
         // given
@@ -130,6 +133,7 @@ class OnboardingMsConnectorImplTest {
         assertNotNull(actual.getInstitution().getDataProtectionOfficer());
         verifyNoMoreInteractions(msOnboardingApiClient);
     }
+
     @Test
     void aggregatesVerification_withProdIO_shouldReturnValidResult() {
         // given
@@ -200,6 +204,7 @@ class OnboardingMsConnectorImplTest {
         verify(msOnboardingAggregatesApiClient, never())._verifyPagoPaAggregatesCsv(any());
         verify(msOnboardingAggregatesApiClient, never())._verifySendAggregatesCsv(any());
     }
+
     @Test
     void onboardingCompany() {
         // given
@@ -234,12 +239,12 @@ class OnboardingMsConnectorImplTest {
         final MockMultipartFile mockMultipartFile =
                 new MockMultipartFile("example", new ByteArrayInputStream("example".getBytes(StandardCharsets.UTF_8)));
         // when
-        final Executable executable = () -> msOnboardingSupportApiClient._completeOnboardingTokenConsume(tokenId, mockMultipartFile);
+        final Executable executable = () -> msOnboardingInternalApiClient._completeOnboardingUsingPUT(tokenId, mockMultipartFile);
         // then
         assertDoesNotThrow(executable);
-        verify(msOnboardingSupportApiClient, times(1))
-                ._completeOnboardingTokenConsume(tokenId, mockMultipartFile);
-        verifyNoMoreInteractions(msOnboardingApiClient);
+        verify(msOnboardingInternalApiClient, times(1))
+                ._completeOnboardingUsingPUT(tokenId, mockMultipartFile);
+        verifyNoMoreInteractions(msOnboardingInternalApiClient);
     }
 
     @Test
@@ -454,7 +459,7 @@ class OnboardingMsConnectorImplTest {
         assertEquals(actual.getAggregates().get(0).getTaxCode(), onboardingData.getAggregates().get(0).getTaxCode());
         assertEquals(actual.getAggregates().get(0).getDescription(), onboardingData.getAggregates().get(0).getDescription());
         assertEquals(actual.getInstitution().getTaxCode(), onboardingData.getTaxCode());
-        assertEquals(actual.getInstitution().getTaxCode(), onboardingData.getInstitutionUpdate().getTaxCode() );
+        assertEquals(actual.getInstitution().getTaxCode(), onboardingData.getInstitutionUpdate().getTaxCode());
         assertEquals(actual.getInstitution().getDescription(), onboardingData.getInstitutionUpdate().getDescription());
         assertEquals(actual.getUsers().size(), onboardingData.getUsers().size());
 
@@ -639,7 +644,7 @@ class OnboardingMsConnectorImplTest {
         // then
         assertDoesNotThrow(executable);
         verify(msOnboardingApiClient, times(1))
-                ._verifyOnboardingInfoByFilters( origin, originId, productId, subunitCode, taxCode);
+                ._verifyOnboardingInfoByFilters(origin, originId, productId, subunitCode, taxCode);
         verifyNoMoreInteractions(msOnboardingApiClient);
     }
 }
