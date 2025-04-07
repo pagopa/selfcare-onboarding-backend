@@ -172,7 +172,7 @@ public class InstitutionV2Controller {
 
     @GetMapping(value = "/onboarding/recipient-code/verification")
     @ResponseStatus(HttpStatus.OK)
-    @Operation(description = "${swagger.onboarding.institutions.api.onboarding.checkRecipientCode}")
+    @Operation(summary = "${swagger.onboarding.institutions.api.onboarding.checkRecipientCode.summary}",description = "${swagger.onboarding.institutions.api.onboarding.checkRecipientCode.description}")
     public RecipientCodeStatus checkRecipientCode(@RequestParam(value = "originId") String originId,
                                                   @RequestParam(value = "recipientCode") String recipientCode) {
         log.trace("Check recipientCode start");
