@@ -2347,6 +2347,7 @@
         "tags": [
           "institution-v-2-controller"
         ],
+        "summary": "The service allows to verify if recipientCode is valid or not",
         "operationId": "checkRecipientCode",
         "parameters": [
           {

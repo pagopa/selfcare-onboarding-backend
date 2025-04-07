@@ -1,8 +1,10 @@
 package it.pagopa.selfcare.onboarding.web.controller;
 
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -171,7 +173,7 @@ public class InstitutionV2Controller {
 
     @GetMapping(value = "/onboarding/recipient-code/verification")
     @ResponseStatus(HttpStatus.OK)
-    @ApiOperation(tags = "billing-portal", value = "", notes = "${swagger.onboarding.institutions.api.onboarding.checkRecipientCode}")
+    @Operation(summary = "${swagger.onboarding.institutions.api.onboarding.checkRecipientCode}")
     public RecipientCodeStatus checkRecipientCode(@RequestParam(value = "originId") String originId,
                                                   @RequestParam(value = "recipientCode") String recipientCode) {
         log.trace("Check recipientCode start");
