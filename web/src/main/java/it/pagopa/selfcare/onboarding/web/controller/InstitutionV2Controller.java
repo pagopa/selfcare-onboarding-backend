@@ -1,6 +1,8 @@
 package it.pagopa.selfcare.onboarding.web.controller;
 
 
+import static org.springframework.http.MediaType.APPLICATION_PROBLEM_JSON_VALUE;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -17,6 +19,9 @@ import it.pagopa.selfcare.onboarding.core.InstitutionService;
 import it.pagopa.selfcare.onboarding.web.model.*;
 import it.pagopa.selfcare.onboarding.web.model.mapper.InstitutionMapper;
 import it.pagopa.selfcare.onboarding.web.model.mapper.OnboardingResourceMapper;
+import jakarta.validation.Valid;
+import java.security.Principal;
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.owasp.encoder.Encode;
@@ -25,12 +30,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import jakarta.validation.Valid;
-import java.security.Principal;
-import java.util.List;
-
-import static org.springframework.http.MediaType.APPLICATION_PROBLEM_JSON_VALUE;
 
 @Slf4j
 @RestController
@@ -173,7 +172,7 @@ public class InstitutionV2Controller {
 
     @GetMapping(value = "/onboarding/recipient-code/verification")
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "${swagger.onboarding.institutions.api.onboarding.checkRecipientCode}")
+    @Operation(description = "${swagger.onboarding.institutions.api.onboarding.checkRecipientCode}")
     public RecipientCodeStatus checkRecipientCode(@RequestParam(value = "originId") String originId,
                                                   @RequestParam(value = "recipientCode") String recipientCode) {
         log.trace("Check recipientCode start");
