@@ -171,7 +171,6 @@ public class InstitutionV2Controller {
 
     @GetMapping(value = "/onboarding/recipient-code/verification")
     @ResponseStatus(HttpStatus.OK)
-    @Tag(name = "billing-portal")
     @Operation(summary = "${swagger.onboarding.institutions.api.onboarding.checkRecipientCode}", operationId = "checkRecipientCodeUsingGET")
     public RecipientCodeStatus checkRecipientCode(@RequestParam(value = "originId") String originId,
                                                   @RequestParam(value = "recipientCode") String recipientCode) {
