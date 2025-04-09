@@ -192,7 +192,7 @@ public class TokenV2Controller {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @ApiOperation(value = "${swagger.tokens.complete}", notes = "${swagger.tokens.complete}")
     @DeleteMapping(value = "/{onboardingId}/complete")
-    public ResponseEntity<Void> delete(@ApiParam("${swagger.tokens.tokenId}")
+    public ResponseEntity<Void> deleteOnboarding(@ApiParam("${swagger.tokens.tokenId}")
                                        @PathVariable(value = "onboardingId") String onboardingId) {
         log.trace("delete Token start");
         log.debug("delete Token tokenId = {}", onboardingId);
