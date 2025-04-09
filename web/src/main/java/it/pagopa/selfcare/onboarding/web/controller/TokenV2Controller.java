@@ -42,7 +42,7 @@ public class TokenV2Controller {
     private final UserService userService;
 
     private final OnboardingResourceMapper onboardingResourceMapper;
-    
+
     public TokenV2Controller(TokenService tokenService, UserService userService, OnboardingResourceMapper onboardingResourceMapper) {
         this.tokenService = tokenService;
         this.userService = userService;
@@ -91,8 +91,8 @@ public class TokenV2Controller {
     @ApiOperation(value = "${swagger.tokens.completeOnboardingUsers}", notes = "${swagger.tokens.completeOnboardingUsers}")
     @PostMapping(value = "/{onboardingId}/complete-onboarding-users")
     public ResponseEntity<Void> completeOnboardingUsers(@ApiParam("${swagger.tokens.onboardingId}")
-                                         @PathVariable(value = "onboardingId") String onboardingId,
-                                         @RequestPart MultipartFile contract) {
+                                                        @PathVariable(value = "onboardingId") String onboardingId,
+                                                        @RequestPart MultipartFile contract) {
         log.trace("complete Onboarding Users start");
         log.debug(LogUtils.CONFIDENTIAL_MARKER, "complete Onboarding Users tokenId = {}, contract = {}", onboardingId, contract);
         tokenService.completeOnboardingUsers(onboardingId, contract);
@@ -113,8 +113,7 @@ public class TokenV2Controller {
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "${swagger.tokens.verify}", notes = "${swagger.tokens.verify}")
     @PostMapping("/{onboardingId}/verify")
-    public OnboardingVerify verifyOnboarding(@ApiParam("${swagger.tokens.onboardingId}")
-                                                                @PathVariable("onboardingId") String onboardingId) {
+    public OnboardingVerify verifyOnboarding(@ApiParam("${swagger.tokens.onboardingId}") @PathVariable("onboardingId") String onboardingId) {
         log.debug("Verify token identified with {}", onboardingId);
         final OnboardingData onboardingData = tokenService.verifyOnboarding(onboardingId);
         OnboardingVerify result = onboardingResourceMapper.toOnboardingVerify(onboardingData);
@@ -173,7 +172,7 @@ public class TokenV2Controller {
     @Operation(summary = "Service to reject a specific onboarding request", description = "Service to reject a specific onboarding request")
     @PostMapping("/{onboardingId}/reject")
     public void rejectOnboarding(@ApiParam("${swagger.tokens.onboardingId}")
-                                     @PathVariable("onboardingId") String onboardingId,
+                                 @PathVariable("onboardingId") String onboardingId,
                                  @RequestBody ReasonForRejectDto reasonForRejectDto) {
         log.debug("reject onboarding identified with {}", onboardingId);
         tokenService.rejectOnboarding(onboardingId, reasonForRejectDto.getReason());
@@ -193,7 +192,7 @@ public class TokenV2Controller {
     @ApiOperation(value = "${swagger.tokens.complete}", notes = "${swagger.tokens.complete}")
     @DeleteMapping(value = "/{onboardingId}/complete")
     public ResponseEntity<Void> deleteOnboarding(@ApiParam("${swagger.tokens.tokenId}")
-                                       @PathVariable(value = "onboardingId") String onboardingId) {
+                                                 @PathVariable(value = "onboardingId") String onboardingId) {
         log.trace("delete Token start");
         log.debug("delete Token tokenId = {}", onboardingId);
         tokenService.rejectOnboarding(onboardingId, "REJECTED_BY_USER");
@@ -233,7 +232,7 @@ public class TokenV2Controller {
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "", notes = "${swagger.tokens.getAggregatesCsv}")
     public ResponseEntity<byte[]> getAggregatesCsv(@ApiParam("${swagger.tokens.onboardingId}") @PathVariable("onboardingId")
-                                                       String onboardingIdInput,
+                                                   String onboardingIdInput,
                                                    @ApiParam("${swagger.tokens.productId}")
                                                    @PathVariable("productId")
                                                    String productIdInput, Principal principal) throws Exception {
@@ -246,9 +245,9 @@ public class TokenV2Controller {
         log.debug("getAggregatesCsv onboardingId = {}, productId = {}", onboardingId, productId);
 
         String userUid = selfCareUser.getId();
-        
+
         if (tokenService.verifyAllowedUserByRole(onboardingId, userUid)
-        || userService.isAllowedUserByUid(userUid)) {
+                || userService.isAllowedUserByUid(userUid)) {
             Resource csv = tokenService.getAggregatesCsv(onboardingId, productId);
             return getResponseEntity(csv);
         } else {
