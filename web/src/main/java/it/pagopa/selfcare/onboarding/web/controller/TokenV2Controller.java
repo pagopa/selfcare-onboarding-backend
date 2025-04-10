@@ -116,7 +116,7 @@ public class TokenV2Controller {
     @PostMapping("/{onboardingId}/verify")
     public OnboardingVerify verifyOnboarding(@ApiParam("${swagger.tokens.onboardingId}") @PathVariable("onboardingId") String onboardingId) {
         String sanitizedOnboardingId = onboardingId.replace("\n", "").replace("\r", "");
-        log.debug("Verify token identified with {}", onboardingId);
+        log.debug("Verify token identified with {}", sanitizedOnboardingId);
         final OnboardingData onboardingData = tokenService.verifyOnboarding(sanitizedOnboardingId);
         OnboardingVerify result = onboardingResourceMapper.toOnboardingVerify(onboardingData);
         log.debug("Verify token identified result = {}", result);
@@ -132,8 +132,9 @@ public class TokenV2Controller {
                                                                @PathVariable("onboardingId")
                                                                String onboardingId) {
         log.trace("retrieveOnboardingRequest start");
-        log.debug("retrieveOnboardingRequest onboardingId = {}", onboardingId);
-        final OnboardingData onboardingData = tokenService.getOnboardingWithUserInfo(onboardingId);
+        String sanitizedOnboardingId = onboardingId.replace("\n", "").replace("\r", "");
+        log.debug("retrieveOnboardingRequest onboardingId = {}", sanitizedOnboardingId);
+        final OnboardingData onboardingData = tokenService.getOnboardingWithUserInfo(sanitizedOnboardingId);
         OnboardingRequestResource result = onboardingResourceMapper.toOnboardingRequestResource(onboardingData);
         log.debug("retrieveOnboardingRequest result = {}", result);
         log.trace("retrieveOnboardingRequest end");
