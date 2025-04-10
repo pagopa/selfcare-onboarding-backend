@@ -72,7 +72,8 @@ public class TokenV2Controller {
                                            @RequestPart MultipartFile contract) {
         log.trace("complete Token start");
         String sanitizedFileName = Encode.forJava(contract.getOriginalFilename());
-        log.debug(LogUtils.CONFIDENTIAL_MARKER, "complete Token tokenId = {}, contract = {}", onboardingId, sanitizedFileName);
+        String sanitizedOnboardingId = onboardingId.replaceAll("[^a-zA-Z0-9-_]", "");
+        log.debug(LogUtils.CONFIDENTIAL_MARKER, "complete Token tokenId = {}, contract = {}", sanitizedOnboardingId, sanitizedFileName);
 
         try {
             tokenService.completeTokenV2(onboardingId, contract);
