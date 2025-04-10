@@ -18,9 +18,11 @@ import it.pagopa.selfcare.onboarding.web.model.OnboardingRequestResource;
 import it.pagopa.selfcare.onboarding.web.model.OnboardingVerify;
 import it.pagopa.selfcare.onboarding.web.model.ReasonForRejectDto;
 import it.pagopa.selfcare.onboarding.web.model.mapper.OnboardingResourceMapper;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.Principal;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.owasp.encoder.Encode;
@@ -42,7 +44,7 @@ public class TokenV2Controller {
     private final UserService userService;
 
     private final OnboardingResourceMapper onboardingResourceMapper;
-    
+
     public TokenV2Controller(TokenService tokenService, UserService userService, OnboardingResourceMapper onboardingResourceMapper) {
         this.tokenService = tokenService;
         this.userService = userService;
@@ -56,7 +58,7 @@ public class TokenV2Controller {
      * that consist of create the institution, activate the onboarding and sending data to notification queue
      *
      * @param onboardingId String
-     * @param contract MultipartFile
+     * @param contract     MultipartFile
      * @return no content
      * * Code: 204, Message: successful operation, DataType: TokenId
      * * Code: 400, Message: Invalid ID supplied, DataType: Problem
@@ -69,9 +71,12 @@ public class TokenV2Controller {
                                          @PathVariable(value = "onboardingId") String onboardingId,
                                          @RequestPart MultipartFile contract) {
         log.trace("complete Token start");
-        log.debug(LogUtils.CONFIDENTIAL_MARKER, "complete Token tokenId = {}, contract = {}", onboardingId, contract);
+        String sanitizedFileName = Encode.forJava(contract.getOriginalFilename());
+        String sanitizedOnboardingId = onboardingId.replaceAll("[^a-zA-Z0-9-_]", "");
+        log.debug(LogUtils.CONFIDENTIAL_MARKER, "complete Token tokenId = {}, contract = {}", sanitizedOnboardingId, sanitizedFileName);
         tokenService.completeTokenV2(onboardingId, contract);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+
     }
 
     /**
@@ -81,7 +86,7 @@ public class TokenV2Controller {
      * that consist of create userInstitution and userInfo records, activate the onboarding for users and sending data to notification queue
      *
      * @param onboardingId String
-     * @param contract MultipartFile
+     * @param contract     MultipartFile
      * @return no content
      * * Code: 204, Message: successful operation, DataType: TokenId
      * * Code: 400, Message: Invalid ID supplied, DataType: Problem
@@ -90,13 +95,16 @@ public class TokenV2Controller {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @ApiOperation(value = "${swagger.tokens.completeOnboardingUsers}", notes = "${swagger.tokens.completeOnboardingUsers}")
     @PostMapping(value = "/{onboardingId}/complete-onboarding-users")
-    public ResponseEntity<Void> completeOnboardingUsers(@ApiParam("${swagger.tokens.onboardingId}")
-                                         @PathVariable(value = "onboardingId") String onboardingId,
-                                         @RequestPart MultipartFile contract) {
+    public ResponseEntity<Object> completeOnboardingUsers(@ApiParam("${swagger.tokens.onboardingId}")
+                                                          @PathVariable(value = "onboardingId") String onboardingId,
+                                                          @RequestPart MultipartFile contract) {
         log.trace("complete Onboarding Users start");
-        log.debug(LogUtils.CONFIDENTIAL_MARKER, "complete Onboarding Users tokenId = {}, contract = {}", onboardingId, contract);
+        String sanitizedFileName = Encode.forJava(contract.getOriginalFilename());
+        String sanitizedOnboardingId = onboardingId.replaceAll("[^a-zA-Z0-9-_]", "");
+        log.debug(LogUtils.CONFIDENTIAL_MARKER, "complete Onboarding Users tokenId = {}, contract = {}", sanitizedOnboardingId, sanitizedFileName);
         tokenService.completeOnboardingUsers(onboardingId, contract);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+
     }
 
     /**
@@ -114,7 +122,7 @@ public class TokenV2Controller {
     @ApiOperation(value = "${swagger.tokens.verify}", notes = "${swagger.tokens.verify}")
     @PostMapping("/{onboardingId}/verify")
     public OnboardingVerify verifyOnboarding(@ApiParam("${swagger.tokens.onboardingId}")
-                                                                @PathVariable("onboardingId") String onboardingId) {
+                                             @PathVariable("onboardingId") String onboardingId) {
         log.debug("Verify token identified with {}", onboardingId);
         final OnboardingData onboardingData = tokenService.verifyOnboarding(onboardingId);
         OnboardingVerify result = onboardingResourceMapper.toOnboardingVerify(onboardingData);
@@ -144,10 +152,10 @@ public class TokenV2Controller {
      * It takes in a String onboarding id.
      *
      * @param onboardingId onboardingId
-     * * Code: 200, Message: successful operation, DataType: TokenId
-     * * Code: 400, Message: Invalid ID supplied, DataType: Problem
-     * * Code: 404, Message: Token not found, DataType: Problem
-     * * Code: 409, Message: Token already consumed, DataType: Problem
+     *                     * Code: 200, Message: successful operation, DataType: TokenId
+     *                     * Code: 400, Message: Invalid ID supplied, DataType: Problem
+     *                     * Code: 404, Message: Token not found, DataType: Problem
+     *                     * Code: 409, Message: Token already consumed, DataType: Problem
      */
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "${swagger.tokens.approveOnboardingRequest}", notes = "${swagger.tokens.approveOnboardingRequest}")
@@ -163,17 +171,17 @@ public class TokenV2Controller {
      * It takes in a String onboarding id.
      *
      * @param onboardingId onboardingId
-     * * Code: 200, Message: successful operation, DataType: TokenId
-     * * Code: 400, Message: Invalid ID supplied, DataType: Problem
-     * * Code: 404, Message: Token not found, DataType: Problem
-     * * Code: 409, Message: Token already consumed, DataType: Problem
+     *                     * Code: 200, Message: successful operation, DataType: TokenId
+     *                     * Code: 400, Message: Invalid ID supplied, DataType: Problem
+     *                     * Code: 404, Message: Token not found, DataType: Problem
+     *                     * Code: 409, Message: Token already consumed, DataType: Problem
      */
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "${swagger.tokens.rejectOnboardingRequest}")
     @Operation(summary = "Service to reject a specific onboarding request", description = "Service to reject a specific onboarding request")
     @PostMapping("/{onboardingId}/reject")
     public void rejectOnboarding(@ApiParam("${swagger.tokens.onboardingId}")
-                                     @PathVariable("onboardingId") String onboardingId,
+                                 @PathVariable("onboardingId") String onboardingId,
                                  @RequestBody ReasonForRejectDto reasonForRejectDto) {
         log.debug("reject onboarding identified with {}", onboardingId);
         tokenService.rejectOnboarding(onboardingId, reasonForRejectDto.getReason());
@@ -233,7 +241,7 @@ public class TokenV2Controller {
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "", notes = "${swagger.tokens.getAggregatesCsv}")
     public ResponseEntity<byte[]> getAggregatesCsv(@ApiParam("${swagger.tokens.onboardingId}") @PathVariable("onboardingId")
-                                                       String onboardingIdInput,
+                                                   String onboardingIdInput,
                                                    @ApiParam("${swagger.tokens.productId}")
                                                    @PathVariable("productId")
                                                    String productIdInput, Principal principal) throws Exception {
@@ -246,9 +254,9 @@ public class TokenV2Controller {
         log.debug("getAggregatesCsv onboardingId = {}, productId = {}", onboardingId, productId);
 
         String userUid = selfCareUser.getId();
-        
+
         if (tokenService.verifyAllowedUserByRole(onboardingId, userUid)
-        || userService.isAllowedUserByUid(userUid)) {
+                || userService.isAllowedUserByUid(userUid)) {
             Resource csv = tokenService.getAggregatesCsv(onboardingId, productId);
             return getResponseEntity(csv);
         } else {
