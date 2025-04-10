@@ -106,13 +106,27 @@ public class TokenV2Controller {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @ApiOperation(value = "${swagger.tokens.completeOnboardingUsers}", notes = "${swagger.tokens.completeOnboardingUsers}")
     @PostMapping(value = "/{onboardingId}/complete-onboarding-users")
-    public ResponseEntity<Void> completeOnboardingUsers(@ApiParam("${swagger.tokens.onboardingId}")
-                                                        @PathVariable(value = "onboardingId") String onboardingId,
-                                                        @RequestPart MultipartFile contract) {
+    public ResponseEntity<Object> completeOnboardingUsers(@ApiParam("${swagger.tokens.onboardingId}")
+                                                          @PathVariable(value = "onboardingId") String onboardingId,
+                                                          @RequestPart MultipartFile contract) {
         log.trace("complete Onboarding Users start");
         log.debug(LogUtils.CONFIDENTIAL_MARKER, "complete Onboarding Users tokenId = {}, contract = {}", onboardingId, contract);
-        tokenService.completeOnboardingUsers(onboardingId, contract);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+
+        try {
+            tokenService.completeOnboardingUsers(onboardingId, contract);
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        } catch (FeignException e) {
+            log.error("Error during completeOnboardingUsers: {}", e.contentUTF8(), e);
+
+            HttpStatus status = HttpStatus.resolve(e.status());
+            if (status == null) {
+                status = HttpStatus.INTERNAL_SERVER_ERROR;
+            }
+
+            return ResponseEntity.status(status)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(e.contentUTF8());
+        }
     }
 
     /**
