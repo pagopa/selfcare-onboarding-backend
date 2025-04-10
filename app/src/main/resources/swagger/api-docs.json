@@ -2583,6 +2583,7 @@
       "get" : {
         "tags" : [ "product-controller" ],
         "summary" : "The service retrieves the product given its internal id",
+        "description" : "The service retrieves the product given its internal id",
         "operationId" : "getProductUsingGET",
         "parameters" : [ {
           "name" : "id",
