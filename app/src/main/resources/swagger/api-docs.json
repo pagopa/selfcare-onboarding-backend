@@ -112,6 +112,7 @@
       "post" : {
         "tags" : [ "token-v-2-controller" ],
         "summary" : "Service to reject a specific onboarding request",
+        "description" : "Service to reject a specific onboarding request",
         "operationId" : "rejectOnboardingUsingPOST",
         "parameters" : [ {
           "name" : "onboardingId",
@@ -491,6 +492,7 @@
       "post" : {
         "tags" : [ "institution-v-2-controller" ],
         "summary" : "The service allows the onboarding of Users to a subunit of an Institution",
+        "description" : "The service allows the onboarding of Users to a subunit of an Institution",
         "operationId" : "institutionOnboarding",
         "requestBody" : {
           "content" : {
@@ -570,6 +572,7 @@
       "post" : {
         "tags" : [ "institution-v-2-controller" ],
         "summary" : "The service allows the onboarding of Users to a PG Institution",
+        "description" : "The service allows the onboarding of Users to a PG Institution",
         "operationId" : "onboardingUsersPgUsingPOST",
         "requestBody" : {
           "content" : {
@@ -638,6 +641,7 @@
       "post" : {
         "tags" : [ "institution-v-2-controller" ],
         "summary" : "The service allows to verify if the given csv contains valid aggregate institutions",
+        "description" : "The service allows to verify if the given csv contains valid aggregate institutions",
         "operationId" : "verifyAggregatesCsvUsingPOST",
         "parameters" : [ {
           "name" : "institutionType",
@@ -735,6 +739,7 @@
       "post" : {
         "tags" : [ "institution-v-2-controller" ],
         "summary" : "The service allows to verify the legal representative on external registries and retrieve the company name",
+        "description" : "The service allows to verify the legal representative on external registries and retrieve the company name",
         "operationId" : "verifyManagerUsingPOST",
         "requestBody" : {
           "content" : {
@@ -811,6 +816,7 @@
       "post" : {
         "tags" : [ "institution-v-2-controller" ],
         "summary" : "The service allows the onboarding of Users to a subunit of an Institution",
+        "description" : "The service allows the onboarding of Users to a subunit of an Institution",
         "operationId" : "institutionOnboardingCompany",
         "requestBody" : {
           "content" : {
@@ -890,6 +896,7 @@
       "post" : {
         "tags" : [ "user-controller" ],
         "summary" : "Check if requested user data are valid",
+        "description" : "Check if requested user data are valid",
         "operationId" : "validateUsingPOST",
         "requestBody" : {
           "content" : {
@@ -969,6 +976,7 @@
       "post" : {
         "tags" : [ "user-controller" ],
         "summary" : "The service allows the onboarding of Users",
+        "description" : "The service allows the onboarding of Users",
         "operationId" : "onboardingUsers",
         "requestBody" : {
           "content" : {
@@ -1048,6 +1056,7 @@
       "post" : {
         "tags" : [ "user-controller" ],
         "summary" : "The service allows the onboarding of Users for aggregators",
+        "description" : "The service allows the onboarding of Users for aggregators",
         "operationId" : "onboardingAggregatorUsingPOST",
         "requestBody" : {
           "content" : {
@@ -1127,6 +1136,7 @@
       "post" : {
         "tags" : [ "user-controller" ],
         "summary" : "Returns true if current manager and previous one are the same",
+        "description" : "Returns true if current manager and previous one are the same",
         "operationId" : "checkManager",
         "requestBody" : {
           "content" : {
@@ -1213,6 +1223,7 @@
       "post" : {
         "tags" : [ "institution-controller" ],
         "summary" : "MatchLegal Representative and inserted Institution by querying on Agenzia delle Entrate",
+        "description" : "MatchLegal Representative and inserted Institution by querying on Agenzia delle Entrate",
         "operationId" : "postVerificationMatchUsingPOST",
         "requestBody" : {
           "content" : {
@@ -1289,6 +1300,7 @@
       "post" : {
         "tags" : [ "institution-controller" ],
         "summary" : "Get legal address by business tax id",
+        "description" : "Get legal address by business tax id",
         "operationId" : "postVerificationLegalAddressUsingPOST",
         "requestBody" : {
           "content" : {
@@ -1365,6 +1377,7 @@
       "post" : {
         "tags" : [ "institution-controller" ],
         "summary" : "The service allows the onboarding of Users to a subunit of an Institution",
+        "description" : "The service allows the onboarding of Users to a subunit of an Institution",
         "operationId" : "onboardingUsingPOST",
         "requestBody" : {
           "content" : {
@@ -1442,6 +1455,7 @@
       "head" : {
         "tags" : [ "institution-controller" ],
         "summary" : "Checks if the specified institution has been onboarded on the specified product.",
+        "description" : "Checks if the specified institution has been onboarded on the specified product.",
         "operationId" : "verifyOnboardingUsingHEAD",
         "parameters" : [ {
           "name" : "taxCode",
@@ -1562,6 +1576,7 @@
       "post" : {
         "tags" : [ "institution-controller" ],
         "summary" : "The service allows the onboarding of Users to a subunit of an Institution",
+        "description" : "The service allows the onboarding of Users to a subunit of an Institution",
         "operationId" : "onboardingCompanyUsingPOST",
         "requestBody" : {
           "content" : {
@@ -1641,6 +1656,7 @@
       "head" : {
         "tags" : [ "institution-controller" ],
         "summary" : "Checks if the specified institution has been onboarded on the specified product.",
+        "description" : "Checks if the specified institution has been onboarded on the specified product.",
         "operationId" : "verifyOnboardingProductUsingHEAD",
         "parameters" : [ {
           "name" : "externalInstitutionId",
@@ -1725,6 +1741,7 @@
       "get" : {
         "tags" : [ "token-v-2-controller" ],
         "summary" : "Service to retrieve a specific onboarding request",
+        "description" : "Service to retrieve a specific onboarding request",
         "operationId" : "retrieveOnboardingRequestUsingGET",
         "parameters" : [ {
           "name" : "onboardingId",
@@ -1799,6 +1816,7 @@
       "get" : {
         "tags" : [ "token-v-2-controller" ],
         "summary" : "Service to download a specific onboarding aggregates csv",
+        "description" : "Service to download a specific onboarding aggregates csv",
         "operationId" : "getAggregatesCsvUsingGET",
         "parameters" : [ {
           "name" : "onboardingId",
@@ -1884,6 +1902,7 @@
       "get" : {
         "tags" : [ "token-v-2-controller" ],
         "summary" : "Service to download a specific onboarding contract",
+        "description" : "Service to download a specific onboarding contract",
         "operationId" : "getContractUsingGET",
         "parameters" : [ {
           "name" : "onboardingId",
@@ -1962,6 +1981,7 @@
       "get" : {
         "tags" : [ "token-v-2-controller" ],
         "summary" : "Service to download a specific onboarding attachment",
+        "description" : "Service to download a specific onboarding attachment",
         "operationId" : "getAttachmentUsingGET",
         "parameters" : [ {
           "name" : "onboardingId",
@@ -2047,6 +2067,7 @@
       "get" : {
         "tags" : [ "institution-v-2-controller" ],
         "summary" : "The service allows the onboarding of Users to a subunit of an Institution",
+        "description" : "The service allows the onboarding of Users to a subunit of an Institution",
         "operationId" : "v2GetInstitutionByFilters",
         "parameters" : [ {
           "name" : "productId",
@@ -2162,6 +2183,7 @@
       "get" : {
         "tags" : [ "institution-v-2-controller" ],
         "summary" : "The service allows to verify if recipientCode is valid or not",
+        "description" : "The service allows to verify if recipientCode is valid or not",
         "operationId" : "checkRecipientCodeUsingGET",
         "parameters" : [ {
           "name" : "originId",
@@ -2244,6 +2266,7 @@
       "get" : {
         "tags" : [ "institution-v-2-controller" ],
         "summary" : "The service retrieves the active onboarding information for a given tax code and product ID",
+        "description" : "The service retrieves the active onboarding information for a given tax code and product ID",
         "operationId" : "getActiveOnboardingUsingGET",
         "parameters" : [ {
           "name" : "taxCode",
@@ -2335,6 +2358,7 @@
       "get" : {
         "tags" : [ "user-controller" ],
         "summary" : "Returns true if current manager and previous one are the same",
+        "description" : "Returns true if current manager and previous one are the same",
         "operationId" : "getManagerInfo",
         "parameters" : [ {
           "name" : "onboardingId",
@@ -2419,6 +2443,7 @@
       "get" : {
         "tags" : [ "product-controller" ],
         "summary" : "The service retrieves all products",
+        "description" : "The service retrieves all products",
         "operationId" : "getProducts",
         "responses" : {
           "200" : {
@@ -2488,6 +2513,7 @@
       "get" : {
         "tags" : [ "product-controller" ],
         "summary" : "The service retrieves all products for the addition administration functionality",
+        "description" : "The service retrieves all products for the addition administration functionality",
         "operationId" : "getProductsAdmin",
         "responses" : {
           "200" : {
@@ -2639,6 +2665,7 @@
       "get" : {
         "tags" : [ "institution-controller" ],
         "summary" : "The service retrieves all the onboarded institutions related to the logged user and product's identifier.  ",
+        "description" : "The service retrieves all the onboarded institutions related to the logged user and product's identifier.  ",
         "operationId" : "getInstitutionsUsingGET",
         "parameters" : [ {
           "name" : "productId",
@@ -2716,6 +2743,7 @@
       "get" : {
         "tags" : [ "institution-controller" ],
         "summary" : "The service retrieves the institutions Manager and institution informations",
+        "description" : "The service retrieves the institutions Manager and institution informations",
         "operationId" : "getInstitutionOnboardingInfoUsingGET_1",
         "parameters" : [ {
           "name" : "externalInstitutionId",
@@ -2798,6 +2826,7 @@
       "get" : {
         "tags" : [ "institution-controller" ],
         "summary" : "The service retrieve the institution's geographic taxonomy",
+        "description" : "The service retrieve the institution's geographic taxonomy",
         "operationId" : "getInstitutionGeographicTaxonomyUsingGET",
         "parameters" : [ {
           "name" : "externalInstitutionId",
@@ -2875,6 +2904,7 @@
       "get" : {
         "tags" : [ "institution-controller" ],
         "summary" : "The service retrieves the institutions Manager and institution informations",
+        "description" : "The service retrieves the institutions Manager and institution informations",
         "operationId" : "getInstitutionOnboardingInfoUsingGET",
         "parameters" : [ {
           "name" : "institutionId",
@@ -2956,6 +2986,7 @@
       "get" : {
         "tags" : [ "institution-controller" ],
         "summary" : "The service retrieve the institution's geographic taxonomy",
+        "description" : "The service retrieve the institution's geographic taxonomy",
         "operationId" : "getGeographicTaxonomiesByTaxCodeAndSubunitCodeUsingGET",
         "parameters" : [ {
           "name" : "taxCode",
@@ -3040,6 +3071,7 @@
       "get" : {
         "tags" : [ "institution-controller" ],
         "summary" : "Get Legal Representative's PN PG institution List",
+        "description" : "Get Legal Representative's PN PG institution List",
         "operationId" : "getInstitutionsFromInfocamereUsingGET",
         "responses" : {
           "200" : {

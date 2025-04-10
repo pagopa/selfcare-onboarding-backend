@@ -66,7 +66,8 @@ public class InstitutionController {
             })
     @PostMapping(value = "/onboarding")
     @ResponseStatus(HttpStatus.CREATED)
-    @Operation(summary = "${swagger.onboarding.institutions.api.onboarding.subunit}", operationId = "onboardingUsingPOST")
+    @Operation(summary = "${swagger.onboarding.institutions.api.onboarding.subunit}",
+            description = "${swagger.onboarding.institutions.api.onboarding.subunit}", operationId = "onboardingUsingPOST")
     public void onboarding(@RequestBody @Valid OnboardingProductDto request) {
         log.trace(ONBOARDING_START);
         log.debug("onboarding request = {}", request);
@@ -82,7 +83,8 @@ public class InstitutionController {
             })
     @PostMapping(value = "/company/onboarding")
     @ResponseStatus(HttpStatus.CREATED)
-    @Operation(summary = "${swagger.onboarding.institutions.api.onboarding.subunit}", operationId = "onboardingCompanyUsingPOST")
+    @Operation(summary = "${swagger.onboarding.institutions.api.onboarding.subunit}",
+            description = "${swagger.onboarding.institutions.api.onboarding.subunit}", operationId = "onboardingCompanyUsingPOST")
     public void onboarding(@RequestBody @Valid CompanyOnboardingDto request) {
         log.trace(ONBOARDING_START);
         log.debug("onboarding request = {}", request);
@@ -92,7 +94,8 @@ public class InstitutionController {
 
     @GetMapping(value = "/onboarding/")
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "${swagger.onboarding.institutions.api.getInstitutionOnboardingInfo}", operationId = "getInstitutionOnboardingInfoUsingGET")
+    @Operation(summary = "${swagger.onboarding.institutions.api.getInstitutionOnboardingInfo}",
+            description = "${swagger.onboarding.institutions.api.getInstitutionOnboardingInfo}", operationId = "getInstitutionOnboardingInfoUsingGET")
     public InstitutionOnboardingInfoResource getInstitutionOnboardingInfoById(@ApiParam("${swagger.onboarding.institutions.model.id}")
                                                                           @RequestParam("institutionId")
                                                                           String institutionId,
@@ -110,7 +113,8 @@ public class InstitutionController {
 
     @GetMapping(value = "/{externalInstitutionId}/geographicTaxonomy")
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "${swagger.onboarding.institutions.api.getInstitutionGeographicTaxonomy}", operationId = "getInstitutionGeographicTaxonomyUsingGET")
+    @Operation(summary = "${swagger.onboarding.institutions.api.getInstitutionGeographicTaxonomy}",
+            description = "${swagger.onboarding.institutions.api.getInstitutionGeographicTaxonomy}", operationId = "getInstitutionGeographicTaxonomyUsingGET")
     public List<GeographicTaxonomyResource> getInstitutionGeographicTaxonomy(@ApiParam("${swagger.onboarding.institutions.model.externalId}")
                                                                              @PathVariable("externalInstitutionId")
                                                                              String externalInstitutionId) {
@@ -127,7 +131,8 @@ public class InstitutionController {
 
     @GetMapping(value = "/geographicTaxonomies")
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "${swagger.onboarding.institutions.api.getInstitutionGeographicTaxonomy}", operationId = "getGeographicTaxonomiesByTaxCodeAndSubunitCodeUsingGET")
+    @Operation(summary = "${swagger.onboarding.institutions.api.getInstitutionGeographicTaxonomy}",
+            description = "${swagger.onboarding.institutions.api.getInstitutionGeographicTaxonomy}", operationId = "getGeographicTaxonomiesByTaxCodeAndSubunitCodeUsingGET")
     public List<GeographicTaxonomyResource> getGeographicTaxonomiesByTaxCodeAndSubunitCode(@ApiParam("${swagger.onboarding.institutions.model.taxCode}")
                                                                                            @RequestParam("taxCode")
                                                                                            String taxCode,
@@ -150,7 +155,8 @@ public class InstitutionController {
 
     @GetMapping("")
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "${swagger.onboarding.institutions.api.getInstitutions}", operationId = "getInstitutionsUsingGET")
+    @Operation(summary = "${swagger.onboarding.institutions.api.getInstitutions}",
+            description = "${swagger.onboarding.institutions.api.getInstitutions}", operationId = "getInstitutionsUsingGET")
     public List<InstitutionResource> getInstitutions(@ApiParam("${swagger.onboarding.institutions.model.productFilter}")
                                                      @RequestParam(value = "productId", required = false)
                                                      String productId,
@@ -177,7 +183,8 @@ public class InstitutionController {
             })
     @RequestMapping(method = HEAD, value = "/{externalInstitutionId}/products/{productId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @Operation(summary = "${swagger.onboarding.institutions.api.verifyOnboarding}", operationId = "verifyOnboardingProductUsingHEAD")
+    @Operation(summary = "${swagger.onboarding.institutions.api.verifyOnboarding}",
+            description = "${swagger.onboarding.institutions.api.verifyOnboarding}", operationId = "verifyOnboardingProductUsingHEAD")
     public void verifyOnboarding(@ApiParam("${swagger.onboarding.institutions.model.externalId}")
                                  @PathVariable("externalInstitutionId")
                                  String externalInstitutionId,
@@ -198,7 +205,8 @@ public class InstitutionController {
             })
     @RequestMapping(method = HEAD, value = "/onboarding")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @Operation(summary = "${swagger.onboarding.institutions.api.verifyOnboarding}", operationId = "verifyOnboardingUsingHEAD")
+    @Operation(summary = "${swagger.onboarding.institutions.api.verifyOnboarding}",
+            description = "${swagger.onboarding.institutions.api.verifyOnboarding}", operationId = "verifyOnboardingUsingHEAD")
     public void verifyOnboarding(@ApiParam("${swagger.onboarding.institutions.model.taxCode}")
                                  @RequestParam(value = "taxCode", required = false)
                                  String taxCode,
@@ -229,7 +237,8 @@ public class InstitutionController {
 
     @GetMapping(value = "/from-infocamere/")
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "${swagger.onboarding.institutions.api.getInstitutionsByUser}", operationId = "getInstitutionsFromInfocamereUsingGET")
+    @Operation(summary = "${swagger.onboarding.institutions.api.getInstitutionsByUser}",
+            description = "${swagger.onboarding.institutions.api.getInstitutionsByUser}", operationId = "getInstitutionsFromInfocamereUsingGET")
     public InstitutionResourceIC getInstitutionsFromInfocamere(Principal principal) {
         log.trace("getInstitutionsFromInfocamere start");
 
@@ -245,7 +254,8 @@ public class InstitutionController {
 
     @PostMapping(value = "/verification/match")
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "${swagger.onboarding.institutions.api.matchInstitutionAndUser}", operationId = "postVerificationMatchUsingPOST")
+    @Operation(summary = "${swagger.onboarding.institutions.api.matchInstitutionAndUser}",
+            description = "${swagger.onboarding.institutions.api.matchInstitutionAndUser}", operationId = "postVerificationMatchUsingPOST")
     public MatchInfoResultResource postVerificationMatch(@RequestBody
                                                          @Valid
                                                          VerificationMatchRequest verificationMatchRequest) {
@@ -261,7 +271,8 @@ public class InstitutionController {
 
     @PostMapping(value = "/verification/legal-address")
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "${swagger.onboarding.institutions.api.getInstitutionLegalAddress}", operationId = "postVerificationLegalAddressUsingPOST")
+    @Operation(summary = "${swagger.onboarding.institutions.api.getInstitutionLegalAddress}",
+            description = "${swagger.onboarding.institutions.api.getInstitutionLegalAddress}", operationId = "postVerificationLegalAddressUsingPOST")
     public InstitutionLegalAddressResource postVerificationLegalAddress(@RequestBody @Valid VerificationLegalAddressRequest verificationLegalAddressRequest) {
         log.trace("getInstitutionLegalAddress start");
         log.debug(LogUtils.CONFIDENTIAL_MARKER, "getInstitutionLegalAddress institutionId = {}", verificationLegalAddressRequest.getTaxCode());
@@ -279,7 +290,8 @@ public class InstitutionController {
     @Deprecated(forRemoval = true)
     @GetMapping(value = "/{externalInstitutionId}/products/{productId}/onboarded-institution-info")
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "${swagger.onboarding.institutions.api.getInstitutionOnboardingInfo}", operationId = "getInstitutionOnboardingInfoUsingGET_1")
+    @Operation(summary = "${swagger.onboarding.institutions.api.getInstitutionOnboardingInfo}",
+            description = "${swagger.onboarding.institutions.api.getInstitutionOnboardingInfo}", operationId = "getInstitutionOnboardingInfoUsingGET_1")
     public InstitutionOnboardingInfoResource getInstitutionOnboardingInfo(@ApiParam("${swagger.onboarding.institutions.model.externalId}")
                                                                           @PathVariable("externalInstitutionId")
                                                                           String externalInstitutionId,

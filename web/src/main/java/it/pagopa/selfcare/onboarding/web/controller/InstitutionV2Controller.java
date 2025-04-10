@@ -56,7 +56,8 @@ public class InstitutionV2Controller {
             })
     @PostMapping(value = "/onboarding")
     @ResponseStatus(HttpStatus.CREATED)
-    @Operation(summary = "${swagger.onboarding.institutions.api.onboarding.subunit}", operationId = "institutionOnboarding")
+    @Operation(summary = "${swagger.onboarding.institutions.api.onboarding.subunit}",
+            description = "${swagger.onboarding.institutions.api.onboarding.subunit}", operationId = "institutionOnboarding")
     public void onboarding(@RequestBody @Valid OnboardingProductDto request) {
         log.trace(ONBOARDING_START);
         log.debug("onboarding request = {}", request);
@@ -76,7 +77,8 @@ public class InstitutionV2Controller {
             })
     @PostMapping(value = "/company/onboarding")
     @ResponseStatus(HttpStatus.CREATED)
-    @Operation(summary = "${swagger.onboarding.institutions.api.onboarding.subunit}", operationId = "institutionOnboardingCompany")
+    @Operation(summary = "${swagger.onboarding.institutions.api.onboarding.subunit}",
+            description = "${swagger.onboarding.institutions.api.onboarding.subunit}", operationId = "institutionOnboardingCompany")
     public void onboarding(@RequestBody @Valid CompanyOnboardingDto request, Principal principal) {
         log.trace(ONBOARDING_START);
         log.debug("onboarding request = {}", Encode.forJava(request.toString()));
@@ -94,7 +96,8 @@ public class InstitutionV2Controller {
             })
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "${swagger.onboarding.institutions.api.onboarding.subunit}", operationId = "v2GetInstitutionByFilters")
+    @Operation(summary = "${swagger.onboarding.institutions.api.onboarding.subunit}",
+            description = "${swagger.onboarding.institutions.api.onboarding.subunit}", operationId = "v2GetInstitutionByFilters")
     public List<InstitutionResource> getInstitution(@ApiParam("${swagger.onboarding.institutions.model.productFilter}")
                                                     @RequestParam(value = "productId")
                                                     String productId,
@@ -122,7 +125,8 @@ public class InstitutionV2Controller {
 
     @PostMapping(value = "/onboarding/aggregation/verification")
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "${swagger.onboarding.institutions.api.onboarding.verifyAggregatesCsv}", operationId = "verifyAggregatesCsvUsingPOST")
+    @Operation(summary = "${swagger.onboarding.institutions.api.onboarding.verifyAggregatesCsv}",
+            description = "${swagger.onboarding.institutions.api.onboarding.verifyAggregatesCsv}",  operationId = "verifyAggregatesCsvUsingPOST")
     public VerifyAggregatesResponse verifyAggregatesCsv(@RequestParam("aggregates") MultipartFile file,
                                                         @RequestParam(value = "institutionType", required = false) String institutionType,
                                                         @RequestParam("productId") String productId){
@@ -135,7 +139,8 @@ public class InstitutionV2Controller {
 
     @PostMapping(value = "/company/verify-manager")
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "${swagger.onboarding.institutions.api.onboarding.verifyManager}", operationId = "verifyManagerUsingPOST")
+    @Operation(summary = "${swagger.onboarding.institutions.api.onboarding.verifyManager}",
+            description = "${swagger.onboarding.institutions.api.onboarding.verifyManager}", operationId = "verifyManagerUsingPOST")
     public VerifyManagerResponse verifyManager(
             @RequestBody @Valid VerifyManagerRequest request,
             Principal principal
@@ -151,7 +156,8 @@ public class InstitutionV2Controller {
 
     @GetMapping(value = "/onboarding/active")
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "${swagger.onboarding.institutions.api.onboarding.getActiveOnboarding}", operationId = "getActiveOnboardingUsingGET")
+    @Operation(summary = "${swagger.onboarding.institutions.api.onboarding.getActiveOnboarding}",
+            description = "${swagger.onboarding.institutions.api.onboarding.getActiveOnboarding}", operationId = "getActiveOnboardingUsingGET")
     public List<InstitutionOnboardingResource> getActiveOnboarding(@RequestParam("taxCode") String taxCode,
                                                                    @RequestParam("productId") String productId,
                                                                    @RequestParam(value = "subunitCode", required = false) String subunitCode
@@ -171,7 +177,8 @@ public class InstitutionV2Controller {
 
     @GetMapping(value = "/onboarding/recipient-code/verification")
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "${swagger.onboarding.institutions.api.onboarding.checkRecipientCode}", operationId = "checkRecipientCodeUsingGET")
+    @Operation(summary = "${swagger.onboarding.institutions.api.onboarding.checkRecipientCode}",
+            description = "${swagger.onboarding.institutions.api.onboarding.checkRecipientCode}", operationId = "checkRecipientCodeUsingGET")
     public RecipientCodeStatus checkRecipientCode(@RequestParam(value = "originId") String originId,
                                                   @RequestParam(value = "recipientCode") String recipientCode) {
         log.trace("Check recipientCode start");
@@ -183,7 +190,8 @@ public class InstitutionV2Controller {
 
     @PostMapping(value = "/onboarding/users/pg")
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "${swagger.onboarding.institutions.api.onboardingUsersPg}", operationId = "onboardingUsersPgUsingPOST")
+    @Operation(summary = "${swagger.onboarding.institutions.api.onboardingUsersPg}",
+            description = "${swagger.onboarding.institutions.api.onboardingUsersPg}", operationId = "onboardingUsersPgUsingPOST")
     public void onboardingUsers(@Valid @RequestBody(required = false) CompanyOnboardingUserDto companyOnboardingUserDto) {
         log.trace("onboardingUsersPgFromIcAndAde start");
         log.debug("onboardingUsersPgFromIcAndAde request = {}", Encode.forJava(companyOnboardingUserDto.toString()));

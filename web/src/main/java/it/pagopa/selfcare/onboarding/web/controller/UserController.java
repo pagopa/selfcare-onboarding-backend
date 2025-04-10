@@ -55,7 +55,8 @@ public class UserController {
                     @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
                             schema = @Schema(implementation = Problem.class))
             })
-    @Operation(summary = "${swagger.onboarding.user.api.validate}", operationId = "validateUsingPOST")
+    @Operation(summary = "${swagger.onboarding.user.api.validate}",
+            description = "${swagger.onboarding.user.api.validate}", operationId = "validateUsingPOST")
     public void validate(@RequestBody @Valid UserDataValidationDto request) {
         log.trace("validate start");
         log.debug(LogUtils.CONFIDENTIAL_MARKER, "validate request = {}", request);
@@ -71,7 +72,8 @@ public class UserController {
             })
     @PostMapping(value = "/onboarding")
     @ResponseStatus(HttpStatus.CREATED)
-    @Operation(summary= "${swagger.onboarding.users.api.onboarding}", operationId = "onboardingUsers")
+    @Operation(summary= "${swagger.onboarding.users.api.onboarding}",
+            description = "${swagger.onboarding.users.api.onboarding}", operationId = "onboardingUsers")
     public void onboarding(@RequestBody @Valid OnboardingUserDto request) {
         log.trace("onboarding start");
         log.debug("onboarding request = {}", request);
@@ -88,7 +90,8 @@ public class UserController {
             })
     @PostMapping(value = "/onboarding/aggregator")
     @ResponseStatus(HttpStatus.CREATED)
-    @Operation(summary = "${swagger.onboarding.users.api.onboarding-aggregator}", operationId = "onboardingAggregatorUsingPOST")
+    @Operation(summary = "${swagger.onboarding.users.api.onboarding-aggregator}",
+            description = "${swagger.onboarding.users.api.onboarding-aggregator}", operationId = "onboardingAggregatorUsingPOST")
     public void onboardingAggregator(@RequestBody @Valid OnboardingUserDto request) {
         log.trace("onboardingAggregator start");
         log.debug("onboardingAggregator request = {}", Encode.forJava(request.toString()));
@@ -104,7 +107,8 @@ public class UserController {
             })
     @PostMapping(value = "/check-manager")
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "${swagger.onboarding.users.api.check-manager}", operationId = "checkManager")
+    @Operation(summary = "${swagger.onboarding.users.api.check-manager}",
+            description = "${swagger.onboarding.users.api.check-manager}", operationId = "checkManager")
     public CheckManagerResponse checkManager(@RequestBody @Valid OnboardingUserDto request) {
         log.trace("onboarding start");
         boolean checkManager =  userService.checkManager(onboardingResourceMapper.toEntity(request));
@@ -120,7 +124,8 @@ public class UserController {
             })
     @GetMapping(value = "/onboarding/{onboardingId}/manager")
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "${swagger.onboarding.users.api.check-manager}", operationId = "getManagerInfo")
+    @Operation(summary = "${swagger.onboarding.users.api.check-manager}",
+            description = "${swagger.onboarding.users.api.check-manager}", operationId = "getManagerInfo")
     public ManagerInfoResponse getManagerInfo(@PathVariable("onboardingId") String onboardingId, Principal principal) {
         log.trace("getManagerInfo start");
         JwtAuthenticationToken jwtAuthenticationToken = (JwtAuthenticationToken) principal;

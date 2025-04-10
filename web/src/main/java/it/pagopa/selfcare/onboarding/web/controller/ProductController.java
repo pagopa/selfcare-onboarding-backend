@@ -49,7 +49,8 @@ public class ProductController {
 
     @GetMapping(value = "/v1/products",  produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "${swagger.onboarding.product.api.getProducts}", operationId = "getProducts")
+    @Operation(summary = "${swagger.onboarding.product.api.getProducts}",
+            description = "${swagger.onboarding.product.api.getProducts}", operationId = "getProducts")
     public List<ProductResource> getProducts() {
         log.trace("getProducts start");
         final List<Product> products = productService.getProducts(false);
@@ -63,7 +64,8 @@ public class ProductController {
 
     @GetMapping(value = "/v1/products/admin",  produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "${swagger.onboarding.product.api.getProductsAdmin}", operationId = "getProductsAdmin")
+    @Operation(summary = "${swagger.onboarding.product.api.getProductsAdmin}",
+            description = "${swagger.onboarding.product.api.getProductsAdmin}", operationId = "getProductsAdmin")
     public List<ProductResource> getProductsAdmin() {
         log.trace("getProductsAdmin start");
         final List<Product> products = productService.getProducts(true);

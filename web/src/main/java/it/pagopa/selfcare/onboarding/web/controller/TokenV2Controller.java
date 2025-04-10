@@ -111,7 +111,8 @@ public class TokenV2Controller {
      * * Code: 409, Message: Token already consumed, DataType: Problem
      */
     @ResponseStatus(HttpStatus.OK)
-    @Operation(description = "${swagger.tokens.verify}", summary = "${swagger.tokens.verify}", operationId = "verifyOnboardingUsingPOST")
+    @Operation(description = "${swagger.tokens.verify}",
+            summary = "${swagger.tokens.verify}", operationId = "verifyOnboardingUsingPOST")
     @PostMapping("/{onboardingId}/verify")
     public OnboardingVerify verifyOnboarding(@ApiParam("${swagger.tokens.onboardingId}") @PathVariable("onboardingId") String onboardingId) {
         log.debug("Verify token identified with {}", onboardingId);
@@ -124,7 +125,8 @@ public class TokenV2Controller {
 
     @GetMapping(value = "/{onboardingId}")
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "${swagger.tokens.retrieveOnboardingRequest}", operationId = "retrieveOnboardingRequestUsingGET")
+    @Operation(summary = "${swagger.tokens.retrieveOnboardingRequest}",
+            description = "${swagger.tokens.retrieveOnboardingRequest}", operationId = "retrieveOnboardingRequestUsingGET")
     public OnboardingRequestResource retrieveOnboardingRequest(@ApiParam("${swagger.tokens.onboardingId}")
                                                                @PathVariable("onboardingId")
                                                                String onboardingId) {
@@ -148,8 +150,8 @@ public class TokenV2Controller {
      * * Code: 409, Message: Token already consumed, DataType: Problem
      */
     @ResponseStatus(HttpStatus.OK)
-    @Operation(description = "${swagger.tokens.approveOnboardingRequest}", summary = "${swagger.tokens.approveOnboardingRequest}",
-            operationId = "approveOnboardingUsingPOST")
+    @Operation(description = "${swagger.tokens.approveOnboardingRequest}",
+            summary = "${swagger.tokens.approveOnboardingRequest}", operationId = "approveOnboardingUsingPOST")
     @PostMapping("/{onboardingId}/approve")
     public void approveOnboarding(@ApiParam("${swagger.tokens.onboardingId}")
                                   @PathVariable("onboardingId") String onboardingId) {
@@ -168,7 +170,8 @@ public class TokenV2Controller {
      * * Code: 409, Message: Token already consumed, DataType: Problem
      */
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "Service to reject a specific onboarding request", operationId = "rejectOnboardingUsingPOST")
+    @Operation(summary = "Service to reject a specific onboarding request",
+            description = "Service to reject a specific onboarding request", operationId = "rejectOnboardingUsingPOST")
     @PostMapping("/{onboardingId}/reject")
     public void rejectOnboarding(@ApiParam("${swagger.tokens.onboardingId}")
                                  @PathVariable("onboardingId") String onboardingId,
@@ -188,7 +191,8 @@ public class TokenV2Controller {
      * * Code: 404, Message: Not found, DataType: Problem
      */
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @Operation(summary = "${swagger.tokens.complete}", description = "${swagger.tokens.complete}", operationId = "deleteUsingDELETE")
+    @Operation(summary = "${swagger.tokens.complete}",
+            description = "${swagger.tokens.complete}", operationId = "deleteUsingDELETE")
     @DeleteMapping(value = "/{onboardingId}/complete")
     public ResponseEntity<Void> deleteOnboarding(@ApiParam("${swagger.tokens.tokenId}")
                                                  @PathVariable(value = "onboardingId") String onboardingId) {
@@ -201,7 +205,8 @@ public class TokenV2Controller {
 
     @GetMapping(value = "/{onboardingId}/contract", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "${swagger.tokens.getContract}", operationId = "getContractUsingGET")
+    @Operation(summary = "${swagger.tokens.getContract}",
+            description = "${swagger.tokens.getContract}", operationId = "getContractUsingGET")
     public ResponseEntity<byte[]> getContract(@ApiParam("${swagger.tokens.onboardingId}")
                                               @PathVariable("onboardingId")
                                               String onboardingId) throws IOException {
@@ -213,7 +218,8 @@ public class TokenV2Controller {
 
     @GetMapping(value = "/{onboardingId}/attachment", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "${swagger.tokens.getAttachment}", operationId = "getAttachmentUsingGET")
+    @Operation(summary = "${swagger.tokens.getAttachment}",
+            description = "${swagger.tokens.getAttachment}",  operationId = "getAttachmentUsingGET")
     public ResponseEntity<byte[]> getAttachment(@ApiParam("${swagger.tokens.onboardingId}")
                                                 @PathVariable("onboardingId")
                                                 String onboardingId,
@@ -229,7 +235,8 @@ public class TokenV2Controller {
 
     @GetMapping(value = "/{onboardingId}/products/{productId}/aggregates-csv", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "${swagger.tokens.getAggregatesCsv}", operationId = "getAggregatesCsvUsingGET")
+    @Operation(summary = "${swagger.tokens.getAggregatesCsv}",
+            description = "${swagger.tokens.getAggregatesCsv}", operationId = "getAggregatesCsvUsingGET")
     public ResponseEntity<byte[]> getAggregatesCsv(@ApiParam("${swagger.tokens.onboardingId}") @PathVariable("onboardingId")
                                                    String onboardingIdInput,
                                                    @ApiParam("${swagger.tokens.productId}")
