@@ -71,7 +71,8 @@ public class TokenV2Controller {
     public ResponseEntity<Object> complete(@PathVariable(value = "onboardingId") String onboardingId,
                                            @RequestPart MultipartFile contract) {
         log.trace("complete Token start");
-        log.debug(LogUtils.CONFIDENTIAL_MARKER, "complete Token tokenId = {}, contract = {}", onboardingId, contract);
+        String sanitizedFileName = Encode.forJava(contract.getOriginalFilename());
+        log.debug(LogUtils.CONFIDENTIAL_MARKER, "complete Token tokenId = {}, contract = {}", onboardingId, sanitizedFileName);
 
         try {
             tokenService.completeTokenV2(onboardingId, contract);
