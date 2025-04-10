@@ -32,6 +32,11 @@ public class OnboardingExceptionHandler {
         return ProblemMapper.toResponseEntity(new Problem(NOT_FOUND, e.getMessage()));
     }
 
+    @ExceptionHandler({ResourceConflictException.class})
+    ResponseEntity<Problem> handleResourceConflictException(ResourceConflictException e) {
+        log.warn(e.toString());
+        return ProblemMapper.toResponseEntity(new Problem(CONFLICT, e.getMessage()));
+    }
 
     @ExceptionHandler({ManagerNotFoundException.class})
     ResponseEntity<Problem> handleProductHasNoRelationshipException(ManagerNotFoundException e) {

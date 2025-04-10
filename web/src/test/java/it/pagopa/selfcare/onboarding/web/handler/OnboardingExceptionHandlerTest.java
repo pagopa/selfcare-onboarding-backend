@@ -154,6 +154,22 @@ class OnboardingExceptionHandlerTest {
     }
 
     @Test
+    void handleResourceConflictException() {
+        // given
+        ResourceConflictException mockException = mock(ResourceConflictException.class);
+        when(mockException.getMessage())
+                .thenReturn(DETAIL_MESSAGE);
+        // when
+        ResponseEntity<Problem> responseEntity = handler.handleResourceConflictException(mockException);
+        // then
+        assertNotNull(responseEntity);
+        assertEquals(CONFLICT, responseEntity.getStatusCode());
+        assertNotNull(responseEntity.getBody());
+        assertEquals(DETAIL_MESSAGE, responseEntity.getBody().getDetail());
+        assertEquals(CONFLICT.value(), responseEntity.getBody().getStatus());
+    }
+
+    @Test
     void handleCustomSignVerificationException() {
         // given
         CustomSignVerificationException mockException = mock(CustomSignVerificationException.class);
