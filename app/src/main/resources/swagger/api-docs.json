@@ -214,14 +214,7 @@
         },
         "responses" : {
           "204" : {
-            "description" : "No Content",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "type" : "object"
-                }
-              }
-            }
+            "description" : "No Content"
           },
           "400" : {
             "description" : "Bad Request",

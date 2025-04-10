@@ -1,12 +1,10 @@
 package it.pagopa.selfcare.onboarding.connector.rest.decoder;
 
-import feign.FeignException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import feign.Response;
 import feign.codec.ErrorDecoder;
-import it.pagopa.selfcare.onboarding.connector.exceptions.ResourceConflictException;
-import it.pagopa.selfcare.onboarding.connector.exceptions.InternalGatewayErrorException;
-import it.pagopa.selfcare.onboarding.connector.exceptions.InvalidRequestException;
-import it.pagopa.selfcare.onboarding.connector.exceptions.ResourceNotFoundException;
+import it.pagopa.selfcare.onboarding.connector.exceptions.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -17,19 +15,20 @@ import java.nio.charset.StandardCharsets;
 @Component
 @Slf4j
 public class FeignErrorDecoder extends ErrorDecoder.Default {
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
     public Exception decode(String methodKey, Response response) {
         String errorMessage = null;
 
-        if (methodKey.contains("MsOnboardingInternalApiClient#_completeOnboardingUsingPUT")
-                || methodKey.contains("MsOnboardingApiClient#_completeOnboardingUser")) {
-            return FeignException.errorStatus(methodKey, response);
-        }
-
         if (response.body() != null) {
             try (InputStream inputStream = response.body().asInputStream()) {
                 errorMessage = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
+                JsonNode root = objectMapper.readTree(errorMessage);
+                if (root.has("errors") && root.get("errors").isArray()) {
+                    return new CustomSignVerificationException(response.status(), errorMessage);
+                }
+
             } catch (IOException e) {
                 log.warn("Failed to read Feign response body", e);
             }

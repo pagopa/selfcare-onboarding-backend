@@ -9,8 +9,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
-import feign.FeignException;
-import feign.Request;
 import it.pagopa.selfcare.commons.base.security.SelfCareUser;
 import it.pagopa.selfcare.commons.web.security.JwtAuthenticationToken;
 import it.pagopa.selfcare.onboarding.connector.exceptions.UnauthorizedUserException;
@@ -26,8 +24,6 @@ import it.pagopa.selfcare.onboarding.web.model.mapper.OnboardingResourceMapperIm
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
-import java.util.Collections;
 import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
@@ -91,48 +87,6 @@ class TokenV2ControllerTest {
                 .file(file);
         mvc.perform(requestBuilder)
                 .andExpect(MockMvcResultMatchers.status().isNoContent());
-    }
-
-    @Test
-    void shouldReturnDownstreamErrorWhenCompleteFails() throws Exception {
-        // given
-        String errorBody = "{\"status\":400,\"errors\":[{\"code\":\"002-1003\",\"detail\":\"Invalid signature\"}]}";
-        FeignException feignException = new FeignException.BadRequest(
-                "Bad Request",
-                Request.create(Request.HttpMethod.POST, "/v2/tokens/42/complete", Collections.emptyMap(), null, StandardCharsets.UTF_8, null),
-                errorBody.getBytes(StandardCharsets.UTF_8),
-                Collections.emptyMap()
-        );
-
-        Mockito.doThrow(feignException).when(tokenService).completeTokenV2(Mockito.eq("42"), Mockito.any());
-
-        MockMultipartFile file = new MockMultipartFile("contract", "".getBytes());
-
-        // when + then
-        mvc.perform(MockMvcRequestBuilders.multipart("/v2/tokens/42/complete").file(file))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest())
-                .andExpect(MockMvcResultMatchers.content().json(errorBody));
-    }
-
-    @Test
-    void shouldReturnDownstreamErrorWhenCompleteOnboardingUsersFails() throws Exception {
-        // given
-        String errorBody = "{\"status\":500,\"errors\":[{\"code\":\"999-9999\",\"detail\":\"Server error in downstream\"}]}";
-        FeignException feignException = new FeignException.InternalServerError(
-                "Internal Server Error",
-                Request.create(Request.HttpMethod.POST, "/v2/tokens/42/complete-onboarding-users", Collections.emptyMap(), null, StandardCharsets.UTF_8, null),
-                errorBody.getBytes(StandardCharsets.UTF_8),
-                Collections.emptyMap()
-        );
-
-        Mockito.doThrow(feignException).when(tokenService).completeOnboardingUsers(Mockito.eq("42"), Mockito.any());
-
-        MockMultipartFile file = new MockMultipartFile("contract", "".getBytes());
-
-        // when + then
-        mvc.perform(MockMvcRequestBuilders.multipart("/v2/tokens/42/complete-onboarding-users").file(file))
-                .andExpect(MockMvcResultMatchers.status().isInternalServerError())
-                .andExpect(MockMvcResultMatchers.content().json(errorBody));
     }
 
     /**

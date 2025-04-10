@@ -3,7 +3,6 @@ package it.pagopa.selfcare.onboarding.web.controller;
 
 import static org.springframework.http.MediaType.APPLICATION_OCTET_STREAM_VALUE;
 
-import feign.FeignException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -68,22 +67,16 @@ public class TokenV2Controller {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @ApiOperation(value = "${swagger.tokens.complete}", notes = "${swagger.tokens.complete}")
     @PostMapping(value = "/{onboardingId}/complete")
-    public ResponseEntity<Object> complete(@ApiParam("${swagger.tokens.onboardingId}")
-                                           @PathVariable(value = "onboardingId") String onboardingId,
-                                           @RequestPart MultipartFile contract) {
+    public ResponseEntity<Void> complete(@ApiParam("${swagger.tokens.onboardingId}")
+                                         @PathVariable(value = "onboardingId") String onboardingId,
+                                         @RequestPart MultipartFile contract) {
         log.trace("complete Token start");
         String sanitizedFileName = Encode.forJava(contract.getOriginalFilename());
         String sanitizedOnboardingId = onboardingId.replaceAll("[^a-zA-Z0-9-_]", "");
         log.debug(LogUtils.CONFIDENTIAL_MARKER, "complete Token tokenId = {}, contract = {}", sanitizedOnboardingId, sanitizedFileName);
-        try {
-            tokenService.completeTokenV2(onboardingId, contract);
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-        } catch (FeignException e) {
-            return ResponseEntity
-                    .status(e.status())
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .body(e.contentUTF8());
-        }
+        tokenService.completeTokenV2(onboardingId, contract);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+
     }
 
     /**
@@ -109,15 +102,9 @@ public class TokenV2Controller {
         String sanitizedFileName = Encode.forJava(contract.getOriginalFilename());
         String sanitizedOnboardingId = onboardingId.replaceAll("[^a-zA-Z0-9-_]", "");
         log.debug(LogUtils.CONFIDENTIAL_MARKER, "complete Onboarding Users tokenId = {}, contract = {}", sanitizedOnboardingId, sanitizedFileName);
-        try {
-            tokenService.completeOnboardingUsers(onboardingId, contract);
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-        } catch (FeignException e) {
-            return ResponseEntity
-                    .status(e.status())
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .body(e.contentUTF8());
-        }
+        tokenService.completeOnboardingUsers(onboardingId, contract);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+
     }
 
     /**
