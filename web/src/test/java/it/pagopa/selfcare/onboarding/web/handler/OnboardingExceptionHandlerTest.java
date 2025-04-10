@@ -1,5 +1,7 @@
 package it.pagopa.selfcare.onboarding.web.handler;
 
+import feign.FeignException;
+import feign.Request;
 import it.pagopa.selfcare.commons.web.model.Problem;
 import it.pagopa.selfcare.onboarding.connector.exceptions.InternalGatewayErrorException;
 import it.pagopa.selfcare.onboarding.connector.exceptions.InvalidRequestException;
@@ -8,10 +10,19 @@ import it.pagopa.selfcare.onboarding.connector.exceptions.ResourceNotFoundExcept
 import it.pagopa.selfcare.onboarding.core.exception.InvalidUserFieldsException;
 import it.pagopa.selfcare.onboarding.core.exception.OnboardingNotAllowedException;
 import it.pagopa.selfcare.onboarding.core.exception.UpdateNotAllowedException;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
+import java.nio.charset.StandardCharsets;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -152,6 +163,85 @@ class OnboardingExceptionHandlerTest {
         assertNotNull(responseEntity.getBody());
         assertEquals(DETAIL_MESSAGE, responseEntity.getBody().getDetail());
         assertEquals(FORBIDDEN.value(), responseEntity.getBody().getStatus());
+    }
+
+    @AfterEach
+    void cleanup() {
+        RequestContextHolder.resetRequestAttributes(); // Pulisce dopo il test
+    }
+
+    @Test
+    void shouldReturnCustomProblemWithInstancePath() {
+        // given
+        String feignBody = "{\"status\":400,\"errors\":[{\"code\":\"002-1003\",\"detail\":\"Only CAdES signature form is admitted. Invalid signatures forms detected: PAdES\"}]}";
+
+        FeignException feignException = new FeignException.BadRequest(
+                "Bad Request",
+                Request.create(
+                        Request.HttpMethod.POST,
+                        "/v2/tokens/565ad8a7-db6d-4f03-9f00-d835c63a0d1a/complete",
+                        Collections.emptyMap(),
+                        null,
+                        StandardCharsets.UTF_8,
+                        null
+                ),
+                feignBody.getBytes(StandardCharsets.UTF_8),
+                Map.of("Content-Type", Collections.singletonList("application/json"))
+        );
+
+        // Simula una HTTP request attiva
+        MockHttpServletRequest mockRequest = new MockHttpServletRequest("POST", "/v2/tokens/565ad8a7-db6d-4f03-9f00-d835c63a0d1a/complete");
+        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(mockRequest));
+
+        // when
+        ResponseEntity<Problem> response = handler.handleFeignException(feignException);
+
+        // then
+        assertNotNull(response);
+        Problem problem = response.getBody();
+        assertNotNull(problem);
+        assertEquals(HttpStatus.BAD_REQUEST.value(), problem.getStatus());
+        assertEquals(HttpStatus.BAD_REQUEST.getReasonPhrase(), problem.getTitle());
+        assertEquals(feignBody, problem.getDetail());
+        assertEquals("/v2/tokens/565ad8a7-db6d-4f03-9f00-d835c63a0d1a/complete", problem.getInstance());
+    }
+
+    @Test
+    void shouldReturn500WhenFeignExceptionIsInternalServerError() {
+        // given
+        String feignBody = "{\"status\":500,\"errors\":[{\"code\":\"999-9999\",\"detail\":\"Generic downstream failure\"}]}";
+
+        FeignException feignException = new FeignException.InternalServerError(
+                "Internal Server Error",
+                Request.create(
+                        Request.HttpMethod.POST,
+                        "/v1/users/onboarding",
+                        Collections.emptyMap(),
+                        null,
+                        StandardCharsets.UTF_8,
+                        null
+                ),
+                feignBody.getBytes(StandardCharsets.UTF_8),
+                Map.of("Content-Type", Collections.singletonList("application/json"))
+        );
+
+        // Simula richiesta HTTP per valorizzare `instance`
+        MockHttpServletRequest mockRequest = new MockHttpServletRequest("POST", "/v1/users/onboarding");
+        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(mockRequest));
+
+        // when
+        ResponseEntity<Problem> response = handler.handleFeignException(feignException);
+
+        // then
+        assertNotNull(response);
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+
+        Problem problem = response.getBody();
+        assertNotNull(problem);
+        assertEquals(500, problem.getStatus());
+        assertEquals("Internal Server Error", problem.getTitle());
+        assertEquals(feignBody, problem.getDetail());
+        assertEquals("/v1/users/onboarding", problem.getInstance());
     }
 
 }

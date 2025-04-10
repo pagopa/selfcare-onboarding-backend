@@ -1,5 +1,7 @@
 package it.pagopa.selfcare.onboarding.web.handler;
 
+import feign.FeignException;
+import it.pagopa.selfcare.commons.web.handler.FeignExceptionsHandler;
 import it.pagopa.selfcare.commons.web.model.Problem;
 import it.pagopa.selfcare.commons.web.model.mapper.ProblemMapper;
 import it.pagopa.selfcare.onboarding.connector.exceptions.InternalGatewayErrorException;
@@ -10,17 +12,19 @@ import it.pagopa.selfcare.onboarding.core.exception.InvalidUserFieldsException;
 import it.pagopa.selfcare.onboarding.core.exception.OnboardingNotAllowedException;
 import it.pagopa.selfcare.onboarding.core.exception.UpdateNotAllowedException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.springframework.http.HttpStatus.*;
 
 @Slf4j
 @RestControllerAdvice
-public class OnboardingExceptionHandler {
+public class OnboardingExceptionHandler extends FeignExceptionsHandler {
 
     @ExceptionHandler({InvalidRequestException.class})
     ResponseEntity<Problem> handleInvalidRequestException(InvalidRequestException e) {
@@ -74,4 +78,16 @@ public class OnboardingExceptionHandler {
         return ProblemMapper.toResponseEntity(new Problem(BAD_GATEWAY, e.getMessage()));
     }
 
+    @Override
+    @ExceptionHandler(FeignException.class)
+    public ResponseEntity<Problem> handleFeignException(FeignException e) {
+        log.info("Onboarding handler called!");
+        log.error("Feign error: {}", e.contentUTF8(), e);
+
+        HttpStatus httpStatus = Optional.ofNullable(HttpStatus.resolve(e.status()))
+                .filter(status -> !status.is2xxSuccessful())
+                .orElse(HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return ProblemMapper.toResponseEntity(new Problem(httpStatus, e.contentUTF8()));
+    }
 }
