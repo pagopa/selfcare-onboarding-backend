@@ -31,7 +31,8 @@ public class ProductController {
 
     @GetMapping(value = "/v1/product/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "${swagger.onboarding.product.api.getProduct}", operationId = "getProductUsingGET")
+    @Operation(summary = "${swagger.onboarding.product.api.getProduct}",
+            description = "${swagger.onboarding.product.api.getProduct}", operationId = "getProductUsingGET")
     public ProductResource getProduct(@ApiParam("${swagger.onboarding.product.model.id}")
                                       @PathVariable("id")
                                       String id,

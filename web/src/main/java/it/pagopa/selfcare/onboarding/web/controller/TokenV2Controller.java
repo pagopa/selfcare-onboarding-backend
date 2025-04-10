@@ -115,8 +115,9 @@ public class TokenV2Controller {
             summary = "${swagger.tokens.verify}", operationId = "verifyOnboardingUsingPOST")
     @PostMapping("/{onboardingId}/verify")
     public OnboardingVerify verifyOnboarding(@ApiParam("${swagger.tokens.onboardingId}") @PathVariable("onboardingId") String onboardingId) {
+        String sanitizedOnboardingId = onboardingId.replace("\n", "").replace("\r", "");
         log.debug("Verify token identified with {}", onboardingId);
-        final OnboardingData onboardingData = tokenService.verifyOnboarding(onboardingId);
+        final OnboardingData onboardingData = tokenService.verifyOnboarding(sanitizedOnboardingId);
         OnboardingVerify result = onboardingResourceMapper.toOnboardingVerify(onboardingData);
         log.debug("Verify token identified result = {}", result);
         log.trace("Verify token identified end");
@@ -197,8 +198,9 @@ public class TokenV2Controller {
     public ResponseEntity<Void> deleteOnboarding(@ApiParam("${swagger.tokens.tokenId}")
                                                  @PathVariable(value = "onboardingId") String onboardingId) {
         log.trace("delete Token start");
-        log.debug("delete Token tokenId = {}", onboardingId);
-        tokenService.rejectOnboarding(onboardingId, "REJECTED_BY_USER");
+        String sanitizedOnboardingId = onboardingId.replace("\n", "").replace("\r", "");
+        log.debug("delete Token tokenId = {}", sanitizedOnboardingId);
+        tokenService.rejectOnboarding(sanitizedOnboardingId, "REJECTED_BY_USER");
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
