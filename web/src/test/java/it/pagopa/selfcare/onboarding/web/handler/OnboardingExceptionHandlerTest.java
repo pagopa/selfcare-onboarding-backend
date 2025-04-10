@@ -172,7 +172,7 @@ class OnboardingExceptionHandlerTest {
     @Test
     void handleCustomSignVerificationException() {
         // given
-        CustomSignVerificationException mockException = mock(CustomSignVerificationException.class);
+        CustomVerifyException mockException = mock(CustomVerifyException.class);
         when(mockException.getStatus()).thenReturn(HttpStatus.BAD_REQUEST.value());
         when(mockException.getBody()).thenReturn(DETAIL_MESSAGE);
         // when

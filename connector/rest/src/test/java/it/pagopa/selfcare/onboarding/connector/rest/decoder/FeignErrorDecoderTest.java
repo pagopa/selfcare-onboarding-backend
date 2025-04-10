@@ -127,9 +127,9 @@ class FeignErrorDecoderTest {
         };
 
         // then
-        Exception exception = assertThrows(CustomSignVerificationException.class, executable);
-        assertEquals(400, ((CustomSignVerificationException) exception).getStatus());
-        assertEquals(jsonError, ((CustomSignVerificationException) exception).getBody());
+        Exception exception = assertThrows(CustomVerifyException.class, executable);
+        assertEquals(400, ((CustomVerifyException) exception).getStatus());
+        assertEquals(jsonError, ((CustomVerifyException) exception).getBody());
     }
 
 }

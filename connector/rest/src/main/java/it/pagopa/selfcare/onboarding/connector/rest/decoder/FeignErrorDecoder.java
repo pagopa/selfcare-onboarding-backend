@@ -26,7 +26,7 @@ public class FeignErrorDecoder extends ErrorDecoder.Default {
                 errorMessage = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
                 JsonNode root = objectMapper.readTree(errorMessage);
                 if (root.has("errors") && root.get("errors").isArray()) {
-                    return new CustomSignVerificationException(response.status(), errorMessage);
+                    return new CustomVerifyException(response.status(), errorMessage);
                 }
 
             } catch (IOException e) {

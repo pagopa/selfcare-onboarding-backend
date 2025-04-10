@@ -77,8 +77,8 @@ public class OnboardingExceptionHandler {
         return ProblemMapper.toResponseEntity(new Problem(BAD_GATEWAY, e.getMessage()));
     }
 
-    @ExceptionHandler(CustomSignVerificationException.class)
-    public ResponseEntity<Object> handlePropagatedFrontendException(CustomSignVerificationException ex) {
+    @ExceptionHandler(CustomVerifyException.class)
+    public ResponseEntity<Object> handlePropagatedFrontendException(CustomVerifyException ex) {
         return ResponseEntity
                 .status(ex.getStatus())
                 .contentType(MediaType.APPLICATION_JSON)
