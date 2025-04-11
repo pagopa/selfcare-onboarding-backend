@@ -98,6 +98,10 @@ app_settings = [
   {
     name  = "ONBOARDING_FUNCTIONS_URL"
     value = "https://selc-d-onboarding-fn.azurewebsites.net"
+  },
+  {
+    name  = "MS_USER_INSTITUTION_URL"
+    value = "https://selc-d-user-ms-ca"
   }
 ]
 
