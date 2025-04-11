@@ -198,6 +198,29 @@ class TokenV2ControllerTest {
     }
 
     /**
+     * Method under test: {@link TokenV2Controller#deleteOnboarding(String)}
+     */
+    @Test
+    void deleteOnboarding() throws Exception {
+
+        final String onboardingId = UUID.randomUUID().toString();
+        final String reason = "REJECTED_BY_USER";
+
+        doNothing().when(tokenService).rejectOnboarding(onboardingId, reason);
+
+        //when
+        mvc.perform(MockMvcRequestBuilders
+                        .delete("/v2/tokens/{onboardingId}/complete", onboardingId)
+                        .contentType(APPLICATION_JSON_VALUE)
+                        .accept(APPLICATION_JSON_VALUE))
+                .andExpect(status().is(204))
+                .andReturn();
+        //then
+        verify(tokenService, times(1))
+                .rejectOnboarding(onboardingId, reason);
+    }
+
+    /**
      * Method under test: {@link TokenV2Controller#getContract(String)}
      */
     @Test
