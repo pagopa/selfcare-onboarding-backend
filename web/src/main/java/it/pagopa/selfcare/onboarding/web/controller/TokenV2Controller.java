@@ -10,9 +10,11 @@ import io.swagger.v3.oas.annotations.Operation;
 import it.pagopa.selfcare.commons.base.logging.LogUtils;
 import it.pagopa.selfcare.commons.base.security.SelfCareUser;
 import it.pagopa.selfcare.commons.web.security.JwtAuthenticationToken;
+import it.pagopa.selfcare.onboarding.common.OnboardingStatus;
 import it.pagopa.selfcare.onboarding.connector.exceptions.UnauthorizedUserException;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
 import it.pagopa.selfcare.onboarding.core.TokenService;
+import it.pagopa.selfcare.onboarding.core.UserInstitutionService;
 import it.pagopa.selfcare.onboarding.core.UserService;
 import it.pagopa.selfcare.onboarding.web.model.OnboardingRequestResource;
 import it.pagopa.selfcare.onboarding.web.model.OnboardingVerify;
@@ -40,12 +42,14 @@ public class TokenV2Controller {
 
     private final TokenService tokenService;
     private final UserService userService;
+    private final UserInstitutionService userInstitutionService;
 
     private final OnboardingResourceMapper onboardingResourceMapper;
-    
-    public TokenV2Controller(TokenService tokenService, UserService userService, OnboardingResourceMapper onboardingResourceMapper) {
+
+    public TokenV2Controller(TokenService tokenService, UserService userService, UserInstitutionService userInstitutionService, OnboardingResourceMapper onboardingResourceMapper) {
         this.tokenService = tokenService;
         this.userService = userService;
+        this.userInstitutionService = userInstitutionService;
         this.onboardingResourceMapper = onboardingResourceMapper;
     }
 
@@ -228,7 +232,6 @@ public class TokenV2Controller {
         return getResponseEntity(contract);
     }
 
-
     @GetMapping(value = "/{onboardingId}/products/{productId}/aggregates-csv", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "", notes = "${swagger.tokens.getAggregatesCsv}")
@@ -246,8 +249,10 @@ public class TokenV2Controller {
         log.debug("getAggregatesCsv onboardingId = {}, productId = {}", onboardingId, productId);
 
         String userUid = selfCareUser.getId();
-        
-        if (tokenService.verifyAllowedUserByRole(onboardingId, userUid)
+        OnboardingData onboardingWithUserInfo = tokenService.getOnboardingWithUserInfo(onboardingId);
+
+        if ((OnboardingStatus.COMPLETED.name().equalsIgnoreCase(onboardingWithUserInfo.getStatus()) && userInstitutionService.verifyAllowedUserInstitution(
+            onboardingWithUserInfo.getInstitutionUpdate().getId(), productId, userUid)) || tokenService.verifyAllowedUserByRole(onboardingId, userUid)
         || userService.isAllowedUserByUid(userUid)) {
             Resource csv = tokenService.getAggregatesCsv(onboardingId, productId);
             return getResponseEntity(csv);
