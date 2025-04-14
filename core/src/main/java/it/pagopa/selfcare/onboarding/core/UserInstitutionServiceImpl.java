@@ -2,6 +2,7 @@ package it.pagopa.selfcare.onboarding.core;
 
 import static org.apache.commons.lang3.StringUtils.*;
 
+import it.pagopa.selfcare.onboarding.common.PartyRole;
 import it.pagopa.selfcare.onboarding.connector.api.UserInstitutionConnector;
 import it.pagopa.selfcare.onboarding.connector.model.userInstitution.UserInstitutionRequest;
 import it.pagopa.selfcare.onboarding.connector.model.userInstitution.UserInstitutionResponse;
@@ -36,7 +37,7 @@ public class UserInstitutionServiceImpl implements UserInstitutionService {
 
     UserInstitutionRequest userInstitutionRequest =
         buildUserInstitutionRequest(
-            institutionId, EMPTY, product, EMPTY, ProductStatus.ACTIVE.name(), EMPTY);
+            institutionId, EMPTY, product, PartyRole.ADMIN_EA.name(), ProductStatus.ACTIVE.name(), EMPTY);
     List<UserInstitutionResponse> response =
         userInstitutionConnector.getInstitutionUsersByFilter(userInstitutionRequest);
 

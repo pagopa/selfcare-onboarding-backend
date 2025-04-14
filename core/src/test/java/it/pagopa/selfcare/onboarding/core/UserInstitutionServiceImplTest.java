@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
+import it.pagopa.selfcare.onboarding.common.PartyRole;
 import it.pagopa.selfcare.onboarding.connector.api.UserInstitutionConnector;
 import it.pagopa.selfcare.onboarding.connector.model.userInstitution.UserInstitutionRequest;
 import it.pagopa.selfcare.onboarding.connector.model.userInstitution.UserInstitutionResponse;
@@ -142,7 +143,7 @@ class UserInstitutionServiceImplTest {
         .institutionId("institutionId")
         .productRoles(List.of(""))
         .products(List.of("product"))
-        .roles(List.of(""))
+        .roles(List.of(PartyRole.ADMIN_EA.name()))
         .states(List.of(ProductStatus.ACTIVE.name()))
         .userId(StringUtils.EMPTY)
         .build();
