@@ -1,6 +1,7 @@
 package it.pagopa.selfcare.onboarding.core;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
@@ -120,6 +121,20 @@ class UserInstitutionServiceImplTest {
 
     // then
     assertFalse(result);
+  }
+
+  @Test
+  void verifyAllowedUserInstitution_shouldReturnException() {
+    // given
+
+    // when
+    assertThrows(
+        IllegalArgumentException.class,
+        () -> {
+          userInstitutionService.verifyAllowedUserInstitution(null, null, null);
+        });
+    // then
+
   }
 
   private UserInstitutionRequest dummyUserInstitutionRequest() {

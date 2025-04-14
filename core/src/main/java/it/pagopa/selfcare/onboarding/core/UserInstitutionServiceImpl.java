@@ -7,6 +7,7 @@ import it.pagopa.selfcare.onboarding.connector.model.userInstitution.UserInstitu
 import it.pagopa.selfcare.onboarding.connector.model.userInstitution.UserInstitutionResponse;
 import it.pagopa.selfcare.product.entity.ProductStatus;
 import java.util.List;
+import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,9 +28,11 @@ public class UserInstitutionServiceImpl implements UserInstitutionService {
   public boolean verifyAllowedUserInstitution(String institutionId, String product, String uid) {
     log.trace("init verifyAllowedUserInstitution");
 
-    assert isNotBlank(institutionId) : "institutionId is null";
-    assert isNotBlank(product) : "product is null";
-    assert isNotBlank(uid) : "uid is null";
+    if (Optional.ofNullable(institutionId).isEmpty()
+        && Optional.ofNullable(product).isEmpty()
+        && Optional.ofNullable(uid).isEmpty()) {
+      throw new IllegalArgumentException("Input args empty");
+    }
 
     UserInstitutionRequest userInstitutionRequest =
         buildUserInstitutionRequest(
