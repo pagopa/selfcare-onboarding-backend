@@ -1,5 +1,6 @@
 package it.pagopa.selfcare.onboarding.connector.rest.decoder;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import feign.Response;
@@ -24,11 +25,14 @@ public class FeignErrorDecoder extends ErrorDecoder.Default {
         if (response.body() != null) {
             try (InputStream inputStream = response.body().asInputStream()) {
                 errorMessage = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
-                JsonNode root = objectMapper.readTree(errorMessage);
-                if (root.has("errors") && root.get("errors").isArray()) {
-                    return new CustomVerifyException(response.status(), errorMessage);
+                try {
+                    JsonNode root = objectMapper.readTree(errorMessage);
+                    if (root.has("errors") && root.get("errors").isArray()) {
+                        return new CustomVerifyException(response.status(), errorMessage);
+                    }
+                } catch (JsonProcessingException e) {
+                    log.warn("Feign exception response: {}", errorMessage);
                 }
-
             } catch (IOException e) {
                 log.warn("Failed to read Feign response body", e);
             }
