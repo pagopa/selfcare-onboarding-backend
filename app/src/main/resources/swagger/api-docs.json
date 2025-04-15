@@ -3235,16 +3235,7 @@
               "$ref" : "#/components/schemas/UserDto"
             }
           },
-          "taxCodePT" : {
-            "type" : "string"
-          },
           "iban" : {
-            "type" : "string"
-          },
-          "service" : {
-            "type" : "string"
-          },
-          "syncAsyncMode" : {
             "type" : "string"
           },
           "recipientCode" : {
@@ -3631,16 +3622,7 @@
           "origin" : {
             "type" : "string"
           },
-          "taxCodePT" : {
-            "type" : "string"
-          },
           "iban" : {
-            "type" : "string"
-          },
-          "service" : {
-            "type" : "string"
-          },
-          "syncAsyncMode" : {
             "type" : "string"
           },
           "parentDescription" : {

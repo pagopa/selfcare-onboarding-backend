@@ -19,10 +19,7 @@ public class AggregateResult {
     private String zipCode;
     private String originId;
     private String origin;
-    private String taxCodePT;
     private String iban;
-    private String service;
-    private String syncAsyncMode;
     private String parentDescription;
     private List<AggregateUserResult> users = null;
 }
