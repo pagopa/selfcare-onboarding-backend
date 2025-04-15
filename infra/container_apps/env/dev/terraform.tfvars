@@ -101,7 +101,7 @@ app_settings = [
   },
   {
     name  = "MS_USER_INSTITUTION_URL"
-    value = "https://selc-d-user-ms-ca"
+    value = "http://selc-d-user-ms-ca"
   }
 ]
 
