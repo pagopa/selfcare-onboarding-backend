@@ -35,9 +35,18 @@ public class UserInstitutionServiceImpl implements UserInstitutionService {
       throw new IllegalArgumentException("Input args empty");
     }
 
+    String rolesFilter =
+        new StringBuilder()
+            .append(PartyRole.MANAGER.name())
+            .append(",")
+            .append(PartyRole.DELEGATE.name())
+            .append(",")
+            .append(PartyRole.SUB_DELEGATE.name())
+            .toString();
+
     UserInstitutionRequest userInstitutionRequest =
         buildUserInstitutionRequest(
-            institutionId, EMPTY, product, PartyRole.ADMIN_EA.name(), ProductStatus.ACTIVE.name(), EMPTY);
+            institutionId, EMPTY, product, rolesFilter, ProductStatus.ACTIVE.name(), EMPTY);
     List<UserInstitutionResponse> response =
         userInstitutionConnector.getInstitutionUsersByFilter(userInstitutionRequest);
 
@@ -64,11 +73,15 @@ public class UserInstitutionServiceImpl implements UserInstitutionService {
       String userId) {
     return UserInstitutionRequest.builder()
         .institutionId(institutionId)
-        .productRoles(List.of(productRole))
-        .products(List.of(product))
-        .roles(List.of(role))
-        .states(List.of(state))
+        .productRoles(splitValue(productRole))
+        .products(splitValue(product))
+        .roles(splitValue(role))
+        .states(splitValue(state))
         .userId(userId)
         .build();
+  }
+
+  private List<String> splitValue(String value) {
+    return StringUtils.isNotBlank(value) ? List.of(value.split(",")) : List.of(EMPTY);
   }
 }
