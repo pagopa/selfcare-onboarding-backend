@@ -143,7 +143,9 @@ class UserInstitutionServiceImplTest {
         .institutionId("institutionId")
         .productRoles(List.of(""))
         .products(List.of("product"))
-        .roles(List.of(PartyRole.ADMIN_EA.name()))
+        .roles(
+            List.of(
+                PartyRole.MANAGER.name(), PartyRole.DELEGATE.name(), PartyRole.SUB_DELEGATE.name()))
         .states(List.of(ProductStatus.ACTIVE.name()))
         .userId(StringUtils.EMPTY)
         .build();
