@@ -9,7 +9,6 @@ import it.pagopa.selfcare.onboarding.connector.model.onboarding.*;
 import it.pagopa.selfcare.onboarding.connector.rest.client.*;
 import it.pagopa.selfcare.onboarding.connector.rest.mapper.OnboardingMapper;
 import it.pagopa.selfcare.onboarding.connector.rest.mapper.OnboardingMapperImpl;
-import it.pagopa.selfcare.onboarding.generated.openapi.v1.api.InternalV1Api;
 import it.pagopa.selfcare.onboarding.generated.openapi.v1.dto.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -42,6 +41,9 @@ class OnboardingMsConnectorImplTest {
 
     @Mock
     private MsOnboardingApiClient msOnboardingApiClient;
+
+    @Mock
+    private MsOnboardingBillingApiClient msOnboardingBillingApiClient;
 
     @Mock
     private MsOnboardingTokenApiClient msOnboardingTokenApiClient;
@@ -613,7 +615,7 @@ class OnboardingMsConnectorImplTest {
         RecipientCodeStatus expectedStatusResult = RecipientCodeStatus.ACCEPTED;
         ResponseEntity<RecipientCodeStatus> responseEntity = ResponseEntity.ok(expectedStatusResult);
 
-        when(msOnboardingApiClient._checkRecipientCode(recipientCode, originId))
+        when(msOnboardingBillingApiClient._checkRecipientCode(recipientCode, originId))
                 .thenReturn(responseEntity);
         when(onboardingMapper.toRecipientCodeStatusResult(responseEntity.getBody()))
                 .thenReturn(RecipientCodeStatusResult.ACCEPTED);
@@ -623,7 +625,7 @@ class OnboardingMsConnectorImplTest {
 
         // then
         assertDoesNotThrow(executable);
-        verify(msOnboardingApiClient, times(1))
+        verify(msOnboardingBillingApiClient, times(1))
                 ._checkRecipientCode(recipientCode, originId);
         verify(onboardingMapper, times(1))
                 .toRecipientCodeStatusResult(responseEntity.getBody());

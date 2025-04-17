@@ -14,8 +14,6 @@ import it.pagopa.selfcare.onboarding.generated.openapi.v1.dto.OnboardingGet;
 import it.pagopa.selfcare.onboarding.generated.openapi.v1.dto.OnboardingResponse;
 import it.pagopa.selfcare.onboarding.generated.openapi.v1.dto.OnboardingStatus;
 import it.pagopa.selfcare.onboarding.generated.openapi.v1.dto.ReasonRequest;
-import java.util.List;
-import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
@@ -23,6 +21,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
+import java.util.Objects;
 
 @Service
 @Slf4j
@@ -32,6 +33,7 @@ public class OnboardingMsConnectorImpl implements OnboardingMsConnector {
     public static final String PROD_PAGOPA = "prod-pagopa";
     public static final String PROD_PN = "prod-pn";
     private final MsOnboardingApiClient msOnboardingApiClient;
+    private final MsOnboardingBillingApiClient msOnboardingBillingApiClient;
     private final MsOnboardingSupportApiClient msOnboardingSupportApiClient;
     private final MsOnboardingTokenApiClient msOnboardingTokenApiClient;
     private final MsOnboardingAggregatesApiClient msOnboardingAggregatesApiClient;
@@ -39,12 +41,13 @@ public class OnboardingMsConnectorImpl implements OnboardingMsConnector {
     private final MsOnboardingInternalApiClient msOnboardingInternalApiClient;
     protected static final String REQUIRED_PRODUCT_ID_MESSAGE = "A product Id is required";
 
-    public OnboardingMsConnectorImpl(MsOnboardingApiClient msOnboardingApiClient,
+    public OnboardingMsConnectorImpl(MsOnboardingApiClient msOnboardingApiClient, MsOnboardingBillingApiClient msOnboardingBillingApiClient,
                                      MsOnboardingTokenApiClient msOnboardingTokenApiClient,
                                      MsOnboardingSupportApiClient msOnboardingSupportApiClient,
                                      MsOnboardingAggregatesApiClient msOnboardingAggregatesApiClient, OnboardingMapper onboardingMapper,
                                      MsOnboardingInternalApiClient msOnboardingInternalApiClient) {
         this.msOnboardingApiClient = msOnboardingApiClient;
+        this.msOnboardingBillingApiClient = msOnboardingBillingApiClient;
         this.msOnboardingTokenApiClient = msOnboardingTokenApiClient;
         this.msOnboardingSupportApiClient = msOnboardingSupportApiClient;
         this.msOnboardingAggregatesApiClient = msOnboardingAggregatesApiClient;
@@ -199,7 +202,7 @@ public class OnboardingMsConnectorImpl implements OnboardingMsConnector {
 
     @Override
     public RecipientCodeStatusResult checkRecipientCode(String originId, String recipientCode) {
-        return onboardingMapper.toRecipientCodeStatusResult(msOnboardingApiClient._checkRecipientCode(originId, recipientCode).getBody());
+        return onboardingMapper.toRecipientCodeStatusResult(msOnboardingBillingApiClient._checkRecipientCode(originId, recipientCode).getBody());
     }
 
     public void verifyOnboarding(String productId, String taxCode, String origin, String originId, String subunitCode) {
