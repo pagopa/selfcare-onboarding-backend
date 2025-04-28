@@ -11,19 +11,25 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import it.pagopa.selfcare.commons.base.security.SelfCareUser;
 import it.pagopa.selfcare.commons.web.security.JwtAuthenticationToken;
+import it.pagopa.selfcare.onboarding.common.OnboardingStatus;
 import it.pagopa.selfcare.onboarding.connector.exceptions.UnauthorizedUserException;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.InstitutionUpdate;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.User;
 import it.pagopa.selfcare.onboarding.core.TokenService;
+import it.pagopa.selfcare.onboarding.core.UserInstitutionService;
 import it.pagopa.selfcare.onboarding.core.UserService;
 import it.pagopa.selfcare.onboarding.web.config.WebTestConfig;
 import it.pagopa.selfcare.onboarding.web.handler.TokenExceptionHandler;
 import it.pagopa.selfcare.onboarding.web.model.OnboardingRequestResource;
 import it.pagopa.selfcare.onboarding.web.model.ReasonForRejectDto;
 import it.pagopa.selfcare.onboarding.web.model.mapper.OnboardingResourceMapperImpl;
+
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.util.List;
 import java.util.UUID;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,6 +59,9 @@ class TokenV2ControllerTest {
 
     @MockBean
     private UserService userService;
+
+    @MockBean
+    private UserInstitutionService userInstitutionService;
 
     @Autowired
     protected ObjectMapper objectMapper;
@@ -166,7 +175,7 @@ class TokenV2ControllerTest {
     }
 
     /**
-     * Method under test: {@link TokenV2Controller#rejectOnboarding(String,ReasonForRejectDto)}
+     * Method under test: {@link TokenV2Controller#rejectOnboarding(String, ReasonForRejectDto)}
      */
     @Test
     void rejectOnboardingRequest() throws Exception {
@@ -196,13 +205,36 @@ class TokenV2ControllerTest {
     }
 
     /**
+     * Method under test: {@link TokenV2Controller#deleteOnboarding(String)}
+     */
+    @Test
+    void deleteOnboarding() throws Exception {
+
+        final String onboardingId = UUID.randomUUID().toString();
+        final String reason = "REJECTED_BY_USER";
+
+        doNothing().when(tokenService).rejectOnboarding(onboardingId, reason);
+
+        //when
+        mvc.perform(MockMvcRequestBuilders
+                        .delete("/v2/tokens/{onboardingId}/complete", onboardingId)
+                        .contentType(APPLICATION_JSON_VALUE)
+                        .accept(APPLICATION_JSON_VALUE))
+                .andExpect(status().is(204))
+                .andReturn();
+        //then
+        verify(tokenService, times(1))
+                .rejectOnboarding(onboardingId, reason);
+    }
+
+    /**
      * Method under test: {@link TokenV2Controller#getContract(String)}
      */
     @Test
     void getContract() throws Exception {
         String onboardingId = "onboardingId";
         String text = "String";
-        byte[] bytes= text.getBytes();
+        byte[] bytes = text.getBytes();
         InputStream is = new ByteArrayInputStream(bytes);
         Resource resource = Mockito.mock(Resource.class);
         Mockito.when(tokenService.getContract(onboardingId)).thenReturn(resource);
@@ -228,7 +260,7 @@ class TokenV2ControllerTest {
         final String onboardingId = "onboardingId";
         final String text = "String";
         final String filename = "filename";
-        byte[] bytes= text.getBytes();
+        byte[] bytes = text.getBytes();
         InputStream is = new ByteArrayInputStream(bytes);
         Resource resource = Mockito.mock(Resource.class);
         Mockito.when(tokenService.getAttachment(onboardingId, filename)).thenReturn(resource);
@@ -258,58 +290,22 @@ class TokenV2ControllerTest {
 
         JwtAuthenticationToken mockPrincipal = Mockito.mock(JwtAuthenticationToken.class);
         SelfCareUser selfCareUser = SelfCareUser.builder("example")
-            .fiscalCode("fiscalCode")
-            .build();
+                .fiscalCode("fiscalCode")
+                .build();
         Mockito.when(mockPrincipal.getPrincipal()).thenReturn(selfCareUser);
 
+        OnboardingData onboardingData = dummyOnboardingData();
         String uid = selfCareUser.getId();
 
+        Mockito.when(tokenService.getOnboardingWithUserInfo(onboardingId))
+            .thenReturn(onboardingData);
+
+        Mockito.when(userInstitutionService.verifyAllowedUserInstitution(onboardingData.getInstitutionUpdate().getId(), productId, uid))
+            .thenReturn(true);
         Mockito.when(tokenService.verifyAllowedUserByRole(onboardingId, uid))
-        .thenReturn(true);
-
-        byte[] bytes= text.getBytes();
-        InputStream is = new ByteArrayInputStream(bytes);
-        Resource resource = Mockito.mock(Resource.class);
-        Mockito.when(tokenService.getAggregatesCsv(onboardingId, productId)).thenReturn(resource);
-        Mockito.when(resource.getInputStream()).thenReturn(is);
-
-    // when
-    mvc.perform(
-            MockMvcRequestBuilders.get(
-                    "/v2/tokens/{onboardingId}/products/{productId}/aggregates-csv",
-                    onboardingId,
-                    productId)
-                .principal(mockPrincipal)
-                .accept(MediaType.APPLICATION_OCTET_STREAM_VALUE))
-        .andExpect(status().isOk())
-        .andReturn();
-
-        //then
-        verify(tokenService, times(1))
-                .getAggregatesCsv(onboardingId, productId);
-        verify(tokenService, times(1))
-            .verifyAllowedUserByRole(onboardingId, uid);
-        verifyNoMoreInteractions(tokenService);
-    }
-
-    /**
-     * Method under test: {@link TokenV2Controller#getAggregatesCsv(String, String, java.security.Principal)}
-     */
-    @Test
-    void getAggregatesCsv_Case2() throws Exception {
-        //given
-        String onboardingId = "onboardingId";
-        String productId = "productId";
-        String text = "String";
-
-        JwtAuthenticationToken mockPrincipal = Mockito.mock(JwtAuthenticationToken.class);
-        SelfCareUser selfCareUser = SelfCareUser.builder("example")
-            .fiscalCode("fiscalCode")
-            .build();
-        Mockito.when(mockPrincipal.getPrincipal()).thenReturn(selfCareUser);
-
-        String uid = selfCareUser.getId();
-        Mockito.when(userService.isAllowedUserByUid(uid)).thenReturn(true);
+            .thenReturn(false);
+        Mockito.when(userService.isAllowedUserByUid(uid))
+            .thenReturn(false);
 
         byte[] bytes= text.getBytes();
         InputStream is = new ByteArrayInputStream(bytes);
@@ -329,21 +325,26 @@ class TokenV2ControllerTest {
             .andReturn();
 
         //then
-        verify(userService, times(1))
-            .isAllowedUserByUid(uid);
         verify(tokenService, times(1))
-            .verifyAllowedUserByRole(onboardingId, uid);
+            .getOnboardingWithUserInfo(onboardingId);
         verify(tokenService, times(1))
             .getAggregatesCsv(onboardingId, productId);
-        verifyNoMoreInteractions(userService);
+        verify(tokenService, times(0))
+            .verifyAllowedUserByRole(onboardingId, uid);
+        verify(userService, times(0))
+            .isAllowedUserByUid(uid);
+        verify(userInstitutionService, times(1))
+            .verifyAllowedUserInstitution(onboardingData.getInstitutionUpdate().getId(), productId, uid);
         verifyNoMoreInteractions(tokenService);
+        verifyNoMoreInteractions(userInstitutionService);
+        verifyNoMoreInteractions(userService);
     }
 
     /**
      * Method under test: {@link TokenV2Controller#getAggregatesCsv(String, String, java.security.Principal)}
      */
     @Test
-    void getAggregatesCsv_CaseKO() throws Exception {
+    void getAggregatesCsv_Case2() throws Exception {
         //given
         String onboardingId = "onboardingId";
         String productId = "productId";
@@ -356,11 +357,19 @@ class TokenV2ControllerTest {
         Mockito.when(mockPrincipal.getPrincipal()).thenReturn(selfCareUser);
 
         String uid = selfCareUser.getId();
+        OnboardingData onboardingData = dummyOnboardingData();
 
+        Mockito.when(tokenService.getOnboardingWithUserInfo(onboardingId))
+            .thenReturn(onboardingData);
+
+        Mockito.when(userInstitutionService.verifyAllowedUserInstitution(onboardingData.getInstitutionUpdate().getId(), productId, uid))
+            .thenReturn(false);
         Mockito.when(tokenService.verifyAllowedUserByRole(onboardingId, uid))
-        .thenReturn(false);
+        .thenReturn(true);
+        Mockito.when(userService.isAllowedUserByUid(uid))
+            .thenReturn(false);
 
-        byte[] bytes= text.getBytes();
+        byte[] bytes = text.getBytes();
         InputStream is = new ByteArrayInputStream(bytes);
         Resource resource = Mockito.mock(Resource.class);
         Mockito.when(tokenService.getAggregatesCsv(onboardingId, productId)).thenReturn(resource);
@@ -368,20 +377,158 @@ class TokenV2ControllerTest {
 
         // when
         mvc.perform(
-                MockMvcRequestBuilders.get(
-                        "/v2/tokens/{onboardingId}/products/{productId}/aggregates-csv",
-                        onboardingId,
-                        productId)
-                    .principal(mockPrincipal)
-                    .accept(MediaType.APPLICATION_OCTET_STREAM_VALUE))
-            .andExpect(result -> assertTrue(result.getResolvedException() instanceof UnauthorizedUserException))
-            .andExpect(status().isForbidden())
-            .andReturn();
+                        MockMvcRequestBuilders.get(
+                                        "/v2/tokens/{onboardingId}/products/{productId}/aggregates-csv",
+                                        onboardingId,
+                                        productId)
+                                .principal(mockPrincipal)
+                                .accept(MediaType.APPLICATION_OCTET_STREAM_VALUE))
+                .andExpect(status().isOk())
+                .andReturn();
 
         //then
+        verify(tokenService, times(1))
+            .getOnboardingWithUserInfo(onboardingId);
+        verify(tokenService, times(1))
+                .getAggregatesCsv(onboardingId, productId);
+        verify(tokenService, times(1))
+            .verifyAllowedUserByRole(onboardingId, uid);
+        verify(userInstitutionService, times(1))
+            .verifyAllowedUserInstitution(onboardingData.getInstitutionUpdate().getId(), productId, uid);
+        verify(userService, times(0))
+            .isAllowedUserByUid(uid);
+
+        verifyNoMoreInteractions(tokenService);
+        verifyNoMoreInteractions(userInstitutionService);
+        verifyNoMoreInteractions(userService);
+    }
+
+    /**
+     * Method under test: {@link TokenV2Controller#getAggregatesCsv(String, String, java.security.Principal)}
+     */
+    @Test
+    void getAggregatesCsv_Case3() throws Exception {
+        //given
+        String onboardingId = "onboardingId";
+        String productId = "productId";
+        String text = "String";
+
+        JwtAuthenticationToken mockPrincipal = Mockito.mock(JwtAuthenticationToken.class);
+        SelfCareUser selfCareUser = SelfCareUser.builder("example")
+                .fiscalCode("fiscalCode")
+                .build();
+        Mockito.when(mockPrincipal.getPrincipal()).thenReturn(selfCareUser);
+
+        String uid = selfCareUser.getId();
+        OnboardingData onboardingData = dummyOnboardingData();
+
+        Mockito.when(tokenService.getOnboardingWithUserInfo(onboardingId))
+            .thenReturn(onboardingData);
+
+        Mockito.when(userInstitutionService.verifyAllowedUserInstitution(onboardingData.getInstitutionUpdate().getId(), productId, uid))
+            .thenReturn(false);
+        Mockito.when(tokenService.verifyAllowedUserByRole(onboardingId, uid))
+            .thenReturn(false);
+        Mockito.when(userService.isAllowedUserByUid(uid))
+            .thenReturn(true);
+
+        byte[] bytes = text.getBytes();
+        InputStream is = new ByteArrayInputStream(bytes);
+        Resource resource = Mockito.mock(Resource.class);
+        Mockito.when(tokenService.getAggregatesCsv(onboardingId, productId)).thenReturn(resource);
+        Mockito.when(resource.getInputStream()).thenReturn(is);
+
+        // when
+        mvc.perform(
+                        MockMvcRequestBuilders.get(
+                                        "/v2/tokens/{onboardingId}/products/{productId}/aggregates-csv",
+                                        onboardingId,
+                                        productId)
+                                .principal(mockPrincipal)
+                                .accept(MediaType.APPLICATION_OCTET_STREAM_VALUE))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        //then
+        verify(tokenService, times(1))
+            .getOnboardingWithUserInfo(onboardingId);
+        verify(tokenService, times(1))
+            .getAggregatesCsv(onboardingId, productId);
+        verify(tokenService, times(1))
+            .verifyAllowedUserByRole(onboardingId, uid);
+        verify(userInstitutionService, times(1))
+            .verifyAllowedUserInstitution(onboardingData.getInstitutionUpdate().getId(), productId, uid);
+        verify(userService, times(1))
+            .isAllowedUserByUid(uid);
+
+        verifyNoMoreInteractions(tokenService);
+        verifyNoMoreInteractions(userInstitutionService);
+        verifyNoMoreInteractions(userService);
+    }
+
+
+    /**
+     * Method under test: {@link TokenV2Controller#getAggregatesCsv(String, String, java.security.Principal)}
+     */
+    @Test
+    void getAggregatesCsv_CaseKO() throws Exception {
+        //given
+        String onboardingId = "onboardingId";
+        String productId = "productId";
+
+        JwtAuthenticationToken mockPrincipal = Mockito.mock(JwtAuthenticationToken.class);
+        SelfCareUser selfCareUser = SelfCareUser.builder("example")
+                .fiscalCode("fiscalCode")
+                .build();
+        Mockito.when(mockPrincipal.getPrincipal()).thenReturn(selfCareUser);
+
+        String uid = selfCareUser.getId();
+        OnboardingData onboardingData = dummyOnboardingData();
+
+        Mockito.when(tokenService.getOnboardingWithUserInfo(onboardingId))
+            .thenReturn(onboardingData);
+
+        Mockito.when(userInstitutionService.verifyAllowedUserInstitution(onboardingData.getInstitutionUpdate().getId(), productId, uid))
+            .thenReturn(false);
+        Mockito.when(tokenService.verifyAllowedUserByRole(onboardingId, uid))
+            .thenReturn(false);
+        Mockito.when(userService.isAllowedUserByUid(uid))
+            .thenReturn(false);
+
+        // when
+        mvc.perform(
+                        MockMvcRequestBuilders.get(
+                                        "/v2/tokens/{onboardingId}/products/{productId}/aggregates-csv",
+                                        onboardingId,
+                                        productId)
+                                .principal(mockPrincipal)
+                                .accept(MediaType.APPLICATION_OCTET_STREAM_VALUE))
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof UnauthorizedUserException))
+                .andExpect(status().isForbidden())
+                .andReturn();
+
+        //then
+        verify(tokenService, times(1))
+            .getOnboardingWithUserInfo(onboardingId);
+
         verify(tokenService, times(1))
             .verifyAllowedUserByRole(onboardingId, uid);
         verifyNoMoreInteractions(tokenService);
     }
 
+  @NotNull
+  private static OnboardingData dummyOnboardingData() {
+    OnboardingData onboardingData = new OnboardingData();
+    onboardingData.setId("onboardingId");
+    onboardingData.setProductId("productId");
+    InstitutionUpdate institutionUpdate = new InstitutionUpdate();
+    institutionUpdate.setId("TEST-1234");
+    onboardingData.setInstitutionUpdate(institutionUpdate);
+    onboardingData.setStatus(String.valueOf(OnboardingStatus.COMPLETED));
+    User user = new User();
+    user.setId("example");
+    onboardingData.setUsers(List.of(user));
+
+    return onboardingData;
+  }
 }

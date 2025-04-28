@@ -36,10 +36,6 @@ public class Institution {
     private CompanyInformations companyInformations;
     private AssistanceContacts assistanceContacts;
     private List<User> users;
-
-    private String taxCodePT;
     private String iban;
-    private String service;
-    private String syncAsyncMode;
     private String recipientCode;
 }
