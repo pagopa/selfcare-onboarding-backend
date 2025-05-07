@@ -8,13 +8,10 @@ import it.pagopa.selfcare.onboarding.connector.rest.mapper.UserMapper;
 import it.pagopa.selfcare.onboarding.connector.rest.model.user_registry.EmbeddedExternalId;
 import it.pagopa.selfcare.user_registry.generated.openapi.v1.dto.UserResource;
 import it.pagopa.selfcare.user_registry.generated.openapi.v1.dto.UserSearchDto;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Mock;
-import org.mockito.Mockito;
+import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseEntity;
 
@@ -36,12 +33,8 @@ class UserRegistryConnectorImplTest {
     @Mock
     private UserMapper userMapper;
 
+    @InjectMocks
     private UserRegistryConnectorImpl userConnector;
-
-    @BeforeEach
-    void setUp() {
-        userConnector = new UserRegistryConnectorImpl(restClientMock, userMapper);
-    }
 
     @Test
     void search_nullInfo() {
