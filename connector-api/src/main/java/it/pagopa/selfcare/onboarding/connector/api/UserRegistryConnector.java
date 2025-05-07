@@ -21,4 +21,6 @@ public interface UserRegistryConnector {
 
     void deleteById(String userId);
 
+    UserId searchUser(String taxCode);
+
 }

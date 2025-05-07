@@ -6,6 +6,7 @@ import it.pagopa.selfcare.onboarding.connector.model.user.User;
 import it.pagopa.selfcare.onboarding.connector.model.user.UserId;
 import it.pagopa.selfcare.onboarding.connector.rest.config.FeignClientConfig;
 import it.pagopa.selfcare.onboarding.connector.rest.model.user_registry.EmbeddedExternalId;
+import it.pagopa.selfcare.user_registry.generated.openapi.v1.api.UserApi;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -14,7 +15,7 @@ import java.util.EnumSet;
 import java.util.UUID;
 
 @FeignClient(name = "${rest-client.user-registry.serviceCode}", url = "${rest-client.user-registry.base-url}", configuration = FeignClientConfig.class)
-public interface UserRegistryRestClient {
+public interface UserRegistryRestClient extends UserApi {
 
     @PostMapping(value = "${rest-client.user-registry.getUserByExternalId.path}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody

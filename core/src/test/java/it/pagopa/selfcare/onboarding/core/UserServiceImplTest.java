@@ -15,6 +15,7 @@ import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.User;
 import it.pagopa.selfcare.onboarding.connector.model.user.Certification;
 import it.pagopa.selfcare.onboarding.connector.model.user.CertifiedField;
+import it.pagopa.selfcare.onboarding.connector.model.user.UserId;
 import it.pagopa.selfcare.onboarding.core.exception.InvalidUserFieldsException;
 import it.pagopa.selfcare.onboarding.core.exception.OnboardingNotAllowedException;
 import it.pagopa.selfcare.onboarding.core.strategy.UserAllowedValidationStrategy;
@@ -22,6 +23,8 @@ import it.pagopa.selfcare.onboarding.core.utils.PgManagerVerifier;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
@@ -328,4 +331,23 @@ class UserServiceImplTest {
     // then
     assertTrue(result);
   }
+
+    @Test
+    void searchUser_returnsUserId_whenValidTaxCode() {
+        // given
+        String taxCode = "ABCDEF12G34H567I";
+        UUID uuid = UUID.randomUUID();
+        UserId userId = new UserId();
+        userId.setId(uuid);
+
+        when(userRegistryConnectorMock.searchUser(taxCode)).thenReturn(userId);
+
+        // when
+        UserId result = userService.searchUser(taxCode);
+
+        // then
+        assertNotNull(result);
+        assertEquals(userId, result);
+        verify(userRegistryConnectorMock).searchUser(taxCode);
+    }
 }

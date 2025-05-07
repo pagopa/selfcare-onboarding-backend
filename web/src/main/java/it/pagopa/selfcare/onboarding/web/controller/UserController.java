@@ -11,11 +11,9 @@ import it.pagopa.selfcare.commons.base.logging.LogUtils;
 import it.pagopa.selfcare.commons.base.security.SelfCareUser;
 import it.pagopa.selfcare.commons.web.model.Problem;
 import it.pagopa.selfcare.commons.web.security.JwtAuthenticationToken;
+import it.pagopa.selfcare.onboarding.connector.model.user.UserId;
 import it.pagopa.selfcare.onboarding.core.UserService;
-import it.pagopa.selfcare.onboarding.web.model.CheckManagerResponse;
-import it.pagopa.selfcare.onboarding.web.model.ManagerInfoResponse;
-import it.pagopa.selfcare.onboarding.web.model.OnboardingUserDto;
-import it.pagopa.selfcare.onboarding.web.model.UserDataValidationDto;
+import it.pagopa.selfcare.onboarding.web.model.*;
 import it.pagopa.selfcare.onboarding.web.model.mapper.OnboardingResourceMapper;
 import it.pagopa.selfcare.onboarding.web.model.mapper.UserMapper;
 import it.pagopa.selfcare.onboarding.web.model.mapper.UserResourceMapper;
@@ -134,5 +132,22 @@ public class UserController {
         ManagerInfoResponse managerInfoResponse = userResourceMapper.toManagerInfoResponse(userService.getManagerInfo(onboardingId, selfCareUser.getFiscalCode()));
         log.trace("getManagerInfo end");
         return managerInfoResponse;
+    }
+
+    @ApiResponse(responseCode = "403",
+            description = "Forbidden",
+            content = {
+                    @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE,
+                            schema = @Schema(implementation = Problem.class))
+            })
+    @PostMapping(value = "/search-user")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "${swagger.onboarding.users.api.search-user}",
+            description = "${swagger.onboarding.users.api.search-user}", operationId = "searchUserId")
+    public UserId searchUser(@RequestBody @Valid UserTaxCodeDto request) {
+        log.trace("searchUser start");
+        UserId userId =  userService.searchUser(userResourceMapper.toString(request));
+        log.trace("searchUser end");
+        return userId;
     }
 }
