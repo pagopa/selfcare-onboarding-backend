@@ -277,7 +277,6 @@ class UserRegistryConnectorImplTest {
     @Test
     void updateUser() {
         //given
-        String institutionId = "institutionId";
         UUID id = UUID.randomUUID();
         MutableUserFieldsDto userDto = TestUtils.mockInstance(new MutableUserFieldsDto(), "setWorkContacts");
         //when
@@ -287,7 +286,6 @@ class UserRegistryConnectorImplTest {
         ArgumentCaptor<MutableUserFieldsDto> userDtoCaptor = ArgumentCaptor.forClass(MutableUserFieldsDto.class);
         verify(restClientMock, Mockito.times(1))
                 .patchUser(any(), userDtoCaptor.capture());
-        MutableUserFieldsDto request = userDtoCaptor.getValue();
 
         Mockito.verifyNoMoreInteractions(restClientMock);
     }
