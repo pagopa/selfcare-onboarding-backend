@@ -1,5 +1,6 @@
 package it.pagopa.selfcare.onboarding.core;
 
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.CheckManagerData;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.User;
 import it.pagopa.selfcare.onboarding.connector.model.user.UserId;
@@ -11,7 +12,7 @@ public interface UserService {
 
   void onboardingUsersAggregator(OnboardingData onboardingData);
 
-  boolean checkManager(OnboardingData onboardingData);
+  boolean checkManager(CheckManagerData checkManagerData);
 
   User getManagerInfo(String onboardingId, String userTaxCode);
 

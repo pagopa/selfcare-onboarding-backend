@@ -107,10 +107,10 @@ public class UserController {
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "${swagger.onboarding.users.api.check-manager}",
             description = "${swagger.onboarding.users.api.check-manager}", operationId = "checkManager")
-    public CheckManagerResponse checkManager(@RequestBody @Valid OnboardingUserDto request) {
-        log.trace("onboarding start");
-        boolean checkManager =  userService.checkManager(onboardingResourceMapper.toEntity(request));
-        log.trace("onboarding end");
+    public CheckManagerResponse checkManager(@RequestBody @Valid CheckManagerDto request) {
+        log.trace("checkManager start");
+        boolean checkManager =  userService.checkManager(onboardingResourceMapper.toCheckManagerData(request));
+        log.trace("checkManager end");
         return new CheckManagerResponse(checkManager);
     }
 

@@ -17,18 +17,13 @@ import it.pagopa.selfcare.onboarding.connector.model.RelationshipState;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.*;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.infocamere.BusinessInfoIC;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.infocamere.InstitutionInfoIC;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.GeographicTaxonomy;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.InstitutionLocation;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.*;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.User;
 import it.pagopa.selfcare.onboarding.connector.model.registry_proxy.GeographicTaxonomies;
 import it.pagopa.selfcare.onboarding.connector.model.registry_proxy.HomogeneousOrganizationalArea;
 import it.pagopa.selfcare.onboarding.connector.model.registry_proxy.InstitutionProxyInfo;
 import it.pagopa.selfcare.onboarding.connector.model.registry_proxy.OrganizationUnit;
-import it.pagopa.selfcare.onboarding.connector.model.user.Certification;
-import it.pagopa.selfcare.onboarding.connector.model.user.CertifiedField;
-import it.pagopa.selfcare.onboarding.connector.model.user.MutableUserFieldsDto;
-import it.pagopa.selfcare.onboarding.connector.model.user.WorkContact;
+import it.pagopa.selfcare.onboarding.connector.model.user.*;
 import it.pagopa.selfcare.onboarding.connector.model.user.mapper.CertifiedFieldMapper;
 import it.pagopa.selfcare.onboarding.connector.model.user.mapper.UserMapper;
 import it.pagopa.selfcare.onboarding.core.exception.OnboardingNotAllowedException;
@@ -544,7 +539,7 @@ class InstitutionServiceImpl implements InstitutionService {
             log.debug("Business with tax code {} is already onboarded, checking if user with fiscal code {} is manager",
                     businessInfoIC.getBusinessTaxId(), fiscalCode);
 
-            boolean isManager = onboardingMsConnector.checkManager(getOnboardingData(fiscalCode, businessInfoIC));
+            boolean isManager = onboardingMsConnector.checkManager(getCheckManagerData(fiscalCode, businessInfoIC));
             log.debug(LogUtils.CONFIDENTIAL_MARKER, "User with fiscal code {} is manager of business with tax code {}",
                     fiscalCode, businessInfoIC.getBusinessTaxId());
             return isManager;
@@ -554,15 +549,13 @@ class InstitutionServiceImpl implements InstitutionService {
         }
     }
 
-    private OnboardingData getOnboardingData(String fiscalCode, BusinessInfoIC businessInfoIC) {
-        OnboardingData onboardingData = new OnboardingData();
-        User user = new User();
-        user.setTaxCode(fiscalCode);
-        user.setRole(PartyRole.MANAGER);
-        onboardingData.setUsers(List.of(user));
-        onboardingData.setTaxCode(businessInfoIC.getBusinessTaxId());
-        onboardingData.setProductId(PROD_PN_PG);
-        return onboardingData;
+    private CheckManagerData getCheckManagerData(String fiscalCode, BusinessInfoIC businessInfoIC) {
+        CheckManagerData checkManagerData = new CheckManagerData();
+        UserId userId = userConnector.searchUser(fiscalCode);
+        checkManagerData.setUserId(userId.getId());
+        checkManagerData.setTaxCode(businessInfoIC.getBusinessTaxId());
+        checkManagerData.setProductId(PROD_PN_PG);
+        return checkManagerData;
     }
 
     @Override

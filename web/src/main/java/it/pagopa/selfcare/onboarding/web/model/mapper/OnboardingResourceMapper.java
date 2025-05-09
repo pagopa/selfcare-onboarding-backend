@@ -6,6 +6,7 @@ import it.pagopa.selfcare.onboarding.connector.model.RecipientCodeStatusResult;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.ManagerVerification;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.VerifyAggregateResult;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.CheckManagerData;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.InstitutionOnboarding;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.User;
@@ -83,6 +84,8 @@ public interface OnboardingResourceMapper {
     OnboardingRequestResource.UserInfo toUserInfo(User user);
 
     OnboardingData toEntity(OnboardingUserDto onboardingUser);
+
+    CheckManagerData toCheckManagerData(CheckManagerDto checkManagerDto);
 
     InstitutionLegalAddressResource toResource(InstitutionLegalAddressData model);
 

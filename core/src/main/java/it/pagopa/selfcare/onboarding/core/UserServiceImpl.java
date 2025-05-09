@@ -10,6 +10,7 @@ import it.pagopa.selfcare.onboarding.connector.api.OnboardingMsConnector;
 import it.pagopa.selfcare.onboarding.connector.api.UserRegistryConnector;
 import it.pagopa.selfcare.onboarding.connector.exceptions.ResourceNotFoundException;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.ManagerVerification;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.CheckManagerData;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.User;
 import it.pagopa.selfcare.onboarding.connector.model.user.Certification;
@@ -88,10 +89,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean  checkManager(OnboardingData onboardingData) {
+    public boolean  checkManager(CheckManagerData checkManagerData) {
         log.trace("checkManager start");
-        log.debug("checkManager onboardingData = {}", onboardingData);
-        boolean checkManager =  onboardingMsConnector.checkManager(onboardingData);
+        log.debug("checkManager checkManagerData = {}", checkManagerData);
+        boolean checkManager =  onboardingMsConnector.checkManager(checkManagerData);
         log.trace("checkManager end");
         return checkManager;
     }
