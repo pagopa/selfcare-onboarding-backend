@@ -1380,6 +1380,7 @@ class InstitutionServiceImplTest {
                 .thenReturn(institutionInfoICmock);
         doNothing().when(onboardingMsConnector).verifyOnboarding(any(), any(), any(), any(), any());
         when(onboardingMsConnector.checkManager(any())).thenReturn(false);
+        when(userConnectorMock.searchUser(any())).thenReturn(userId);
         //when
         InstitutionInfoIC result = institutionService.getInstitutionsByUser(user.getTaxCode());
         //then

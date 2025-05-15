@@ -1229,7 +1229,7 @@
           "content" : {
             "application/json" : {
               "schema" : {
-                "$ref" : "#/components/schemas/OnboardingUserDto"
+                "$ref" : "#/components/schemas/CheckManagerDto"
               }
             }
           },
@@ -3881,6 +3881,35 @@
             "items" : {
               "$ref" : "#/components/schemas/UserDto"
             }
+          },
+          "institutionType" : {
+            "type" : "string",
+            "enum" : [ "PA", "PG", "GSP", "SA", "PT", "SCP", "PSP", "AS", "REC", "CON", "PRV", "GPU" ]
+          },
+          "origin" : {
+            "type" : "string"
+          },
+          "originId" : {
+            "type" : "string"
+          },
+          "productId" : {
+            "type" : "string"
+          },
+          "taxCode" : {
+            "type" : "string"
+          },
+          "subunitCode" : {
+            "type" : "string"
+          }
+        }
+      },
+      "CheckManagerDto" : {
+        "required" : [ "productId", "userId" ],
+        "type" : "object",
+        "properties" : {
+          "userId" : {
+            "type" : "string",
+            "format" : "uuid"
           },
           "institutionType" : {
             "type" : "string",

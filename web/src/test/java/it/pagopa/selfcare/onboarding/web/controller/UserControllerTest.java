@@ -3,13 +3,13 @@ package it.pagopa.selfcare.onboarding.web.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.pagopa.selfcare.commons.base.security.SelfCareUser;
 import it.pagopa.selfcare.commons.web.security.JwtAuthenticationToken;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.CheckManagerData;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
 import it.pagopa.selfcare.onboarding.connector.model.user.UserId;
 import it.pagopa.selfcare.onboarding.core.UserService;
 import it.pagopa.selfcare.onboarding.core.exception.InvalidUserFieldsException;
 import it.pagopa.selfcare.onboarding.web.config.WebTestConfig;
 import it.pagopa.selfcare.onboarding.web.handler.OnboardingExceptionHandler;
-import it.pagopa.selfcare.onboarding.web.model.OnboardingUserDto;
 import it.pagopa.selfcare.onboarding.web.model.UserTaxCodeDto;
 import it.pagopa.selfcare.onboarding.web.model.mapper.OnboardingResourceMapperImpl;
 import it.pagopa.selfcare.onboarding.web.model.mapper.UserResourceMapper;
@@ -134,20 +134,20 @@ class UserControllerTest {
     }
 
     /**
-     * Method under test: {@link UserController#checkManager(OnboardingUserDto)}
+     * Method under test: {@link UserController#checkManager(it.pagopa.selfcare.onboarding.web.model.CheckManagerDto)}
      */
     @Test
-    void checkManager(@Value("classpath:stubs/onboardingUsers.json") Resource onboardinUserDto) throws Exception {
+    void checkManager(@Value("classpath:stubs/checkManagerDto.json") Resource checkManagerDto) throws Exception {
         // when
         mvc.perform(MockMvcRequestBuilders
                         .post(BASE_URL + "/check-manager")
-                        .content(onboardinUserDto.getInputStream().readAllBytes())
+                        .content(checkManagerDto.getInputStream().readAllBytes())
                         .contentType(APPLICATION_JSON_VALUE)
                         .accept(APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk());
         // then
         verify(userServiceMock, times(1))
-                .checkManager(any(OnboardingData.class));
+                .checkManager(any(CheckManagerData.class));
         verifyNoMoreInteractions(userServiceMock);
     }
 

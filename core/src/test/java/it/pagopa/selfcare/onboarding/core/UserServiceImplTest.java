@@ -11,6 +11,7 @@ import it.pagopa.selfcare.onboarding.connector.api.OnboardingMsConnector;
 import it.pagopa.selfcare.onboarding.connector.api.UserRegistryConnector;
 import it.pagopa.selfcare.onboarding.connector.exceptions.ResourceNotFoundException;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.ManagerVerification;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.CheckManagerData;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.User;
 import it.pagopa.selfcare.onboarding.connector.model.user.Certification;
@@ -185,13 +186,13 @@ class UserServiceImplTest {
     @Test
     void checkManager() {
         // given
-        OnboardingData onboardingData = new OnboardingData();
+        CheckManagerData checkManagerData = new CheckManagerData();
         when(onboardingMsConnector.checkManager(any())).thenReturn(true);
         // when
-        userService.checkManager(onboardingData);
+        userService.checkManager(checkManagerData);
         // then
         verify(onboardingMsConnector, times(1))
-                .checkManager(onboardingData);
+                .checkManager(checkManagerData);
         verifyNoMoreInteractions(onboardingMsConnector);
     }
 
