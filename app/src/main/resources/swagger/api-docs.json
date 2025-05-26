@@ -3904,7 +3904,7 @@
         }
       },
       "CheckManagerDto" : {
-        "required" : [ "productId", "userId" ],
+        "required" : [ "productId" ],
         "type" : "object",
         "properties" : {
           "userId" : {
