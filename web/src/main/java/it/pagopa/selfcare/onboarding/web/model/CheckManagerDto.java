@@ -9,7 +9,8 @@ import java.util.UUID;
 @Data
 public class CheckManagerDto {
 
-    @ApiModelProperty(value = "${swagger.onboarding.institutions.model.userId}")
+    @ApiModelProperty(value = "${swagger.onboarding.institutions.model.userId}", required = true)
+    @NotNull
     private UUID userId;
 
     @ApiModelProperty(value = "${swagger.onboarding.institutions.model.institutionType}")
