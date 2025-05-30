@@ -11,10 +11,12 @@ import it.pagopa.selfcare.onboarding.connector.api.OnboardingMsConnector;
 import it.pagopa.selfcare.onboarding.connector.api.UserRegistryConnector;
 import it.pagopa.selfcare.onboarding.connector.exceptions.ResourceNotFoundException;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.ManagerVerification;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.CheckManagerData;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.User;
 import it.pagopa.selfcare.onboarding.connector.model.user.Certification;
 import it.pagopa.selfcare.onboarding.connector.model.user.CertifiedField;
+import it.pagopa.selfcare.onboarding.connector.model.user.UserId;
 import it.pagopa.selfcare.onboarding.core.exception.InvalidUserFieldsException;
 import it.pagopa.selfcare.onboarding.core.exception.OnboardingNotAllowedException;
 import it.pagopa.selfcare.onboarding.core.strategy.UserAllowedValidationStrategy;
@@ -22,6 +24,8 @@ import it.pagopa.selfcare.onboarding.core.utils.PgManagerVerifier;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
@@ -182,13 +186,13 @@ class UserServiceImplTest {
     @Test
     void checkManager() {
         // given
-        OnboardingData onboardingData = new OnboardingData();
+        CheckManagerData checkManagerData = new CheckManagerData();
         when(onboardingMsConnector.checkManager(any())).thenReturn(true);
         // when
-        userService.checkManager(onboardingData);
+        userService.checkManager(checkManagerData);
         // then
         verify(onboardingMsConnector, times(1))
-                .checkManager(onboardingData);
+                .checkManager(checkManagerData);
         verifyNoMoreInteractions(onboardingMsConnector);
     }
 
@@ -328,4 +332,23 @@ class UserServiceImplTest {
     // then
     assertTrue(result);
   }
+
+    @Test
+    void searchUser_returnsUserId_whenValidTaxCode() {
+        // given
+        String taxCode = "ABCDEF12G34H567I";
+        UUID uuid = UUID.randomUUID();
+        UserId userId = new UserId();
+        userId.setId(uuid);
+
+        when(userRegistryConnectorMock.searchUser(taxCode)).thenReturn(userId);
+
+        // when
+        UserId result = userService.searchUser(taxCode);
+
+        // then
+        assertNotNull(result);
+        assertEquals(userId, result);
+        verify(userRegistryConnectorMock).searchUser(taxCode);
+    }
 }

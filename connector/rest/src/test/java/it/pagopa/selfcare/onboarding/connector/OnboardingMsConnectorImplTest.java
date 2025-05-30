@@ -590,16 +590,16 @@ class OnboardingMsConnectorImplTest {
         final String originId = "originId";
         CheckManagerResponse response = new CheckManagerResponse();
         response.setResponse(true);
-        OnboardingData onboardingData = new OnboardingData();
-        onboardingData.setOrigin(origin);
-        onboardingData.setOriginId(originId);
-        OnboardingUserRequest request = new OnboardingUserRequest();
+        CheckManagerData checkManagerData = new CheckManagerData();
+        checkManagerData.setOrigin(origin);
+        checkManagerData.setOriginId(originId);
+        CheckManagerRequest request = new CheckManagerRequest();
         request.setOrigin(origin);
         request.setOriginId(originId);
         when(msOnboardingApiClient._checkManager(request))
                 .thenReturn(ResponseEntity.ok(response));
         // when
-        final Executable executable = () -> onboardingMsConnector.checkManager(onboardingData);
+        final Executable executable = () -> onboardingMsConnector.checkManager(checkManagerData);
         // then
         assertDoesNotThrow(executable);
         verify(msOnboardingApiClient, times(1))

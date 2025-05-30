@@ -8,7 +8,9 @@ import it.pagopa.selfcare.onboarding.connector.model.user.SaveUserDto;
 import it.pagopa.selfcare.onboarding.connector.model.user.User;
 import it.pagopa.selfcare.onboarding.connector.model.user.UserId;
 import it.pagopa.selfcare.onboarding.connector.rest.client.UserRegistryRestClient;
+import it.pagopa.selfcare.onboarding.connector.rest.mapper.UserMapper;
 import it.pagopa.selfcare.onboarding.connector.rest.model.user_registry.EmbeddedExternalId;
+import it.pagopa.selfcare.user_registry.generated.openapi.v1.dto.UserSearchDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,10 +25,13 @@ import java.util.UUID;
 public class UserRegistryConnectorImpl implements UserRegistryConnector {
 
     private final UserRegistryRestClient restClient;
+    public static final String USERS_FIELD_LIST = "fiscalCode,familyName,name,workContacts";
+    private final UserMapper userRegistryMapper;
 
     @Autowired
-    public UserRegistryConnectorImpl(UserRegistryRestClient restClient) {
+    public UserRegistryConnectorImpl(UserRegistryRestClient restClient, UserMapper userRegistryMapper) {
         this.restClient = restClient;
+        this.userRegistryMapper = userRegistryMapper;
     }
 
     @Override
@@ -85,6 +90,16 @@ public class UserRegistryConnectorImpl implements UserRegistryConnector {
         Assert.hasText(userId, "A UUID is required");
         restClient.deleteById(UUID.fromString(userId));
         log.trace("deleteById end");
+    }
+
+    @Override
+    public UserId searchUser(String taxCode) {
+        log.trace("searchUser start");
+        log.debug(LogUtils.CONFIDENTIAL_MARKER, "searchUser taxCode = {}}", taxCode);
+        UserId userId = userRegistryMapper.toUserId(restClient._searchUsingPOST(USERS_FIELD_LIST, new UserSearchDto().fiscalCode(taxCode)).getBody());
+        log.debug("searchUser result = {}", userId);
+        log.trace("searchUser end");
+        return userId;
     }
 
 

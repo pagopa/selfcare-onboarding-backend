@@ -3,10 +3,8 @@ package it.pagopa.selfcare.onboarding.connector.rest.mapper;
 
 import it.pagopa.selfcare.onboarding.connector.model.RecipientCodeStatusResult;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.VerifyAggregateResult;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.DataProtectionOfficer;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.*;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.GeographicTaxonomy;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.PaymentServiceProvider;
 import it.pagopa.selfcare.onboarding.generated.openapi.v1.dto.*;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -130,6 +128,8 @@ public interface OnboardingMapper {
     }
 
     OnboardingUserRequest toOnboardingUsersRequest(OnboardingData onboardingData);
+
+    CheckManagerRequest toCheckManagerRequest(CheckManagerData checkManagerData);
 
     @Mapping(target = "institution", source = ".", qualifiedByName = "toInstitutionBase")
     OnboardingPaRequest toOnboardingPaAggregationRequest(OnboardingData onboardingData);

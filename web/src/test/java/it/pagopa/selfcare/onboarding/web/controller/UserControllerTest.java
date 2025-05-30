@@ -1,14 +1,18 @@
 package it.pagopa.selfcare.onboarding.web.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import it.pagopa.selfcare.commons.base.security.SelfCareUser;
 import it.pagopa.selfcare.commons.web.security.JwtAuthenticationToken;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.CheckManagerData;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
+import it.pagopa.selfcare.onboarding.connector.model.user.UserId;
 import it.pagopa.selfcare.onboarding.core.UserService;
 import it.pagopa.selfcare.onboarding.core.exception.InvalidUserFieldsException;
 import it.pagopa.selfcare.onboarding.web.config.WebTestConfig;
 import it.pagopa.selfcare.onboarding.web.handler.OnboardingExceptionHandler;
-import it.pagopa.selfcare.onboarding.web.model.OnboardingUserDto;
+import it.pagopa.selfcare.onboarding.web.model.UserTaxCodeDto;
 import it.pagopa.selfcare.onboarding.web.model.mapper.OnboardingResourceMapperImpl;
+import it.pagopa.selfcare.onboarding.web.model.mapper.UserResourceMapper;
 import it.pagopa.selfcare.onboarding.web.model.mapper.UserResourceMapperImpl;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -24,6 +28,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.security.Principal;
+import java.util.UUID;
 
 import static org.hamcrest.Matchers.emptyString;
 import static org.hamcrest.Matchers.not;
@@ -51,6 +56,10 @@ class UserControllerTest {
     @MockBean
     protected UserService userServiceMock;
 
+    @MockBean
+    private UserResourceMapper userResourceMapper;
+
+    private static final ObjectMapper objectMapper = new ObjectMapper();
 
     @Test
     void validate_OK(@Value("classpath:stubs/userDataValidationDto.json") Resource userDataValidationDto) throws Exception {
@@ -125,20 +134,20 @@ class UserControllerTest {
     }
 
     /**
-     * Method under test: {@link UserController#checkManager(OnboardingUserDto)}
+     * Method under test: {@link UserController#checkManager(it.pagopa.selfcare.onboarding.web.model.CheckManagerDto)}
      */
     @Test
-    void checkManager(@Value("classpath:stubs/onboardingUsers.json") Resource onboardinUserDto) throws Exception {
+    void checkManager(@Value("classpath:stubs/checkManagerDto.json") Resource checkManagerDto) throws Exception {
         // when
         mvc.perform(MockMvcRequestBuilders
                         .post(BASE_URL + "/check-manager")
-                        .content(onboardinUserDto.getInputStream().readAllBytes())
+                        .content(checkManagerDto.getInputStream().readAllBytes())
                         .contentType(APPLICATION_JSON_VALUE)
                         .accept(APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk());
         // then
         verify(userServiceMock, times(1))
-                .checkManager(any(OnboardingData.class));
+                .checkManager(any(CheckManagerData.class));
         verifyNoMoreInteractions(userServiceMock);
     }
 
@@ -166,4 +175,32 @@ class UserControllerTest {
                 .getManagerInfo(any(), any());
         verifyNoMoreInteractions(userServiceMock);
     }
+
+    @Test
+    void searchUser_returnsUserId_whenValidRequest() throws Exception {
+        // given
+        UserTaxCodeDto requestDto = new UserTaxCodeDto();
+        requestDto.setTaxCode("ABCDEF12G34H567I");
+
+        String taxCodeAsString = "ABCDEF12G34H567I";
+        UUID uuid = UUID.randomUUID();
+        UserId userId = new UserId();
+        userId.setId(uuid);
+
+        when(userResourceMapper.toString(requestDto)).thenReturn(taxCodeAsString);
+        when(userServiceMock.searchUser(taxCodeAsString)).thenReturn(userId);
+
+        // when
+        mvc.perform(MockMvcRequestBuilders
+                        .post(BASE_URL+ "/search-user")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(requestDto)))
+                .andExpect(status().isOk())
+                .andExpect(content().json(objectMapper.writeValueAsString(userId)));
+
+        // then
+        verify(userResourceMapper).toString(requestDto);
+        verify(userServiceMock).searchUser(taxCodeAsString);
+    }
+
 }

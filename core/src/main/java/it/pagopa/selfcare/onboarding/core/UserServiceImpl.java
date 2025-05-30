@@ -10,10 +10,12 @@ import it.pagopa.selfcare.onboarding.connector.api.OnboardingMsConnector;
 import it.pagopa.selfcare.onboarding.connector.api.UserRegistryConnector;
 import it.pagopa.selfcare.onboarding.connector.exceptions.ResourceNotFoundException;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.ManagerVerification;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.CheckManagerData;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.User;
 import it.pagopa.selfcare.onboarding.connector.model.user.Certification;
 import it.pagopa.selfcare.onboarding.connector.model.user.CertifiedField;
+import it.pagopa.selfcare.onboarding.connector.model.user.UserId;
 import it.pagopa.selfcare.onboarding.core.exception.InvalidUserFieldsException;
 import it.pagopa.selfcare.onboarding.core.exception.OnboardingNotAllowedException;
 import it.pagopa.selfcare.onboarding.core.strategy.UserAllowedValidationStrategy;
@@ -87,10 +89,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean  checkManager(OnboardingData onboardingData) {
+    public boolean  checkManager(CheckManagerData checkManagerData) {
         log.trace("checkManager start");
-        log.debug("checkManager onboardingData = {}", onboardingData);
-        boolean checkManager =  onboardingMsConnector.checkManager(onboardingData);
+        log.debug("checkManager checkManagerData = {}", checkManagerData);
+        boolean checkManager =  onboardingMsConnector.checkManager(checkManagerData);
         log.trace("checkManager end");
         return checkManager;
     }
@@ -142,4 +144,13 @@ public class UserServiceImpl implements UserService {
       log.trace("isAllowedUser for {}", uid);
       return userAllowedValidationStrategy.isAuthorizedUser(uid);
   }
+
+    @Override
+    public UserId searchUser(String taxCode) {
+        log.trace("searchUser start");
+        log.debug("searchUser taxCode = {}", taxCode);
+        UserId userId = userRegistryConnector.searchUser(taxCode);
+        log.trace("searchUser end");
+        return userId;
+    }
 }
