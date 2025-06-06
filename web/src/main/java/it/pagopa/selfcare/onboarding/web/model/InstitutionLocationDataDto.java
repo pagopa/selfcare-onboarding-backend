@@ -13,5 +13,4 @@ public class InstitutionLocationDataDto {
 
     @ApiModelProperty(value = "${swagger.onboarding.institutions.model.country}")
     private String country;
-
 }

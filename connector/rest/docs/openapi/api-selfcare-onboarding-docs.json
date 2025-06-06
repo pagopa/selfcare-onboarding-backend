@@ -2325,6 +2325,9 @@
           "county" : {
             "type" : "string"
           },
+          "istatCode" : {
+            "type" : "string"
+          },
           "description" : {
             "type" : "string"
           },
@@ -2465,6 +2468,9 @@
             "type" : "string"
           },
           "county" : {
+            "type" : "string"
+          },
+          "istatCode" : {
             "type" : "string"
           },
           "description" : {
