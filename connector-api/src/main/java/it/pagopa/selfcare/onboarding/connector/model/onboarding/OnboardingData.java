@@ -35,6 +35,7 @@ public class OnboardingData {
     private String productId;
     private String productName;
     private String status;
+    private String istatCode;
     private List<User> users;
     private String contractPath;
     private String contractVersion;
