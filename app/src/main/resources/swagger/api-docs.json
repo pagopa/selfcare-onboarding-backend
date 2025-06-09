@@ -3549,6 +3549,9 @@
           },
           "gpuData" : {
             "$ref" : "#/components/schemas/GPUData"
+          },
+          "istatCode" : {
+            "type" : "string"
           }
         }
       },
