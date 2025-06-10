@@ -16,7 +16,7 @@ import org.springframework.context.annotation.PropertySource;
 @PropertySource("classpath:config/user-registry-rest-client.properties")
 public class UserRegistryRestClientConfig {
 
-    @Value("${USERVICE_USER_REGISTRY_API_KEY}")
+    @Value("${rest-client.user-registry.apiKey}")
     private String apiKey;
 
     @Bean
