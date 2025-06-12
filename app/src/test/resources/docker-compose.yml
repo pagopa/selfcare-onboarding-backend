@@ -50,6 +50,7 @@ services:
       - mongo-db
       - mock-server
       - azure-cli
+      - azurite
 
   user-ms:
     image: ghcr.io/pagopa/selfcare-user-ms:sha-f3cd392
@@ -104,6 +105,11 @@ services:
       dockerfile: "Dockerfile-fn"
     networks:
       - develop-network
+    depends_on:
+      - mongo-db
+      - mock-server
+      - azure-cli
+      - azurite
 
 networks:
   develop-network:
