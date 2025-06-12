@@ -50,6 +50,7 @@ services:
       - mongo-db
       - mock-server
       - azure-cli
+      - azurite
 
   user-ms:
     image: ghcr.io/pagopa/selfcare-user-ms:sha-f3cd392
@@ -109,7 +110,7 @@ services:
       - mock-server
       - azure-cli
       - azurite
-      
+
 networks:
   develop-network:
     name: selfcare-develop-network
