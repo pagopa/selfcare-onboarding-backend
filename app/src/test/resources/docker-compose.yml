@@ -104,7 +104,12 @@ services:
       dockerfile: "Dockerfile-fn"
     networks:
       - develop-network
-
+    depends_on:
+      - mongo-db
+      - mock-server
+      - azure-cli
+      - azurite
+      
 networks:
   develop-network:
     name: selfcare-develop-network
