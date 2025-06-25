@@ -18,7 +18,7 @@ Feature: Product
     Then The status code is 200
     And The response body contains:
       | id     | prod-pagopa      |
-      | title  | Pagamenti pagoPa |
+      | title  | Pagamenti pagoPA |
       | status | ACTIVE           |
 
   Scenario: Failed case in getProducts by wrong id
