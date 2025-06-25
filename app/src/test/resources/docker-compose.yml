@@ -99,17 +99,18 @@ services:
     networks:
       - develop-network
 
-  onboarding-fn:
-    build:
-      context: .
-      dockerfile: "Dockerfile-fn"
-    networks:
-      - develop-network
-    depends_on:
-      - mongo-db
-      - mock-server
-      - azure-cli
-      - azurite
+
+#  onboarding-fn:
+#    build:
+#      context: .
+#      dockerfile: "Dockerfile-fn"
+#    networks:
+#      - develop-network
+#    depends_on:
+#      - mongo-db
+#      - mock-server
+#      - azure-cli
+#      - azurite
 
 networks:
   develop-network:
