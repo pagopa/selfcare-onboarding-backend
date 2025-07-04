@@ -68,7 +68,6 @@ Feature: Token
     When I send a POST request to "/v2/tokens/89ad7142-24bb-48ad-8504-9c9231137i1022/approve"
     Then The status code is 409
 
-
   Scenario: Success to reject onboarding
     Given User login with username "j.doe" and password "test"
     And The following request body:
