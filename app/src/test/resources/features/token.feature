@@ -50,20 +50,63 @@ Feature: Token
 
   Scenario: Success to approve onboarding
     Given User login with username "j.doe" and password "test"
-    When I send a GET request to "/v2/tokens/89ad7142-24bb-48ad-8504-9c9231137i1022/approve"
+    When I send a POST request to "/v2/tokens/89ad7142-24bb-48ad-8504-9c9231137i1022/approve"
     Then The status code is 200
 
   Scenario: Failed to approve onboarding when given invalid id
     Given User login with username "j.doe" and password "test"
-    When I send a GET request to "/v2/tokens/89ad7142-24bb-48ad-8504-9c9231137i101/approve"
+    When I send a POST request to "/v2/tokens/89ad7142-24bb-48ad-8504-9c9231137i101/approve"
     Then The status code is 400
 
   Scenario: Failed to approve onboarding when is not found
     Given User login with username "j.doe" and password "test"
-    When I send a GET request to "/v2/tokens/89ad7142-24bb-48ad-8504-9c9231137i101/approve"
+    When I send a POST request to "/v2/tokens/89ad7142-24bb-48ad-8504-9c9231137i101/approve"
     Then The status code is 404
 
   Scenario: Failed to approve onboarding when is already consumed
     Given User login with username "j.doe" and password "test"
-    When I send a GET request to "/v2/tokens/89ad7142-24bb-48ad-8504-9c9231137i105/approve"
+    When I send a POST request to "/v2/tokens/89ad7142-24bb-48ad-8504-9c9231137i1022/approve"
     Then The status code is 409
+
+
+  Scenario: Success to reject onboarding
+    Given User login with username "j.doe" and password "test"
+    And The following request body:
+    """
+      {
+        "reason": "test reject"
+      }
+    """
+    When I send a POST request to "/v2/tokens/89ad7142-24bb-48ad-8504-9c9231137i1023/reject"
+    Then The status code is 200
+
+  Scenario: Failed to reject onboarding
+    Given User login with username "j.doe" and password "test"
+    And The following request body:
+    """
+      {
+        "reason": "test reject"
+      }
+    """
+    When I send a POST request to "/v2/tokens/89ad7142-24bb-48ad-8504-9c9231137i1000/reject"
+    Then The status code is 400
+
+  Scenario: Success to reject onboarding
+    Given User login with username "j.doe" and password "test"
+    When I send a DELETE request to "/v2/tokens/89ad7142-24bb-48ad-8504-9c9231137i103/complete"
+    Then The status code is 204
+
+  Scenario: Failed to reject onboarding when status is COMPLETED
+    Given User login with username "j.doe" and password "test"
+    When I send a DELETE request to "/v2/tokens/89ad7142-24bb-48ad-8504-9c9231137i1000/complete"
+    Then The status code is 400
+
+  Scenario: Success to get Contract
+    Given User login with username "j.doe" and password "test"
+    When I send a GET request to "/v2/tokens/89ad7142-24bb-48ad-8504-9c9231137i103/contract"
+    Then The status code is 200
+
+  Scenario: Failed to get Contract
+    Given User login with username "j.doe" and password "test"
+    When I send a GET request to "/v2/tokens/89ad7142-24bb-48ad-8504-9c9231137i10001/contract"
+    Then The status code is 502
