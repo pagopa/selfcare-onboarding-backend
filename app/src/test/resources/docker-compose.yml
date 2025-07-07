@@ -51,6 +51,7 @@ services:
       - mock-server
       - azure-cli
       - azurite
+      - institution-ms
 
   user-ms:
     image: ghcr.io/pagopa/selfcare-user-ms:sha-f3cd392
