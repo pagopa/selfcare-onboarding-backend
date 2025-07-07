@@ -247,9 +247,56 @@ db.tokens.insertMany([
 
 db = db.getSiblingDB("selcMsCore");
 
-db.Institution.insertOne({
-  createdAt: new Date(),
-});
+db.Institutions.insertMany(
+  {
+    _id: "05e970c2-6393-469f-b178-2999df0b57ba",
+    origin: "SELC",
+    originId: "00145190922",
+    description: "test",
+    institutionType: "GPU",
+    digitalAddress: "1@1.com",
+    address: "via Roma 3",
+    zipCode: "23123",
+    taxCode: "00145190922",
+    city: "Milano",
+    county: "MI",
+    country: "IT",
+    geographicTaxonomies: [
+      {
+        code: "ITA",
+        desc: "ITALIA",
+      },
+    ],
+    rea: "REA-13",
+    imported: false,
+    createdAt: "2023-01-01T10:00:00.000Z",
+    updatedAt: "2024-07-01T12:00:00.000Z",
+  },
+  {
+    _id: "05e970c2-6393-469f-b178-2999df0b57bu",
+    origin: "SELC",
+    originId: "00145190923",
+    description: "test",
+    institutionType: "GPU",
+    digitalAddress: "1@1.com",
+    address: "via Roma 3",
+    zipCode: "23123",
+    taxCode: "00145190923",
+    city: "Milano",
+    county: "MI",
+    country: "IT",
+    geographicTaxonomies: [
+      {
+        code: "ITA",
+        desc: "ITALIA",
+      },
+    ],
+    rea: "REA-13",
+    imported: false,
+    createdAt: "2023-01-01T10:00:00.000Z",
+    updatedAt: "2024-07-01T12:00:00.000Z",
+  }
+);
 
 db = db.getSiblingDB("selcUser");
 
