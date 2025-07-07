@@ -39,7 +39,7 @@ services:
       - develop-network
 
   onboarding-ms:
-    image: ghcr.io/pagopa/selfcare-onboarding-ms:sha-9fcd152
+    image: ghcr.io/pagopa/selfcare-onboarding-ms:latest
     ports:
       - "8085:8080"
     env_file:
@@ -67,7 +67,7 @@ services:
       - azure-cli
 
   institution-ms:
-    image: ghcr.io/pagopa/selfcare-institution-ms:sha-a1572ab
+    image: ghcr.io/pagopa/selfcare-institution-ms:latest
     ports:
       - "8082:8080"
     networks:

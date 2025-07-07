@@ -205,6 +205,43 @@ db.onboardings.insertMany([
     ],
     workflowType: "CONTRACT_REGISTRATION",
   },
+  {
+    _id: "37f7609b-5a4b-4200-82e7-2117756d64aa",
+    billing: {
+      publicServices: false,
+      vatNumber: "08875230016",
+    },
+    createdAt: ISODate("2024-02-23T11:04:09.749Z"),
+    expiringDate: ISODate("2024-04-23T11:04:09.749Z"),
+    institution: {
+      address: "VIA DELLE MAGNOLIE 12, 00184 ROMA",
+      city: "Roma",
+      country: "IT",
+      county: "RM",
+      description: "BANCA FINTA SPA",
+      digitalAddress: "BANCAFINTASPA@LEGALMAIL.IT",
+      imported: false,
+      institutionType: "AS",
+      origin: "IVASS",
+      taxCode: "08875230016",
+      zipCode: "20154",
+      id: "1ff1d0eb-5022-42d3-8713-e2b81421c503",
+    },
+    productId: "prod-interop",
+    status: "COMPLETED",
+    userRequestUid: "c5ae981f-c651-45f9-bb7f-589297c88416",
+    users: [
+      {
+        _id: "ec7ca4d5-c537-462a-8c06-e102e0c21c44",
+        productRole: "admin",
+        role: "MANAGER",
+        userMailUuid: "c5ba6158-da4f-4600-9136-b1315f7510a1",
+      },
+    ],
+    workflowType: "CONTRACT_REGISTRATION",
+    updateAt: ISODate("2024-02-23T11:04:16.280Z"),
+    updatedAt: ISODate("2024-05-17T12:25:27.963Z"),
+  },
 ]);
 
 db.tokens.insertOne({
@@ -275,13 +312,13 @@ db.Institutions.insertMany(
   {
     _id: "05e970c2-6393-469f-b178-2999df0b57bu",
     origin: "SELC",
-    originId: "00145190923",
+    originId: "11223345661",
     description: "test",
     institutionType: "GPU",
     digitalAddress: "1@1.com",
     address: "via Roma 3",
     zipCode: "23123",
-    taxCode: "00145190923",
+    taxCode: "11223345661",
     city: "Milano",
     county: "MI",
     country: "IT",
@@ -289,6 +326,25 @@ db.Institutions.insertMany(
       {
         code: "ITA",
         desc: "ITALIA",
+      },
+    ],
+    onboarding: [
+      {
+        productId: "prod-interop",
+        status: "ACTIVE",
+        tokenId: "89ad7142-24bb-48ad-8504-9c9231137i1000",
+        contract:
+          "parties/docs/b0882722-eb57-4ab3-ac1a-d95dac45d741/Accordo Adesione.pdf2115572574547542175.pdf",
+        billing: {
+          vatNumber: "11223345661",
+          recipientCode: "c_d548",
+          publicServices: false,
+        },
+        createdAt: "2022-09-29T19:03:11.523Z",
+        updatedAt: "2024-07-05T12:12:07.2534613Z",
+        institutionType: "PA",
+        origin: "SELC",
+        originId: "c_d548",
       },
     ],
     rea: "REA-13",

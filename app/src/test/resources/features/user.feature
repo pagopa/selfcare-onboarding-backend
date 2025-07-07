@@ -93,8 +93,8 @@ Feature: User
       "productId":"prod-interop",
        "institutionType":"PA",
        "origin":"SELC",
-       "originId":"00145190923",
-       "taxCode":"00145190923"
+       "originId":"11223345661",
+       "taxCode":"11223345661"
       }
     """
     When I send a POST request to "/v1/users/onboarding"
@@ -148,3 +148,47 @@ Feature: User
     """
     When I send a POST request to "/v1/users/onboarding/aggregator"
     Then The status code is 200
+
+
+  Scenario: Success to check manager
+    Given User login with username "j.doe" and password "test"
+    And The following request body:
+    """
+      {
+      "userId":"ec7ca4d5-c537-462a-8c06-e102e0c21c44",
+      "productId":"prod-interop",
+       "institutionType":"PA",
+       "origin":"SELC",
+       "originId":"00145190922",
+       "taxCode":"00145190922"
+      }
+    """
+    When I send a POST request to "/v1/users/check-manager"
+    Then The status code is 200
+
+
+  Scenario: Failed to check manager
+    Given User login with username "j.doe" and password "test"
+    And The following request body:
+    """
+      {
+      "userId":"ec7ca4d5-c537-462a-8c06-e102e0c21c40",
+      "productId":"prod-interop",
+       "institutionType":"PA",
+       "origin":"SELC",
+       "originId":"00145190922",
+       "taxCode":"00145190922"
+      }
+    """
+    When I send a POST request to "/v1/users/check-manager"
+    Then The status code is 200
+
+  Scenario: Success to retrive manager infos
+    Given User login with username "j.doe" and password "test"
+    When I send a GET request to "/v1/users/onboarding/37f7609b-5a4b-4200-82e7-2117756d64aa/manager"
+    Then The status code is 200
+
+  Scenario: Failed to retrive manager infos when onboardingId not exist
+    Given User login with username "j.doe" and password "test"
+    When I send a GET request to "/v1/users/onboarding/ec7ca4d5-c537-462a-8c06-e102e0c21c40/manager"
+    Then The status code is 404
