@@ -52,5 +52,23 @@
         "Content-Type": "application/json"
       }
     }
+  },
+  {
+    "httpRequest": {
+      "method": "GET",
+      "path": "/api/StartOnboardingOrchestration",
+      "queryStringParameters": {
+        "onboardingId": [
+          "89ad7142-24bb-48ad-8504-9c9231137i123"
+        ]
+      }
+    },
+    "httpResponse": {
+      "statusCode": 202,
+      "body": "{\n \"fake-response\": \"fake-response\"\n    }",
+      "headers": {
+        "Content-Type": "application/json"
+      }
+    }
   }
 ]

@@ -40,8 +40,8 @@ Feature: Token
 
   Scenario: Success to retrive onboarding
     Given User login with username "j.doe" and password "test"
-    When I send a GET request to "/v2/tokens/89ad7142-24bb-48ad-8504-9c9231137i122"
-    Then The status code is 204
+    When I send a GET request to "/v2/tokens/37f7609b-5a4b-4200-82e7-2117756d64aa"
+    Then The status code is 200
 
   Scenario: Failed to retrive onboarding
     Given User login with username "j.doe" and password "test"
@@ -76,7 +76,7 @@ Feature: Token
         "reason": "test reject"
       }
     """
-    When I send a POST request to "/v2/tokens/89ad7142-24bb-48ad-8504-9c9231137i1023/reject"
+    When I send a POST request to "/v2/tokens/89ad7142-24bb-48ad-8504-9c9231137i123/reject"
     Then The status code is 200
 
   Scenario: Failed to reject onboarding
@@ -90,12 +90,12 @@ Feature: Token
     When I send a POST request to "/v2/tokens/89ad7142-24bb-48ad-8504-9c9231137i1000/reject"
     Then The status code is 400
 
-  Scenario: Success to reject onboarding
+  Scenario: Success to delete onboarding
     Given User login with username "j.doe" and password "test"
     When I send a DELETE request to "/v2/tokens/89ad7142-24bb-48ad-8504-9c9231137i103/complete"
     Then The status code is 204
 
-  Scenario: Failed to reject onboarding when status is COMPLETED
+  Scenario: Failed to delete onboarding when status is COMPLETED
     Given User login with username "j.doe" and password "test"
     When I send a DELETE request to "/v2/tokens/89ad7142-24bb-48ad-8504-9c9231137i1000/complete"
     Then The status code is 400
