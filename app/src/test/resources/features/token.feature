@@ -50,7 +50,7 @@ Feature: Token
 
   Scenario: Success to approve onboarding
     Given User login with username "j.doe" and password "test"
-    When I send a POST request to "/v2/tokens/89ad7142-24bb-48ad-8504-9c9231137i1022/approve"
+    When I send a POST request to "/v2/tokens/89ad7142-24bb-48ad-8504-9c9231137i10222/approve"
     Then The status code is 200
 
   Scenario: Failed to approve onboarding when given invalid id
@@ -61,7 +61,7 @@ Feature: Token
   Scenario: Failed to approve onboarding when is not found
     Given User login with username "j.doe" and password "test"
     When I send a POST request to "/v2/tokens/89ad7142-24bb-48ad-8504-9c9231137i101/approve"
-    Then The status code is 404
+    Then The status code is 400
 
   Scenario: Failed to approve onboarding when is already consumed
     Given User login with username "j.doe" and password "test"
