@@ -1,0 +1,27 @@
+[
+  {
+    "httpRequest": {
+      "method": "GET",
+      "path": "/pdnd-interop-uservice-party-process/institutions/",
+      "queryStringParameters": {
+        "taxCode": [
+          "11223345661"
+        ]
+      }
+    },
+    "httpResponseTemplate": {
+      "templateType": "VELOCITY",
+      "template": "{\"statusCode\":200,\"body\":{[{\"institutionId\":\"inst-001\",\"name\":\"Università di Roma\",\"taxCode\":\"12345678901\",\"onboarding\":[{\"productId\":\"prod-xyz\",\"status\":\"ACTIVE\",\"onboardingDate\":\"2023-09-01\",\"origin\":\"internal\",\"originId\":\"user-abc\",\"subunitCode\":\"SU01\"}]}]}}"
+    }
+  },
+    {
+    "httpRequest": {
+      "method": "GET",
+      "path": "/pdnd-interop-uservice-party-process/institutions/?taxCode=11223345661"
+    },
+    "httpResponseTemplate": {
+      "templateType": "VELOCITY",
+      "template": "{\"statusCode\":200,\"body\":{[{\"institutionId\":\"inst-001\",\"name\":\"Università di Roma\",\"taxCode\":\"12345678901\",\"onboarding\":[{\"productId\":\"prod-xyz\",\"status\":\"ACTIVE\",\"onboardingDate\":\"2023-09-01\",\"origin\":\"internal\",\"originId\":\"user-abc\",\"subunitCode\":\"SU01\"}]}]}}"
+    }
+  }
+]

@@ -199,5 +199,26 @@
         "Content-Type": "application/json"
       }
     }
+  },
+  {
+    "httpRequest": {
+      "method": "GET",
+      "path": "/party-registry-mock/national-registries/verify-legal",
+      "queryStringParameters": {
+        "vatNumber": [
+          "11223345777"
+        ],
+        "taxId": [
+          "VRDMRA22T71F205A"
+        ]
+      }
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "body": "{\"resultCode\":\"test\",\"resultDetail\":\"test\",\"verificationResult\":true}",
+      "headers": {
+        "Content-Type": "application/json"
+      }
+    }
   }
 ]
