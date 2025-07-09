@@ -63,13 +63,12 @@
         ]
       }
     },
-    "httpResponseTemplate": {
+    "httpResponse": {
       "statusCode": 200,
-      "templateType": "VELOCITY",
+      "body": "{\"country\": \"100\", \"enabled\": true, \"code\": \"058091\", \"desc\": \"ROMA - COMUNE\", \"istat_code\": \"058091\", \"province_id\": \"058\", \"province_abbreviation\": \"RM\", \"region_id\": \"12\", \"country_abbreviation\": \"IT\"}",
       "headers": {
         "Content-Type": "application/json"
-      },
-      "template": "[{\n  \\\"id\\\": \\\"inst-001\\\",\n  \\\"externalId\\\": \\\"ext-001\\\",\n  \\\"originId\\\": \\\"user-abc\\\",\n  \\\"description\\\": \\\"Università di Roma\\\",\n  \\\"digitalAddress\\\": \\\"info@uniroma.it\\\",\n  \\\"address\\\": \\\"Via Roma 1\\\",\n  \\\"zipCode\\\": \\\"00100\\\",\n  \\\"taxCode\\\": \\\"12345678901\\\",\n  \\\"origin\\\": \\\"internal\\\",\n  \\\"city\\\": \\\"Roma\\\",\n  \\\"county\\\": \\\"RM\\\",\n  \\\"country\\\": \\\"IT\\\",\n  \\\"subunitCode\\\": \\\"SU01\\\",\n  \\\"subunitType\\\": \\\"DEPARTMENT\\\",\n  \\\"aooParentCode\\\": \\\"AOO123\\\",\n  \\\"institutionType\\\": \\\"PA\\\",\n  \\\"attributes\\\": [],\n  \\\"paymentServiceProvider\\\": null,\n  \\\"dataProtectionOfficer\\\": null,\n  \\\"gpuData\\\": null,\n  \\\"geographicTaxonomies\\\": [],\n  \\\"onboarding\\\": [\n    {\n      \\\"productId\\\": \\\"prod-xyz\\\",\n      \\\"status\\\": \\\"ACTIVE\\\",\n      \\\"onboardingDate\\\": \\\"2023-09-01\\\",\n      \\\"origin\\\": \\\"internal\\\",\n      \\\"originId\\\": \\\"user-abc\\\",\n      \\\"subunitCode\\\": \\\"SU01\\\"\n    }\n  ],\n  \\\"rea\\\": \\\"RM123456\\\",\n  \\\"shareCapital\\\": \\\"1000000\\\",\n  \\\"businessRegisterPlace\\\": \\\"Roma\\\",\n  \\\"supportEmail\\\": \\\"support@uniroma.it\\\",\n  \\\"supportPhone\\\": \\\"+390612345678\\\",\n  \\\"imported\\\": true\n}]"
+      }
     }
   },
   {
@@ -216,10 +215,10 @@
     },
     "httpResponse": {
       "statusCode": 200,
-      "body": "{\"resultCode\":\"test\",\"resultDetail\":\"test\",\"verificationResult\":true}",
       "headers": {
         "Content-Type": "application/json"
-      }
+      },
+      "body": "{\n  \"resultCode\": \"test\",\n  \"resultDetail\": \"test\",\n  \"verificationResult\": true\n}"
     }
   }
 ]
