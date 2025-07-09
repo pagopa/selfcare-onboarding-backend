@@ -88,5 +88,63 @@
         "Content-Type": "application/json"
       }
     }
+  },
+  {
+    "httpRequest": {
+      "method": "POST",
+      "path": "/api/StartOnboardingOrchestration",
+      "queryStringParameters": {
+        "?timeout": [
+          {
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "?onboardingId": [
+          {
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "httpResponse": {
+      "statusCode": 202,
+      "body": "{\n \"fake-response\": \"fake-response\"\n    }",
+      "headers": {
+        "Content-Type": "application/json"
+      }
+    }
+  },
+  {
+    "httpRequest": {
+      "method": "GET",
+      "path": "/api/StartOnboardingOrchestration",
+      "queryStringParameters": {
+        "?timeout": [
+          {
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "?onboardingId": [
+          {
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "httpResponse": {
+      "statusCode": 202,
+      "body": "{\n \"fake-response\": \"fake-response\"\n    }",
+      "headers": {
+        "Content-Type": "application/json"
+      }
+    }
   }
 ]
