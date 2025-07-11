@@ -220,5 +220,69 @@
       },
       "body": "{\n  \"resultCode\": \"test\",\n  \"resultDetail\": \"test\",\n  \"verificationResult\": true\n}"
     }
+  },
+  {
+    "httpRequest": {
+      "method": "GET",
+      "path": "/party-registry-mock/info-camere/institutions",
+      "body": "{\"filter\":{\"legalTaxId\":\"PRVTNT80A41H401T\"}}"
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": "{\"legalTaxId\":\"PRVTNT80A41H401T\",\"requestDateTime\":\"2025-07-11T10:30:00Z\",\"businesses\":[{\"businessName\":\"Azienda Esempio S.p.A.\"}]}"
+    }
+  },
+  {
+    "httpRequest": {
+      "method": "GET",
+      "path": "/national-registries/verify-legal",
+      "queryStringParameters": {
+        "vatNumber": [
+          "11223345665"
+        ],
+        "taxId": [
+          "RSSMRA80A01H703Z"
+        ]
+      }
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": "{\n  \"verificationResult\": \"true\"}"
+    }
+  },
+  {
+    "httpRequest": {
+      "method": "GET",
+      "path": "/national-registries/verify-legal?taxId=RSSMRA80A01H703Z&vatNumber=11223345665"
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": "{\n  \"verificationResult\": \"true\"}"
+    }
+  },
+  {
+    "httpRequest": {
+      "method": "GET",
+      "path": "/national-registries/legal-address",
+      "queryStringParameters":{
+        "taxId": "11223345687"
+      }
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": "{\n  \"address\": \"Prova Indirizzo\", \"zipCode\": \"12345\"}"
+    }
   }
 ]

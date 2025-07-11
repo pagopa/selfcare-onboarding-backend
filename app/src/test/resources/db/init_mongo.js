@@ -75,6 +75,7 @@ db.onboardings.insertMany([
       imported: false,
       institutionType: "PT",
       origin: "INFOCAMERE",
+      originId: "11223345667",
       taxCode: "11223345667",
       zipCode: "11223",
     },

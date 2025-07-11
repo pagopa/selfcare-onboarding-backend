@@ -100,7 +100,152 @@ Feature: Institution
     When I send a POST request to "/v1/institutions/onboarding"
     Then The status code is 409
 
-  Scenario: Success to retrive onboarding
+  Scenario: Success to retrive geotaxonomy
     Given User login with username "j.doe" and password "test"
-    When I send a GET request to "/v1/institutions/onboarding?institutionId=test1323&productId=prod-io"
-    Then The status code is 201
+    And The following path params:
+      | institutionId | test1235 |
+    When I send a GET request to "/v1/institutions/{institutionId}/geographicTaxonomy"
+    Then The status code is 200
+
+  Scenario: Failed to retrive geotaxonomy
+    Given User login with username "j.doe" and password "test"
+    And The following path params:
+      | institutionId | 123 |
+    When I send a GET request to "/v1/institutions/{institutionId}/geographicTaxonomy"
+    Then The status code is 404
+
+  Scenario: Success to retrive geotaxonomy by filters
+    Given User login with username "j.doe" and password "test"
+    And The following query params:
+      | taxCode | 35843432474 |
+    When I send a GET request to "/v1/institutions/geographicTaxonomies"
+    Then The status code is 200
+
+  Scenario: Failed to retrive geotaxonomy by filters
+    Given User login with username "j.doe" and password "test"
+    And The following query params:
+      | taxCode | test1235 |
+    When I send a GET request to "/v1/institutions/geographicTaxonomies"
+    Then The status code is 404
+
+  Scenario: Success to retrive institutions
+    Given User login with username "j.doe" and password "test"
+    And The following query params:
+      | productId | prod-io |
+    When I send a GET request to "/v1/institutions"
+    Then The status code is 200
+
+  Scenario: Failed to retrive institutions
+    Given User login with username "j.doe" and password "test"
+    And The following query params:
+      | productId | prod-test |
+    When I send a GET request to "/v1/institutions"
+    Then The status code is 404
+
+  Scenario: Success to verify onboarding
+    Given User login with username "j.doe" and password "test"
+    And The following path params:
+      | externalInstitutionId | test-io |
+      | productId             | prod-io |
+    When I send a HEAD request to "/v1/institutions/{externalInstitutionId}/products/{productId}"
+    Then The status code is 204
+
+  Scenario: Failed to verify onboarding when not allowed on strategy
+    Given User login with username "j.doe" and password "test"
+    And The following path params:
+      | externalInstitutionId | test-io   |
+      | productId             | prod-test |
+    When I send a HEAD request to "/v1/institutions/{externalInstitutionId}/products/{productId}"
+    Then The status code is 404
+
+
+  Scenario: Success to verify onboarding
+    Given User login with username "j.doe" and password "test"
+    And The following query params:
+      | taxCode   | 11223345667 |
+      | origin    | INFOCAMERE  |
+      | originId  | 11223345667 |
+      | productId | prod-io     |
+    When I send a HEAD request to "/v1/institutions/onboarding"
+    Then The status code is 204
+
+
+  Scenario: Failed to verify onboarding when missing
+    Given User login with username "j.doe" and password "test"
+    And The following query params:
+      | taxCode   | 11223345669 |
+      | origin    | INFOCAMERE  |
+      | originId  | 11223345667 |
+      | productId | prod-io     |
+    When I send a HEAD request to "/v1/institutions/onboarding"
+    Then The status code is 404
+
+  Scenario: Success to get institution from infocamere
+    Given User login with username "j.doe" and password "test"
+    When I send a GET request to "/v1/institutions/from-infocamere/"
+    Then The status code is 200
+
+  Scenario: Failed to get institution from infocamere
+    Given User login with username "r.balboa" and password "test"
+    When I send a GET request to "/v1/institutions/from-infocamere/"
+    Then The status code is 404
+
+  Scenario: Success to get verify match by institutionTaxCode and user info
+    Given User login with username "j.doe" and password "test"
+    And The following request body:
+    """
+      {
+       "taxCode": "11223345665",
+        "userDto" : {
+              "email": "mario.rossi@esempio.it",
+              "name": "Mario",
+              "role": "ADMIN_EA",
+              "surname": "Rossi",
+              "taxCode": "RSSMRA80A01H703Z"
+         }
+       }
+     """
+    When I send a POST request to "/v1/institutions/verification/match"
+    Then The status code is 200
+
+
+  Scenario: Failed to get verify match by institutionTaxCode and user info
+    Given User login with username "j.doe" and password "test"
+    And The following request body:
+    """
+      {
+       "taxCode": "11223345666",
+        "userDto" : {
+              "email": "mario.rossi@esempio.it",
+              "name": "Mario",
+              "role": "ADMIN_EA",
+              "surname": "Rossi",
+              "taxCode": "RSSMRA80A01H703Z"
+         }
+       }
+     """
+    When I send a POST request to "/v1/institutions/verification/match"
+    Then The status code is 404
+
+  Scenario: Success to get verify legal-address
+    Given User login with username "j.doe" and password "test"
+    And The following request body:
+    """
+      {
+       "taxCode": "11223345687"
+       }
+    """
+    When I send a POST request to "/v1/institutions/verification/legal-address"
+    Then The status code is 200
+
+
+  Scenario: Failed to get verify legal-address
+    Given User login with username "j.doe" and password "test"
+    And The following request body:
+    """
+      {
+       "taxCode": "11223345686"
+       }
+    """
+    When I send a POST request to "/v1/institutions/verification/legal-address"
+    Then The status code is 404
