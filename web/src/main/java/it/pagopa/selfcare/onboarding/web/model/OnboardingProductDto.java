@@ -78,4 +78,7 @@ public class OnboardingProductDto {
 
     @ApiModelProperty(value = "${swagger.onboarding.institutions.model.gpuData}")
     private GPUData gpuData;
+
+    @ApiModelProperty(value = "${swagger.onboarding.institutions.model.istatCode}")
+    private String istatCode;
 }

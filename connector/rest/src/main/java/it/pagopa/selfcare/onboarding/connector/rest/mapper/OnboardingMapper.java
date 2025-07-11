@@ -37,6 +37,7 @@ public interface OnboardingMapper {
         InstitutionBaseRequest institution = new InstitutionBaseRequest();
         institution.institutionType(InstitutionType.valueOf(onboardingData.getInstitutionType().name()));
         institution.taxCode(onboardingData.getTaxCode());
+        institution.setIstatCode(onboardingData.getIstatCode());
         institution.subunitCode(onboardingData.getSubunitCode());
         institution.subunitType(Optional.ofNullable(onboardingData.getSubunitType())
                 .map(InstitutionPaSubunitType::valueOf)
@@ -78,7 +79,7 @@ public interface OnboardingMapper {
         institutionPsp.subunitType(Optional.ofNullable(onboardingData.getSubunitType())
                 .map(InstitutionPaSubunitType::valueOf)
                 .orElse(null));
-
+        institutionPsp.setIstatCode(onboardingData.getIstatCode());
         institutionPsp.setOrigin(Optional.ofNullable(onboardingData.getOrigin()).map(Origin::fromValue).orElse(null));
         if(Objects.nonNull(onboardingData.getOriginId())) {
             institutionPsp.setOriginId(onboardingData.getOriginId());
