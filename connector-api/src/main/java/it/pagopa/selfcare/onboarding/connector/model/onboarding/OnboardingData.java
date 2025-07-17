@@ -54,6 +54,7 @@ public class OnboardingData {
     private Boolean isAggregator;
     private List<Institution> aggregates;
     private List<String> attachments;
+    private List<String> atecoCodes;
     public List<User> getUsers() {
         return Optional.ofNullable(users).orElse(Collections.emptyList());
     }
