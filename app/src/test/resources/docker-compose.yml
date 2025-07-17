@@ -39,7 +39,7 @@ services:
       - develop-network
 
   onboarding-ms:
-    image: ghcr.io/pagopa/selfcare-onboarding-ms:sha-9fcd152
+    image: ghcr.io/pagopa/selfcare-onboarding-ms:latest
     ports:
       - "8085:8080"
     env_file:
@@ -51,6 +51,7 @@ services:
       - mock-server
       - azure-cli
       - azurite
+      - institution-ms
 
   user-ms:
     image: ghcr.io/pagopa/selfcare-user-ms:sha-f3cd392
@@ -66,7 +67,7 @@ services:
       - azure-cli
 
   institution-ms:
-    image: ghcr.io/pagopa/selfcare-institution-ms:sha-a1572ab
+    image: ghcr.io/pagopa/selfcare-institution-ms:latest
     ports:
       - "8082:8080"
     networks:
@@ -99,17 +100,18 @@ services:
     networks:
       - develop-network
 
-  onboarding-fn:
-    build:
-      context: .
-      dockerfile: "Dockerfile-fn"
-    networks:
-      - develop-network
-    depends_on:
-      - mongo-db
-      - mock-server
-      - azure-cli
-      - azurite
+
+#  onboarding-fn:
+#    build:
+#      context: .
+#      dockerfile: "Dockerfile-fn"
+#    networks:
+#      - develop-network
+#    depends_on:
+#      - mongo-db
+#      - mock-server
+#      - azure-cli
+#      - azurite
 
 networks:
   develop-network:
