@@ -3555,6 +3555,12 @@
           },
           "istatCode" : {
             "type" : "string"
+          },
+          "atecoCodes" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
           }
         }
       },

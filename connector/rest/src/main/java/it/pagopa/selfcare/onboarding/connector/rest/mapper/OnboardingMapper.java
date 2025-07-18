@@ -66,6 +66,7 @@ public interface OnboardingMapper {
         institution.supportEmail(onboardingData.getInstitutionUpdate().getSupportEmail());
         institution.supportPhone(onboardingData.getInstitutionUpdate().getSupportPhone());
         institution.imported(onboardingData.getInstitutionUpdate().getImported());
+        institution.setAtecoCodes(onboardingData.getAtecoCodes());
         return institution;
     }
 
