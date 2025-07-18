@@ -81,4 +81,7 @@ public class OnboardingProductDto {
 
     @ApiModelProperty(value = "${swagger.onboarding.institutions.model.istatCode}")
     private String istatCode;
+
+    @ApiModelProperty(value = "${swagger.onboarding.institutions.model.atecoCodes}")
+    private List<String> atecoCodes;
 }

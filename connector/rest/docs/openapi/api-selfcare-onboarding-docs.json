@@ -2341,6 +2341,12 @@
           "zipCode" : {
             "type" : "string"
           },
+          "atecoCodes" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          },
           "geographicTaxonomies" : {
             "type" : "array",
             "items" : {
