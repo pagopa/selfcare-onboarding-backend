@@ -38,6 +38,7 @@ public interface OnboardingResourceMapper {
     @Mapping(source = "additionalInformations", target = "institutionUpdate.additionalInformations")
     @Mapping(source = "gpuData", target = "institutionUpdate.gpuData")
     @Mapping(source = "originId", target = "originId")
+    @Mapping(source= "billingData.legalForm", target="institutionUpdate.legalForm")
     OnboardingData toEntity(OnboardingProductDto dto);
 
     VerifyManagerResponse toManagerVerification(ManagerVerification managerVerification);
