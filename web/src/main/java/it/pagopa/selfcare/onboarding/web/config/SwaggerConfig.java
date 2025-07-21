@@ -7,16 +7,14 @@ import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
-import io.swagger.v3.oas.models.servers.Server;
-import io.swagger.v3.oas.models.servers.ServerVariable;
-import io.swagger.v3.oas.models.servers.ServerVariables;
 import io.swagger.v3.oas.models.tags.Tag;
-import java.util.List;
-import java.util.Objects;
 import org.springdoc.core.customizers.OpenApiCustomizer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.*;
 import org.springframework.core.env.Environment;
+
+import java.util.List;
+import java.util.Objects;
 
 /** The Class SwaggerConfig. */
 @Configuration
@@ -77,7 +75,6 @@ class SwaggerConfig {
                     .name("user")
                     .description(
                         environment.getProperty("swagger.onboarding.user.api.description"))))
-        .servers(List.of(setupServerConfig()))
         .components(
             new Components()
                 .addSecuritySchemes(
@@ -89,18 +86,6 @@ class SwaggerConfig {
                         .description(
                             "A bearer token in the format of a JWS and conformed to the specifications included in [RFC8725](https://tools.ietf.org/html/RFC8725)")
                         .bearerFormat("JWT")));
-  }
-
-  private static Server setupServerConfig() {
-    Server server = new Server();
-    ServerVariables variables = new ServerVariables();
-    variables.addServerVariable("url", new ServerVariable()._default("http:localhost"));
-    variables.addServerVariable("port", new ServerVariable()._default("80"));
-    variables.addServerVariable("basePath", new ServerVariable()._default(""));
-    server.variables(variables);
-    server.setUrl("{url}:{port}{basePath}");
-
-    return server;
   }
 
   @Bean
