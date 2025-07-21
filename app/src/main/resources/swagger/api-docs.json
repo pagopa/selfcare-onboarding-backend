@@ -3379,6 +3379,9 @@
           },
           "certified" : {
             "type" : "boolean"
+          },
+          "legalForm" : {
+            "type" : "string"
           }
         }
       },

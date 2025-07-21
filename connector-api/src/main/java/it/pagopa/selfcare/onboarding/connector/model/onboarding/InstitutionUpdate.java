@@ -19,6 +19,7 @@ public class InstitutionUpdate {
     private String zipCode;
     private String origin;
     private String originId;
+    private String legalForm;
     private PaymentServiceProvider paymentServiceProvider;
     private DataProtectionOfficer dataProtectionOfficer;
     private GPUData gpuData;

@@ -29,6 +29,7 @@
           "address": "via del campo",
           "taxCode": "string",
           "zipCode": "string",
+          "legalForm": "string",
           "paymentServiceProvider": {
             "abiCode": "string",
             "businessRegisterNumber": "string",
