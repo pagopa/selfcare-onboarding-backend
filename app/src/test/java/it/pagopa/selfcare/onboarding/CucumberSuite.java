@@ -4,6 +4,8 @@ import static io.cucumber.junit.platform.engine.Constants.GLUE_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.PLUGIN_PROPERTY_NAME;
 
 import io.cucumber.spring.CucumberContextConfiguration;
+
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -16,6 +18,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.TestPropertySource;
+import org.testcontainers.containers.ComposeContainer;
+import org.testcontainers.containers.wait.strategy.Wait;
 
 @Suite
 @IncludeEngines("cucumber")
@@ -31,6 +35,20 @@ import org.springframework.test.context.TestPropertySource;
 @TestPropertySource(locations = "classpath:application-test.properties")
 @Slf4j
 public class CucumberSuite {
+
+  private static final ComposeContainer composeContainer;
+
+  static {
+    log.info("Starting test containers...");
+
+    composeContainer = new ComposeContainer(new File("../docker-compose.yml"))
+            .withLocalCompose(true)
+            .waitingFor("azure-cli", Wait.forLogMessage(".*BLOBSTORAGE INITIALIZED.*\\n", 1));
+    composeContainer.start();
+    Runtime.getRuntime().addShutdownHook(new Thread(composeContainer::stop));
+
+    log.info("Test containers started successfully");
+  }
 
   @DynamicPropertySource
   static void setProperties(DynamicPropertyRegistry registry) throws IOException {
