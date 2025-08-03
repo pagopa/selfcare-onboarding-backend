@@ -478,8 +478,8 @@
     "/v1/onboarding/aggregation/completion" : {
       "post" : {
         "tags" : [ "Onboarding Controller" ],
-        "summary" : "Asynchronously complete aggregated onboarding to COMPLETED status.",
-        "description" : "Perform onboarding aggregation as /onboarding but completing the onboarding request to COMPLETED phase. The operation will be performed async due to the possible amount of time the process could take.",
+        "summary" : "Asynchronously complete aggregated onboarding to PENDING status.",
+        "description" : "Perform onboarding aggregation as /onboarding to PENDING phase. The operation will be performed async due to the possible amount of time the process could take.",
         "operationId" : "onboardingAggregationCompletion",
         "requestBody" : {
           "content" : {
@@ -562,6 +562,44 @@
             "application/json" : {
               "schema" : {
                 "$ref" : "#/components/schemas/OnboardingPaRequest"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/OnboardingResponse"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Not Authorized"
+          },
+          "403" : {
+            "description" : "Not Allowed"
+          }
+        },
+        "security" : [ {
+          "SecurityScheme" : [ ]
+        } ]
+      }
+    },
+    "/v1/onboarding/aggregation/psp/completion" : {
+      "post" : {
+        "tags" : [ "Onboarding Controller" ],
+        "summary" : "Asynchronously complete aggregated PSP onboarding to PENDING status.",
+        "description" : "Perform onboarding aggregation as /onboarding to PENDING phase. The operation will be performed async due to the possible amount of time the process could take.",
+        "operationId" : "onboardingAggregationPspCompletion",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/OnboardingPspRequest"
               }
             }
           }
@@ -676,6 +714,44 @@
         "summary" : "Complete onboarding request and set status to COMPLETED.",
         "description" : "Perform onboarding as /onboarding but completing the onboarding request to COMPLETED phase.",
         "operationId" : "onboardingCompletion",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/OnboardingDefaultRequest"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/OnboardingResponse"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Not Authorized"
+          },
+          "403" : {
+            "description" : "Not Allowed"
+          }
+        },
+        "security" : [ {
+          "SecurityScheme" : [ ]
+        } ]
+      }
+    },
+    "/v1/onboarding/import" : {
+      "post" : {
+        "tags" : [ "Onboarding Controller", "internal-v1" ],
+        "summary" : "Import onboarding (not PA and PSP) with token creation and complete to COMPLETED.",
+        "description" : "Perform onboarding (not PA and PSP) but create token and completing the request to COMPLETED phase.",
+        "operationId" : "onboardingImport",
         "requestBody" : {
           "content" : {
             "application/json" : {
@@ -888,7 +964,7 @@
     },
     "/v1/onboarding/pa/import" : {
       "post" : {
-        "tags" : [ "Onboarding Controller" ],
+        "tags" : [ "Onboarding Controller", "internal-v1" ],
         "summary" : "Import PA onboarding with token creation and complete to COMPLETED.",
         "description" : "Perform onboarding as /onboarding/pa but create token and completing the onboarding request to COMPLETED phase.",
         "operationId" : "onboardingPaImport",
@@ -2325,9 +2401,6 @@
           "county" : {
             "type" : "string"
           },
-          "istatCode" : {
-            "type" : "string"
-          },
           "description" : {
             "type" : "string"
           },
@@ -2341,11 +2414,11 @@
           "zipCode" : {
             "type" : "string"
           },
-          "atecoCodes" : {
-            "type" : "array",
-            "items" : {
-              "type" : "string"
-            }
+          "istatCode" : {
+            "type" : "string"
+          },
+          "legalForm" : {
+            "type" : "string"
           },
           "geographicTaxonomies" : {
             "type" : "array",
@@ -2370,6 +2443,12 @@
           },
           "imported" : {
             "type" : "boolean"
+          },
+          "atecoCodes" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
           }
         }
       },
@@ -2476,9 +2555,6 @@
           "county" : {
             "type" : "string"
           },
-          "istatCode" : {
-            "type" : "string"
-          },
           "description" : {
             "type" : "string"
           },
@@ -2490,6 +2566,12 @@
             "type" : "string"
           },
           "zipCode" : {
+            "type" : "string"
+          },
+          "istatCode" : {
+            "type" : "string"
+          },
+          "legalForm" : {
             "type" : "string"
           },
           "geographicTaxonomies" : {
@@ -2515,6 +2597,12 @@
           },
           "imported" : {
             "type" : "boolean"
+          },
+          "atecoCodes" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
           },
           "paymentServiceProvider" : {
             "$ref" : "#/components/schemas/PaymentServiceProviderRequest"
@@ -2601,6 +2689,12 @@
           },
           "dataProtectionOfficer" : {
             "$ref" : "#/components/schemas/DataProtectionOfficerRequest"
+          },
+          "atecoCodes" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
           }
         }
       },
@@ -2614,7 +2708,7 @@
         "example" : "2022-03-10T12:15:50"
       },
       "OnboardingAggregationImportRequest" : {
-        "required" : [ "productId", "users", "institution" ],
+        "required" : [ "productId", "institution" ],
         "type" : "object",
         "properties" : {
           "productId" : {
@@ -2622,7 +2716,6 @@
             "type" : "string"
           },
           "users" : {
-            "minItems" : 1,
             "type" : "array",
             "items" : {
               "$ref" : "#/components/schemas/UserRequest"
@@ -2661,7 +2754,7 @@
         }
       },
       "OnboardingDefaultRequest" : {
-        "required" : [ "productId", "users", "institution" ],
+        "required" : [ "productId", "institution" ],
         "type" : "object",
         "properties" : {
           "productId" : {
@@ -2669,7 +2762,6 @@
             "type" : "string"
           },
           "users" : {
-            "minItems" : 1,
             "type" : "array",
             "items" : {
               "$ref" : "#/components/schemas/UserRequest"
@@ -2844,11 +2936,14 @@
           },
           "forceImport" : {
             "type" : "boolean"
+          },
+          "sendMailForImport" : {
+            "type" : "boolean"
           }
         }
       },
       "OnboardingPaRequest" : {
-        "required" : [ "productId", "users", "institution" ],
+        "required" : [ "productId", "institution" ],
         "type" : "object",
         "properties" : {
           "productId" : {
@@ -2856,7 +2951,6 @@
             "type" : "string"
           },
           "users" : {
-            "minItems" : 1,
             "type" : "array",
             "items" : {
               "$ref" : "#/components/schemas/UserRequest"
@@ -2921,7 +3015,7 @@
         }
       },
       "OnboardingPspRequest" : {
-        "required" : [ "productId", "users", "institution" ],
+        "required" : [ "productId", "institution" ],
         "type" : "object",
         "properties" : {
           "productId" : {
@@ -2929,7 +3023,6 @@
             "type" : "string"
           },
           "users" : {
-            "minItems" : 1,
             "type" : "array",
             "items" : {
               "$ref" : "#/components/schemas/UserRequest"

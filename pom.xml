@@ -24,7 +24,7 @@
     <properties>
         <selc-commons.version>2.8.4</selc-commons.version>
         <sonar.host.url>https://sonarcloud.io/</sonar.host.url>
-        <parent-commons-sdk-version>0.6.9</parent-commons-sdk-version>
+        <parent-commons-sdk-version>0.7.2</parent-commons-sdk-version>
     </properties>
 
     <dependencyManagement>
@@ -130,6 +130,11 @@
             <id>selfcare-onboarding</id>
             <name>Selfcare Onboarding SDK</name>
             <url>https://maven.pkg.github.com/pagopa/selfcare-onboarding</url>
+        </repository>
+        <repository>
+            <id>selfcare</id>
+            <name>Selfcare SDK</name>
+            <url>https://maven.pkg.github.com/pagopa/selfcare</url>
         </repository>
     </repositories>
 </project>
