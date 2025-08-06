@@ -100,42 +100,42 @@ Feature: Institution
     When I send a POST request to "/v1/institutions/onboarding"
     Then The status code is 409
 
-  Scenario: Success to retrive geotaxonomy
+  Scenario: Success to retrieve geotaxonomy
     Given User login with username "j.doe" and password "test"
     And The following path params:
       | institutionId | test1235 |
     When I send a GET request to "/v1/institutions/{institutionId}/geographicTaxonomy"
     Then The status code is 200
 
-  Scenario: Failed to retrive geotaxonomy
+  Scenario: Failed to retrieve geotaxonomy
     Given User login with username "j.doe" and password "test"
     And The following path params:
       | institutionId | 123 |
     When I send a GET request to "/v1/institutions/{institutionId}/geographicTaxonomy"
     Then The status code is 404
 
-  Scenario: Success to retrive geotaxonomy by filters
+  Scenario: Success to retrieve geotaxonomy by filters
     Given User login with username "j.doe" and password "test"
     And The following query params:
       | taxCode | 35843432474 |
     When I send a GET request to "/v1/institutions/geographicTaxonomies"
     Then The status code is 200
 
-  Scenario: Failed to retrive geotaxonomy by filters
+  Scenario: Failed to retrieve geotaxonomy by filters
     Given User login with username "j.doe" and password "test"
     And The following query params:
       | taxCode | test1235 |
     When I send a GET request to "/v1/institutions/geographicTaxonomies"
     Then The status code is 404
 
-  Scenario: Success to retrive institutions
+  Scenario: Success to retrieve institutions
     Given User login with username "j.doe" and password "test"
     And The following query params:
       | productId | prod-io |
     When I send a GET request to "/v1/institutions"
     Then The status code is 200
 
-  Scenario: Failed to retrive institutions
+  Scenario: Failed to retrieve institutions
     Given User login with username "j.doe" and password "test"
     And The following query params:
       | productId | prod-test |

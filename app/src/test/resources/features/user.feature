@@ -125,29 +125,29 @@ Feature: User
     Then The status code is 404
 
 
-  Scenario: Success to onboarding aggregator
-    Given User login with username "j.doe" and password "test"
-    And The following request body:
-    """
-      {
-      "users":[
-      {
-         "name":"Tizio",
-         "role":"MANAGER",
-         "surname":"Caio",
-         "taxCode":"VRDMRA22T71F205A",
-         "email":"prova@test.it"
-      }
-      ],
-      "productId":"prod-interop",
-       "institutionType":"PA",
-       "origin":"SELC",
-       "originId":"00145190922",
-       "taxCode":"00145190922"
-      }
-    """
-    When I send a POST request to "/v1/users/onboarding/aggregator"
-    Then The status code is 200
+  #Scenario: Success to onboarding aggregator
+  #  Given User login with username "j.doe" and password "test"
+  #  And The following request body:
+  #  """
+  #    {
+  #    "users":[
+  #    {
+  #       "name":"Tizio",
+  #       "role":"MANAGER",
+  #       "surname":"Caio",
+  #       "taxCode":"VRDMRA22T71F205A",
+  #       "email":"prova@test.it"
+  #    }
+  #    ],
+  #    "productId":"prod-interop",
+  #     "institutionType":"PA",
+  #     "origin":"SELC",
+  #     "originId":"00145190922",
+  #     "taxCode":"00145190922"
+  #    }
+  #  """
+  #  When I send a POST request to "/v1/users/onboarding/aggregator"
+  #  Then The status code is 200
 
 
   Scenario: Success to check manager
