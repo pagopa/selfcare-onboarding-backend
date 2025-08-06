@@ -35,6 +35,7 @@ services:
       - SELFCARE_INFRA_PRIVATE_ENV=dev
     networks:
       - develop-network
+    entrypoint: [ "sh", "/init_azurite.sh" ]
 
   onboarding-ms:
     image: ghcr.io/pagopa/selfcare-onboarding-ms:latest
