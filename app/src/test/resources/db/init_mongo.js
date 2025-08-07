@@ -417,28 +417,29 @@ db.Institution.insertMany([
 
 db = db.getSiblingDB("selcUser");
 
-db.userInstitutions.insertOne({
-  createdAt: new Date(),
-});
-
-db.userInstitutions.insertOne({
- _id: new ObjectId("6894755453f442f61d6b140d"),
- institutionId: "f80ad9b9-90b8-421d-ae8a-11fdab8188f4",
- userId: "97a511a7-2acc-47b9-afed-2f3c65753b4a",
- products: [
-    {
-      productId: "prod-io",
-      relationshipId: "39ba0512-dfe8-4d4f-b799-6172157df5bd",
-      tokenId: "f24998e9-15b2-4d50-8aed-d87be21cbe39",
-      status: "ACTIVE",
-      productRole: "admin",
-      role: "MANAGER",
-      env: "ROOT",
-      createdAt:  new Date(),
-      updatedAt:  new Date()
-    }
-  ],
-  institutionDescription: "Comune di Villarbasse",
-  userMailUuid: "ID_MAIL#d373e4d6-9a86-4316-9ce1-426ed95d139b"
-});
+db.userInstitutions.insertMany([
+  {
+    createdAt: new Date(),
+  },
+  {
+   _id: new ObjectId("6894755453f442f61d6b140d"),
+   institutionId: "f80ad9b9-90b8-421d-ae8a-11fdab8188f4",
+   userId: "97a511a7-2acc-47b9-afed-2f3c65753b4a",
+   products: [
+      {
+        productId: "prod-io",
+        relationshipId: "39ba0512-dfe8-4d4f-b799-6172157df5bd",
+        tokenId: "f24998e9-15b2-4d50-8aed-d87be21cbe39",
+        status: "ACTIVE",
+        productRole: "admin",
+        role: "MANAGER",
+        env: "ROOT",
+        createdAt:  new Date(),
+        updatedAt:  new Date()
+      }
+    ],
+    institutionDescription: "Comune di Villarbasse",
+    userMailUuid: "ID_MAIL#d373e4d6-9a86-4316-9ce1-426ed95d139b"
+  }
+]);
 
