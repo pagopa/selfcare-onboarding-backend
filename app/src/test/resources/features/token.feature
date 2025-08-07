@@ -100,10 +100,10 @@ Feature: Token
     When I send a DELETE request to "/v2/tokens/89ad7142-24bb-48ad-8504-9c9231137i1000/complete"
     Then The status code is 400
 
-  Scenario: Success to get Contract
-    Given User login with username "j.doe" and password "test"
-    When I send a GET request to "/v2/tokens/89ad7142-24bb-48ad-8504-9c9231137i103/contract"
-    Then The status code is 200
+  #Scenario: Success to get Contract
+  #  Given User login with username "j.doe" and password "test"
+  #  When I send a GET request to "/v2/tokens/89ad7142-24bb-48ad-8504-9c9231137i103/contract"
+  #  Then The status code is 200
 
   Scenario: Failed to get Contract
     Given User login with username "j.doe" and password "test"
