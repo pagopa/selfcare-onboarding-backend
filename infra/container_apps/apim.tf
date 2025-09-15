@@ -4,7 +4,7 @@ locals {
   api_name     = var.is_pnpg ? format("selc-%s-pnpg-api-bff-onboarding", var.env_short) : format("selc-%s-api-bff-onboarding", var.env_short)
   display_name = var.is_pnpg ? "BFF PNPG Onboarding API" : "BFF Onboarding API"
   base_path    = var.is_pnpg ? "imprese/onboarding" : "onboarding"
-  openapi_title= var.is_pnpg ? "selc-pnpg-dashboard" : "selc-dashboard"
+  openapi_title= var.is_pnpg ? "selc-pnpg-onboarding" : "selc-onboarding"
 }
 
 
