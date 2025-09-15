@@ -4,8 +4,11 @@ import static io.cucumber.junit.platform.engine.Constants.GLUE_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.PLUGIN_PROPERTY_NAME;
 
 import io.cucumber.spring.CucumberContextConfiguration;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.platform.suite.api.ConfigurationParameter;
@@ -16,6 +19,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.TestPropertySource;
+import org.testcontainers.containers.ComposeContainer;
+import org.testcontainers.containers.output.Slf4jLogConsumer;
+import org.testcontainers.containers.wait.strategy.Wait;
 
 @Suite
 @IncludeEngines("cucumber")
@@ -31,6 +37,34 @@ import org.springframework.test.context.TestPropertySource;
 @TestPropertySource(locations = "classpath:application-test.properties")
 @Slf4j
 public class CucumberSuite {
+
+  private static final ComposeContainer composeContainer;
+
+  static {
+    log.info("Starting test containers...");
+
+    try {
+      URL resource = CucumberSuite.class.getClassLoader().getResource("docker-compose.yml");
+      if (resource == null) {
+        throw new IllegalStateException("Cannot find docker-compose.yml in resources");
+      }
+
+      File composeFile = new File(resource.toURI());
+      composeContainer = new ComposeContainer(composeFile)
+              .withLocalCompose(true)
+              .withTailChildContainers(true)
+              .withLogConsumer("azure-cli", new Slf4jLogConsumer(log))
+              .waitingFor("azure-cli", Wait.forLogMessage(".*BLOBSTORAGE INITIALIZED.*\\n", 1));
+
+      composeContainer.start();
+
+      Runtime.getRuntime().addShutdownHook(new Thread(composeContainer::stop));
+
+      log.info("Test containers started successfully");
+    } catch (URISyntaxException e) {
+      throw new RuntimeException("Failed to load or start docker-compose container", e);
+    }
+  }
 
   @DynamicPropertySource
   static void setProperties(DynamicPropertyRegistry registry) throws IOException {

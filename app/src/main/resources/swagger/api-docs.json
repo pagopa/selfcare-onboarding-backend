@@ -3551,6 +3551,20 @@
             "items" : {
               "type" : "string"
             }
+          },
+          "payment" : {
+            "$ref" : "#/components/schemas/PaymentDto"
+          }
+        }
+      },
+      "PaymentDto" : {
+        "type" : "object",
+        "properties" : {
+          "iban" : {
+            "type" : "string"
+          },
+          "holder" : {
+            "type" : "string"
           }
         }
       },
