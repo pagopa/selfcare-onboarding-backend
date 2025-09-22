@@ -1246,7 +1246,7 @@ class InstitutionServiceImplTest {
         final String origin = "origin";
         final String originId = "originId";
         // when
-        final Executable executable = () -> institutionService.verifyOnboarding(productId, taxCode, origin, originId, subunitCode);
+        final Executable executable = () -> institutionService.verifyOnboarding(productId, taxCode, origin, originId, subunitCode, null);
         // then
         final Exception e = assertThrows(OnboardingNotAllowedException.class, executable);
         assertEquals("Institution with external id '" + taxCode + "' is not allowed to onboard '" + productId + "' product", e.getMessage());
@@ -1263,7 +1263,7 @@ class InstitutionServiceImplTest {
         final String productId = "productId";
 
         // when
-        final Executable executable = () -> institutionService.verifyOnboarding(productId, taxCode, originId, origin, subunitCode);
+        final Executable executable = () -> institutionService.verifyOnboarding(productId, taxCode, originId, origin, subunitCode, null);
 
         // then
         assertThrows(InvalidRequestException.class, executable);
@@ -1290,14 +1290,14 @@ class InstitutionServiceImplTest {
                 .thenReturn(true);
 
         // when
-        final Executable executable = () -> institutionService.verifyOnboarding(productId, taxCode, originId, origin, subunitCode);
+        final Executable executable = () -> institutionService.verifyOnboarding(productId, taxCode, originId, origin, subunitCode, null);
 
         // then
         assertDoesNotThrow(executable);
         verify(onboardingValidationStrategyMock, times(1))
                 .validate(productId, taxCode);
         verify(onboardingMsConnector, times(1))
-                .verifyOnboarding(productId, taxCode, originId, origin, subunitCode);
+                .verifyOnboarding(productId, taxCode, originId, origin, subunitCode, null);
         verifyNoMoreInteractions(onboardingValidationStrategyMock, onboardingMsConnector);
         verifyNoInteractions(productsConnectorMock, userConnectorMock);
     }
@@ -1320,16 +1320,17 @@ class InstitutionServiceImplTest {
         final String productId = "productId";
         final String origin = "origin";
         final String originId = "originId";
+        final Boolean soleTrader = true;
         when(onboardingValidationStrategyMock.validate(productId, taxCode))
                 .thenReturn(true);
         // when
-        final Executable executable = () -> institutionService.verifyOnboarding(productId, taxCode, origin, originId, subunitCode);
+        final Executable executable = () -> institutionService.verifyOnboarding(productId, taxCode, origin, originId, subunitCode, soleTrader);
         // then
         assertDoesNotThrow(executable);
         verify(onboardingValidationStrategyMock, times(1))
                 .validate(productId, taxCode);
         verify(onboardingMsConnector, times(1))
-                .verifyOnboarding(productId, taxCode, origin, originId, subunitCode);
+                .verifyOnboarding(productId, taxCode, origin, originId, subunitCode, soleTrader);
         verifyNoMoreInteractions(onboardingValidationStrategyMock, onboardingMsConnector);
         verifyNoInteractions(productsConnectorMock, userConnectorMock);
     }
@@ -1349,7 +1350,7 @@ class InstitutionServiceImplTest {
         when(partyRegistryProxyConnectorMock.getInstitutionsByUserFiscalCode(anyString()))
                 .thenReturn(institutionInfoICmock);
         doThrow(new ResourceNotFoundException()).when(onboardingMsConnector)
-                .verifyOnboarding(any(), any(), any(), any(), any());
+                .verifyOnboarding(any(), any(), any(), any(), any(), any());
         //when
         InstitutionInfoIC result = institutionService.getInstitutionsByUser(user.getTaxCode());
         //then
@@ -1378,7 +1379,7 @@ class InstitutionServiceImplTest {
         institutionInfoICmock.setBusinesses(businessInfoICSmock);
         when(partyRegistryProxyConnectorMock.getInstitutionsByUserFiscalCode(anyString()))
                 .thenReturn(institutionInfoICmock);
-        doNothing().when(onboardingMsConnector).verifyOnboarding(any(), any(), any(), any(), any());
+        doNothing().when(onboardingMsConnector).verifyOnboarding(any(), any(), any(), any(), any(), any());
         when(onboardingMsConnector.checkManager(any())).thenReturn(false);
         when(userConnectorMock.searchUser(any())).thenReturn(userId);
         //when
