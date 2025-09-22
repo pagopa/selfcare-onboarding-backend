@@ -152,7 +152,7 @@ class OnboardingMsConnectorImplTest {
         // then
         assertEquals(expectedResult, result);
         verify(msOnboardingAggregatesApiClient, times(1))._verifyAppIoAggregatesCsv(file);
-        verify(onboardingMapper, times(1)).toVerifyAggregateResult(eq(verifyAggregateAppIoResponse));
+        verify(onboardingMapper, times(1)).toVerifyAggregateResult(verifyAggregateAppIoResponse);
     }
 
     @Test
@@ -171,7 +171,7 @@ class OnboardingMsConnectorImplTest {
         // then
         assertEquals(expectedResult, result);
         verify(msOnboardingAggregatesApiClient, times(1))._verifyPagoPaAggregatesCsv(file);
-        verify(onboardingMapper, times(1)).toVerifyAggregateResult(eq(verifyAggregateResponse));
+        verify(onboardingMapper, times(1)).toVerifyAggregateResult(verifyAggregateResponse);
     }
 
     @Test
