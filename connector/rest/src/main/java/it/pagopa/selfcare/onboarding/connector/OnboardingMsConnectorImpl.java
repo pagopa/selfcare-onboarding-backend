@@ -206,10 +206,10 @@ public class OnboardingMsConnectorImpl implements OnboardingMsConnector {
         return onboardingMapper.toRecipientCodeStatusResult(msOnboardingBillingApiClient._checkRecipientCode(originId, recipientCode).getBody());
     }
 
-    public void verifyOnboarding(String productId, String taxCode, String origin, String originId, String subunitCode) {
+    public void verifyOnboarding(String productId, String taxCode, String origin, String originId, String subunitCode, Boolean soleTrader) {
         log.trace("verifyOnboarding start");
         Assert.hasText(productId, REQUIRED_PRODUCT_ID_MESSAGE);
-        msOnboardingApiClient._verifyOnboardingInfoByFilters(origin, originId, productId, subunitCode, taxCode);
+        msOnboardingApiClient._verifyOnboardingInfoByFilters(origin, originId, productId, soleTrader, subunitCode, taxCode);
         log.trace("verifyOnboarding end");
     }
 

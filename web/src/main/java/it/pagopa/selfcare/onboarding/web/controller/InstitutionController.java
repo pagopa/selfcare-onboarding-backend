@@ -225,13 +225,16 @@ public class InstitutionController {
                                  @ApiParam("${swagger.onboarding.institutions.model.vatNumber}")
                                  @RequestParam(value = "vatNumber", required = false)
                                  Optional<String> vatNumber,
+                                 @ApiParam("${swagger.onboarding.institutions.model.soleTrader}")
+                                 @RequestParam(value = "soleTrader", required = false)
+                                 Boolean soleTrader,
                                  @ApiParam("${swagger.onboarding.institutions.model.verifyType}")
                                  @RequestParam(value = "verifyType", required = false) VerifyType type) {
         log.trace("verifyOnboarding start");
         if (VerifyType.EXTERNAL.equals(type) && vatNumber.isPresent() && (PROD_FD.getValue().equals(productId) || PROD_FD_GARANTITO.getValue().equals(productId))) {
             institutionService.checkOrganization(productId, taxCode, vatNumber.get());
         } else
-            institutionService.verifyOnboarding(productId, taxCode, origin, originId, subunitCode);
+            institutionService.verifyOnboarding(productId, taxCode, origin, originId, subunitCode, soleTrader);
         log.trace("verifyOnboarding end");
     }
 

@@ -1577,6 +1577,13 @@
             "type" : "string"
           }
         }, {
+          "name" : "soleTrader",
+          "in" : "query",
+          "required" : false,
+          "schema" : {
+            "type" : "boolean"
+          }
+        }, {
           "name" : "verifyType",
           "in" : "query",
           "required" : false,
@@ -3554,6 +3561,9 @@
           },
           "payment" : {
             "$ref" : "#/components/schemas/PaymentDto"
+          },
+          "soleTrader" : {
+            "type" : "boolean"
           }
         }
       },
