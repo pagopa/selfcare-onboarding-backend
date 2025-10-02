@@ -4438,7 +4438,7 @@
           },
           "institutionType" : {
             "type" : "string",
-            "enum" : [ "PA", "PG", "GSP", "SA", "PT", "SCP", "PSP", "AS", "REC", "CON", "PRV", "GPU" ]
+            "enum" : [ "PA", "PG", "GSP", "SA", "PT", "SCP", "PSP", "AS", "REC", "CON", "PRV", "GPU", "PRV_PF", "SCEC" ]
           },
           "billingData" : {
             "$ref" : "#/components/schemas/BillingDataResponseDto"
