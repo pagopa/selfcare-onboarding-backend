@@ -1,6 +1,6 @@
 package it.pagopa.selfcare.onboarding.connector.rest.model;
 
-import it.pagopa.selfcare.commons.base.utils.InstitutionType;
+import it.pagopa.selfcare.onboarding.common.InstitutionType;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.Billing;
 import lombok.Data;
 

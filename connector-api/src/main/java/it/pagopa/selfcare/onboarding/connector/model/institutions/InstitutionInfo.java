@@ -1,7 +1,7 @@
 package it.pagopa.selfcare.onboarding.connector.model.institutions;
 
 import it.pagopa.selfcare.commons.base.security.PartyRole;
-import it.pagopa.selfcare.commons.base.utils.InstitutionType;
+import it.pagopa.selfcare.onboarding.common.InstitutionType;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.*;
 import lombok.Data;
 

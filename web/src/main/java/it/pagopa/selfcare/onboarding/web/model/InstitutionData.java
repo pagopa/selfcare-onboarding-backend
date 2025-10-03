@@ -1,7 +1,7 @@
 package it.pagopa.selfcare.onboarding.web.model;
 
 import io.swagger.annotations.ApiModelProperty;
-import it.pagopa.selfcare.commons.base.utils.InstitutionType;
+import it.pagopa.selfcare.onboarding.common.InstitutionType;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.DataProtectionOfficer;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.GPUData;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.PaymentServiceProvider;
