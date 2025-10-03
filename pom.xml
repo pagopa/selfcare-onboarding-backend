@@ -22,7 +22,7 @@
     <description>Self Care OnBoarding Backend</description>
 
     <properties>
-        <selc-commons.version>2.8.4</selc-commons.version>
+        <selc-commons.version>2.9.0</selc-commons.version>
         <sonar.host.url>https://sonarcloud.io/</sonar.host.url>
         <parent-commons-sdk-version>0.7.2</parent-commons-sdk-version>
     </properties>
