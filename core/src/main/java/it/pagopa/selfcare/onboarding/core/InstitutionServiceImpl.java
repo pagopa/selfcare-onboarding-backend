@@ -481,12 +481,12 @@ class InstitutionServiceImpl implements InstitutionService {
 
 
     @Override
-    public void verifyOnboarding(String productId, String taxCode, String origin, String originId, String subunitCode) {
+    public void verifyOnboarding(String productId, String taxCode, String origin, String originId, String subunitCode, Boolean soleTrader) {
         log.trace("verifyOnboardingSubunit start");
         validateParameter(taxCode, origin, originId, subunitCode);
         log.debug("verifyOnboardingSubunit taxCode = {}", taxCode);
         validateOnboarding(taxCode, productId);
-        onboardingMsConnector.verifyOnboarding(productId, taxCode, origin, originId, subunitCode);
+        onboardingMsConnector.verifyOnboarding(productId, taxCode, origin, originId, subunitCode, soleTrader);
         log.trace("verifyOnboardingSubunit end");
     }
 
@@ -535,7 +535,7 @@ class InstitutionServiceImpl implements InstitutionService {
         log.debug(LogUtils.CONFIDENTIAL_MARKER, "Checking if business with tax code {} is onboarded by user with fiscal code {}",
                 businessInfoIC.getBusinessTaxId(), fiscalCode);
         try {
-            onboardingMsConnector.verifyOnboarding(PROD_PN_PG, businessInfoIC.getBusinessTaxId(), null, null, null);
+            onboardingMsConnector.verifyOnboarding(PROD_PN_PG, businessInfoIC.getBusinessTaxId(), null, null, null, null);
             log.debug("Business with tax code {} is already onboarded, checking if user with fiscal code {} is manager",
                     businessInfoIC.getBusinessTaxId(), fiscalCode);
 

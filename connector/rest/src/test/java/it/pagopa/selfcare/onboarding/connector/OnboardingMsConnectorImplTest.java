@@ -152,7 +152,7 @@ class OnboardingMsConnectorImplTest {
         // then
         assertEquals(expectedResult, result);
         verify(msOnboardingAggregatesApiClient, times(1))._verifyAppIoAggregatesCsv(file);
-        verify(onboardingMapper, times(1)).toVerifyAggregateResult(eq(verifyAggregateAppIoResponse));
+        verify(onboardingMapper, times(1)).toVerifyAggregateResult(verifyAggregateAppIoResponse);
     }
 
     @Test
@@ -171,7 +171,7 @@ class OnboardingMsConnectorImplTest {
         // then
         assertEquals(expectedResult, result);
         verify(msOnboardingAggregatesApiClient, times(1))._verifyPagoPaAggregatesCsv(file);
-        verify(onboardingMapper, times(1)).toVerifyAggregateResult(eq(verifyAggregateResponse));
+        verify(onboardingMapper, times(1)).toVerifyAggregateResult(verifyAggregateResponse);
     }
 
     @Test
@@ -641,12 +641,13 @@ class OnboardingMsConnectorImplTest {
         final String productId = "productId";
         final String origin = "origin";
         final String originId = "originId";
+        final Boolean soleTrader = false;
         // when
-        final Executable executable = () -> onboardingMsConnector.verifyOnboarding(productId, taxCode, origin, originId, subunitCode);
+        final Executable executable = () -> onboardingMsConnector.verifyOnboarding(productId, taxCode, origin, originId, subunitCode, soleTrader);
         // then
         assertDoesNotThrow(executable);
         verify(msOnboardingApiClient, times(1))
-                ._verifyOnboardingInfoByFilters(origin, originId, productId, subunitCode, taxCode);
+                ._verifyOnboardingInfoByFilters(origin, originId, productId, soleTrader, subunitCode, taxCode);
         verifyNoMoreInteractions(msOnboardingApiClient);
     }
 }

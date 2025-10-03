@@ -84,4 +84,10 @@ public class OnboardingProductDto {
 
     @ApiModelProperty(value = "${swagger.onboarding.institutions.model.atecoCodes}")
     private List<String> atecoCodes;
+
+    @ApiModelProperty(value = "${swagger.onboarding.institutions.model.payment}")
+    private PaymentDto payment;
+
+    @ApiModelProperty(value = "${swagger.onboarding.institutions.model.soleTrader}")
+    private Boolean soleTrader;
 }

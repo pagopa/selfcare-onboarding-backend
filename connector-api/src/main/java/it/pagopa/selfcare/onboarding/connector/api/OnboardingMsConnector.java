@@ -49,7 +49,7 @@ public interface OnboardingMsConnector {
 
     VerifyAggregateResult aggregatesVerification(MultipartFile file, String productId);
 
-    void verifyOnboarding(String productId, String taxCode, String origin, String originId, String subunitCode);
+    void verifyOnboarding(String productId, String taxCode, String origin, String originId, String subunitCode, Boolean soleTrader);
 
     void onboardingUsersPgFromIcAndAde(OnboardingData onboardingUserPgRequest);
 
