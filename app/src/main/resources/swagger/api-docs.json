@@ -1,7 +1,7 @@
 {
   "openapi" : "3.0.1",
   "info" : {
-    "title" : "selc-onboarding",
+    "title" : "${openapi_title}",
     "description" : "Self Care OnBoarding API documentation",
     "contact" : {
       "name" : "PagoPA",
