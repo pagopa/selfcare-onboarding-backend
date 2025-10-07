@@ -1318,6 +1318,12 @@
         "description" : "Verify if the onboarded product is already onboarded for the institution",
         "operationId" : "verifyOnboardingInfoByFilters",
         "parameters" : [ {
+          "name" : "institutionType",
+          "in" : "query",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
           "name" : "origin",
           "in" : "query",
           "schema" : {
@@ -1334,12 +1340,6 @@
           "in" : "query",
           "schema" : {
             "type" : "string"
-          }
-        }, {
-          "name" : "soleTrader",
-          "in" : "query",
-          "schema" : {
-            "type" : "boolean"
           }
         }, {
           "name" : "subunitCode",
@@ -2753,7 +2753,7 @@
         }
       },
       "InstitutionType" : {
-        "enum" : [ "PA", "PG", "GSP", "SA", "PT", "SCP", "PSP", "AS", "REC", "CON", "PRV", "GPU", "PRV_PF", "SCEC" ],
+        "enum" : [ "PA", "PG", "GSP", "SA", "PT", "SCP", "PSP", "AS", "REC", "CON", "PRV", "PRV_PF", "GPU", "SCEC" ],
         "type" : "string"
       },
       "LocalDateTime" : {
@@ -2788,9 +2788,6 @@
             "type" : "string"
           },
           "signContract" : {
-            "type" : "boolean"
-          },
-          "soleTrader" : {
             "type" : "boolean"
           },
           "institution" : {
@@ -2840,9 +2837,6 @@
             "type" : "string"
           },
           "signContract" : {
-            "type" : "boolean"
-          },
-          "soleTrader" : {
             "type" : "boolean"
           },
           "institution" : {
@@ -3043,9 +3037,6 @@
           "signContract" : {
             "type" : "boolean"
           },
-          "soleTrader" : {
-            "type" : "boolean"
-          },
           "institution" : {
             "$ref" : "#/components/schemas/InstitutionBaseRequest"
           },
@@ -3086,6 +3077,9 @@
           },
           "digitalAddress" : {
             "type" : "string"
+          },
+          "skipVerifyLegal" : {
+            "type" : "boolean"
           }
         }
       },
@@ -3116,9 +3110,6 @@
             "type" : "string"
           },
           "signContract" : {
-            "type" : "boolean"
-          },
-          "soleTrader" : {
             "type" : "boolean"
           },
           "institution" : {

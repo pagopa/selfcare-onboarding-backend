@@ -1320,17 +1320,16 @@ class InstitutionServiceImplTest {
         final String productId = "productId";
         final String origin = "origin";
         final String originId = "originId";
-        final Boolean soleTrader = true;
         when(onboardingValidationStrategyMock.validate(productId, taxCode))
                 .thenReturn(true);
         // when
-        final Executable executable = () -> institutionService.verifyOnboarding(productId, taxCode, origin, originId, subunitCode, soleTrader);
+        final Executable executable = () -> institutionService.verifyOnboarding(productId, taxCode, origin, originId, subunitCode, InstitutionType.PA.name());
         // then
         assertDoesNotThrow(executable);
         verify(onboardingValidationStrategyMock, times(1))
                 .validate(productId, taxCode);
         verify(onboardingMsConnector, times(1))
-                .verifyOnboarding(productId, taxCode, origin, originId, subunitCode, soleTrader);
+                .verifyOnboarding(productId, taxCode, origin, originId, subunitCode, InstitutionType.PA.name());
         verifyNoMoreInteractions(onboardingValidationStrategyMock, onboardingMsConnector);
         verifyNoInteractions(productsConnectorMock, userConnectorMock);
     }

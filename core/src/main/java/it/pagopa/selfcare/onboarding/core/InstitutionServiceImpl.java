@@ -481,12 +481,12 @@ class InstitutionServiceImpl implements InstitutionService {
 
 
     @Override
-    public void verifyOnboarding(String productId, String taxCode, String origin, String originId, String subunitCode, Boolean soleTrader) {
+    public void verifyOnboarding(String productId, String taxCode, String origin, String originId, String subunitCode, String institutionType) {
         log.trace("verifyOnboardingSubunit start");
         validateParameter(taxCode, origin, originId, subunitCode);
         log.debug("verifyOnboardingSubunit taxCode = {}", taxCode);
         validateOnboarding(taxCode, productId);
-        onboardingMsConnector.verifyOnboarding(productId, taxCode, origin, originId, subunitCode, soleTrader);
+        onboardingMsConnector.verifyOnboarding(productId, taxCode, origin, originId, subunitCode, institutionType);
         log.trace("verifyOnboardingSubunit end");
     }
 

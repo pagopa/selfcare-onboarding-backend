@@ -208,33 +208,33 @@ public class InstitutionController {
     @Operation(summary = "${swagger.onboarding.institutions.api.verifyOnboarding}",
             description = "${swagger.onboarding.institutions.api.verifyOnboarding}", operationId = "verifyOnboardingUsingHEAD")
     public void verifyOnboarding(@ApiParam("${swagger.onboarding.institutions.model.taxCode}")
-                                 @RequestParam(value = "taxCode", required = false)
-                                 String taxCode,
+                                     @RequestParam(value = "taxCode", required = false)
+                                     String taxCode,
                                  @ApiParam("${swagger.onboarding.institutions.model.subunitCode}")
-                                 @RequestParam(value = "subunitCode", required = false)
-                                 String subunitCode,
+                                     @RequestParam(value = "subunitCode", required = false)
+                                     String subunitCode,
                                  @ApiParam("${swagger.onboarding.product.model.id}")
-                                 @RequestParam("productId")
-                                 String productId,
+                                     @RequestParam("productId")
+                                     String productId,
                                  @ApiParam("${swagger.onboarding.institutions.model.origin}")
-                                 @RequestParam(value = "origin", required = false)
-                                 String origin,
+                                     @RequestParam(value = "origin", required = false)
+                                     String origin,
                                  @ApiParam("${swagger.onboarding.institutions.model.originId}")
-                                 @RequestParam(value = "originId", required = false)
-                                 String originId,
+                                     @RequestParam(value = "originId", required = false)
+                                     String originId,
                                  @ApiParam("${swagger.onboarding.institutions.model.vatNumber}")
-                                 @RequestParam(value = "vatNumber", required = false)
-                                 Optional<String> vatNumber,
-                                 @ApiParam("${swagger.onboarding.institutions.model.soleTrader}")
-                                 @RequestParam(value = "soleTrader", required = false)
-                                 Boolean soleTrader,
+                                     @RequestParam(value = "vatNumber", required = false)
+                                     Optional<String> vatNumber,
+                                 @ApiParam("${swagger.onboarding.institutions.model.institutionType}")
+                                     @RequestParam(value = "institutionType", required = false)
+                                     String institutionType,
                                  @ApiParam("${swagger.onboarding.institutions.model.verifyType}")
-                                 @RequestParam(value = "verifyType", required = false) VerifyType type) {
+                                     @RequestParam(value = "verifyType", required = false) VerifyType type) {
         log.trace("verifyOnboarding start");
         if (VerifyType.EXTERNAL.equals(type) && vatNumber.isPresent() && (PROD_FD.getValue().equals(productId) || PROD_FD_GARANTITO.getValue().equals(productId))) {
             institutionService.checkOrganization(productId, taxCode, vatNumber.get());
         } else
-            institutionService.verifyOnboarding(productId, taxCode, origin, originId, subunitCode, soleTrader);
+            institutionService.verifyOnboarding(productId, taxCode, origin, originId, subunitCode, institutionType);
         log.trace("verifyOnboarding end");
     }
 

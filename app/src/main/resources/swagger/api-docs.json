@@ -1577,11 +1577,11 @@
             "type" : "string"
           }
         }, {
-          "name" : "soleTrader",
+          "name" : "institutionType",
           "in" : "query",
           "required" : false,
           "schema" : {
-            "type" : "boolean"
+            "type" : "string"
           }
         }, {
           "name" : "verifyType",
@@ -3561,9 +3561,6 @@
           },
           "payment" : {
             "$ref" : "#/components/schemas/PaymentDto"
-          },
-          "soleTrader" : {
-            "type" : "boolean"
           }
         }
       },
