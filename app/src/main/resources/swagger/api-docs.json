@@ -1,7 +1,7 @@
 {
   "openapi" : "3.0.1",
   "info" : {
-    "title" : "selc-onboarding",
+    "title" : "${openapi_title}",
     "description" : "Self Care OnBoarding API documentation",
     "contact" : {
       "name" : "PagoPA",
@@ -1577,6 +1577,13 @@
             "type" : "string"
           }
         }, {
+          "name" : "institutionType",
+          "in" : "query",
+          "required" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
           "name" : "verifyType",
           "in" : "query",
           "required" : false,
@@ -2675,7 +2682,7 @@
           "required" : false,
           "schema" : {
             "type" : "string",
-            "enum" : [ "PA", "PG", "GSP", "SA", "PT", "SCP", "PSP", "AS", "REC", "CON", "PRV", "GPU" ]
+            "enum" : [ "PA", "PG", "GSP", "SA", "PT", "SCP", "PSP", "AS", "REC", "CON", "PRV", "PRV_PF", "GPU", "SCEC" ]
           }
         } ],
         "responses" : {
@@ -2742,8 +2749,8 @@
     "/v1/institutions" : {
       "get" : {
         "tags" : [ "institution-controller" ],
-        "summary" : "The service retrieves all the onboarded institutions related to the logged user and product's identifier.  ",
-        "description" : "The service retrieves all the onboarded institutions related to the logged user and product's identifier.  ",
+        "summary" : "The service retrieves all the onboarded institutions related to the logged user and product's identifier.",
+        "description" : "The service retrieves all the onboarded institutions related to the logged user and product's identifier.",
         "operationId" : "getInstitutionsUsingGET",
         "parameters" : [ {
           "name" : "productId",
@@ -3490,7 +3497,7 @@
           },
           "institutionType" : {
             "type" : "string",
-            "enum" : [ "PA", "PG", "GSP", "SA", "PT", "SCP", "PSP", "AS", "REC", "CON", "PRV", "GPU" ]
+            "enum" : [ "PA", "PG", "GSP", "SA", "PT", "SCP", "PSP", "AS", "REC", "CON", "PRV", "PRV_PF", "GPU", "SCEC" ]
           },
           "origin" : {
             "type" : "string"
@@ -3645,7 +3652,7 @@
           },
           "institutionType" : {
             "type" : "string",
-            "enum" : [ "PA", "PG", "GSP", "SA", "PT", "SCP", "PSP", "AS", "REC", "CON", "PRV", "GPU" ]
+            "enum" : [ "PA", "PG", "GSP", "SA", "PT", "SCP", "PSP", "AS", "REC", "CON", "PRV", "PRV_PF", "GPU", "SCEC" ]
           },
           "productId" : {
             "type" : "string"
@@ -3844,7 +3851,7 @@
           },
           "institutionType" : {
             "type" : "string",
-            "enum" : [ "PA", "PG", "GSP", "SA", "PT", "SCP", "PSP", "AS", "REC", "CON", "PRV", "GPU" ]
+            "enum" : [ "PA", "PG", "GSP", "SA", "PT", "SCP", "PSP", "AS", "REC", "CON", "PRV", "PRV_PF", "GPU", "SCEC" ]
           },
           "productId" : {
             "type" : "string"
@@ -3900,7 +3907,7 @@
           },
           "institutionType" : {
             "type" : "string",
-            "enum" : [ "PA", "PG", "GSP", "SA", "PT", "SCP", "PSP", "AS", "REC", "CON", "PRV", "GPU" ]
+            "enum" : [ "PA", "PG", "GSP", "SA", "PT", "SCP", "PSP", "AS", "REC", "CON", "PRV", "PRV_PF", "GPU", "SCEC" ]
           },
           "origin" : {
             "type" : "string"
@@ -3929,7 +3936,7 @@
           },
           "institutionType" : {
             "type" : "string",
-            "enum" : [ "PA", "PG", "GSP", "SA", "PT", "SCP", "PSP", "AS", "REC", "CON", "PRV", "GPU" ]
+            "enum" : [ "PA", "PG", "GSP", "SA", "PT", "SCP", "PSP", "AS", "REC", "CON", "PRV", "PRV_PF", "GPU", "SCEC" ]
           },
           "origin" : {
             "type" : "string"
@@ -4428,7 +4435,7 @@
           },
           "institutionType" : {
             "type" : "string",
-            "enum" : [ "PA", "PG", "GSP", "SA", "PT", "SCP", "PSP", "AS", "REC", "CON", "PRV", "GPU" ]
+            "enum" : [ "PA", "PG", "GSP", "SA", "PT", "SCP", "PSP", "AS", "REC", "CON", "PRV", "PRV_PF", "GPU", "SCEC" ]
           },
           "billingData" : {
             "$ref" : "#/components/schemas/BillingDataResponseDto"

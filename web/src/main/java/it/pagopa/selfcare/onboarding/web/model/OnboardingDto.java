@@ -1,7 +1,7 @@
 package it.pagopa.selfcare.onboarding.web.model;
 
 import io.swagger.annotations.ApiModelProperty;
-import it.pagopa.selfcare.commons.base.utils.InstitutionType;
+import it.pagopa.selfcare.onboarding.common.InstitutionType;
 import lombok.Data;
 
 import jakarta.validation.Valid;

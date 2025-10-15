@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.pagopa.selfcare.commons.base.security.SelfCareUser;
 import it.pagopa.selfcare.commons.web.security.JwtAuthenticationToken;
+import it.pagopa.selfcare.onboarding.common.InstitutionType;
 import it.pagopa.selfcare.onboarding.connector.model.InstitutionLegalAddressData;
 import it.pagopa.selfcare.onboarding.connector.model.InstitutionOnboardingData;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.InstitutionInfo;
@@ -236,11 +237,11 @@ class InstitutionControllerTest {
     @Test
     void getInstitutions() throws Exception {
         //given
-        JwtAuthenticationToken mockPrincipal = Mockito.mock(JwtAuthenticationToken.class);
+        JwtAuthenticationToken mockPrincipal = mock(JwtAuthenticationToken.class);
         SelfCareUser selfCareUser = SelfCareUser.builder("example")
                 .fiscalCode("fiscalCode")
                 .build();
-        Mockito.when(mockPrincipal.getPrincipal()).thenReturn(selfCareUser);
+        when(mockPrincipal.getPrincipal()).thenReturn(selfCareUser);
 
         InstitutionInfo institutionInfo = mockInstance(new InstitutionInfo(), "setId");
         institutionInfo.setId(randomUUID().toString());
@@ -346,6 +347,7 @@ class InstitutionControllerTest {
         String subunitCode = "subunitCode";
         String origin = "origin";
         String originId = "originId";
+        String institutionType = InstitutionType.PA.name();
         //when
         mvc.perform(MockMvcRequestBuilders
                         .head(BASE_URL + "/onboarding")
@@ -354,21 +356,22 @@ class InstitutionControllerTest {
                         .queryParam("origin", origin)
                         .queryParam("originId", originId)
                         .queryParam("subunitCode", subunitCode)
+                        .queryParam("institutionType", institutionType)
                         .queryParam("verifyType", VerifyType.EXTERNAL.name())
                         .contentType(APPLICATION_JSON_VALUE)
                         .accept(APPLICATION_JSON_VALUE))
                 .andExpect(status().isNoContent());
         //then
-        verify(institutionServiceMock, times(1)).verifyOnboarding(productId, taxCode, origin, originId, subunitCode);
+        verify(institutionServiceMock, times(1)).verifyOnboarding(productId, taxCode, origin, originId, subunitCode, institutionType);
     }
     @Test
     void getInstitutionsByUserId() throws Exception {
         //given
-        JwtAuthenticationToken mockPrincipal = Mockito.mock(JwtAuthenticationToken.class);
+        JwtAuthenticationToken mockPrincipal = mock(JwtAuthenticationToken.class);
         SelfCareUser selfCareUser = SelfCareUser.builder("example")
                 .fiscalCode("fiscalCode")
                 .build();
-        Mockito.when(mockPrincipal.getPrincipal()).thenReturn(selfCareUser);
+        when(mockPrincipal.getPrincipal()).thenReturn(selfCareUser);
 
         List<BusinessInfoIC> businessInfoICSmock = List.of(mockInstance(new BusinessInfoIC()));
         InstitutionInfoIC institutionInfoICmock = mockInstance(new InstitutionInfoIC(), "setBusinesses");
