@@ -110,7 +110,6 @@ public class TokenV2Controller {
         log.debug(LogUtils.CONFIDENTIAL_MARKER, "complete Onboarding Users tokenId = {}, contract = {}", sanitizedOnboardingId, sanitizedFileName);
         tokenService.completeOnboardingUsers(onboardingId, contract);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-
     }
 
     /**
