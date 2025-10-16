@@ -71,8 +71,8 @@ class TokenV2ControllerTest {
      */
     @Test
     void shouldCompleteToken() throws Exception {
-
-        MockMultipartFile file = new MockMultipartFile("contract", "".getBytes());
+        MockMultipartFile file = new MockMultipartFile(
+                "contract", "hello.pdf", MediaType.APPLICATION_PDF_VALUE, "Hello, World!".getBytes());
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .multipart("/v2/tokens/{tokenId}/complete",
                         "42")
@@ -86,12 +86,13 @@ class TokenV2ControllerTest {
      */
     @Test
     void shouldCompleteOnboardingUsers() throws Exception {
+        MockMultipartFile file = new MockMultipartFile(
+                "contract", "hello.pdf", MediaType.APPLICATION_PDF_VALUE, "Hello, World!".getBytes());
 
-        MockMultipartFile file = new MockMultipartFile("contract", "".getBytes());
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
-                .multipart("/v2/tokens/{tokenId}/complete-onboarding-users",
-                        "42")
+                .multipart("/v2/tokens/{onboardingId}/complete-onboarding-users", "42")
                 .file(file);
+
         mvc.perform(requestBuilder)
                 .andExpect(MockMvcResultMatchers.status().isNoContent());
     }

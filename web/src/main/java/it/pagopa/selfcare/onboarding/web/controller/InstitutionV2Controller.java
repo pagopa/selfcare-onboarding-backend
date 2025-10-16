@@ -8,7 +8,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import it.pagopa.selfcare.commons.base.logging.LogUtils;
 import it.pagopa.selfcare.commons.base.security.SelfCareUser;
 import it.pagopa.selfcare.commons.web.model.Problem;
@@ -18,6 +17,7 @@ import it.pagopa.selfcare.onboarding.core.InstitutionService;
 import it.pagopa.selfcare.onboarding.web.model.*;
 import it.pagopa.selfcare.onboarding.web.model.mapper.InstitutionMapper;
 import it.pagopa.selfcare.onboarding.web.model.mapper.OnboardingResourceMapper;
+import it.pagopa.selfcare.onboarding.web.utils.FileValidationUtils;
 import jakarta.validation.Valid;
 import java.security.Principal;
 import java.util.List;
@@ -132,6 +132,8 @@ public class InstitutionV2Controller {
                                                         @RequestParam("productId") String productId){
         log.trace("Verify Aggregates Csv start");
         log.debug("Verify Aggregates Csv start for productId {}", productId);
+
+        FileValidationUtils.validateAggregatesFile(file);
         VerifyAggregatesResponse response = onboardingResourceMapper.toVerifyAggregatesResponse(institutionService.validateAggregatesCsv(file, productId));
         log.trace("Verify Aggregates Csv end");
         return response;
