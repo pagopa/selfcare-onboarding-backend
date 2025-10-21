@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.Principal;
 
+import it.pagopa.selfcare.onboarding.web.utils.FileValidationUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.owasp.encoder.Encode;
@@ -74,12 +75,12 @@ public class TokenV2Controller {
                                          @PathVariable(value = "onboardingId") String onboardingId,
                                          @RequestPart MultipartFile contract) {
         log.trace("complete Token start");
+        FileValidationUtils.validatePdfOrP7m(contract);
         String sanitizedFileName = Encode.forJava(contract.getOriginalFilename());
         String sanitizedOnboardingId = onboardingId.replaceAll("[^a-zA-Z0-9-_]", "");
         log.debug(LogUtils.CONFIDENTIAL_MARKER, "complete Token tokenId = {}, contract = {}", sanitizedOnboardingId, sanitizedFileName);
         tokenService.completeTokenV2(onboardingId, contract);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-
     }
 
     /**
@@ -103,12 +104,12 @@ public class TokenV2Controller {
                                                         @PathVariable(value = "onboardingId") String onboardingId,
                                                         @RequestPart MultipartFile contract) {
         log.trace("complete Onboarding Users start");
+        FileValidationUtils.validatePdfOrP7m(contract);
         String sanitizedFileName = Encode.forJava(contract.getOriginalFilename());
         String sanitizedOnboardingId = onboardingId.replaceAll("[^a-zA-Z0-9-_]", "");
         log.debug(LogUtils.CONFIDENTIAL_MARKER, "complete Onboarding Users tokenId = {}, contract = {}", sanitizedOnboardingId, sanitizedFileName);
         tokenService.completeOnboardingUsers(onboardingId, contract);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-
     }
 
     /**
