@@ -76,8 +76,11 @@ class FileValidationUtilsTest {
 
     @Test
     void validateFileNullFile() {
+        final List<String> extensions = List.of(".pdf");
+        final List<String> mimeTypes = List.of("application/pdf");
+
         assertThrows(IllegalArgumentException.class,
-                () -> FileValidationUtils.validateFile(null, List.of(".pdf"), List.of("application/pdf")));
+                () -> FileValidationUtils.validateFile(null, extensions, mimeTypes));
     }
 
     @Test
