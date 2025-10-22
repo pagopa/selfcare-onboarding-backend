@@ -203,14 +203,16 @@ public class InstitutionV2Controller {
         log.trace("onboardingUsersPgFromIcAndAde end");
     }
 
-    @GetMapping(value = "/onboarding-info")
+    @GetMapping(value = "/onboardings")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "${swagger.onboarding.institutions.api.onboardingInfo.summary}",
             description = "${swagger.onboarding.institutions.api.onboardingInfo.description}", operationId = "getOnboardingInfo")
-    public List<OnboardingResult> onboardingInfo(@RequestParam(value = "taxCode") String taxCode,
-                                                 @RequestParam(value = "status") String status) {
+    public List<OnboardingResult> getOnboardingsInfo(@RequestParam(value = "taxCode") String inputTaxCode,
+                                                     @RequestParam(value = "status") String inputStatus) {
         log.trace("onboardingInfo start");
-        log.debug("onboardingInfo request = {} - {}", Encode.forJava(taxCode), Encode.forJava(status));
+        String taxCode = Encode.forJava(inputTaxCode);
+        String status = Encode.forJava(inputStatus);
+        log.debug("onboardingInfo request = {} - {}", taxCode, status);
         List<OnboardingResult> results = institutionService.getOnboardingWithFilter(taxCode, status);
         log.trace("onboardingInfo end");
         return results;
