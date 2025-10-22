@@ -1,5 +1,6 @@
 package it.pagopa.selfcare.onboarding.web.utils;
 
+import it.pagopa.selfcare.onboarding.connector.exceptions.InvalidRequestException;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -49,7 +50,7 @@ public class FileValidationUtils {
 
     public static void validateFile(MultipartFile file, List<String> allowedExtensions, List<String> allowedMimeTypes) {
         if (file == null || file.isEmpty()) {
-            throw new IllegalArgumentException("Il file è vuoto o mancante.");
+            throw new InvalidRequestException("Il file è vuoto o mancante.");
         }
 
         final String filename = file.getOriginalFilename();
@@ -59,7 +60,7 @@ public class FileValidationUtils {
                 allowedExtensions.stream().anyMatch(ext -> filename != null && filename.toLowerCase().endsWith(ext));
 
         if (!isValid) {
-            throw new IllegalArgumentException("Formato file non supportato. Ammessi: " + allowedExtensions);
+            throw new InvalidRequestException("Formato file non supportato. Ammessi: " + allowedExtensions);
         }
     }
 }
