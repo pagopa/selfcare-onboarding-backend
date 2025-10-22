@@ -1,13 +1,5 @@
 package it.pagopa.selfcare.onboarding.core;
 
-import static it.pagopa.selfcare.commons.utils.TestUtils.mockInstance;
-import static it.pagopa.selfcare.onboarding.connector.model.user.User.Fields.*;
-import static it.pagopa.selfcare.onboarding.core.InstitutionServiceImpl.*;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.*;
-
 import it.pagopa.selfcare.commons.base.utils.Origin;
 import it.pagopa.selfcare.commons.base.utils.ProductId;
 import it.pagopa.selfcare.onboarding.common.InstitutionType;
@@ -15,10 +7,7 @@ import it.pagopa.selfcare.onboarding.common.PartyRole;
 import it.pagopa.selfcare.onboarding.connector.api.*;
 import it.pagopa.selfcare.onboarding.connector.exceptions.InvalidRequestException;
 import it.pagopa.selfcare.onboarding.connector.exceptions.ResourceNotFoundException;
-import it.pagopa.selfcare.onboarding.connector.model.InstitutionLegalAddressData;
-import it.pagopa.selfcare.onboarding.connector.model.InstitutionOnboardingData;
-import it.pagopa.selfcare.onboarding.connector.model.RecipientCodeStatusResult;
-import it.pagopa.selfcare.onboarding.connector.model.RelationshipState;
+import it.pagopa.selfcare.onboarding.connector.model.*;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.*;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.infocamere.BusinessInfoIC;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.infocamere.InstitutionInfoIC;
@@ -41,9 +30,6 @@ import it.pagopa.selfcare.product.entity.ProductStatus;
 import it.pagopa.selfcare.product.exception.ProductNotFoundException;
 import it.pagopa.selfcare.product.service.ProductService;
 import jakarta.validation.ValidationException;
-import java.time.OffsetDateTime;
-import java.util.*;
-import java.util.stream.Stream;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -58,6 +44,18 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.time.OffsetDateTime;
+import java.util.*;
+import java.util.stream.Stream;
+
+import static it.pagopa.selfcare.commons.utils.TestUtils.mockInstance;
+import static it.pagopa.selfcare.onboarding.connector.model.user.User.Fields.*;
+import static it.pagopa.selfcare.onboarding.core.InstitutionServiceImpl.*;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class InstitutionServiceImplTest {
@@ -913,7 +911,7 @@ class InstitutionServiceImplTest {
         verify(partyConnectorMock, times(1))
                 .getInstitutionsByTaxCodeAndSubunitCode(onboardingData.getTaxCode(), onboardingData.getSubunitCode());
         verify(partyConnectorMock, times(1))
-                .createInstitutionFromIpa(onboardingData.getTaxCode(),onboardingData.getSubunitCode(), onboardingData.getSubunitType());
+                .createInstitutionFromIpa(onboardingData.getTaxCode(), onboardingData.getSubunitCode(), onboardingData.getSubunitType());
         verify(productsConnectorMock, times(1))
                 .getProduct(onboardingData.getProductId(), onboardingData.getInstitutionType());
         verify(onboardingValidationStrategyMock, times(1))
@@ -987,7 +985,7 @@ class InstitutionServiceImplTest {
         verify(partyConnectorMock, times(1))
                 .getInstitutionsByTaxCodeAndSubunitCode(onboardingData.getTaxCode(), onboardingData.getSubunitCode());
         verify(partyConnectorMock, times(1))
-                .createInstitutionFromIpa(onboardingData.getTaxCode(),onboardingData.getSubunitCode(), onboardingData.getSubunitType());
+                .createInstitutionFromIpa(onboardingData.getTaxCode(), onboardingData.getSubunitCode(), onboardingData.getSubunitType());
         verify(productsConnectorMock, times(1))
                 .getProduct(onboardingData.getProductId(), onboardingData.getInstitutionType());
         verify(onboardingValidationStrategyMock, times(1))
@@ -1503,6 +1501,7 @@ class InstitutionServiceImplTest {
         assertEquals(REQUIRED_INSTITUTION_ID_MESSAGE, e.getMessage());
         verifyNoInteractions(partyConnectorMock, productsConnectorMock, userConnectorMock);
     }
+
     @Test
     void getInstitutionOnboardingDataById_nullProductId() {
         //given
@@ -1515,6 +1514,7 @@ class InstitutionServiceImplTest {
         assertEquals(A_PRODUCT_ID_IS_REQUIRED, e.getMessage());
         verifyNoInteractions(partyConnectorMock, productsConnectorMock, userConnectorMock);
     }
+
     @Test
     void getInstitutionOnboardingDataById_onboardingsNotFound() {
         //given
@@ -1700,6 +1700,7 @@ class InstitutionServiceImplTest {
         assertNotNull(institutionOnboardingData.getInstitution().getInstitutionLocation().getCity());
 
     }
+
     @Test
     void getInstitutionOnboardingData_NoLocationEC() {
         //given
@@ -1732,6 +1733,7 @@ class InstitutionServiceImplTest {
         assertNotNull(institutionOnboardingData.getInstitution().getInstitutionLocation().getCity());
 
     }
+
     @Test
     void getInstitutionOnboardingData_NoLocationAOO() {
         //given
@@ -1761,6 +1763,7 @@ class InstitutionServiceImplTest {
         assertNotNull(institutionOnboardingData.getInstitution().getInstitutionLocation());
         assertNotNull(institutionOnboardingData.getInstitution().getInstitutionLocation().getCity());
     }
+
     @Test
     void getInstitutionOnboardingData_NoLocationUO() {
         //given
@@ -1791,6 +1794,7 @@ class InstitutionServiceImplTest {
         assertNotNull(institutionOnboardingData.getInstitution().getInstitutionLocation().getCity());
 
     }
+
     @Test
     void getActiveOnboarding_shouldReturnActiveOnboardingInstitutions() {
         // given
@@ -1857,7 +1861,7 @@ class InstitutionServiceImplTest {
     }
 
     @Test
-    void getOnboardingData_locationNotFound(){
+    void getOnboardingData_locationNotFound() {
         //given
         String institutionId = "institutionId";
         String productId = "productId";
@@ -1885,6 +1889,7 @@ class InstitutionServiceImplTest {
         assertNotNull(institutionOnboardingData.getInstitution().getInstitutionLocation());
         assertNull(institutionOnboardingData.getInstitution().getInstitutionLocation().getCity());
     }
+
     @Test
     void getInstitutionOnboardingData() {
         //given
@@ -2037,6 +2042,37 @@ class InstitutionServiceImplTest {
         verifyNoMoreInteractions(onboardingMsConnector);
     }
 
+    @Test
+    void getOnboardingWithFilterTest_whenResponseIsEmpty() {
+        // Given
+        when(onboardingMsConnector.onboardingWithFilter(any(), any())).thenReturn(List.of());
+
+        // When
+        List<OnboardingResult> result = institutionService.getOnboardingWithFilter("test", "test");
+
+        // Then
+        assertTrue(result.isEmpty());
+        verify(onboardingMsConnector, times(1)).onboardingWithFilter(any(), any());
+        verifyNoMoreInteractions(onboardingMsConnector);
+    }
+
+    @Test
+    void getOnboardingWithFilterTest_whenResponseIsNotEmpty() {
+        // Given
+        OnboardingResult onboardingResult = new OnboardingResult();
+        onboardingResult.setId("test");
+        onboardingResult.setStatus("PENDING");
+        onboardingResult.setProductId("prod-testing");
+        when(onboardingMsConnector.onboardingWithFilter(any(), any())).thenReturn(List.of(onboardingResult));
+
+        // When
+        List<OnboardingResult> result = institutionService.getOnboardingWithFilter("test", "test");
+
+        // Then
+        assertFalse(result.isEmpty());
+        verify(onboardingMsConnector, times(1)).onboardingWithFilter(any(), any());
+        verifyNoMoreInteractions(onboardingMsConnector);
+    }
 
     private static InstitutionInfo createInstitutionInfoMock() {
         return false ? mockInstance(new InstitutionInfo()) : mockInstance(new InstitutionInfo(), "setInstitutionLocation");
