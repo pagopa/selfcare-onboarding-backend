@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import java.util.List;
+
+import it.pagopa.selfcare.onboarding.connector.exceptions.InvalidRequestException;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.web.multipart.MultipartFile;
@@ -27,7 +29,7 @@ class FileValidationUtilsTest {
     @Test
     void validateAggregatesFileError() {
         MultipartFile file = mockFile("test.txt", "text/plain", false);
-        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+        InvalidRequestException ex = assertThrows(InvalidRequestException.class,
                 () -> FileValidationUtils.validateAggregatesFile(file));
         assertTrue(ex.getMessage().contains("Formato file non supportato"));
     }
@@ -41,7 +43,7 @@ class FileValidationUtilsTest {
     @Test
     void validatePdfFileError() {
         MultipartFile file = mockFile("doc.csv", "text/csv", false);
-        assertThrows(IllegalArgumentException.class, () -> FileValidationUtils.validatePdfFile(file));
+        assertThrows(InvalidRequestException.class, () -> FileValidationUtils.validatePdfFile(file));
     }
 
     @Test
@@ -53,7 +55,7 @@ class FileValidationUtilsTest {
     @Test
     void validateP7mFileError() {
         MultipartFile file = mockFile("file.pdf", "application/pdf", false);
-        assertThrows(IllegalArgumentException.class, () -> FileValidationUtils.validateP7mFile(file));
+        assertThrows(InvalidRequestException.class, () -> FileValidationUtils.validateP7mFile(file));
     }
 
     @Test
@@ -71,7 +73,7 @@ class FileValidationUtilsTest {
     @Test
     void validatePdfOrP7Error() {
         MultipartFile file = mockFile("file.txt", "text/plain", false);
-        assertThrows(IllegalArgumentException.class, () -> FileValidationUtils.validatePdfOrP7m(file));
+        assertThrows(InvalidRequestException.class, () -> FileValidationUtils.validatePdfOrP7m(file));
     }
 
     @Test
@@ -79,14 +81,14 @@ class FileValidationUtilsTest {
         final List<String> extensions = List.of(".pdf");
         final List<String> mimeTypes = List.of("application/pdf");
 
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(InvalidRequestException.class,
                 () -> FileValidationUtils.validateFile(null, extensions, mimeTypes));
     }
 
     @Test
     void validateFileEmptyFile() {
         MultipartFile file = mockFile("empty.pdf", "application/pdf", true);
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(InvalidRequestException.class,
                 () -> FileValidationUtils.validateFile(file, List.of(".pdf"), List.of("application/pdf")));
     }
 
@@ -107,7 +109,7 @@ class FileValidationUtilsTest {
     @Test
     void validateFileErrorMime() {
         MultipartFile file = mockFile("data.txt", "text/plain", false);
-        assertThrows(IllegalArgumentException.class, () ->
+        assertThrows(InvalidRequestException.class, () ->
                 FileValidationUtils.validateFile(file, List.of(".pdf"), List.of("application/pdf")));
     }
 }
