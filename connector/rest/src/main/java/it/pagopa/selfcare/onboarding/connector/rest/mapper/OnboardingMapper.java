@@ -14,7 +14,6 @@ import org.mapstruct.Named;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring")
 public interface OnboardingMapper {
