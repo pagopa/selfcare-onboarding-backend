@@ -716,8 +716,10 @@ class InstitutionServiceImpl implements InstitutionService {
         }
     }
 
-    public List<OnboardingResult> getOnboardingWithFilter(String taxCode, String status) {
+    public List<OnboardingResult> getOnboardingWithFilter(String inputTaxCode, String inputStatus) {
         log.trace("getOnboardingWithFilter start");
+        String taxCode = Encode.forJava(inputTaxCode);
+        String status = Encode.forJava(inputStatus);
         log.debug("getOnboardingWithFilter with taxCode = {}, stauts = {}", taxCode, status);
         List<OnboardingResult> result =  onboardingMsConnector.onboardingWithFilter(taxCode, status);
         log.trace("getOnboardingWithFilter end");
