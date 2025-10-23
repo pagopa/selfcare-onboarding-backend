@@ -2263,6 +2263,91 @@
         } ]
       }
     },
+    "/v2/institutions/onboardings" : {
+      "get" : {
+        "tags" : [ "institution-v-2-controller" ],
+        "summary" : "Retrieve onboarding information for an institution filtered by tax code and status",
+        "description" : "Returns a list of onboarding processes associated with the institution identified by the provided tax code. The results can be filtered by the onboarding status. Each item in the response contains key details such as the onboarding ID, related product, and current status.",
+        "operationId" : "getOnboardingInfo",
+        "parameters" : [ {
+          "name" : "taxCode",
+          "in" : "query",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "status",
+          "in" : "query",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/OnboardingResult"
+                  }
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad Request",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "type" : "object",
+                  "description" : "Generic problem response"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Unauthorized",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "type" : "object",
+                  "description" : "Generic problem response"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "Not Found",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "type" : "object",
+                  "description" : "Generic problem response"
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "Internal Server Error",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "type" : "object",
+                  "description" : "Generic problem response"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ "global" ]
+        } ]
+      }
+    },
     "/v2/institutions/onboarding/recipient-code/verification" : {
       "get" : {
         "tags" : [ "institution-v-2-controller" ],
@@ -4238,6 +4323,20 @@
           "userRole" : {
             "type" : "string",
             "enum" : [ "ADMIN", "LIMITED", "ADMIN_EA" ]
+          }
+        }
+      },
+      "OnboardingResult" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string"
+          },
+          "status" : {
+            "type" : "string"
+          },
+          "productId" : {
+            "type" : "string"
           }
         }
       },

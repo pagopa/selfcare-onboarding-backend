@@ -1,8 +1,5 @@
 package it.pagopa.selfcare.onboarding.core;
 
-import static io.netty.util.internal.StringUtil.isNullOrEmpty;
-import static it.pagopa.selfcare.onboarding.connector.model.user.User.Fields.*;
-
 import it.pagopa.selfcare.commons.base.logging.LogUtils;
 import it.pagopa.selfcare.commons.base.utils.Origin;
 import it.pagopa.selfcare.onboarding.common.InstitutionType;
@@ -10,10 +7,7 @@ import it.pagopa.selfcare.onboarding.common.PartyRole;
 import it.pagopa.selfcare.onboarding.connector.api.*;
 import it.pagopa.selfcare.onboarding.connector.exceptions.InvalidRequestException;
 import it.pagopa.selfcare.onboarding.connector.exceptions.ResourceNotFoundException;
-import it.pagopa.selfcare.onboarding.connector.model.InstitutionLegalAddressData;
-import it.pagopa.selfcare.onboarding.connector.model.InstitutionOnboardingData;
-import it.pagopa.selfcare.onboarding.connector.model.RecipientCodeStatusResult;
-import it.pagopa.selfcare.onboarding.connector.model.RelationshipState;
+import it.pagopa.selfcare.onboarding.connector.model.*;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.*;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.infocamere.BusinessInfoIC;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.infocamere.InstitutionInfoIC;
@@ -36,7 +30,6 @@ import it.pagopa.selfcare.product.entity.ProductRoleInfo;
 import it.pagopa.selfcare.product.entity.ProductStatus;
 import it.pagopa.selfcare.product.exception.ProductNotFoundException;
 import it.pagopa.selfcare.product.service.ProductService;
-import java.util.*;
 import jakarta.validation.ValidationException;
 import lombok.extern.slf4j.Slf4j;
 import org.owasp.encoder.Encode;
@@ -45,6 +38,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.*;
+
+import static io.netty.util.internal.StringUtil.isNullOrEmpty;
+import static it.pagopa.selfcare.onboarding.connector.model.user.User.Fields.*;
 
 @Slf4j
 @Service
@@ -716,6 +714,16 @@ class InstitutionServiceImpl implements InstitutionService {
                 log.warn("Error while searching institution {} on IPA, {} ", institutionInfo.getDescription(), e.getMessage());
             }
         }
+    }
+
+    public List<OnboardingResult> getOnboardingWithFilter(String inputTaxCode, String inputStatus) {
+        log.trace("getOnboardingWithFilter start");
+        String taxCode = Encode.forJava(inputTaxCode);
+        String status = Encode.forJava(inputStatus);
+        log.debug("getOnboardingWithFilter with taxCode = {}, stauts = {}", taxCode, status);
+        List<OnboardingResult> result =  onboardingMsConnector.onboardingWithFilter(taxCode, status);
+        log.trace("getOnboardingWithFilter end");
+        return result;
     }
 
 }

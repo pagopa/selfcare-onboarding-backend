@@ -1,6 +1,7 @@
 package it.pagopa.selfcare.onboarding.connector.rest.mapper;
 
 
+import it.pagopa.selfcare.onboarding.connector.model.OnboardingResult;
 import it.pagopa.selfcare.onboarding.connector.model.RecipientCodeStatusResult;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.VerifyAggregateResult;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.*;
@@ -10,6 +11,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -142,4 +144,21 @@ public interface OnboardingMapper {
     RecipientCodeStatusResult toRecipientCodeStatusResult(RecipientCodeStatus recipientCodeStatus);
 
     OnboardingUserPgRequest toOnboardingUserPgRequest(OnboardingData onboardingData);
+
+   default List<OnboardingResult> toOnboardingWithFilter(OnboardingGetResponse onboardingGetResponse) {
+        if (onboardingGetResponse == null || onboardingGetResponse.getItems() == null) {
+            return List.of();
+        }
+
+        return onboardingGetResponse.getItems().stream()
+                .filter(Objects::nonNull)
+                .map(current -> {
+                    OnboardingResult onboarding = new OnboardingResult();
+                    onboarding.setId(current.getId());
+                    onboarding.setProductId(current.getProductId());
+                    onboarding.setStatus(current.getStatus());
+                    return onboarding;
+                })
+                .toList();
+    }
 }

@@ -1,5 +1,6 @@
 package it.pagopa.selfcare.onboarding.connector.api;
 
+import it.pagopa.selfcare.onboarding.connector.model.OnboardingResult;
 import it.pagopa.selfcare.onboarding.connector.model.RecipientCodeStatusResult;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.VerifyAggregateResult;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.CheckManagerData;
@@ -53,4 +54,5 @@ public interface OnboardingMsConnector {
 
     void onboardingUsersPgFromIcAndAde(OnboardingData onboardingUserPgRequest);
 
+    List<OnboardingResult> onboardingWithFilter(String taxCode, String status);
 }
