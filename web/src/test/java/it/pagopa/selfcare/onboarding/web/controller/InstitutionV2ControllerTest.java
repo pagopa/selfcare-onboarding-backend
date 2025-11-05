@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import it.pagopa.selfcare.commons.base.security.SelfCareUser;
 import it.pagopa.selfcare.commons.base.utils.ProductId;
 import it.pagopa.selfcare.commons.web.security.JwtAuthenticationToken;
+import it.pagopa.selfcare.onboarding.common.InstitutionType;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.ManagerVerification;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.InstitutionOnboarding;
@@ -30,7 +31,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import it.pagopa.selfcare.onboarding.common.InstitutionType;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.OffsetDateTime;
@@ -39,7 +39,8 @@ import java.util.UUID;
 
 import static it.pagopa.selfcare.commons.utils.TestUtils.mockInstance;
 import static org.hamcrest.Matchers.emptyString;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -70,16 +71,9 @@ class InstitutionV2ControllerTest {
         String institutionId = "institutionId";
         String productId = "productId";
         // when
-        mvc.perform(MockMvcRequestBuilders
-                        .post(BASE_URL + "/onboarding", institutionId, productId)
-                        .content(onboardingDto.getInputStream().readAllBytes())
-                        .contentType(APPLICATION_JSON_VALUE)
-                        .accept(APPLICATION_JSON_VALUE))
-                .andExpect(status().isCreated())
-                .andExpect(content().string(emptyString()));
+        mvc.perform(MockMvcRequestBuilders.post(BASE_URL + "/onboarding", institutionId, productId).content(onboardingDto.getInputStream().readAllBytes()).contentType(APPLICATION_JSON_VALUE).accept(APPLICATION_JSON_VALUE)).andExpect(status().isCreated()).andExpect(content().string(emptyString()));
         // then
-        verify(institutionServiceMock, times(1))
-                .onboardingProductV2(any(OnboardingData.class));
+        verify(institutionServiceMock, times(1)).onboardingProductV2(any(OnboardingData.class));
         verifyNoMoreInteractions(institutionServiceMock);
     }
 
@@ -89,16 +83,9 @@ class InstitutionV2ControllerTest {
         String institutionId = "institutionId";
         String productId = "productId";
         // when
-        mvc.perform(MockMvcRequestBuilders
-                        .post(BASE_URL + "/onboarding", institutionId, productId)
-                        .content(onboardingDto.getInputStream().readAllBytes())
-                        .contentType(APPLICATION_JSON_VALUE)
-                        .accept(APPLICATION_JSON_VALUE))
-                .andExpect(status().isCreated())
-                .andExpect(content().string(emptyString()));
+        mvc.perform(MockMvcRequestBuilders.post(BASE_URL + "/onboarding", institutionId, productId).content(onboardingDto.getInputStream().readAllBytes()).contentType(APPLICATION_JSON_VALUE).accept(APPLICATION_JSON_VALUE)).andExpect(status().isCreated()).andExpect(content().string(emptyString()));
         // then
-        verify(institutionServiceMock, times(1))
-                .onboardingPaAggregator(any(OnboardingData.class));
+        verify(institutionServiceMock, times(1)).onboardingPaAggregator(any(OnboardingData.class));
         verifyNoMoreInteractions(institutionServiceMock);
     }
 
@@ -107,23 +94,13 @@ class InstitutionV2ControllerTest {
     void onboardingCompany(@Value("classpath:stubs/onboardingCompanyDto.json") Resource onboardingDto) throws Exception {
         //given
         JwtAuthenticationToken mockPrincipal = Mockito.mock(JwtAuthenticationToken.class);
-        SelfCareUser selfCareUser = SelfCareUser.builder("example")
-                .fiscalCode("fiscalCode")
-                .build();
+        SelfCareUser selfCareUser = SelfCareUser.builder("example").fiscalCode("fiscalCode").build();
         Mockito.when(mockPrincipal.getPrincipal()).thenReturn(selfCareUser);
         // when
-        mvc.perform(MockMvcRequestBuilders
-                        .post(BASE_URL + "/company/onboarding")
-                        .principal(mockPrincipal)
-                        .content(onboardingDto.getInputStream().readAllBytes())
-                        .contentType(APPLICATION_JSON_VALUE)
-                        .accept(APPLICATION_JSON_VALUE))
-                .andExpect(status().isCreated())
-                .andExpect(content().string(emptyString()));
+        mvc.perform(MockMvcRequestBuilders.post(BASE_URL + "/company/onboarding").principal(mockPrincipal).content(onboardingDto.getInputStream().readAllBytes()).contentType(APPLICATION_JSON_VALUE).accept(APPLICATION_JSON_VALUE)).andExpect(status().isCreated()).andExpect(content().string(emptyString()));
         // then
 
-        verify(institutionServiceMock, times(1))
-                .onboardingCompanyV2(any(OnboardingData.class), anyString());
+        verify(institutionServiceMock, times(1)).onboardingCompanyV2(any(OnboardingData.class), anyString());
         verifyNoMoreInteractions(institutionServiceMock);
     }
 
@@ -141,20 +118,13 @@ class InstitutionV2ControllerTest {
         institution.setDescription("description");
         institution.setInstitutionType(InstitutionType.PA);
         institution.setId(UUID.randomUUID().toString());
-        when(institutionServiceMock.getByFilters(productId, null, origin, originId, null))
-                .thenReturn(List.of(institution));
+        when(institutionServiceMock.getByFilters(productId, null, origin, originId, null)).thenReturn(List.of(institution));
         // when
-        MvcResult result = mvc.perform(MockMvcRequestBuilders
-                        .get(BASE_URL + "?origin={origin}&originId={originId}&productId={productId}", origin, originId, productId)
-                        .contentType(APPLICATION_JSON_VALUE)
-                        .accept(APPLICATION_JSON_VALUE))
-                .andExpect(status().isOk())
-                .andReturn();
+        MvcResult result = mvc.perform(MockMvcRequestBuilders.get(BASE_URL + "?origin={origin}&originId={originId}&productId={productId}", origin, originId, productId).contentType(APPLICATION_JSON_VALUE).accept(APPLICATION_JSON_VALUE)).andExpect(status().isOk()).andReturn();
 
         // then
-        List<Institution> response = objectMapper.readValue(
-                result.getResponse().getContentAsString(),
-                new TypeReference<>() {});
+        List<Institution> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
+        });
         assertNotNull(response);
         assertEquals(1, response.size());
         assertEquals(institution.getDescription(), response.get(0).getDescription());
@@ -170,30 +140,17 @@ class InstitutionV2ControllerTest {
         final String origin = "origin";
         final String originId = "originId";
         // when
-        mvc.perform(MockMvcRequestBuilders
-                        .get(BASE_URL + "?origin={origin}&originId={originId}", origin, originId)
-                        .contentType(APPLICATION_JSON_VALUE)
-                        .accept(APPLICATION_JSON_VALUE))
-                .andExpect(status().isBadRequest());
+        mvc.perform(MockMvcRequestBuilders.get(BASE_URL + "?origin={origin}&originId={originId}", origin, originId).contentType(APPLICATION_JSON_VALUE).accept(APPLICATION_JSON_VALUE)).andExpect(status().isBadRequest());
 
     }
 
     @Test
     void verifyAggregatesCsvSuccess() throws Exception {
         // Given
-        MockMultipartFile file = new MockMultipartFile(
-                "aggregates",
-                "hello.csv",
-                "text/csv",
-                "Hello world".getBytes()
-        );
+        MockMultipartFile file = new MockMultipartFile("aggregates", "hello.csv", "text/csv", "Hello world".getBytes());
 
         // When
-        mvc.perform(MockMvcRequestBuilders.multipart(BASE_URL + "/onboarding/aggregation/verification")
-                        .file(file)
-                        .param("productId", ProductId.PROD_PAGOPA.getValue())
-                        .contentType(MediaType.MULTIPART_FORM_DATA))
-                .andExpect(status().isOk());
+        mvc.perform(MockMvcRequestBuilders.multipart(BASE_URL + "/onboarding/aggregation/verification").file(file).param("productId", ProductId.PROD_PAGOPA.getValue()).contentType(MediaType.MULTIPART_FORM_DATA)).andExpect(status().isOk());
 
         // Then
         verify(institutionServiceMock, times(1)).validateAggregatesCsv(any(MultipartFile.class), anyString());
@@ -206,11 +163,7 @@ class InstitutionV2ControllerTest {
         MultipartFile file = new MockMultipartFile("file", "hello.tsxt", MediaType.TEXT_PLAIN_VALUE, "Hello, World!".getBytes());
 
         // When
-        mvc.perform(MockMvcRequestBuilders.multipart(BASE_URL + "/onboarding/aggregation/verification")
-                        .file("aggregates", file.getBytes())
-                        .param("productId", ProductId.PROD_PAGOPA.getValue())
-                        .contentType(MediaType.MULTIPART_FORM_DATA_VALUE))
-                .andExpect(status().isInternalServerError());
+        mvc.perform(MockMvcRequestBuilders.multipart(BASE_URL + "/onboarding/aggregation/verification").file("aggregates", file.getBytes()).param("productId", ProductId.PROD_PAGOPA.getValue()).contentType(MediaType.MULTIPART_FORM_DATA_VALUE)).andExpect(status().isInternalServerError());
 
         // Then
         verifyNoInteractions(institutionServiceMock);
@@ -220,9 +173,7 @@ class InstitutionV2ControllerTest {
     void verifyManager_success() throws Exception {
         // given
         JwtAuthenticationToken mockPrincipal = Mockito.mock(JwtAuthenticationToken.class);
-        SelfCareUser selfCareUser = SelfCareUser.builder("example")
-                .fiscalCode("fiscalCode")
-                .build();
+        SelfCareUser selfCareUser = SelfCareUser.builder("example").fiscalCode("fiscalCode").build();
         Mockito.when(mockPrincipal.getPrincipal()).thenReturn(selfCareUser);
 
         VerifyManagerRequest verifyManagerRequest = new VerifyManagerRequest();
@@ -234,14 +185,7 @@ class InstitutionV2ControllerTest {
         when(institutionServiceMock.verifyManager(anyString(), anyString())).thenReturn(managerVerification);
 
         // when
-        MvcResult result = mvc.perform(MockMvcRequestBuilders
-                        .post(BASE_URL + "/company/verify-manager")
-                        .content(objectMapper.writeValueAsString(verifyManagerRequest))
-                        .principal(mockPrincipal)
-                        .contentType(APPLICATION_JSON_VALUE)
-                        .accept(APPLICATION_JSON_VALUE))
-                .andExpect(status().isOk())
-                .andReturn();
+        MvcResult result = mvc.perform(MockMvcRequestBuilders.post(BASE_URL + "/company/verify-manager").content(objectMapper.writeValueAsString(verifyManagerRequest)).principal(mockPrincipal).contentType(APPLICATION_JSON_VALUE).accept(APPLICATION_JSON_VALUE)).andExpect(status().isOk()).andReturn();
 
         // then
         VerifyManagerResponse response = objectMapper.readValue(result.getResponse().getContentAsString(), VerifyManagerResponse.class);
@@ -256,21 +200,13 @@ class InstitutionV2ControllerTest {
     void verifyManager_invalidRequest() throws Exception {
         // given
         JwtAuthenticationToken mockPrincipal = Mockito.mock(JwtAuthenticationToken.class);
-        SelfCareUser selfCareUser = SelfCareUser.builder("example")
-                .fiscalCode("fiscalCode")
-                .build();
+        SelfCareUser selfCareUser = SelfCareUser.builder("example").fiscalCode("fiscalCode").build();
         Mockito.when(mockPrincipal.getPrincipal()).thenReturn(selfCareUser);
 
         VerifyManagerRequest request = new VerifyManagerRequest();
 
         // when
-        mvc.perform(MockMvcRequestBuilders
-                        .post(BASE_URL + "/company/verify-manager")
-                        .principal(mockPrincipal)
-                        .content(objectMapper.writeValueAsString(request))
-                        .contentType(APPLICATION_JSON_VALUE)
-                        .accept(APPLICATION_JSON_VALUE))
-                .andExpect(status().isBadRequest());
+        mvc.perform(MockMvcRequestBuilders.post(BASE_URL + "/company/verify-manager").principal(mockPrincipal).content(objectMapper.writeValueAsString(request)).contentType(APPLICATION_JSON_VALUE).accept(APPLICATION_JSON_VALUE)).andExpect(status().isBadRequest());
     }
 
     @Test
@@ -285,26 +221,16 @@ class InstitutionV2ControllerTest {
         Institution institution = new Institution();
         institution.setOnboarding(List.of(onboarding));
 
-        when(institutionServiceMock.getActiveOnboarding(taxCode, productId, null))
-                .thenReturn(List.of(institution));
+        when(institutionServiceMock.getActiveOnboarding(taxCode, productId, null)).thenReturn(List.of(institution));
         InstitutionOnboardingResource onboardingResource = new InstitutionOnboardingResource();
         onboardingResource.setInstitutionId(institution.getId());
 
         // when
-        MvcResult result = mvc.perform(MockMvcRequestBuilders
-                        .get(BASE_URL + "/onboarding/active")
-                        .param("taxCode", taxCode)
-                        .param("productId", productId)
-                        .contentType(APPLICATION_JSON_VALUE)
-                        .accept(APPLICATION_JSON_VALUE))
-                .andExpect(status().isOk())
-                .andReturn();
+        MvcResult result = mvc.perform(MockMvcRequestBuilders.get(BASE_URL + "/onboarding/active").param("taxCode", taxCode).param("productId", productId).contentType(APPLICATION_JSON_VALUE).accept(APPLICATION_JSON_VALUE)).andExpect(status().isOk()).andReturn();
 
         // then
-        List<InstitutionOnboardingResource> response = objectMapper.readValue(
-                result.getResponse().getContentAsString(),
-                new TypeReference<>() {
-                });
+        List<InstitutionOnboardingResource> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
+        });
         assertNotNull(response);
         assertEquals(1, response.size());
         assertEquals(response.get(0).getInstitutionId(), onboardingResource.getInstitutionId());
@@ -316,12 +242,7 @@ class InstitutionV2ControllerTest {
         String taxCode = "";
 
         // when
-        mvc.perform(MockMvcRequestBuilders
-                        .get(BASE_URL + "/onboarding/active")
-                        .param("taxCode", taxCode)
-                        .contentType(APPLICATION_JSON_VALUE)
-                        .accept(APPLICATION_JSON_VALUE))
-                .andExpect(status().isBadRequest());
+        mvc.perform(MockMvcRequestBuilders.get(BASE_URL + "/onboarding/active").param("taxCode", taxCode).contentType(APPLICATION_JSON_VALUE).accept(APPLICATION_JSON_VALUE)).andExpect(status().isBadRequest());
     }
 
     @Test
@@ -331,13 +252,7 @@ class InstitutionV2ControllerTest {
         String productId = "";
 
         // when
-        mvc.perform(MockMvcRequestBuilders
-                        .get(BASE_URL + "/onboarding/active")
-                        .param("taxCode", taxCode)
-                        .param("productId", productId)
-                        .contentType(APPLICATION_JSON_VALUE)
-                        .accept(APPLICATION_JSON_VALUE))
-                .andExpect(status().isInternalServerError());
+        mvc.perform(MockMvcRequestBuilders.get(BASE_URL + "/onboarding/active").param("taxCode", taxCode).param("productId", productId).contentType(APPLICATION_JSON_VALUE).accept(APPLICATION_JSON_VALUE)).andExpect(status().isInternalServerError());
     }
 
     @Test
@@ -347,13 +262,7 @@ class InstitutionV2ControllerTest {
         String productId = "validProductId";
 
         // when
-        mvc.perform(MockMvcRequestBuilders
-                        .get(BASE_URL + "/onboarding/active")
-                        .param("taxCode", taxCode)
-                        .param("productId", productId)
-                        .contentType(APPLICATION_JSON_VALUE)
-                        .accept(APPLICATION_JSON_VALUE))
-                .andExpect(status().isBadRequest());
+        mvc.perform(MockMvcRequestBuilders.get(BASE_URL + "/onboarding/active").param("taxCode", taxCode).param("productId", productId).contentType(APPLICATION_JSON_VALUE).accept(APPLICATION_JSON_VALUE)).andExpect(status().isBadRequest());
     }
 
     @Test
@@ -363,51 +272,36 @@ class InstitutionV2ControllerTest {
         String productId = null;
 
         // when
-        mvc.perform(MockMvcRequestBuilders
-                        .get(BASE_URL + "/onboarding/active")
-                        .param("taxCode", taxCode)
-                        .param("productId", productId)
-                        .contentType(APPLICATION_JSON_VALUE)
-                        .accept(APPLICATION_JSON_VALUE))
-                .andExpect(status().isBadRequest());
+        mvc.perform(MockMvcRequestBuilders.get(BASE_URL + "/onboarding/active").param("taxCode", taxCode).param("productId", productId).contentType(APPLICATION_JSON_VALUE).accept(APPLICATION_JSON_VALUE)).andExpect(status().isBadRequest());
     }
 
     @Test
     void verifyAggregatesCsvFailure() throws Exception {
         // Given
-        MockMultipartFile  file = new MockMultipartFile("file", "hello.txt", MediaType.TEXT_PLAIN_VALUE, "Hello, World!".getBytes());
+        MockMultipartFile file = new MockMultipartFile("file", "hello.txt", MediaType.TEXT_PLAIN_VALUE, "Hello, World!".getBytes());
 
         doThrow(new RuntimeException()).when(institutionServiceMock).validateAggregatesCsv(any(MultipartFile.class), anyString());
 
         // When
-        mvc.perform(MockMvcRequestBuilders.multipart(BASE_URL + "/onboarding/aggregation/verification")
-                        .file(file)
-                        .param("productId", ProductId.PROD_PAGOPA.name())
-                        .contentType(MediaType.MULTIPART_FORM_DATA_VALUE))
-                .andExpect(status().isBadRequest());
+        mvc.perform(MockMvcRequestBuilders.multipart(BASE_URL + "/onboarding/aggregation/verification").file(file).param("productId", ProductId.PROD_PAGOPA.name()).contentType(MediaType.MULTIPART_FORM_DATA_VALUE)).andExpect(status().isBadRequest());
 
         // Then
         verifyNoInteractions(institutionServiceMock);
     }
 
-  @Test
-  void verifyRecipientCode() throws Exception {
-    // Given
-    String recipientCode = "recipientCode";
-    String originId = "originId";
+    @Test
+    void verifyRecipientCode() throws Exception {
+        // Given
+        String recipientCode = "recipientCode";
+        String originId = "originId";
 
-    // When
-    mvc.perform(
-            MockMvcRequestBuilders.get(BASE_URL + "/onboarding/recipient-code/verification")
-                .queryParam("recipientCode", recipientCode)
-                .queryParam("originId", originId)
-                .contentType(APPLICATION_JSON_VALUE))
-        .andExpect(status().isOk());
+        // When
+        mvc.perform(MockMvcRequestBuilders.get(BASE_URL + "/onboarding/recipient-code/verification").queryParam("recipientCode", recipientCode).queryParam("originId", originId).contentType(APPLICATION_JSON_VALUE)).andExpect(status().isOk());
 
-    // Then
-    verify(institutionServiceMock, times(1)).checkRecipientCode(any(), any());
-    verifyNoMoreInteractions(institutionServiceMock);
-  }
+        // Then
+        verify(institutionServiceMock, times(1)).checkRecipientCode(any(), any());
+        verifyNoMoreInteractions(institutionServiceMock);
+    }
 
     @Test
     void onboardingUsersPgFromIcAndAde_success() throws Exception {
@@ -420,15 +314,25 @@ class InstitutionV2ControllerTest {
 
 
         // when
-        mvc.perform(MockMvcRequestBuilders
-                        .post(BASE_URL + "/onboarding/users/pg")
-                        .content(objectMapper.writeValueAsString(onboardingData))
-                        .contentType(APPLICATION_JSON_VALUE)
-                        .accept(APPLICATION_JSON_VALUE))
-                .andExpect(status().isOk());
+        mvc.perform(MockMvcRequestBuilders.post(BASE_URL + "/onboarding/users/pg").content(objectMapper.writeValueAsString(onboardingData)).contentType(APPLICATION_JSON_VALUE).accept(APPLICATION_JSON_VALUE)).andExpect(status().isOk());
 
         // then
         verify(institutionServiceMock, times(1)).onboardingUsersPgFromIcAndAde(any(OnboardingData.class));
         verifyNoMoreInteractions(institutionServiceMock);
     }
+
+    @Test
+    void getOnboardingsInfo() throws Exception {
+        // Given
+        String taxCode = "taxCode";
+        String status = "status";
+
+        // When
+        mvc.perform(MockMvcRequestBuilders.get(BASE_URL + "/onboardings").queryParam("taxCode", taxCode).queryParam("status", status).contentType(APPLICATION_JSON_VALUE)).andExpect(status().isOk());
+
+        // Then
+        verify(institutionServiceMock, times(1)).getOnboardingWithFilter(any(), any());
+        verifyNoMoreInteractions(institutionServiceMock);
+    }
+
 }

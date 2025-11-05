@@ -2,6 +2,7 @@ package it.pagopa.selfcare.onboarding.core;
 
 import it.pagopa.selfcare.onboarding.connector.model.InstitutionLegalAddressData;
 import it.pagopa.selfcare.onboarding.connector.model.InstitutionOnboardingData;
+import it.pagopa.selfcare.onboarding.connector.model.OnboardingResult;
 import it.pagopa.selfcare.onboarding.connector.model.RecipientCodeStatusResult;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.*;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.infocamere.InstitutionInfoIC;
@@ -55,4 +56,6 @@ public interface InstitutionService {
     void onboardingUsersPgFromIcAndAde(OnboardingData onboardingUserPgRequest);
 
     ManagerVerification verifyManager(String taxCode, String companyTaxCode);
+
+    List<OnboardingResult> getOnboardingWithFilter(String taxCode, String status);
 }

@@ -5,19 +5,18 @@ import it.pagopa.selfcare.onboarding.common.InstitutionPaSubunitType;
 import it.pagopa.selfcare.onboarding.common.InstitutionType;
 import it.pagopa.selfcare.onboarding.connector.api.OnboardingMsConnector;
 import it.pagopa.selfcare.onboarding.connector.exceptions.InvalidRequestException;
+import it.pagopa.selfcare.onboarding.connector.model.OnboardingResult;
 import it.pagopa.selfcare.onboarding.connector.model.RecipientCodeStatusResult;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.VerifyAggregateResult;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.CheckManagerData;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
 import it.pagopa.selfcare.onboarding.connector.rest.client.*;
 import it.pagopa.selfcare.onboarding.connector.rest.mapper.OnboardingMapper;
-import it.pagopa.selfcare.onboarding.generated.openapi.v1.dto.OnboardingGet;
-import it.pagopa.selfcare.onboarding.generated.openapi.v1.dto.OnboardingResponse;
-import it.pagopa.selfcare.onboarding.generated.openapi.v1.dto.OnboardingStatus;
-import it.pagopa.selfcare.onboarding.generated.openapi.v1.dto.ReasonRequest;
+import it.pagopa.selfcare.onboarding.generated.openapi.v1.dto.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
@@ -219,4 +218,26 @@ public class OnboardingMsConnectorImpl implements OnboardingMsConnector {
         msOnboardingApiClient._onboardingUsersPg(onboardingMapper.toOnboardingUserPgRequest(onboardingData));
         log.trace("onboardingUsersPgFromIcAndAde end");
     }
+
+    @Override
+    public List<OnboardingResult> onboardingWithFilter(String taxCode, String status) {
+        log.trace("onboardingWithFilter start");
+        ResponseEntity<OnboardingGetResponse> response = msOnboardingApiClient._getOnboardingWithFilter( null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                status,
+                null,
+                taxCode,
+                null,
+                null);
+        List<OnboardingResult> onboardingResults = onboardingMapper.toOnboardingWithFilter(response.getBody());
+        log.trace("onboardingWithFilter end");
+        return onboardingResults;
+    }
+
 }

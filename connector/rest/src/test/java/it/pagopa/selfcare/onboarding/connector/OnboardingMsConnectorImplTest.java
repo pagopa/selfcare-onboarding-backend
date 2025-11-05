@@ -2,6 +2,7 @@ package it.pagopa.selfcare.onboarding.connector;
 
 import it.pagopa.selfcare.onboarding.common.InstitutionType;
 import it.pagopa.selfcare.onboarding.connector.exceptions.InvalidRequestException;
+import it.pagopa.selfcare.onboarding.connector.model.OnboardingResult;
 import it.pagopa.selfcare.onboarding.connector.model.RecipientCodeStatusResult;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.VerifyAggregateResult;
@@ -648,5 +649,62 @@ class OnboardingMsConnectorImplTest {
         verify(msOnboardingApiClient, times(1))
                 ._verifyOnboardingInfoByFilters(InstitutionType.PA.name(), origin, originId, productId, subunitCode, taxCode);
         verifyNoMoreInteractions(msOnboardingApiClient);
+    }
+
+    @Test
+    void onboardingWithFilterTest() {
+        // Given
+        final String taxCode = "taxCode";
+        final String status = "status";
+
+        OnboardingGet onboardingGet = new OnboardingGet();
+        onboardingGet.setProductId("prod-test");
+        List<OnboardingGet> onboardingGets = List.of(onboardingGet);
+
+        OnboardingGetResponse onboardingGetResponse = new OnboardingGetResponse();
+        onboardingGetResponse.setItems(onboardingGets);
+        ResponseEntity<OnboardingGetResponse> responseEntity = ResponseEntity.ok(onboardingGetResponse);
+
+        when(msOnboardingApiClient._getOnboardingWithFilter( any(),
+                any(),
+                any(),
+                any(),
+                any(),
+                any(),
+                any(),
+                any(),
+                any(),
+                any(),
+                any(),
+                any(),
+                any())).thenReturn(responseEntity);
+
+        OnboardingResult onboardingResult = new OnboardingResult();
+        onboardingResult.setProductId("product-test");
+        when(onboardingMapper.toOnboardingWithFilter(responseEntity.getBody()))
+                .thenReturn(List.of(onboardingResult));
+
+        // When
+        onboardingMsConnector.onboardingWithFilter(taxCode, status);
+
+        // Then
+        verify(msOnboardingApiClient, times(1))
+                ._getOnboardingWithFilter( any(),
+                        any(),
+                        any(),
+                        any(),
+                        any(),
+                        any(),
+                        any(),
+                        any(),
+                        any(),
+                        any(),
+                        any(),
+                        any(),
+                        any());
+        verify(onboardingMapper, times(1))
+                .toOnboardingWithFilter(responseEntity.getBody());
+        verifyNoMoreInteractions(msOnboardingApiClient);
+        verifyNoMoreInteractions(onboardingMapper);
     }
 }
