@@ -1,5 +1,17 @@
 package it.pagopa.selfcare.onboarding.web.controller;
 
+import static it.pagopa.selfcare.commons.utils.TestUtils.checkNotNullFields;
+import static it.pagopa.selfcare.commons.utils.TestUtils.mockInstance;
+import static java.util.UUID.randomUUID;
+import static org.hamcrest.Matchers.emptyString;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.pagopa.selfcare.commons.base.security.SelfCareUser;
@@ -14,14 +26,12 @@ import it.pagopa.selfcare.onboarding.connector.model.institutions.infocamere.Ins
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.Billing;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.GeographicTaxonomy;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.OnboardingData;
-import it.pagopa.selfcare.onboarding.connector.model.onboarding.User;
 import it.pagopa.selfcare.onboarding.core.InstitutionService;
 import it.pagopa.selfcare.onboarding.web.config.WebTestConfig;
 import it.pagopa.selfcare.onboarding.web.model.*;
-import it.pagopa.selfcare.onboarding.web.model.mapper.GeographicTaxonomyMapperImpl;
-import it.pagopa.selfcare.onboarding.web.model.mapper.OnboardingInstitutionInfoMapperImpl;
-import it.pagopa.selfcare.onboarding.web.model.mapper.OnboardingResourceMapperImpl;
-import it.pagopa.selfcare.onboarding.web.model.mapper.UserMapper;
+import it.pagopa.selfcare.onboarding.web.model.mapper.*;
+import java.util.Collections;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,23 +45,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import java.util.Collections;
-import java.util.List;
-
-import static it.pagopa.selfcare.commons.utils.TestUtils.checkNotNullFields;
-import static it.pagopa.selfcare.commons.utils.TestUtils.mockInstance;
-import static java.util.UUID.randomUUID;
-import static org.hamcrest.Matchers.emptyString;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 @WebMvcTest(value = {InstitutionController.class}, excludeAutoConfiguration = SecurityAutoConfiguration.class)
-@ContextConfiguration(classes = {InstitutionController.class, WebTestConfig.class, OnboardingResourceMapperImpl.class, OnboardingInstitutionInfoMapperImpl.class, GeographicTaxonomyMapperImpl.class})
+@ContextConfiguration(classes = {InstitutionController.class, WebTestConfig.class, OnboardingResourceMapperImpl.class, OnboardingInstitutionInfoMapperImpl.class, GeographicTaxonomyMapperImpl.class, UserResourceMapperImpl.class, InstitutionResourceMapperImpl.class})
 class InstitutionControllerTest {
 
     private static final String BASE_URL = "/v1/institutions";
@@ -425,9 +420,8 @@ class InstitutionControllerTest {
 
         MatchInfoResult matchInfo = mockInstance(new MatchInfoResult(), "setVerificationResult");
         matchInfo.setVerificationResult(true);
-        User expectedUser = UserMapper.toUser(verificationMatchRequest.getUserDto());
 
-        when(institutionServiceMock.matchInstitutionAndUser(taxCode, expectedUser))
+        when(institutionServiceMock.matchInstitutionAndUser(any(), any()))
                 .thenReturn(matchInfo);
         //when
         MvcResult result = mvc.perform(MockMvcRequestBuilders

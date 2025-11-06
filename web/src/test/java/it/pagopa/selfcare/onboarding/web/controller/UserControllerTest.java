@@ -1,5 +1,13 @@
 package it.pagopa.selfcare.onboarding.web.controller;
 
+import static org.hamcrest.Matchers.emptyString;
+import static org.hamcrest.Matchers.not;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.pagopa.selfcare.commons.base.security.SelfCareUser;
 import it.pagopa.selfcare.commons.web.security.JwtAuthenticationToken;
@@ -10,10 +18,13 @@ import it.pagopa.selfcare.onboarding.core.UserService;
 import it.pagopa.selfcare.onboarding.core.exception.InvalidUserFieldsException;
 import it.pagopa.selfcare.onboarding.web.config.WebTestConfig;
 import it.pagopa.selfcare.onboarding.web.handler.OnboardingExceptionHandler;
+import it.pagopa.selfcare.onboarding.web.model.UserDataValidationDto;
 import it.pagopa.selfcare.onboarding.web.model.UserTaxCodeDto;
 import it.pagopa.selfcare.onboarding.web.model.mapper.OnboardingResourceMapperImpl;
 import it.pagopa.selfcare.onboarding.web.model.mapper.UserResourceMapper;
 import it.pagopa.selfcare.onboarding.web.model.mapper.UserResourceMapperImpl;
+import java.security.Principal;
+import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,23 +38,13 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import java.security.Principal;
-import java.util.UUID;
-
-import static org.hamcrest.Matchers.emptyString;
-import static org.hamcrest.Matchers.not;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 @WebMvcTest(value = {UserController.class}, excludeAutoConfiguration = SecurityAutoConfiguration.class)
 @ContextConfiguration(classes = {
         UserController.class,
         OnboardingResourceMapperImpl.class,
         WebTestConfig.class,
         OnboardingExceptionHandler.class,
+        UserResourceMapperImpl.class,
         UserResourceMapperImpl.class
 })
 class UserControllerTest {
@@ -61,6 +62,9 @@ class UserControllerTest {
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
+    /**
+     * Method under test: {@link UserController#validate(UserDataValidationDto)}
+     */
     @Test
     void validate_OK(@Value("classpath:stubs/userDataValidationDto.json") Resource userDataValidationDto) throws Exception {
         //given

@@ -11,6 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 class ProductMapperTest {
 
+    private final ProductMapper productMapper = new ProductMapperImpl();
     @Test
     void toResource_notNull() {
         //given
@@ -21,7 +22,7 @@ class ProductMapperTest {
         product.setLogoBgColor("logoBgColor");
         product.setStatus(ProductStatus.ACTIVE);
         // when
-        ProductResource productResource = ProductMapper.toResource(product);
+        ProductResource productResource = productMapper.toResource(product);
         // then
         assertEquals(product.getId(), productResource.getId());
         assertEquals(product.getTitle(), productResource.getTitle());
@@ -35,7 +36,7 @@ class ProductMapperTest {
     void toResource_null() {
         // given
         // when
-        ProductResource productResource = ProductMapper.toResource(null);
+        ProductResource productResource = productMapper.toResource(null);
         // then
         assertNull(productResource);
     }

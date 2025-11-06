@@ -1,20 +1,21 @@
 package it.pagopa.selfcare.onboarding.web.model.mapper;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import it.pagopa.selfcare.commons.utils.TestUtils;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.User;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.UserInfo;
 import it.pagopa.selfcare.onboarding.web.model.UserDataValidationDto;
 import it.pagopa.selfcare.onboarding.web.model.UserDto;
 import it.pagopa.selfcare.onboarding.web.model.UserResource;
+import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import java.util.UUID;
-
-import static org.junit.jupiter.api.Assertions.*;
-
 class UserMapperTest {
+
+    private UserResourceMapper userMapper = new UserResourceMapperImpl();
 
     @ParameterizedTest
     @ValueSource(classes = {
@@ -27,9 +28,9 @@ class UserMapperTest {
         //when
         User resource;
         if (UserDto.class.isAssignableFrom(clazz)) {
-            resource = UserMapper.toUser((UserDto) model);
+            resource = userMapper.toUser((UserDto) model);
         } else if (UserDataValidationDto.class.isAssignableFrom(clazz)) {
-            resource = UserMapper.toUser((UserDataValidationDto) model);
+            resource = userMapper.toUser((UserDataValidationDto) model);
         } else {
             throw new IllegalArgumentException();
         }
@@ -49,9 +50,9 @@ class UserMapperTest {
         //when
         User resource;
         if (UserDto.class.isAssignableFrom(clazz)) {
-            resource = UserMapper.toUser((UserDto) null);
+            resource = userMapper.toUser((UserDto) null);
         } else if (UserDataValidationDto.class.isAssignableFrom(clazz)) {
-            resource = UserMapper.toUser((UserDataValidationDto) null);
+            resource = userMapper.toUser((UserDataValidationDto) null);
         } else {
             throw new IllegalArgumentException();
         }
@@ -67,7 +68,7 @@ class UserMapperTest {
         model.setId(UUID.randomUUID().toString());
         model.setInstitutionId(UUID.randomUUID().toString());
         //when
-        UserResource resource = UserMapper.toResource(model);
+        UserResource resource = userMapper.toResource(model);
         //then
         assertNotNull(resource);
         TestUtils.reflectionEqualsByName(resource, model, "id", "institutionId");
@@ -80,7 +81,7 @@ class UserMapperTest {
     void toResource_nullUserResource() {
         //given
         //when
-        UserResource resource = UserMapper.toResource(null);
+        UserResource resource = userMapper.toResource(null);
         //then
         assertNull(resource);
     }
