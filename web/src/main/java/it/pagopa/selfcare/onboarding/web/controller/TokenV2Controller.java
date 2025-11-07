@@ -45,7 +45,6 @@ public class TokenV2Controller {
     private final TokenService tokenService;
     private final UserService userService;
     private final UserInstitutionService userInstitutionService;
-
     private final OnboardingResourceMapper onboardingResourceMapper;
 
     public TokenV2Controller(TokenService tokenService, UserService userService, UserInstitutionService userInstitutionService, OnboardingResourceMapper onboardingResourceMapper) {

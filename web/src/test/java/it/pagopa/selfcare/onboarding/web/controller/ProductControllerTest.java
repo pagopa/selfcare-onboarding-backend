@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import it.pagopa.selfcare.onboarding.core.ProductService;
 import it.pagopa.selfcare.onboarding.web.config.WebTestConfig;
 import it.pagopa.selfcare.onboarding.web.model.ProductResource;
+import it.pagopa.selfcare.onboarding.web.model.mapper.ProductMapperImpl;
 import it.pagopa.selfcare.product.entity.ContractTemplate;
 import it.pagopa.selfcare.product.entity.Product;
 import org.junit.jupiter.api.Assertions;
@@ -31,7 +32,8 @@ import static org.mockito.ArgumentMatchers.any;
 @WebMvcTest(value = {ProductController.class}, excludeAutoConfiguration = SecurityAutoConfiguration.class)
 @ContextConfiguration(classes = {
         ProductController.class,
-        WebTestConfig.class
+        WebTestConfig.class,
+        ProductMapperImpl.class
 })
 class ProductControllerTest {
 
