@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static it.pagopa.selfcare.commons.utils.TestUtils.mockInstance;
 import static org.junit.jupiter.api.Assertions.*;
@@ -569,6 +570,31 @@ class OnboardingMsConnectorImplTest {
         OnboardingResponse resource = new OnboardingResponse();
         InstitutionResponse institution = new InstitutionResponse();
         institution.setSubunitType(InstitutionPaSubunitType.AOO);
+        resource.setInstitution(institution);
+
+        resource.setProductId("productId");
+        when(msOnboardingSupportApiClient._onboardingInstitutionUsingGET(origin, originId, OnboardingStatus.COMPLETED, null, null))
+                .thenReturn(ResponseEntity.ok(List.of(resource)));
+        // when
+        List<OnboardingData> result = onboardingMsConnector.getByFilters(productId, null, origin, originId, null);
+        // then
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+        verify(msOnboardingSupportApiClient, times(1))
+                ._onboardingInstitutionUsingGET(origin, originId, OnboardingStatus.COMPLETED, null, null);
+        verifyNoMoreInteractions(msOnboardingSupportApiClient);
+    }
+
+    @Test
+    void getOnboardingByFiltersWithReferenceOnboardingId() {
+        // given
+        final String origin = "origin";
+        final String originId = "originId";
+        final String productId = "productId";
+        OnboardingResponse resource = new OnboardingResponse();
+        resource.setReferenceOnboardingId("referenceOnboardingId");
+        InstitutionResponse institution = new InstitutionResponse();
+        institution.setId(UUID.randomUUID().toString());
         resource.setInstitution(institution);
 
         resource.setProductId("productId");
