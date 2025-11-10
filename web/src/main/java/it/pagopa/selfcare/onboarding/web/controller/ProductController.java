@@ -23,10 +23,12 @@ import org.springframework.web.bind.annotation.*;
 public class ProductController {
 
     private final ProductService productService;
+    private final ProductMapper productMapper;
 
     @Autowired
-    public ProductController(ProductService productService) {
+    public ProductController(ProductService productService, ProductMapper productMapper) {
         this.productService = productService;
+        this.productMapper = productMapper;
     }
 
     @GetMapping(value = "/v1/product/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -42,7 +44,7 @@ public class ProductController {
         log.trace("getProduct start");
         log.debug("getProduct id = {}, institutionType = {}", id, institutionType);
         Product product = productService.getProduct(id, institutionType.orElse(null));
-        ProductResource resource = ProductMapper.toResource(product);
+        ProductResource resource = productMapper.toResource(product);
         log.debug("getProduct result = {}", resource);
         log.trace("getProduct end");
         return resource;
@@ -56,7 +58,7 @@ public class ProductController {
         log.trace("getProducts start");
         final List<Product> products = productService.getProducts(false);
         List<ProductResource> resources = products.stream()
-                .map(ProductMapper::toResource)
+                .map(productMapper::toResource)
                 .toList();
         log.debug("getProducts result = {}", resources);
         log.trace("getProducts end");
@@ -72,7 +74,7 @@ public class ProductController {
         final List<Product> products = productService.getProducts(true);
         List<ProductResource> resources = products.stream()
                 .filter(product -> Objects.nonNull(product.getUserContractTemplate(Product.CONTRACT_TYPE_DEFAULT).getContractTemplatePath()))
-                .map(ProductMapper::toResource)
+                .map(productMapper::toResource)
                 .toList();
         log.debug("getProductsAdmin result = {}", resources);
         log.trace("getProductsAdmin end");

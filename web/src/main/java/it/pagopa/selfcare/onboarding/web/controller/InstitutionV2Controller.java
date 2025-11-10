@@ -14,7 +14,7 @@ import it.pagopa.selfcare.onboarding.connector.exceptions.InvalidRequestExceptio
 import it.pagopa.selfcare.onboarding.connector.model.OnboardingResult;
 import it.pagopa.selfcare.onboarding.core.InstitutionService;
 import it.pagopa.selfcare.onboarding.web.model.*;
-import it.pagopa.selfcare.onboarding.web.model.mapper.InstitutionMapper;
+import it.pagopa.selfcare.onboarding.web.model.mapper.InstitutionResourceMapper;
 import it.pagopa.selfcare.onboarding.web.model.mapper.OnboardingResourceMapper;
 import it.pagopa.selfcare.onboarding.web.utils.FileValidationUtils;
 import jakarta.validation.Valid;
@@ -40,14 +40,17 @@ public class InstitutionV2Controller {
 
     private final InstitutionService institutionService;
     private final OnboardingResourceMapper onboardingResourceMapper;
-
+    private final InstitutionResourceMapper institutionMapper;
     private static final String ONBOARDING_START = "onboarding start";
     private static final String ONBOARDING_END = "onboarding end";
 
     @Autowired
-    public InstitutionV2Controller(InstitutionService institutionService, OnboardingResourceMapper onboardingResourceMapper) {
+    public InstitutionV2Controller(InstitutionService institutionService,
+                                   OnboardingResourceMapper onboardingResourceMapper,
+                                   InstitutionResourceMapper institutionMapper) {
         this.institutionService = institutionService;
         this.onboardingResourceMapper = onboardingResourceMapper;
+        this.institutionMapper = institutionMapper;
     }
 
     @ApiResponse(responseCode = "403",
@@ -118,7 +121,7 @@ public class InstitutionV2Controller {
         log.trace("getInstitution start");
         final List<InstitutionResource> institutions = institutionService.getByFilters(productId, taxCode, origin, originId, subunitCode)
                 .stream()
-                .map(InstitutionMapper::toResource)
+                .map(institutionMapper::toResource)
                 .toList();
         log.debug(LogUtils.CONFIDENTIAL_MARKER, "getInstitution result = {}", institutions);
         log.trace("getInstitution end");

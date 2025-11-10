@@ -44,19 +44,27 @@ public class InstitutionController {
 
     private final InstitutionService institutionService;
     private final OnboardingResourceMapper onboardingResourceMapper;
+    private final InstitutionResourceMapper institutionMapper;
+    private final UserResourceMapper userMapper;
     private final OnboardingInstitutionInfoMapper onboardingInstitutionInfoMapper;
     private static final String ONBOARDING_START = "onboarding start";
     private static final String ONBOARDING_END = "onboarding end";
     private final GeographicTaxonomyMapper geographicTaxonomyMapper;
 
     @Autowired
-    public InstitutionController(InstitutionService institutionService, OnboardingResourceMapper onboardingResourceMapper, OnboardingInstitutionInfoMapper onboardingInstitutionInfoMapper, GeographicTaxonomyMapper geographicTaxonomyMapper) {
+    public InstitutionController(InstitutionService institutionService,
+                                 OnboardingResourceMapper onboardingResourceMapper,
+                                 OnboardingInstitutionInfoMapper onboardingInstitutionInfoMapper,
+                                 GeographicTaxonomyMapper geographicTaxonomyMapper,
+                                 InstitutionResourceMapper institutionMapper,
+                                 UserResourceMapper userMapper) {
         this.institutionService = institutionService;
         this.onboardingResourceMapper = onboardingResourceMapper;
         this.onboardingInstitutionInfoMapper = onboardingInstitutionInfoMapper;
         this.geographicTaxonomyMapper = geographicTaxonomyMapper;
+        this.institutionMapper = institutionMapper;
+        this.userMapper = userMapper;
     }
-
 
     @ApiResponse(responseCode = "403",
             description = "Forbidden",
@@ -167,7 +175,7 @@ public class InstitutionController {
 
         List<InstitutionResource> institutionResources = institutionService.getInstitutions(productId, selfCareUser.getId())
                 .stream()
-                .map(InstitutionMapper::toResource)
+                .map(institutionMapper::toResource)
                 .toList();
         log.debug("getInstitutions result = {}", institutionResources);
         log.trace("getInstitutions end");
@@ -249,7 +257,7 @@ public class InstitutionController {
         SelfCareUser selfCareUser = (SelfCareUser) jwtAuthenticationToken.getPrincipal();
 
         InstitutionInfoIC institutionInfoIC = institutionService.getInstitutionsByUser(selfCareUser.getFiscalCode());
-        InstitutionResourceIC institutionResourceIC = InstitutionMapper.toResource(institutionInfoIC);
+        InstitutionResourceIC institutionResourceIC = institutionMapper.toResource(institutionInfoIC);
         log.debug(LogUtils.CONFIDENTIAL_MARKER, "getInstitutionsFromInfocamere result = {}", institutionResourceIC);
         log.trace("getInstitutionsFromInfocamere end");
         return institutionResourceIC;
@@ -265,8 +273,8 @@ public class InstitutionController {
         log.trace("matchInstitutionAndUser start");
         log.debug(LogUtils.CONFIDENTIAL_MARKER, "matchInstitutionAndUser userDto = {}", verificationMatchRequest);
         MatchInfoResult matchInfoResult = institutionService.matchInstitutionAndUser(verificationMatchRequest.getTaxCode(),
-                UserMapper.toUser(verificationMatchRequest.getUserDto()));
-        MatchInfoResultResource result = InstitutionMapper.toResource(matchInfoResult);
+                userMapper.toUser(verificationMatchRequest.getUserDto()));
+        MatchInfoResultResource result = institutionMapper.toResource(matchInfoResult);
         log.debug("matchInstitutionAndUser result = {}", result);
         log.trace("matchInstitutionAndUser end");
         return result;

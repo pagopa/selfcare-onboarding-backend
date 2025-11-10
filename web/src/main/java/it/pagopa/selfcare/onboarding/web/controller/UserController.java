@@ -15,7 +15,6 @@ import it.pagopa.selfcare.onboarding.connector.model.user.UserId;
 import it.pagopa.selfcare.onboarding.core.UserService;
 import it.pagopa.selfcare.onboarding.web.model.*;
 import it.pagopa.selfcare.onboarding.web.model.mapper.OnboardingResourceMapper;
-import it.pagopa.selfcare.onboarding.web.model.mapper.UserMapper;
 import it.pagopa.selfcare.onboarding.web.model.mapper.UserResourceMapper;
 import jakarta.validation.Valid;
 import java.security.Principal;
@@ -58,7 +57,7 @@ public class UserController {
     public void validate(@RequestBody @Valid UserDataValidationDto request) {
         log.trace("validate start");
         log.debug(LogUtils.CONFIDENTIAL_MARKER, "validate request = {}", request);
-        userService.validate(UserMapper.toUser(request));
+        userService.validate(userResourceMapper.toUser(request));
         log.trace("validate end");
     }
 

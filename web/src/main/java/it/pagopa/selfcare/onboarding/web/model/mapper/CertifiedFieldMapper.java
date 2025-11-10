@@ -3,20 +3,20 @@ package it.pagopa.selfcare.onboarding.web.model.mapper;
 import it.pagopa.selfcare.onboarding.connector.model.user.Certification;
 import it.pagopa.selfcare.onboarding.connector.model.user.CertifiedField;
 import it.pagopa.selfcare.onboarding.web.model.CertifiedFieldResource;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
+import org.mapstruct.Mapper;
+import org.mapstruct.Named;
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class CertifiedFieldMapper {
+@Mapper(componentModel = "spring")
+public interface CertifiedFieldMapper {
 
-    public static <T> CertifiedFieldResource<T> map(CertifiedField<T> certifiedField) {
-        CertifiedFieldResource<T> resource = null;
-        if (certifiedField != null) {
-            resource = new CertifiedFieldResource<>();
-            resource.setCertified(Certification.isCertified(certifiedField.getCertification()));
-            resource.setValue(certifiedField.getValue());
+    @Named("toResource")
+    default <T> CertifiedFieldResource<T> toResource(CertifiedField<T> certifiedField) {
+        if (certifiedField == null) {
+            return null;
         }
+        CertifiedFieldResource<T> resource = new CertifiedFieldResource<>();
+        resource.setCertified(Certification.isCertified(certifiedField.getCertification()));
+        resource.setValue(certifiedField.getValue());
         return resource;
     }
-
 }

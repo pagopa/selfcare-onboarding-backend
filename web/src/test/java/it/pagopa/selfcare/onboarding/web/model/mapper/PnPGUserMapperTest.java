@@ -9,19 +9,21 @@ import org.junit.jupiter.params.provider.ValueSource;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 class PnPGUserMapperTest {
+
     @ParameterizedTest
     @ValueSource(classes = {
             UserDto.class,
             UserDataValidationDto.class
     })
     void toUser_null(Class<?> clazz) {
+    final UserResourceMapper userMapper = new UserResourceMapperImpl();
         //given
         //when
         User resource;
         if (UserDto.class.isAssignableFrom(clazz)) {
-            resource = UserMapper.toUser((UserDto) null);
+            resource = userMapper.toUser((UserDto) null);
         } else if (UserDataValidationDto.class.isAssignableFrom(clazz)) {
-            resource = UserMapper.toUser((UserDataValidationDto) null);
+            resource = userMapper.toUser((UserDataValidationDto) null);
         } else {
             throw new IllegalArgumentException();
         }
