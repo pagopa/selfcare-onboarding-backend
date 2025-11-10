@@ -188,7 +188,7 @@ public class OnboardingMsConnectorImpl implements OnboardingMsConnector {
                         return !onboardingResponse.getInstitution().getSubunitType().name().equals(InstitutionPaSubunitType.UO.name())
                                 && !onboardingResponse.getInstitution().getSubunitType().name().equals(InstitutionPaSubunitType.AOO.name());
                     }
-                    return true;
+                    return !StringUtils.hasText(onboardingResponse.getReferenceOnboardingId());
                 })
                 .filter(onboardingResponse -> onboardingResponse.getProductId().equals(productId))
                 .map(onboardingMapper::toOnboardingData)
