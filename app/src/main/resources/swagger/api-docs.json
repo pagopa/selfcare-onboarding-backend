@@ -2992,7 +2992,7 @@
         } ]
       }
     },
-    "/v1/institutions/{externalInstitutionId}/geographicTaxonomy" : {
+    "/v1/institutions/{externalInstitutionId}/geographic-taxonomy" : {
       "get" : {
         "tags" : [ "institution-controller" ],
         "summary" : "The service retrieve the institution's geographic taxonomy",
@@ -3152,7 +3152,7 @@
         } ]
       }
     },
-    "/v1/institutions/geographicTaxonomies" : {
+    "/v1/institutions/geographic-taxonomies" : {
       "get" : {
         "tags" : [ "institution-controller" ],
         "summary" : "The service retrieve the institution's geographic taxonomy",
