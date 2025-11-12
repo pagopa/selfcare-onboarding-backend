@@ -119,7 +119,7 @@ public class InstitutionController {
         return result;
     }
 
-    @GetMapping(value = "/{externalInstitutionId}/geographicTaxonomy")
+    @GetMapping(value = "/{externalInstitutionId}/geographic-taxonomy")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "${swagger.onboarding.institutions.api.getInstitutionGeographicTaxonomy}",
             description = "${swagger.onboarding.institutions.api.getInstitutionGeographicTaxonomy}", operationId = "getInstitutionGeographicTaxonomyUsingGET")
@@ -137,7 +137,7 @@ public class InstitutionController {
         return geographicTaxonomies;
     }
 
-    @GetMapping(value = "/geographicTaxonomies")
+    @GetMapping(value = "/geographic-taxonomies")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "${swagger.onboarding.institutions.api.getInstitutionGeographicTaxonomy}",
             description = "${swagger.onboarding.institutions.api.getInstitutionGeographicTaxonomy}", operationId = "getGeographicTaxonomiesByTaxCodeAndSubunitCodeUsingGET")

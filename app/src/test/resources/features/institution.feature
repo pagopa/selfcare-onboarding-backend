@@ -104,28 +104,28 @@ Feature: Institution
     Given User login with username "j.doe" and password "test"
     And The following path params:
       | institutionId | test1235 |
-    When I send a GET request to "/v1/institutions/{institutionId}/geographicTaxonomy"
+    When I send a GET request to "/v1/institutions/{institutionId}/geographic-taxonomy"
     Then The status code is 200
 
   Scenario: Failed to retrieve geotaxonomy
     Given User login with username "j.doe" and password "test"
     And The following path params:
       | institutionId | 123 |
-    When I send a GET request to "/v1/institutions/{institutionId}/geographicTaxonomy"
+    When I send a GET request to "/v1/institutions/{institutionId}/geographic-taxonomy"
     Then The status code is 404
 
   Scenario: Success to retrieve geotaxonomy by filters
     Given User login with username "j.doe" and password "test"
     And The following query params:
       | taxCode | 35843432474 |
-    When I send a GET request to "/v1/institutions/geographicTaxonomies"
+    When I send a GET request to "/v1/institutions/geographic-taxonomies"
     Then The status code is 200
 
   Scenario: Failed to retrieve geotaxonomy by filters
     Given User login with username "j.doe" and password "test"
     And The following query params:
       | taxCode | test1235 |
-    When I send a GET request to "/v1/institutions/geographicTaxonomies"
+    When I send a GET request to "/v1/institutions/geographic-taxonomies"
     Then The status code is 404
 
   Scenario: Success to retrieve institutions
