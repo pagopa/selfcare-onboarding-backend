@@ -197,6 +197,7 @@ public class OnboardingMsConnectorImpl implements OnboardingMsConnector {
     }
 
     @Override
+    @Retry(name = "retryTimeout")
     public boolean checkManager(CheckManagerData checkManagerData) {
         return Objects.requireNonNull(msOnboardingApiClient._checkManager(onboardingMapper.toCheckManagerRequest(checkManagerData)).getBody()).getResponse();
     }
