@@ -1,5 +1,6 @@
 package it.pagopa.selfcare.onboarding.connector;
 
+import io.github.resilience4j.retry.annotation.Retry;
 import it.pagopa.selfcare.commons.base.logging.LogUtils;
 import it.pagopa.selfcare.onboarding.connector.api.PartyRegistryProxyConnector;
 import it.pagopa.selfcare.onboarding.connector.model.InstitutionLegalAddressData;
@@ -42,6 +43,7 @@ class PartyRegistryProxyConnectorImpl implements PartyRegistryProxyConnector {
 
 
     @Override
+    @Retry(name = "retryTimeout")
     public InstitutionInfoIC getInstitutionsByUserFiscalCode(String taxCode) {
         log.trace("getInstitutionsByUserFiscalCode start");
         log.debug(LogUtils.CONFIDENTIAL_MARKER, "getInstitutionsByUserFiscalCode taxCode = {}", taxCode);
