@@ -14,7 +14,7 @@ tags = {
 }
 
 container_app = {
-  min_replicas = 1
+  min_replicas = 3
   max_replicas = 5
   scale_rules = [
     {
@@ -81,7 +81,7 @@ app_settings = [
   },
   {
     name  = "USERVICE_PARTY_REGISTRY_PROXY_URL"
-    value = "http://selc-p-pnpg-party-reg-proxy-ca"
+    value = "https://selc-p-pnpg-party-reg-proxy-ca.calmmoss-0be48755.westeurope.azurecontainerapps.io"
   },
   {
     name  = "USERVICE_USER_REGISTRY_URL"
