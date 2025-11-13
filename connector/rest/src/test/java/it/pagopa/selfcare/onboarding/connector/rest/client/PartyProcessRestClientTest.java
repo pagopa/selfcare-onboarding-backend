@@ -38,7 +38,8 @@ import org.springframework.test.context.support.TestPropertySourceUtils;
         properties = {
                 "logging.level.it.pagopa.selfcare.onboarding.connector.rest=DEBUG",
                 "spring.application.name=selc-onboarding-connector-rest",
-                "feign.okhttp.enabled=true"
+                "feign.okhttp.enabled=true",
+                "feign.httpclient.enabled=true"
         })
 @ContextConfiguration(
         initializers = PartyProcessRestClientTest.RandomPortInitializer.class,

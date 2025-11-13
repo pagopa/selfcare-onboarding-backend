@@ -28,7 +28,8 @@ import org.springframework.test.context.support.TestPropertySourceUtils;
         properties = {
                 "logging.level.it.pagopa.selfcare.dashboard.connector.rest=DEBUG",
                 "spring.application.name=selc-dashboard-connector-rest",
-                "feign.okhttp.enabled=true"
+                "feign.okhttp.enabled=true",
+                "feign.httpclient.enabled=true"
         }
 )
 @ContextConfiguration(
