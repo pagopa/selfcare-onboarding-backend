@@ -2,6 +2,7 @@ package it.pagopa.selfcare.onboarding.connector;
 
 import static it.pagopa.selfcare.onboarding.connector.model.RelationshipState.ACTIVE;
 
+import io.github.resilience4j.retry.annotation.Retry;
 import it.pagopa.selfcare.commons.base.logging.LogUtils;
 import it.pagopa.selfcare.onboarding.connector.api.PartyConnector;
 import it.pagopa.selfcare.onboarding.connector.model.RelationshipInfo;
@@ -226,6 +227,7 @@ class PartyConnectorImpl implements PartyConnector {
     }
 
     @Override
+    @Retry(name = "retryTimeout")
     public List<Institution> getInstitutionsByTaxCodeAndSubunitCode(String taxCode, String subunitCode) {
         log.trace("getInstitution start");
         log.debug("getInstitution taxCode = {}, subunitCode = {}", Encode.forJava(taxCode), Encode.forJava(subunitCode));
