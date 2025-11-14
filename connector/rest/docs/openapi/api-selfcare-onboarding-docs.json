@@ -3225,6 +3225,9 @@
           "taxCode" : {
             "type" : "string"
           },
+          "toAddOnAggregates" : {
+            "type" : "boolean"
+          },
           "users" : {
             "minItems" : 1,
             "type" : "array",
