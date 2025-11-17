@@ -4008,6 +4008,9 @@
           },
           "subunitCode" : {
             "type" : "string"
+          },
+          "toAddOnAggregates" : {
+            "type" : "boolean"
           }
         }
       },
