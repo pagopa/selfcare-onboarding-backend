@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
-//@Api(tags = "product")
 @RequestMapping(value = "/v2/product", produces = MediaType.APPLICATION_JSON_VALUE)
+@Api(tags = "product-ms")
 public class ProductV2Controller {
 
     private final ProductService productService;
