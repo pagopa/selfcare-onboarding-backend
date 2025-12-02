@@ -8,6 +8,7 @@ import it.pagopa.selfcare.onboarding.core.ProductService;
 import it.pagopa.selfcare.onboarding.web.model.OriginResponse;
 import it.pagopa.selfcare.onboarding.web.model.mapper.ProductMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.owasp.encoder.Encode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -36,8 +37,9 @@ public class ProductV2Controller {
                                       @RequestParam(value = "productId", required = true)
                                       String productId) {
         log.trace("getOrigins start");
-        log.debug("getOrigins productId = {}", productId);
-        OriginResult originEntries = productService.getOrigins(productId);
+        String productIdSanitized = Encode.forJava(productId);
+        log.debug("getOrigins productId = {}", productIdSanitized);
+        OriginResult originEntries = productService.getOrigins(productIdSanitized);
         OriginResponse response = productMapper.toOriginResponse(originEntries);
         log.trace("getOrigins end");
         return response;
