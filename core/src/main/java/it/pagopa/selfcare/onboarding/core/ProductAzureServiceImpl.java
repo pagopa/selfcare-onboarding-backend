@@ -44,10 +44,9 @@ public class ProductAzureServiceImpl implements ProductAzureService {
     @Override
     public Product getProductValid(String id) {
         log.trace("getProductValid start");
-        String idSanitized = Encode.forJava(id);
-        log.debug("getProductValid id = {}", idSanitized);
-        Assert.notNull(idSanitized, "ProductId is required");
-        Product product = productsConnector.getProductValid(idSanitized);
+        log.debug("getProductValid id = {}", id);
+        Assert.notNull(id, "ProductId is required");
+        Product product = productsConnector.getProductValid(id);
         log.debug("getProductValid result = {}", product);
         log.trace("getProductValid end");
         return product;
