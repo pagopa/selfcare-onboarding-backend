@@ -3,6 +3,7 @@ package it.pagopa.selfcare.onboarding.core;
 import it.pagopa.selfcare.onboarding.connector.api.ProductMsConnector;
 import it.pagopa.selfcare.onboarding.connector.model.product.OriginResult;
 import lombok.extern.slf4j.Slf4j;
+import org.owasp.encoder.Encode;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -19,7 +20,8 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public OriginResult getOrigins(String productId) {
         log.trace("getOrigins start");
-        OriginResult originResult = productMsConnector.getOrigins(productId);
+        String productIdSanitized = Encode.forJava(productId);
+        OriginResult originResult = productMsConnector.getOrigins(productIdSanitized);
         log.debug("getOrigins size = {}", originResult.getOrigins().size());
         log.trace("getOrigins end");
         return originResult;
