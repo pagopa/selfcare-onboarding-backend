@@ -3,7 +3,6 @@ package it.pagopa.selfcare.onboarding.web.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.pagopa.selfcare.onboarding.connector.api.ProductsConnector;
 import it.pagopa.selfcare.onboarding.connector.rest.client.*;
-import it.pagopa.selfcare.onboarding.connector.rest.config.MsProductApiClientConfig;
 import it.pagopa.selfcare.onboarding.connector.rest.config.ProductServiceConfig;
 import it.pagopa.selfcare.onboarding.connector.rest.config.UserRegistryRestClientConfig;
 import it.pagopa.selfcare.onboarding.core.InstitutionService;
@@ -69,7 +68,7 @@ class SwaggerConfigTest {
     private MsUserApiClient msUserApiClient;
 
     @MockBean
-    private MsOnboardingTokenApiClient MsOnboardingTokenApiClient;
+    private MsOnboardingTokenApiClient msOnboardingTokenApiClient;
 
     @MockBean
     private MsOnboardingAggregatesApiClient msOnboardingAggregatesApiClient;
