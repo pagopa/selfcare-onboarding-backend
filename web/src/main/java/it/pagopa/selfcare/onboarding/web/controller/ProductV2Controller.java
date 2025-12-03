@@ -29,7 +29,7 @@ public class ProductV2Controller {
         this.productMapper = productMapper;
     }
 
-    @GetMapping(value = "/origin", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "${swagger.product.ms.api.getOrigins.summary}",
             description = "${swagger.product.ms.api.getOrigins.description}", operationId = "getOrigins")

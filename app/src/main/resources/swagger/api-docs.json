@@ -2147,7 +2147,7 @@
         } ]
       }
     },
-    "/v2/product/origin" : {
+    "/v2/product" : {
       "get" : {
         "tags" : [ "product-v-2-controller" ],
         "summary" : "Get product origins by productId",

@@ -60,7 +60,7 @@ class ProductV2ControllerTest {
 
         // when
         MvcResult result = mvc.perform(
-                        MockMvcRequestBuilders.get(BASE_URL + "/origin")
+                        MockMvcRequestBuilders.get(BASE_URL)
                                 .param("productId", productId)
                                 .contentType(APPLICATION_JSON_VALUE)
                                 .accept(APPLICATION_JSON_VALUE))
@@ -94,7 +94,7 @@ class ProductV2ControllerTest {
 
         // when
         mvc.perform(
-                        MockMvcRequestBuilders.get(BASE_URL + "/origin")
+                        MockMvcRequestBuilders.get(BASE_URL)
                                 .param("productId", rawProductId)
                                 .contentType(APPLICATION_JSON_VALUE)
                                 .accept(APPLICATION_JSON_VALUE))
@@ -110,7 +110,7 @@ class ProductV2ControllerTest {
     void getOriginsTest_missingProductId_badRequest() throws Exception {
         // when
         mvc.perform(
-                        MockMvcRequestBuilders.get(BASE_URL + "/origin")
+                        MockMvcRequestBuilders.get(BASE_URL)
                                 .contentType(APPLICATION_JSON_VALUE)
                                 .accept(APPLICATION_JSON_VALUE))
                 .andExpect(status().isBadRequest());
