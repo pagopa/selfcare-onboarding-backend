@@ -443,100 +443,99 @@ db.userInstitutions.insertMany([
   }
 ]);
 
-
 db = db.getSiblingDB("selcProduct");
 
 db.products.insertMany([
   {
-    "productId": "prod-test",
-    "alias": "prod-test",
-    "title": "Prod TEST",
-    "description": "Product description",
-    "status": "TESTING",
-    "version": 1,
-    "consumers": [
+    _id: "89ad7142-24bb-48ad-8504-9c9231137232",
+    productId: "prod-test",
+    alias: "prod-test",
+    title: "Prod TEST",
+    description: "Product description",
+    status: "TESTING",
+    version: 1,
+    consumers: [
       "Standard"
     ],
-    "visualConfiguration": {
-      "logoUrl": "http://localhost:8080",
-      "depictImageUrl": "http://localhost:8080",
-      "logoBgColor": "#0B3EE3"
+    visualConfiguration: {
+      logoUrl: "http://localhost:8080",
+      depictImageUrl: "http://localhost:8080",
+      logoBgColor: "#0B3EE3"
     },
-    "features": {
-      "allowCompanyOnboarding": true,
-      "allowIndividualOnboarding": false,
-      "allowedInstitutionTaxCode": [],
-      "delegable": false,
-      "invoiceable": true,
-      "expirationDays": 30,
-      "enabled": true
+    features: {
+      allowCompanyOnboarding: true,
+      allowIndividualOnboarding: false,
+      allowedInstitutionTaxCode: [],
+      delegable: false,
+      invoiceable: true,
+      expirationDays: 30,
+      enabled: true
     },
-    "roleMappings": [
+    roleMappings: [
       {
-        "role": "OPERATOR",
-        "multiroleAllowed": false,
-        "phasesAdditionAllowed": [],
-        "skipUserCreation": false,
-          "backOfficeRoles": [
+        role: "OPERATOR",
+        multiroleAllowed: false,
+        phasesAdditionAllowed: [],
+        skipUserCreation: false,
+        backOfficeRoles: [
           {
-            "code": "referente operativo",
-            "label": "Operatore",
-            "description": "Operatore"
+            code: "referente operativo",
+            label: "Operatore",
+            description: "Operatore"
           }
         ]
       }
     ],
-    "contracts": [
+    contracts: [
       {
-        "type": "institution",
-        "institutionType": "default",
-        "path": "contracts/template/io/2.4.6/io-accordo_di_adesione-v.2.4.6.html",
-        "version": "2.4.6",
-        "order": 10,
-        "generated": true,
-        "mandatory": true,
-        "name": "Accordo di adesione IO",
-        "workflowState": "REQUEST",
-        "workflowType": []
+        type: "institution",
+        institutionType: "default",
+        path: "contracts/template/io/2.4.6/io-accordo_di_adesione-v.2.4.6.html",
+        version: "2.4.6",
+        order: 10,
+        generated: true,
+        mandatory: true,
+        name: "Accordo di adesione IO",
+        workflowState: "REQUEST",
+        workflowType: []
       }
     ],
-    "institutionOrigins": [
+    institutionOrigins: [
       {
-        "institutionType": "PA",
-        "origin": "IPA",
-        "labelKey": "pa"
+        institutionType: "PA",
+        origin: "IPA",
+        labelKey: "pa"
       },
       {
-        "institutionType": "GSP",
-        "origin": "IPA",
-        "labelKey": "gsp"
+        institutionType: "GSP",
+        origin: "IPA",
+        labelKey: "gsp"
       },
       {
-        "institutionType": "SCP",
-        "origin": "SELC",
-        "labelKey": "scp"
+        institutionType: "SCP",
+        origin: "SELC",
+        labelKey: "scp"
       }
     ],
-    "emailTemplates": [
+    emailTemplates: [
       {
-        "type": "IMPORT",
-        "institutionType": "default",
-        "path": "contracts/template/mail/import-massivo-io/1.0.0.json",
-        "version": "1.0.0",
-        "status": "PENDING"
+        type: "IMPORT",
+        institutionType: "default",
+        path: "contracts/template/mail/import-massivo-io/1.0.0.json",
+        version: "1.0.0",
+        status: "PENDING"
       }
     ],
-    "backOfficeEnvironmentConfigurations": [
+    backOfficeEnvironmentConfigurations: [
       {
-        "env": "Locale",
-        "urlPublic": "http://localhost:8080",
-        "urlBO": "http://localhost:8080",
-        "identityTokenAudience": "locale"
+        env: "Locale",
+        urlPublic: "http://localhost:8080",
+        urlBO: "http://localhost:8080",
+        identityTokenAudience: "locale"
       }
     ],
-    "metadata": {
-      "createdBy": "user-apim-name"
+    metadata: {
+      createdBy: "user-apim-name"
     }
   }
 ]);
-
