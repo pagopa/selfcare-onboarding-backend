@@ -247,6 +247,22 @@ public class TokenV2Controller {
         return getResponseEntity(contract);
     }
 
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(description = "${swagger.tokens.uploadAttachment}", summary = "${swagger.tokens.uploadAttachment}", operationId = "uploadAttachmentUsingPOST")
+    @PostMapping(value = "/{onboardingId}/attachment")
+    public ResponseEntity<Void> uploadAttachment(@ApiParam("${swagger.tokens.onboardingId}")
+                                                 @PathVariable(value = "onboardingId") String onboardingId,
+                                                 @RequestParam("name") String attachmentName,
+                                                 @RequestPart MultipartFile attachment) {
+        log.trace("uploadAttachment start");
+        FileValidationUtils.validatePdfOrP7m(attachment);
+        String sanitizedFileName = Encode.forJava(attachment.getOriginalFilename());
+        String sanitizedOnboardingId = onboardingId.replaceAll("[^a-zA-Z0-9-_]", "");
+        log.debug(LogUtils.CONFIDENTIAL_MARKER, "upload Attachment tokenId = {}, file = {}", sanitizedOnboardingId, sanitizedFileName);
+        tokenService.uploadAttachment(onboardingId, attachment, attachmentName);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
     @GetMapping(value = "/{onboardingId}/products/{productId}/aggregates-csv", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "${swagger.tokens.getAggregatesCsv}",
