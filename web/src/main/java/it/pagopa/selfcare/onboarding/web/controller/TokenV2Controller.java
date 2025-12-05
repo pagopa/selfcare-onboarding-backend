@@ -46,6 +46,7 @@ public class TokenV2Controller {
     private final UserService userService;
     private final UserInstitutionService userInstitutionService;
     private final OnboardingResourceMapper onboardingResourceMapper;
+    private final static String SANITIZIER = "[^a-zA-Z0-9-_]";
 
     public TokenV2Controller(TokenService tokenService, UserService userService, UserInstitutionService userInstitutionService, OnboardingResourceMapper onboardingResourceMapper) {
         this.tokenService = tokenService;
@@ -105,7 +106,7 @@ public class TokenV2Controller {
         log.trace("complete Onboarding Users start");
         FileValidationUtils.validatePdfOrP7m(contract);
         String sanitizedFileName = Encode.forJava(contract.getOriginalFilename());
-        String sanitizedOnboardingId = onboardingId.replaceAll("[^a-zA-Z0-9-_]", "");
+        String sanitizedOnboardingId = onboardingId.replaceAll(SANITIZIER, "");
         log.debug(LogUtils.CONFIDENTIAL_MARKER, "complete Onboarding Users tokenId = {}, contract = {}", sanitizedOnboardingId, sanitizedFileName);
         tokenService.completeOnboardingUsers(onboardingId, contract);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
@@ -241,7 +242,7 @@ public class TokenV2Controller {
                                                 @ApiParam("${swagger.tokens.attachmentName}")
                                                 @RequestParam(name = "name") String filename) throws IOException {
         log.trace("getAttachment start");
-        String sanitizedFilename = filename.replaceAll("[^a-zA-Z0-9._-]", "_");
+        String sanitizedFilename = filename.replaceAll(SANITIZIER, "_");
         log.debug("getAttachment onboardingId = {}, filename = {}", Encode.forJava(onboardingId), sanitizedFilename);
         Resource contract = tokenService.getAttachment(onboardingId, filename);
         return getResponseEntity(contract);
@@ -257,7 +258,7 @@ public class TokenV2Controller {
         log.trace("uploadAttachment start");
         FileValidationUtils.validatePdfOrP7m(attachment);
         String sanitizedFileName = Encode.forJava(attachment.getOriginalFilename());
-        String sanitizedOnboardingId = onboardingId.replaceAll("[^a-zA-Z0-9-_]", "");
+        String sanitizedOnboardingId = onboardingId.replaceAll(SANITIZIER, "");
         log.debug(LogUtils.CONFIDENTIAL_MARKER, "upload Attachment tokenId = {}, file = {}", sanitizedOnboardingId, sanitizedFileName);
         tokenService.uploadAttachment(onboardingId, attachment, attachmentName);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();

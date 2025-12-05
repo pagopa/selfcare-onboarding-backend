@@ -145,7 +145,7 @@ class OnboardingMsConnectorImplTest {
         VerifyAggregateResult expectedResult = new VerifyAggregateResult();
         when(msOnboardingAggregatesApiClient._verifyAppIoAggregatesCsv(file))
                 .thenReturn(ResponseEntity.ok(verifyAggregateAppIoResponse));
-        when(onboardingMapper.toVerifyAggregateResult(eq(verifyAggregateAppIoResponse))).thenReturn(expectedResult);
+        when(onboardingMapper.toVerifyAggregateResult(verifyAggregateAppIoResponse)).thenReturn(expectedResult);
 
         // when
         VerifyAggregateResult result = onboardingMsConnector.aggregatesVerification(file, "prod-io");
@@ -164,7 +164,7 @@ class OnboardingMsConnectorImplTest {
         VerifyAggregateResponse verifyAggregateResponse = new VerifyAggregateResponse();
         when(msOnboardingAggregatesApiClient._verifyPagoPaAggregatesCsv(file))
                 .thenReturn(ResponseEntity.ok(new VerifyAggregateResponse()));
-        when(onboardingMapper.toVerifyAggregateResult(eq(verifyAggregateResponse))).thenReturn(expectedResult);
+        when(onboardingMapper.toVerifyAggregateResult(verifyAggregateResponse)).thenReturn(expectedResult);
 
         // when
         VerifyAggregateResult result = onboardingMsConnector.aggregatesVerification(file, "prod-pagopa");
