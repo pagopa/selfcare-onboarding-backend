@@ -39,7 +39,7 @@ public class ProductV2Controller {
         log.trace("getOrigins start");
         String productIdSanitized = Encode.forJava(productId);
         log.debug("getOrigins productId = {}", productIdSanitized);
-        OriginResult originEntries = productService.getOrigins(productIdSanitized);
+        OriginResult originEntries = productService.getOrigins(productId);
         OriginResponse response = productMapper.toOriginResponse(originEntries);
         log.trace("getOrigins end");
         return response;
