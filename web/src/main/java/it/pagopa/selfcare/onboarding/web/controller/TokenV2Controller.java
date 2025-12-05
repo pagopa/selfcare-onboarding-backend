@@ -268,7 +268,7 @@ public class TokenV2Controller {
     @Operation(summary = "${swagger.tokens.getAggregatesCsv}",
             description = "${swagger.tokens.getAggregatesCsv}", operationId = "getAggregatesCsvUsingGET")
     public ResponseEntity<byte[]> getAggregatesCsv(@ApiParam("${swagger.tokens.onboardingId}") @PathVariable("onboardingId")
-                                                       String onboardingIdInput,
+                                                   String onboardingIdInput,
                                                    @ApiParam("${swagger.tokens.productId}")
                                                    @PathVariable("productId")
                                                    String productIdInput, Principal principal) throws Exception {
@@ -284,8 +284,8 @@ public class TokenV2Controller {
         OnboardingData onboardingWithUserInfo = tokenService.getOnboardingWithUserInfo(onboardingId);
 
         if ((OnboardingStatus.COMPLETED.name().equalsIgnoreCase(onboardingWithUserInfo.getStatus()) && userInstitutionService.verifyAllowedUserInstitution(
-            onboardingWithUserInfo.getInstitutionUpdate().getId(), productId, userUid)) || tokenService.verifyAllowedUserByRole(onboardingId, userUid)
-        || userService.isAllowedUserByUid(userUid)) {
+                onboardingWithUserInfo.getInstitutionUpdate().getId(), productId, userUid)) || tokenService.verifyAllowedUserByRole(onboardingId, userUid)
+                || userService.isAllowedUserByUid(userUid)) {
             Resource csv = tokenService.getAggregatesCsv(onboardingId, productId);
             return getResponseEntity(csv);
         } else {
@@ -293,7 +293,6 @@ public class TokenV2Controller {
         }
 
     }
-
 
     private HttpHeaders getHttpHeaders(Resource contract) {
         HttpHeaders headers = new HttpHeaders();

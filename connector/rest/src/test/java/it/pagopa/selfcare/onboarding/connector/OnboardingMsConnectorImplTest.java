@@ -1,5 +1,9 @@
 package it.pagopa.selfcare.onboarding.connector;
 
+import static it.pagopa.selfcare.commons.utils.TestUtils.mockInstance;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
 import it.pagopa.selfcare.onboarding.common.InstitutionType;
 import it.pagopa.selfcare.onboarding.connector.exceptions.InvalidRequestException;
 import it.pagopa.selfcare.onboarding.connector.model.OnboardingResult;
@@ -11,6 +15,12 @@ import it.pagopa.selfcare.onboarding.connector.rest.client.*;
 import it.pagopa.selfcare.onboarding.connector.rest.mapper.OnboardingMapper;
 import it.pagopa.selfcare.onboarding.connector.rest.mapper.OnboardingMapperImpl;
 import it.pagopa.selfcare.onboarding.generated.openapi.v1.dto.*;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
@@ -20,17 +30,6 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ContextConfiguration;
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-
-import static it.pagopa.selfcare.commons.utils.TestUtils.mockInstance;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 @ContextConfiguration(classes = {OnboardingMsConnectorImpl.class})
 @ExtendWith(MockitoExtension.class)
@@ -733,4 +732,24 @@ class OnboardingMsConnectorImplTest {
         verifyNoMoreInteractions(msOnboardingApiClient);
         verifyNoMoreInteractions(onboardingMapper);
     }
+
+    @Test
+    void uploadAttachment() {
+        // given
+        final String onboardingId = "onboardingId";
+        final String filename = "filename";
+        MockMultipartFile file = new MockMultipartFile("file", "content".getBytes());
+
+        when(msOnboardingTokenApiClient._uploadAttachment(onboardingId, filename, file))
+                .thenReturn(ResponseEntity.ok().build());
+
+        // when
+        onboardingMsConnector.uploadAttachment(onboardingId, file, filename);
+
+        // then
+        verify(msOnboardingTokenApiClient, times(1))
+                ._uploadAttachment(onboardingId, filename, file);
+        verifyNoMoreInteractions(msOnboardingTokenApiClient);
+    }
+
 }
