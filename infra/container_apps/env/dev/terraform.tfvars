@@ -102,6 +102,10 @@ app_settings = [
   {
     name  = "MS_USER_INSTITUTION_URL"
     value = "http://selc-d-user-ms-ca"
+  },
+  {
+    name  = "MS_PRODUCT_URL"
+    value = "http://selc-d-product-ms-ca"
   }
 ]
 
