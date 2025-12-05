@@ -489,7 +489,7 @@ db.products.insertMany([
     contracts: [
       {
         type: "institution",
-        institutionType: "default",
+        institutionType: "DEFAULT",
         path: "contracts/template/io/2.4.6/io-accordo_di_adesione-v.2.4.6.html",
         version: "2.4.6",
         order: 10,
@@ -520,7 +520,7 @@ db.products.insertMany([
     emailTemplates: [
       {
         type: "IMPORT",
-        institutionType: "default",
+        institutionType: "DEFAULT",
         path: "contracts/template/mail/import-massivo-io/1.0.0.json",
         version: "1.0.0",
         status: "PENDING"
