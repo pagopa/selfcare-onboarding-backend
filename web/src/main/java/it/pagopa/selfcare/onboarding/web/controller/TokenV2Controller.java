@@ -46,6 +46,7 @@ public class TokenV2Controller {
     private final UserService userService;
     private final UserInstitutionService userInstitutionService;
     private final OnboardingResourceMapper onboardingResourceMapper;
+    private final static String SANITIZIER = "[^a-zA-Z0-9-_]";
 
     public TokenV2Controller(TokenService tokenService, UserService userService, UserInstitutionService userInstitutionService, OnboardingResourceMapper onboardingResourceMapper) {
         this.tokenService = tokenService;
@@ -105,7 +106,7 @@ public class TokenV2Controller {
         log.trace("complete Onboarding Users start");
         FileValidationUtils.validatePdfOrP7m(contract);
         String sanitizedFileName = Encode.forJava(contract.getOriginalFilename());
-        String sanitizedOnboardingId = onboardingId.replaceAll("[^a-zA-Z0-9-_]", "");
+        String sanitizedOnboardingId = onboardingId.replaceAll(SANITIZIER, "");
         log.debug(LogUtils.CONFIDENTIAL_MARKER, "complete Onboarding Users tokenId = {}, contract = {}", sanitizedOnboardingId, sanitizedFileName);
         tokenService.completeOnboardingUsers(onboardingId, contract);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
@@ -241,10 +242,26 @@ public class TokenV2Controller {
                                                 @ApiParam("${swagger.tokens.attachmentName}")
                                                 @RequestParam(name = "name") String filename) throws IOException {
         log.trace("getAttachment start");
-        String sanitizedFilename = filename.replaceAll("[^a-zA-Z0-9._-]", "_");
+        String sanitizedFilename = filename.replaceAll(SANITIZIER, "_");
         log.debug("getAttachment onboardingId = {}, filename = {}", Encode.forJava(onboardingId), sanitizedFilename);
         Resource contract = tokenService.getAttachment(onboardingId, filename);
         return getResponseEntity(contract);
+    }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(description = "${swagger.tokens.uploadAttachment}", summary = "${swagger.tokens.uploadAttachment}", operationId = "uploadAttachmentUsingPOST")
+    @PostMapping(value = "/{onboardingId}/attachment")
+    public ResponseEntity<Void> uploadAttachment(@ApiParam("${swagger.tokens.onboardingId}")
+                                                 @PathVariable(value = "onboardingId") String onboardingId,
+                                                 @RequestParam("name") String attachmentName,
+                                                 @RequestPart MultipartFile attachment) {
+        log.trace("uploadAttachment start");
+        FileValidationUtils.validatePdfOrP7m(attachment);
+        String sanitizedFileName = Encode.forJava(attachment.getOriginalFilename());
+        String sanitizedOnboardingId = onboardingId.replaceAll(SANITIZIER, "");
+        log.debug(LogUtils.CONFIDENTIAL_MARKER, "upload Attachment tokenId = {}, file = {}", sanitizedOnboardingId, sanitizedFileName);
+        tokenService.uploadAttachment(onboardingId, attachment, attachmentName);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @GetMapping(value = "/{onboardingId}/products/{productId}/aggregates-csv", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
@@ -252,7 +269,7 @@ public class TokenV2Controller {
     @Operation(summary = "${swagger.tokens.getAggregatesCsv}",
             description = "${swagger.tokens.getAggregatesCsv}", operationId = "getAggregatesCsvUsingGET")
     public ResponseEntity<byte[]> getAggregatesCsv(@ApiParam("${swagger.tokens.onboardingId}") @PathVariable("onboardingId")
-                                                       String onboardingIdInput,
+                                                   String onboardingIdInput,
                                                    @ApiParam("${swagger.tokens.productId}")
                                                    @PathVariable("productId")
                                                    String productIdInput, Principal principal) throws Exception {
@@ -268,8 +285,8 @@ public class TokenV2Controller {
         OnboardingData onboardingWithUserInfo = tokenService.getOnboardingWithUserInfo(onboardingId);
 
         if ((OnboardingStatus.COMPLETED.name().equalsIgnoreCase(onboardingWithUserInfo.getStatus()) && userInstitutionService.verifyAllowedUserInstitution(
-            onboardingWithUserInfo.getInstitutionUpdate().getId(), productId, userUid)) || tokenService.verifyAllowedUserByRole(onboardingId, userUid)
-        || userService.isAllowedUserByUid(userUid)) {
+                onboardingWithUserInfo.getInstitutionUpdate().getId(), productId, userUid)) || tokenService.verifyAllowedUserByRole(onboardingId, userUid)
+                || userService.isAllowedUserByUid(userUid)) {
             Resource csv = tokenService.getAggregatesCsv(onboardingId, productId);
             return getResponseEntity(csv);
         } else {
@@ -277,7 +294,6 @@ public class TokenV2Controller {
         }
 
     }
-
 
     private HttpHeaders getHttpHeaders(Resource contract) {
         HttpHeaders headers = new HttpHeaders();

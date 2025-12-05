@@ -123,7 +123,18 @@ public class TokenServiceImpl implements TokenService {
   public boolean verifyAllowedUserByRole(String onboardingId, String uid) {
     log.trace("verifyAllowedUserRole for {} - {}", onboardingId, uid);
     OnboardingData onboardingData = getOnboardingWithUserInfo(onboardingId);
-
     return onboardingData.getUsers().stream().anyMatch(user -> uid.equalsIgnoreCase(user.getId()));
   }
+
+    @Override
+    public void uploadAttachment(String onboardingId, MultipartFile attachment, String attachmentName) {
+        log.trace("uploadAttachment start");
+        log.debug("uploadAttachment id = {}, filename = {}",  Encode.forJava(onboardingId),  Encode.forJava(attachmentName));
+        Assert.notNull(onboardingId, TOKEN_ID_IS_REQUIRED);
+        Assert.notNull(attachmentName, "filename is required");
+        Assert.notNull(attachment, "file is required");
+        onboardingMsConnector.uploadAttachment(onboardingId, attachment, attachmentName);
+        log.debug("getAttachment result = success");
+        log.trace("getAttachment end");
+    }
 }

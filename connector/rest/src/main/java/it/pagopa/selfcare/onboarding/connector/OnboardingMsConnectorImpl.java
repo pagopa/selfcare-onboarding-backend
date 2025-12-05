@@ -241,4 +241,9 @@ public class OnboardingMsConnectorImpl implements OnboardingMsConnector {
         return onboardingResults;
     }
 
+    @Override
+    public void uploadAttachment(String onboardingId, MultipartFile attachment, String attachmentName) {
+        msOnboardingTokenApiClient._uploadAttachment(onboardingId, attachmentName, attachment);
+    }
+
 }

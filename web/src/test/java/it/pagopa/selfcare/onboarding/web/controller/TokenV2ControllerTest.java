@@ -24,7 +24,6 @@ import it.pagopa.selfcare.onboarding.web.handler.TokenExceptionHandler;
 import it.pagopa.selfcare.onboarding.web.model.OnboardingRequestResource;
 import it.pagopa.selfcare.onboarding.web.model.ReasonForRejectDto;
 import it.pagopa.selfcare.onboarding.web.model.mapper.OnboardingResourceMapperImpl;
-
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.List;
@@ -278,6 +277,34 @@ class TokenV2ControllerTest {
         verify(tokenService, times(1))
                 .getAttachment(onboardingId, filename);
     }
+
+    /**
+     * Method under test: {@link TokenV2Controller#uploadAttachment(String, String, MultipartFile)}
+     */
+    @Test
+    void uploadAttachment() throws Exception {
+        final String onboardingId = "onboardingId";
+        final String filename = "filename";
+
+        MockMultipartFile file = new MockMultipartFile(
+                "attachment",         
+                "hello.pdf",
+                MediaType.APPLICATION_PDF_VALUE,
+                "Hello, World!".getBytes()
+        );
+
+        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
+                .multipart("/v2/tokens/{onboardingId}/attachment", onboardingId)
+                .file(file)
+                .queryParam("name", filename);
+
+        mvc.perform(requestBuilder)
+                .andExpect(MockMvcResultMatchers.status().isNoContent());
+
+        verify(tokenService, times(1))
+                .uploadAttachment(onboardingId, file, filename);
+    }
+
 
     /**
      * Method under test: {@link TokenV2Controller#getAggregatesCsv(String, String, java.security.Principal)}
