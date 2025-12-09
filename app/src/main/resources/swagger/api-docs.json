@@ -2147,6 +2147,81 @@
         } ]
       }
     },
+    "/v2/product" : {
+      "get" : {
+        "tags" : [ "product-v-2-controller" ],
+        "summary" : "Get product origins by productId",
+        "description" : "Retrieve the list of institution origins for the given product.",
+        "operationId" : "getOrigins",
+        "parameters" : [ {
+          "name" : "productId",
+          "in" : "query",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/OriginResponse"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad Request",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "type" : "object",
+                  "description" : "Generic problem response"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Unauthorized",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "type" : "object",
+                  "description" : "Generic problem response"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "Not Found",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "type" : "object",
+                  "description" : "Generic problem response"
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "Internal Server Error",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "type" : "object",
+                  "description" : "Generic problem response"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ "global" ]
+        } ]
+      }
+    },
     "/v2/institutions" : {
       "get" : {
         "tags" : [ "institution-v-2-controller" ],
@@ -4274,6 +4349,33 @@
           },
           "fiscalCode" : {
             "type" : "string"
+          }
+        }
+      },
+      "OriginEntry" : {
+        "type" : "object",
+        "properties" : {
+          "institutionType" : {
+            "type" : "string",
+            "enum" : [ "PA", "PG", "GSP", "SA", "PT", "SCP", "PSP", "AS", "REC", "CON", "PRV", "PRV_PF", "GPU", "SCEC", "DEFAULT" ]
+          },
+          "origin" : {
+            "type" : "string",
+            "enum" : [ "MOCK", "IPA", "SELC", "ANAC", "UNKNOWN", "ADE", "INFOCAMERE", "IVASS", "PDND_INFOCAMERE" ]
+          },
+          "labelKey" : {
+            "type" : "string"
+          }
+        }
+      },
+      "OriginResponse" : {
+        "type" : "object",
+        "properties" : {
+          "origins" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/OriginEntry"
+            }
           }
         }
       },
