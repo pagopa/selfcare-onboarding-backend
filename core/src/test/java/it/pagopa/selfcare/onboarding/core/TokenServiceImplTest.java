@@ -154,6 +154,19 @@ public class TokenServiceImplTest {
                 .getAttachment(onboardingId, filename);
     }
 
+    @Test
+    void uploadAttachment() throws IOException {
+        //given
+        final String onboardingId = "onboardingId";
+        final String filename = "filename";
+        MockMultipartFile mockMultipartFile = new MockMultipartFile("example", new ByteArrayInputStream("example".getBytes(StandardCharsets.UTF_8)));
+        // when
+        tokenService.uploadAttachment(onboardingId, mockMultipartFile, filename);
+        //then
+        Mockito.verify(onboardingMsConnector, Mockito.times(1))
+                .uploadAttachment(onboardingId, mockMultipartFile, filename);
+    }
+
 
     @Test
     void getAggregatesCsv() {

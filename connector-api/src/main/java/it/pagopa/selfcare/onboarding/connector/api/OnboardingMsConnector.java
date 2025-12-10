@@ -55,4 +55,6 @@ public interface OnboardingMsConnector {
     void onboardingUsersPgFromIcAndAde(OnboardingData onboardingUserPgRequest);
 
     List<OnboardingResult> onboardingWithFilter(String taxCode, String status);
+
+    void uploadAttachment(String onboardingId, MultipartFile attachment, String attachmentName);
 }
