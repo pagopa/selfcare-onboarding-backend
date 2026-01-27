@@ -57,6 +57,7 @@ public class OnboardingData {
     private List<String> atecoCodes;
     private Payment payment;
     private Boolean toAddOnAggregates;
+    private UserRequester userRequest;
     public List<User> getUsers() {
         return Optional.ofNullable(users).orElse(Collections.emptyList());
     }

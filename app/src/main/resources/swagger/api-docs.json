@@ -1,7 +1,7 @@
 {
   "openapi" : "3.0.1",
   "info" : {
-    "title" : "${openapi_title}",
+    "title" : "selc-onboarding",
     "description" : "Self Care OnBoarding API documentation",
     "contact" : {
       "name" : "PagoPA",
@@ -3810,6 +3810,9 @@
           },
           "payment" : {
             "$ref" : "#/components/schemas/PaymentDto"
+          },
+          "userRequest" : {
+            "$ref" : "#/components/schemas/UserRequestDto"
           }
         }
       },
@@ -3869,6 +3872,21 @@
             "type" : "string"
           },
           "productRole" : {
+            "type" : "string"
+          }
+        }
+      },
+      "UserRequestDto" : {
+        "required" : [ "email", "name", "surname" ],
+        "type" : "object",
+        "properties" : {
+          "name" : {
+            "type" : "string"
+          },
+          "surname" : {
+            "type" : "string"
+          },
+          "email" : {
             "type" : "string"
           }
         }
