@@ -232,7 +232,7 @@ public class TokenV2Controller {
         return getResponseEntity(contract);
     }
 
-    @GetMapping(value = "/{onboardingId}/attachment", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    @GetMapping(value = "/{onboardingId}/template-attachment", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "${swagger.tokens.getAttachment}",
             description = "${swagger.tokens.getAttachment}",  operationId = "getAttachmentUsingGET")

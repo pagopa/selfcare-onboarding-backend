@@ -268,7 +268,7 @@ class TokenV2ControllerTest {
 
         //when
         mvc.perform(MockMvcRequestBuilders
-                        .get("/v2/tokens/{onboardingId}/attachment?name={name}", onboardingId, filename)
+                        .get("/v2/tokens/{onboardingId}/template-attachment?name={name}", onboardingId, filename)
                         .accept(MediaType.APPLICATION_OCTET_STREAM_VALUE))
                 .andExpect(status().isOk())
                 .andReturn();
