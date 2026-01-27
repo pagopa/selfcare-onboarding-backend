@@ -21,6 +21,8 @@ public interface TokenService {
 
   Resource getTemplateAttachment(String onboardingId, String filename);
 
+  Resource getAttachment(String onboardingId, String filename);
+
   Resource getAggregatesCsv(String onboardingId, String productId);
 
   boolean verifyAllowedUserByRole(String onboardingId, String uid);

@@ -38,6 +38,8 @@ public interface OnboardingMsConnector {
 
     Resource getTemplateAttachment(String onboardingId, String filename);
 
+    Resource getAttachment(String onboardingId, String filename);
+
     Resource getAggregatesCsv(String onboardingId, String productId);
 
     void onboardingPaAggregation(OnboardingData onboardingData);
