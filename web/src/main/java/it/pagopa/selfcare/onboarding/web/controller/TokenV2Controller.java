@@ -236,15 +236,15 @@ public class TokenV2Controller {
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "${swagger.tokens.getAttachment}",
             description = "${swagger.tokens.getAttachment}",  operationId = "getAttachmentUsingGET")
-    public ResponseEntity<byte[]> getAttachment(@ApiParam("${swagger.tokens.onboardingId}")
+    public ResponseEntity<byte[]> getTemplateAttachment(@ApiParam("${swagger.tokens.onboardingId}")
                                                 @PathVariable("onboardingId")
                                                 String onboardingId,
-                                                @ApiParam("${swagger.tokens.attachmentName}")
+                                                        @ApiParam("${swagger.tokens.attachmentName}")
                                                 @RequestParam(name = "name") String filename) throws IOException {
         log.trace("getAttachment start");
         String sanitizedFilename = filename.replaceAll(SANITIZIER, "_");
         log.debug("getAttachment onboardingId = {}, filename = {}", Encode.forJava(onboardingId), sanitizedFilename);
-        Resource contract = tokenService.getAttachment(onboardingId, filename);
+        Resource contract = tokenService.getTemplateAttachment(onboardingId, filename);
         return getResponseEntity(contract);
     }
 

@@ -351,19 +351,19 @@ class OnboardingMsConnectorImplTest {
     }
 
     @Test
-    void getAttachment() {
+    void getTemplateAttachment() {
         // given
         final String onboardingId = "onboardingId";
         final String filename = "filename";
         Resource resource = Mockito.mock(Resource.class);
-        when(msOnboardingTokenApiClient._getAttachment(onboardingId, filename))
+        when(msOnboardingTokenApiClient._getTemplateAttachment(onboardingId, filename))
                 .thenReturn(ResponseEntity.of(Optional.of(resource)));
         // when
-        final Executable executable = () -> onboardingMsConnector.getAttachment(onboardingId, filename);
+        final Executable executable = () -> onboardingMsConnector.getTemplateAttachment(onboardingId, filename);
         // then
         assertDoesNotThrow(executable);
         verify(msOnboardingTokenApiClient, times(1))
-                ._getAttachment(onboardingId, filename);
+                ._getTemplateAttachment(onboardingId, filename);
         verifyNoMoreInteractions(msOnboardingTokenApiClient);
     }
 

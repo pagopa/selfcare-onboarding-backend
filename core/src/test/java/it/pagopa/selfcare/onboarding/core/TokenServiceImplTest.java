@@ -143,15 +143,15 @@ public class TokenServiceImplTest {
     }
 
     @Test
-    void getAttachment() {
+    void getTemplateAttachment() {
         //given
         final String onboardingId = "onboardingId";
         final String filename = "filename";
         // when
-        tokenService.getAttachment(onboardingId, filename);
+        tokenService.getTemplateAttachment(onboardingId, filename);
         //then
         Mockito.verify(onboardingMsConnector, Mockito.times(1))
-                .getAttachment(onboardingId, filename);
+                .getTemplateAttachment(onboardingId, filename);
     }
 
     @Test

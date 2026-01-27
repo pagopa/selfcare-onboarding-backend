@@ -253,17 +253,17 @@ class TokenV2ControllerTest {
     }
 
     /**
-     * Method under test: {@link TokenV2Controller#getAttachment(String, String)}
+     * Method under test: {@link TokenV2Controller#getTemplateAttachment(String, String)}
      */
     @Test
-    void getAttachment() throws Exception {
+    void getTemplateAttachment() throws Exception {
         final String onboardingId = "onboardingId";
         final String text = "String";
         final String filename = "filename";
         byte[] bytes = text.getBytes();
         InputStream is = new ByteArrayInputStream(bytes);
         Resource resource = Mockito.mock(Resource.class);
-        Mockito.when(tokenService.getAttachment(onboardingId, filename)).thenReturn(resource);
+        Mockito.when(tokenService.getTemplateAttachment(onboardingId, filename)).thenReturn(resource);
         Mockito.when(resource.getInputStream()).thenReturn(is);
 
         //when
@@ -275,7 +275,7 @@ class TokenV2ControllerTest {
 
         //then
         verify(tokenService, times(1))
-                .getAttachment(onboardingId, filename);
+                .getTemplateAttachment(onboardingId, filename);
     }
 
     /**

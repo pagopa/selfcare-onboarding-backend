@@ -36,7 +36,7 @@ public interface OnboardingMsConnector {
 
     Resource getContract(String onboardingId);
 
-    Resource getAttachment(String onboardingId, String filename);
+    Resource getTemplateAttachment(String onboardingId, String filename);
 
     Resource getAggregatesCsv(String onboardingId, String productId);
 
