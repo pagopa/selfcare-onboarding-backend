@@ -162,6 +162,12 @@ public class OnboardingMsConnectorImpl implements OnboardingMsConnector {
 
     @Override
     @Retry(name = "retryTimeout")
+    public Resource getTemplateAttachment(String onboardingId, String filename) {
+        return msOnboardingTokenApiClient._getTemplateAttachment(onboardingId, filename).getBody();
+    }
+
+    @Override
+    @Retry(name = "retryTimeout")
     public Resource getAttachment(String onboardingId, String filename) {
         return msOnboardingTokenApiClient._getAttachment(onboardingId, filename).getBody();
     }

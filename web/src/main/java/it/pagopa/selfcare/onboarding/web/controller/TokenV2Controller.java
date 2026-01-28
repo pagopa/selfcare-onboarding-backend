@@ -1,8 +1,6 @@
 package it.pagopa.selfcare.onboarding.web.controller;
 
 
-import static org.springframework.http.MediaType.APPLICATION_OCTET_STREAM_VALUE;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiParam;
 import io.swagger.v3.oas.annotations.Operation;
@@ -19,11 +17,6 @@ import it.pagopa.selfcare.onboarding.web.model.OnboardingRequestResource;
 import it.pagopa.selfcare.onboarding.web.model.OnboardingVerify;
 import it.pagopa.selfcare.onboarding.web.model.ReasonForRejectDto;
 import it.pagopa.selfcare.onboarding.web.model.mapper.OnboardingResourceMapper;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.security.Principal;
-
 import it.pagopa.selfcare.onboarding.web.utils.FileValidationUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
@@ -35,6 +28,12 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.security.Principal;
+
+import static org.springframework.http.MediaType.APPLICATION_OCTET_STREAM_VALUE;
 
 @Slf4j
 @RestController
@@ -232,15 +231,31 @@ public class TokenV2Controller {
         return getResponseEntity(contract);
     }
 
+    @GetMapping(value = "/{onboardingId}/template-attachment", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "${swagger.tokens.getTemplateAttachment}",
+            description = "${swagger.tokens.getTemplateAttachment}",  operationId = "getTemplateAttachmentUsingGET")
+    public ResponseEntity<byte[]> getTemplateAttachment(@ApiParam("${swagger.tokens.onboardingId}")
+                                                @PathVariable("onboardingId")
+                                                String onboardingId,
+                                                        @ApiParam("${swagger.tokens.attachmentName}")
+                                                @RequestParam(name = "name") String filename) throws IOException {
+        log.trace("getTemplateAttachment start");
+        String sanitizedFilename = filename.replaceAll(SANITIZIER, "_");
+        log.debug("getTemplateAttachment onboardingId = {}, filename = {}", Encode.forJava(onboardingId), sanitizedFilename);
+        Resource contract = tokenService.getTemplateAttachment(onboardingId, filename);
+        return getResponseEntity(contract);
+    }
+
     @GetMapping(value = "/{onboardingId}/attachment", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "${swagger.tokens.getAttachment}",
             description = "${swagger.tokens.getAttachment}",  operationId = "getAttachmentUsingGET")
     public ResponseEntity<byte[]> getAttachment(@ApiParam("${swagger.tokens.onboardingId}")
-                                                @PathVariable("onboardingId")
-                                                String onboardingId,
-                                                @ApiParam("${swagger.tokens.attachmentName}")
-                                                @RequestParam(name = "name") String filename) throws IOException {
+                                                        @PathVariable("onboardingId")
+                                                        String onboardingId,
+                                                        @ApiParam("${swagger.tokens.attachmentName}")
+                                                        @RequestParam(name = "name") String filename) throws IOException {
         log.trace("getAttachment start");
         String sanitizedFilename = filename.replaceAll(SANITIZIER, "_");
         log.debug("getAttachment onboardingId = {}, filename = {}", Encode.forJava(onboardingId), sanitizedFilename);

@@ -19,6 +19,8 @@ public interface TokenService {
 
   Resource getContract(String onboardingId);
 
+  Resource getTemplateAttachment(String onboardingId, String filename);
+
   Resource getAttachment(String onboardingId, String filename);
 
   Resource getAggregatesCsv(String onboardingId, String productId);
