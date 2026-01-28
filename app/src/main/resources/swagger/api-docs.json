@@ -415,7 +415,7 @@
         "tags" : [ "token-v-2-controller" ],
         "summary" : "Service to download a specific onboarding attachment",
         "description" : "Service to download a specific onboarding attachment",
-        "operationId" : "getAttachmentUsingGET_1",
+        "operationId" : "getAttachmentUsingGET",
         "parameters" : [ {
           "name" : "onboardingId",
           "in" : "path",
@@ -2074,9 +2074,9 @@
     "/v2/tokens/{onboardingId}/template-attachment" : {
       "get" : {
         "tags" : [ "token-v-2-controller" ],
-        "summary" : "Service to download a specific onboarding attachment",
-        "description" : "Service to download a specific onboarding attachment",
-        "operationId" : "getAttachmentUsingGET",
+        "summary" : "Service to download a specific template attachment",
+        "description" : "Service to download a specific template attachment",
+        "operationId" : "getTemplateAttachmentUsingGET",
         "parameters" : [ {
           "name" : "onboardingId",
           "in" : "path",

@@ -233,8 +233,8 @@ public class TokenV2Controller {
 
     @GetMapping(value = "/{onboardingId}/template-attachment", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "${swagger.tokens.getAttachment}",
-            description = "${swagger.tokens.getAttachment}",  operationId = "getAttachmentUsingGET")
+    @Operation(summary = "${swagger.tokens.getTemplateAttachment}",
+            description = "${swagger.tokens.getTemplateAttachment}",  operationId = "getTemplateAttachmentUsingGET")
     public ResponseEntity<byte[]> getTemplateAttachment(@ApiParam("${swagger.tokens.onboardingId}")
                                                 @PathVariable("onboardingId")
                                                 String onboardingId,
