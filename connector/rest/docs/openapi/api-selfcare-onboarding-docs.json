@@ -2981,6 +2981,9 @@
           "signContract" : {
             "type" : "boolean"
           },
+          "userRequester" : {
+            "$ref" : "#/components/schemas/UserRequester"
+          },
           "institution" : {
             "$ref" : "#/components/schemas/InstitutionBaseRequest"
           },
@@ -3029,6 +3032,9 @@
           },
           "signContract" : {
             "type" : "boolean"
+          },
+          "userRequester" : {
+            "$ref" : "#/components/schemas/UserRequester"
           },
           "institution" : {
             "$ref" : "#/components/schemas/InstitutionBaseRequest"
@@ -3228,6 +3234,9 @@
           "signContract" : {
             "type" : "boolean"
           },
+          "userRequester" : {
+            "$ref" : "#/components/schemas/UserRequester"
+          },
           "institution" : {
             "$ref" : "#/components/schemas/InstitutionBaseRequest"
           },
@@ -3302,6 +3311,9 @@
           },
           "signContract" : {
             "type" : "boolean"
+          },
+          "userRequester" : {
+            "$ref" : "#/components/schemas/UserRequester"
           },
           "institution" : {
             "$ref" : "#/components/schemas/InstitutionPspRequest"
@@ -3603,6 +3615,20 @@
           },
           "role" : {
             "$ref" : "#/components/schemas/PartyRole"
+          }
+        }
+      },
+      "UserRequester" : {
+        "type" : "object",
+        "properties" : {
+          "name" : {
+            "type" : "string"
+          },
+          "surname" : {
+            "type" : "string"
+          },
+          "email" : {
+            "type" : "string"
           }
         }
       },

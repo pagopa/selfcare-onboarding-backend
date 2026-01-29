@@ -3896,6 +3896,9 @@
           },
           "payment" : {
             "$ref" : "#/components/schemas/PaymentDto"
+          },
+          "userRequester" : {
+            "$ref" : "#/components/schemas/UserRequestDto"
           }
         }
       },
@@ -3955,6 +3958,21 @@
             "type" : "string"
           },
           "productRole" : {
+            "type" : "string"
+          }
+        }
+      },
+      "UserRequestDto" : {
+        "required" : [ "email", "name", "surname" ],
+        "type" : "object",
+        "properties" : {
+          "name" : {
+            "type" : "string"
+          },
+          "surname" : {
+            "type" : "string"
+          },
+          "email" : {
             "type" : "string"
           }
         }

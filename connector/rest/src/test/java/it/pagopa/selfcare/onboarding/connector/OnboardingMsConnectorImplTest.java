@@ -11,6 +11,7 @@ import it.pagopa.selfcare.onboarding.connector.model.RecipientCodeStatusResult;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.Institution;
 import it.pagopa.selfcare.onboarding.connector.model.institutions.VerifyAggregateResult;
 import it.pagopa.selfcare.onboarding.connector.model.onboarding.*;
+import it.pagopa.selfcare.onboarding.connector.model.onboarding.UserRequester;
 import it.pagopa.selfcare.onboarding.connector.rest.client.*;
 import it.pagopa.selfcare.onboarding.connector.rest.mapper.OnboardingMapper;
 import it.pagopa.selfcare.onboarding.connector.rest.mapper.OnboardingMapperImpl;
@@ -73,6 +74,11 @@ class OnboardingMsConnectorImplTest {
         onboardingData.setUsers(List.of(mockInstance(new User())));
         onboardingData.setOriginId("originId");
         onboardingData.setInstitutionUpdate(institutionUpdate);
+        UserRequester userRequester = new UserRequester();
+        userRequester.setEmail("email");
+        userRequester.setName("name");
+        userRequester.setSurname("surname");
+        onboardingData.setUserRequester(userRequester);
         // when
         onboardingMsConnector.onboarding(onboardingData);
         // then
@@ -83,6 +89,9 @@ class OnboardingMsConnectorImplTest {
         OnboardingDefaultRequest actual = onboardingRequestCaptor.getValue();
         assertEquals(actual.getInstitution().getTaxCode(), institutionUpdate.getTaxCode());
         assertEquals(actual.getInstitution().getDescription(), institutionUpdate.getDescription());
+        assertEquals(actual.getUserRequester().getEmail(), userRequester.getEmail());
+        assertEquals(actual.getUserRequester().getName(), userRequester.getName());
+        assertEquals(actual.getUserRequester().getSurname(), userRequester.getSurname());
         verifyNoMoreInteractions(msOnboardingApiClient);
     }
 
@@ -98,6 +107,11 @@ class OnboardingMsConnectorImplTest {
         onboardingData.setBilling(billing);
         onboardingData.setUsers(List.of(mockInstance(new User())));
         onboardingData.setInstitutionUpdate(institutionUpdate);
+        UserRequester userRequester = new UserRequester();
+        userRequester.setEmail("email");
+        userRequester.setName("name");
+        userRequester.setSurname("surname");
+        onboardingData.setUserRequester(userRequester);
         // when
         onboardingMsConnector.onboarding(onboardingData);
         // then
@@ -107,6 +121,9 @@ class OnboardingMsConnectorImplTest {
                 ._onboardingPa(onboardingRequestCaptor.capture());
         OnboardingPaRequest actual = onboardingRequestCaptor.getValue();
         assertEquals(actual.getInstitution().getTaxCode(), institutionUpdate.getTaxCode());
+        assertEquals(actual.getUserRequester().getEmail(), userRequester.getEmail());
+        assertEquals(actual.getUserRequester().getName(), userRequester.getName());
+        assertEquals(actual.getUserRequester().getSurname(), userRequester.getSurname());
         verifyNoMoreInteractions(msOnboardingApiClient);
     }
 
@@ -124,6 +141,11 @@ class OnboardingMsConnectorImplTest {
         onboardingData.setBilling(billing);
         onboardingData.setUsers(List.of(mockInstance(new User())));
         onboardingData.setInstitutionUpdate(institutionUpdate);
+        UserRequester userRequester = new UserRequester();
+        userRequester.setEmail("email");
+        userRequester.setName("name");
+        userRequester.setSurname("surname");
+        onboardingData.setUserRequester(userRequester);
         // when
         onboardingMsConnector.onboarding(onboardingData);
         // then
@@ -134,6 +156,9 @@ class OnboardingMsConnectorImplTest {
         assertEquals(actual.getInstitution().getTaxCode(), institutionUpdate.getTaxCode());
         assertNotNull(actual.getInstitution().getPaymentServiceProvider());
         assertNotNull(actual.getInstitution().getDataProtectionOfficer());
+        assertEquals(actual.getUserRequester().getEmail(), userRequester.getEmail());
+        assertEquals(actual.getUserRequester().getName(), userRequester.getName());
+        assertEquals(actual.getUserRequester().getSurname(), userRequester.getSurname());
         verifyNoMoreInteractions(msOnboardingApiClient);
     }
 
