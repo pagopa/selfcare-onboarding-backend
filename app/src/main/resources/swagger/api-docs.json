@@ -3897,7 +3897,7 @@
           "payment" : {
             "$ref" : "#/components/schemas/PaymentDto"
           },
-          "userRequest" : {
+          "userRequester" : {
             "$ref" : "#/components/schemas/UserRequestDto"
           }
         }

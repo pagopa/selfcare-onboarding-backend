@@ -89,6 +89,6 @@ public class OnboardingProductDto {
     private PaymentDto payment;
 
     @ApiModelProperty(value = "${swagger.onboarding.institutions.model.requester}")
-    private UserRequestDto userRequest;
+    private UserRequestDto userRequester;
 
 }
