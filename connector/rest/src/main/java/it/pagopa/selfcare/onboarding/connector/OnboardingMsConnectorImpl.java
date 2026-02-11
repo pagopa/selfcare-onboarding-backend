@@ -259,7 +259,7 @@ public class OnboardingMsConnectorImpl implements OnboardingMsConnector {
         log.info("headAttachment for onboardingId: {}, filename: {}", Encode.forJava(onboardingId), Encode.forJava(filename));
         ResponseEntity<Void> responseEntity = msOnboardingTokenApiClient._headAttachment(onboardingId, filename);
         log.info("headAttachment response status code: {}", responseEntity.getStatusCode());
-        return responseEntity.getStatusCode();
+        return HttpStatus.resolve(responseEntity.getStatusCode().value());
     }
 
 }
