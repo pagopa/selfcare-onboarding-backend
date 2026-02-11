@@ -1,7 +1,6 @@
 package it.pagopa.selfcare.onboarding.web.controller;
 
 
-import com.azure.core.annotation.QueryParam;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiParam;
 import io.swagger.v3.oas.annotations.Operation;
@@ -34,7 +33,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.Principal;
-import java.util.Optional;
 
 import static org.springframework.http.MediaType.APPLICATION_OCTET_STREAM_VALUE;
 
@@ -267,16 +265,16 @@ public class TokenV2Controller {
     }
 
     @GetMapping(value = "/{onboardingId}/attachment/status")
-    @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "${swagger.tokens.headAttachment}",
             description = "${swagger.tokens.headAttachment}",  operationId = "headAttachmentUsingGET")
     public ResponseEntity<Boolean> headAttachment(@ApiParam("${swagger.tokens.onboardingId}")
                                                 @PathVariable("onboardingId")
-                                                String onboardingId, @NotNull @QueryParam("name") String attachmentName) {
+                                                String onboardingId, @NotNull @RequestParam("name") String attachmentName) {
         log.trace("headAttachment start");
         log.debug("headAttachment onboardingId = {}, filename = {}", Encode.forJava(onboardingId), Encode.forJava(attachmentName));
         boolean attachment = tokenService.headAttachment(onboardingId, attachmentName);
-        return attachment ? ResponseEntity.ok(Boolean.TRUE) : ResponseEntity.ok(Boolean.FALSE);
+        return attachment ? ResponseEntity.noContent().build()
+                : ResponseEntity.notFound().build();
     }
 
 
