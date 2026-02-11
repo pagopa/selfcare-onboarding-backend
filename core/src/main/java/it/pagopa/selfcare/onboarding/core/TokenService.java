@@ -28,4 +28,6 @@ public interface TokenService {
   boolean verifyAllowedUserByRole(String onboardingId, String uid);
 
   void uploadAttachment(String onboardingId, MultipartFile attachment, String attachmentName);
+
+  boolean headAttachment(String onboardingId, String filename);
 }
