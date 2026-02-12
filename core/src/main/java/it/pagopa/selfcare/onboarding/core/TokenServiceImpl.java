@@ -152,14 +152,14 @@ public class TokenServiceImpl implements TokenService {
     }
 
     @Override
-    public boolean headAttachment(String onboardingId, String filename) {
+    public HttpStatusCode headAttachment(String onboardingId, String filename) {
         log.trace("headAttachment start");
         log.debug("headAttachment id = {}, filename = {}",  Encode.forJava(onboardingId),  Encode.forJava(filename));
         Assert.notNull(onboardingId, TOKEN_ID_IS_REQUIRED);
         Assert.notNull(filename, "filename is required");
         HttpStatusCode resource = onboardingMsConnector.headAttachment(onboardingId, filename);
-        log.debug("headAttachment result = success");
+        log.debug("headAttachment result {}", resource.value());
         log.trace("headAttachment end");
-        return resource.is2xxSuccessful();
+        return resource;
     }
 }

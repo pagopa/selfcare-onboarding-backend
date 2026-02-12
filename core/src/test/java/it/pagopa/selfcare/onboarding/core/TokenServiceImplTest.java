@@ -164,12 +164,14 @@ public class TokenServiceImplTest {
         when(onboardingMsConnector.headAttachment(onboardingId, filename)).thenReturn(HttpStatusCode.valueOf(204));
 
         // when
-        boolean result = tokenService.headAttachment(onboardingId, filename);
+        HttpStatusCode result = tokenService.headAttachment(onboardingId, filename);
 
         //then
         Mockito.verify(onboardingMsConnector, Mockito.times(1))
                 .headAttachment(eq("onboardingId"), eq("filename"));
-        assertTrue(result);
+        assertTrue(result.is2xxSuccessful());
+        assertFalse(result.is4xxClientError());
+        assertFalse(result.is5xxServerError());
     }
 
     @Test
@@ -181,12 +183,14 @@ public class TokenServiceImplTest {
         when(onboardingMsConnector.headAttachment(onboardingId, filename)).thenReturn(HttpStatusCode.valueOf(404));
 
         // when
-        boolean result = tokenService.headAttachment(onboardingId, filename);
+        HttpStatusCode result = tokenService.headAttachment(onboardingId, filename);
 
         //then
         Mockito.verify(onboardingMsConnector, Mockito.times(1))
                 .headAttachment(eq("onboardingId"), eq("filename"));
-        assertFalse(result);
+        assertFalse(result.is2xxSuccessful());
+        assertTrue(result.is4xxClientError());
+        assertFalse(result.is5xxServerError());
     }
 
     @Test
@@ -198,12 +202,14 @@ public class TokenServiceImplTest {
         when(onboardingMsConnector.headAttachment(onboardingId, filename)).thenReturn(HttpStatusCode.valueOf(500));
 
         // when
-        boolean result = tokenService.headAttachment(onboardingId, filename);
+        HttpStatusCode result = tokenService.headAttachment(onboardingId, filename);
 
         //then
         Mockito.verify(onboardingMsConnector, Mockito.times(1))
                 .headAttachment(eq("onboardingId"), eq("filename"));
-        assertFalse(result);
+        assertFalse(result.is2xxSuccessful());
+        assertFalse(result.is4xxClientError());
+        assertTrue(result.is5xxServerError());
     }
 
     @Test

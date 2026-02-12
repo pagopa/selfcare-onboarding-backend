@@ -26,6 +26,7 @@ import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfi
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.core.io.Resource;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ContextConfiguration;
@@ -286,11 +287,11 @@ class TokenV2ControllerTest {
         final String onboardingId = "onboardingId";
         final String filename = "filename";
 
-        Mockito.when(tokenService.headAttachment(onboardingId, filename)).thenReturn(true);
+        Mockito.when(tokenService.headAttachment(onboardingId, filename)).thenReturn(HttpStatusCode.valueOf(204));
 
         //when
         mvc.perform(MockMvcRequestBuilders
-                        .get("/v2/tokens/{onboardingId}/attachment/status", onboardingId)
+                        .head("/v2/tokens/{onboardingId}/attachment/status", onboardingId)
                         .queryParam("name", filename))
                 .andExpect(status().isNoContent())
                 .andReturn();
@@ -306,11 +307,11 @@ class TokenV2ControllerTest {
         final String onboardingId = "onboardingId";
         final String filename = "filename";
 
-        Mockito.when(tokenService.headAttachment(onboardingId, filename)).thenReturn(false);
+        Mockito.when(tokenService.headAttachment(onboardingId, filename)).thenReturn(HttpStatusCode.valueOf(404));
 
         //when
         mvc.perform(MockMvcRequestBuilders
-                        .get("/v2/tokens/{onboardingId}/attachment/status", onboardingId)
+                        .head("/v2/tokens/{onboardingId}/attachment/status", onboardingId)
                         .queryParam("name", filename))
                 .andExpect(status().isNotFound())
                 .andReturn();

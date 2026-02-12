@@ -23,10 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.owasp.encoder.Encode;
 import org.springframework.core.io.Resource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -35,6 +32,7 @@ import java.io.InputStream;
 import java.security.Principal;
 
 import static org.springframework.http.MediaType.APPLICATION_OCTET_STREAM_VALUE;
+import static org.springframework.web.bind.annotation.RequestMethod.HEAD;
 
 @Slf4j
 @RestController
@@ -264,16 +262,16 @@ public class TokenV2Controller {
         return getResponseEntity(contract);
     }
 
-    @GetMapping(value = "/{onboardingId}/attachment/status")
+    @RequestMapping(method = HEAD, value = "/{onboardingId}/attachment/status")
     @Operation(summary = "${swagger.tokens.headAttachment}",
             description = "${swagger.tokens.headAttachment}",  operationId = "headAttachmentUsingGET")
-    public ResponseEntity<Boolean> headAttachment(@ApiParam("${swagger.tokens.onboardingId}")
+    public ResponseEntity<Void> headAttachment(@ApiParam("${swagger.tokens.onboardingId}")
                                                 @PathVariable("onboardingId")
                                                 String onboardingId, @NotNull @RequestParam("name") String attachmentName) {
         log.trace("headAttachment start");
         log.debug("headAttachment onboardingId = {}, filename = {}", Encode.forJava(onboardingId), Encode.forJava(attachmentName));
-        boolean attachment = tokenService.headAttachment(onboardingId, attachmentName);
-        return attachment ? ResponseEntity.noContent().build()
+        HttpStatusCode attachmentResponse = tokenService.headAttachment(onboardingId, attachmentName);
+        return attachmentResponse.is2xxSuccessful() ? ResponseEntity.noContent().build()
                 : ResponseEntity.notFound().build();
     }
 
