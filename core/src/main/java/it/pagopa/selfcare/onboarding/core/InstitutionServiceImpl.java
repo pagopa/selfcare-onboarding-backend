@@ -499,7 +499,7 @@ class InstitutionServiceImpl implements InstitutionService {
         log.trace("checkOrganization end");
     }
 
-    private void validateOnboardingByProductOrInstitutionTaxCode(String externalInstitutionId, String productId) {
+    public void validateOnboardingByProductOrInstitutionTaxCode(String externalInstitutionId, String productId) {
         log.trace("validate start");
         log.debug("validate productId = {}, externalInstitutionId = {}", productId, externalInstitutionId);
         boolean productEnabled = productService.isProductEnabled(productId);
